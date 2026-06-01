@@ -905,8 +905,8 @@ body.edit-mode #edit-mode-bar { display:block; }
 }
 
 /* ── ECAL ALERT BANNER ── */
-@keyframes ecal-slide-down { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
-#_ecal-alert-bar { animation: ecal-slide-down .35s cubic-bezier(.34,1.3,.64,1) forwards; }
+@keyframes ecal-slide-down { from{transform:translateX(120%) scale(.9);opacity:0} to{transform:translateX(0) scale(1);opacity:1} }
+#_ecal-alert-bar { animation: ecal-slide-down .4s cubic-bezier(.34,1.3,.64,1) forwards; }
 
 /* ── LOGIN CELEBRATION ── */
 @keyframes confetti-fall { 0%{opacity:1;transform:translateY(0) rotate(0)} 100%{opacity:0;transform:translateY(80px) rotate(360deg)} }
@@ -6706,16 +6706,19 @@ function _scheduleTodayAlerts() {
 
   const now      = new Date();
   const todayStr = now.toDateString();
-  const BEFORE   = 5 * 60 * 1000; // 5 minutes
+  // Fire at 15, 10, and 5 minutes before each event
+  const ALERTS   = [15, 10, 5];
 
   const todayEvents = _ecalCache.filter(ev => new Date(ev.date).toDateString() === todayStr);
 
   for (const ev of todayEvents) {
-    const alertAt = new Date(ev.date).getTime() - BEFORE;
-    const delay   = alertAt - Date.now();
-    if (delay <= 0) continue; // already past the 5-min window
-    const t = setTimeout(() => _showEcalAlertBar(ev.title, ev.country, new Date(ev.date)), delay);
-    _ecalDayTimers.push(t);
+    for (const mins of ALERTS) {
+      const alertAt = new Date(ev.date).getTime() - mins * 60 * 1000;
+      const delay   = alertAt - Date.now();
+      if (delay <= 0) continue; // already past this window
+      const t = setTimeout(() => _showEcalAlertBar(ev.title, ev.country, new Date(ev.date), mins), delay);
+      _ecalDayTimers.push(t);
+    }
   }
   return todayEvents;
 }
@@ -6747,26 +6750,39 @@ function _showTodayEcalBriefing(todayEvents) {
   setTimeout(() => toast?.remove(), 15_000);
 }
 
-function _showEcalAlertBar(title, country, evDate) {
+function _showEcalAlertBar(title, country, evDate, minsLeft) {
+  minsLeft = minsLeft || 5;
   const timeStr = evDate.toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' });
   let bar = document.getElementById('_ecal-alert-bar');
   if (bar) bar.remove();
   bar = document.createElement('div');
   bar.id = '_ecal-alert-bar';
-  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;direction:rtl;';
-  bar.innerHTML = `<div style="background:linear-gradient(135deg,#1c1000,#2e1a00);border-bottom:2px solid #f0b429;padding:11px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(0,0,0,.7)">
-    <div style="font-size:24px;flex-shrink:0;animation:pulse-dot 1.5s infinite">⚠️</div>
-    <div style="flex:1">
-      <div style="font-size:13px;font-weight:700;color:#f0b429;line-height:1.3">שים לב! בעוד 5 דקות הודעה חשובה — סחור חכם</div>
-      <div style="font-size:11px;color:#e8d5a0;margin-top:3px;opacity:.85">⭐⭐⭐ &nbsp;${title} &nbsp;·&nbsp; ${timeStr}</div>
+  // Bottom-right corner, stays until manually closed
+  bar.style.cssText = 'position:fixed;bottom:24px;right:20px;z-index:99999;direction:rtl;max-width:360px;min-width:300px;animation:ecal-slide-down .4s cubic-bezier(.34,1.3,.64,1) forwards;';
+  const urgencyColor = minsLeft <= 5 ? '#ff4d4d' : minsLeft <= 10 ? '#f0b429' : '#a78bfa';
+  const urgencyBg    = minsLeft <= 5 ? 'linear-gradient(135deg,#1c0000,#2e0000)' : minsLeft <= 10 ? 'linear-gradient(135deg,#1c1000,#2e1a00)' : 'linear-gradient(135deg,#100c1c,#1a1230)';
+  const urgencyBdr   = minsLeft <= 5 ? '#ff4d4d' : minsLeft <= 10 ? '#f0b429' : '#a78bfa';
+  bar.innerHTML = `<div style="background:${urgencyBg};border:2px solid ${urgencyBdr};border-radius:14px;padding:16px 18px;box-shadow:0 8px 40px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:30px;flex-shrink:0;animation:pulse-dot 1s infinite">⚠️</span>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:${urgencyColor};line-height:1.3;letter-spacing:.3px">בעוד ${minsLeft} דקות — הודעה חשובה!</div>
+        <div style="font-size:11px;color:#8892a4;margin-top:2px">סחור חכם · שים לב לתנועות</div>
+      </div>
+      <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#8892a4;cursor:pointer;font-size:16px;border-radius:8px;width:28px;height:28px;flex-shrink:0;font-family:inherit;line-height:1;padding:0">✕</button>
     </div>
-    <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e8ecf4;cursor:pointer;font-size:13px;border-radius:6px;padding:4px 10px;flex-shrink:0;font-family:inherit">✕</button>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px">
+      <div style="font-size:13px;font-weight:700;color:#e8ecf4;margin-bottom:4px">⭐⭐⭐ &nbsp;${title}</div>
+      <div style="font-size:12px;color:#f0b429;font-family:monospace;font-weight:600">🕐 ${timeStr} &nbsp;·&nbsp; 🇺🇸 ארה"ב</div>
+    </div>
   </div>`;
-  document.body.prepend(bar);
-  setTimeout(() => { document.getElementById('_ecal-alert-bar')?.remove(); }, 5 * 60 * 1000);
+  document.body.appendChild(bar);
+  // Auto-remove only when the event time is reached
+  const msUntilEvent = evDate.getTime() - Date.now();
+  if (msUntilEvent > 0) setTimeout(() => { document.getElementById('_ecal-alert-bar')?.remove(); }, msUntilEvent);
   if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
     new Notification('⚠️ Fayna Trading — הודעה כלכלית חשובה', {
-      body: title + '\nבעוד 5 דקות — סחור חכם!',
+      body: `בעוד ${minsLeft} דקות: ${title} (${timeStr})`,
       tag: 'ecal-alert',
     });
   }
