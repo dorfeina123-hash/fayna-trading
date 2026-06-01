@@ -7200,6 +7200,14 @@ let _udpCurrentUid   = null;
 let _udpCurrentUser  = null;
 
 async function refreshAdminUsers() {
+  // Reset filters on every refresh
+  _adminUserFilter = 'all';
+  _adminUserSearch = '';
+  const si = document.getElementById('user-search');
+  if (si) si.value = '';
+  document.querySelectorAll('[data-uf]').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('[data-uf="all"]');
+  if (allBtn) allBtn.classList.add('active');
   const tbody = document.getElementById('admin-users-tbody');
   if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#545f72">טוען...</td></tr>';
   const result = await _getUsers();
@@ -7218,6 +7226,11 @@ function filterAdminUsers() {
 
 function setUserFilter(status, btn) {
   _adminUserFilter = status;
+  if (status === 'all') {
+    _adminUserSearch = '';
+    const si = document.getElementById('user-search');
+    if (si) si.value = '';
+  }
   document.querySelectorAll('[data-uf]').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   _renderUsersTable();
