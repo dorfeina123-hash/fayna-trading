@@ -1103,6 +1103,82 @@ body.edit-mode #edit-mode-bar { display:block; }
 .chat-input::placeholder{color:var(--t3)}
 .chat-send-btn{background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;transition:all .15s;flex-shrink:0}
 .chat-send-btn:hover{transform:scale(1.1)}
+
+/* ══════════════════════════════════════════
+   NEW FEATURES CSS
+══════════════════════════════════════════ */
+
+/* ── LIGHT MODE ── */
+body.light-mode{--bg0:#f0f4f8;--bg1:#ffffff;--bg2:#f5f7fa;--bg3:#edf0f4;--bg4:#e2e8f0;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.13);--t1:#1a202c;--t2:#4a5568;--t3:#718096;background:#f0f4f8!important}
+body.light-mode .topnav{background:linear-gradient(180deg,#fff,#f8fafc)!important;box-shadow:0 1px 4px rgba(0,0,0,.1)!important}
+body.light-mode .zcl{background:linear-gradient(145deg,#fff,#f8fafc)!important;border-color:rgba(0,0,0,.07)!important}
+body.light-mode .zm{background:linear-gradient(145deg,#fff,#f8fafc)!important}
+body.light-mode .modal{background:linear-gradient(145deg,#fff,#f8fafc)!important}
+body.light-mode .side-panel,.body.light-mode .mob-nav-drawer{background:#fff!important}
+body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!important}
+
+/* ── NAV AVATAR ── */
+.nav-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#000;cursor:pointer;flex-shrink:0;transition:transform .15s,box-shadow .15s;border:2px solid rgba(255,255,255,.2);letter-spacing:-.5px}
+.nav-avatar:hover{transform:scale(1.1);box-shadow:0 0 12px rgba(255,255,255,.2)}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle{width:30px;height:30px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.theme-toggle:hover{background:var(--bg3);color:var(--t1)}
+
+/* ── DAILY GOAL WIDGET ── */
+.goal-widget{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.goal-widget:hover{border-color:var(--border2)}
+.goal-progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;flex:1}
+.goal-progress-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* ── STREAK BADGE ── */
+.streak-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.streak-win{background:rgba(0,210,106,.12);color:#00d26a;border:1px solid rgba(0,210,106,.25)}
+.streak-loss{background:rgba(255,77,77,.12);color:#ff4d4d;border:1px solid rgba(255,77,77,.25)}
+.streak-neutral{background:var(--bg3);color:var(--t3);border:1px solid var(--border)}
+
+/* ── TRADE TAGS ── */
+.tag-bubble{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:10px;background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3);margin:2px;transition:background .12s}
+.tag-bubble:hover{background:rgba(167,139,250,.28)}
+.tag-x{font-size:12px;opacity:.6;cursor:pointer;line-height:1;padding:0 1px}
+.tags-input-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);min-height:38px;align-items:center;cursor:text;transition:border-color .15s}
+.tags-input-wrap:focus-within{border-color:var(--ac)}
+.tags-real-input{border:none;background:transparent;color:var(--t1);font-size:12px;outline:none;min-width:80px;flex:1;font-family:inherit}
+.tags-real-input::placeholder{color:var(--t3)}
+.trade-tag-disp{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:10px;font-size:9px;background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+
+/* ── NEXT EVENTS WIDGET ── */
+.next-event-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.next-event-item:last-child{border-bottom:none}
+.next-event-time{font-size:10px;color:#f0b429;font-family:monospace;min-width:72px;flex-shrink:0}
+.next-event-title{font-size:11px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── PROFILE MODAL ── */
+.profile-avatar-big{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 12px;color:#000;border:3px solid rgba(255,255,255,.25);cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:-1px}
+.profile-avatar-big:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,255,255,.15)}
+.avatar-color-pick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;justify-content:center}
+.acp-btn{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.acp-btn:hover{transform:scale(1.2)}
+.acp-btn.selected{border-color:rgba(255,255,255,.7);transform:scale(1.15)}
+.prof-stat{text-align:center;padding:10px;background:var(--bg3);border-radius:8px}
+.prof-stat-val{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--t1)}
+.prof-stat-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+/* ── SESSION TIMEOUT BAR ── */
+#session-timeout-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,#1c0000,#2e0000);border-top:2px solid #ff4d4d;color:#fff;text-align:center;padding:12px;font-size:13px;font-weight:600;z-index:99999;display:none;direction:rtl;box-shadow:0 -4px 20px rgba(255,77,77,.4)}
+
+/* ── ADMIN ACTIVITY CHART ── */
+.adm-chart-wrap{height:130px;position:relative}
+
+/* ── HOUR HEATMAP ── */
+.hour-hm-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin-top:8px}
+.hour-hm-cell{height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
+.hour-hm-cell:hover{transform:scale(1.15);z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* ── RR BADGE ── */
+.rr-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.rr-pos{background:rgba(0,210,106,.12);color:#00d26a;border:1px solid rgba(0,210,106,.2)}
+.rr-neg{background:rgba(255,77,77,.12);color:#ff4d4d;border:1px solid rgba(255,77,77,.2)}
 </style>
 <!-- ═══ FIREBASE SDK ═══ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1229,12 +1305,16 @@ body.edit-mode #edit-mode-bar { display:block; }
   </div>
 
   <div style="display:flex;align-items:center;gap:8px">
+    <!-- Theme toggle -->
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="מצב בהיר/כהה" style="display:none">🌙</button>
     <!-- Styled user badge (replaces plain text) -->
     <div class="nav-user-badge" id="nav-user-info">
       <div class="nav-user-dot"></div>
       <span class="nav-user-plan free" id="nav-plan-badge">FREE</span>
       <span class="nav-user-name" id="nav-user-name-text">—</span>
     </div>
+    <!-- Avatar circle -->
+    <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()" title="פרופיל אישי" style="display:none;background:#00d26a">?</div>
     <button id="pwa-install-btn" onclick="installPWA()" style="display:none;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
     <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#545f72;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
     <!-- Hamburger for mobile -->
@@ -1256,6 +1336,7 @@ body.edit-mode #edit-mode-bar { display:block; }
   <button class="side-panel-btn" id="sp-btn-ecal"     onclick="swSide('ecal')" style="color:#f0b429">📅 יומן כלכלי</button>
   <div class="side-panel-sep"></div>
   <div class="side-panel-grp">חשבון</div>
+  <button class="side-panel-btn" id="sp-btn-profile" onclick="openProfileModal();closeSidePanel()">👤 פרופיל אישי</button>
   <button class="side-panel-btn" id="sp-btn-billing"  onclick="swSide('billing')" style="color:#f0b429">💳 תשלום</button>
   <button class="side-panel-btn" id="sp-btn-help"     onclick="swSide('help')" style="color:#4da6ff">❓ עזרה</button>
   <button class="side-panel-btn admin-only" id="sp-btn-admin" onclick="swSide('admin')" style="color:#a78bfa;display:none">🛡️ ניהול</button>
@@ -1370,6 +1451,21 @@ body.edit-mode #edit-mode-bar { display:block; }
 
 <!-- DAILY TIP -->
 <div id="daily-tip-wrap"></div>
+
+<!-- STREAK + GOAL + NEXT EVENTS ROW -->
+<div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;margin-bottom:10px;align-items:stretch" id="overview-top-widgets">
+  <!-- Streak -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;min-width:140px">
+    <span id="streak-display"><span class="streak-badge streak-neutral">— אין נתונים</span></span>
+  </div>
+  <!-- Daily Goal -->
+  <div class="goal-widget" id="daily-goal-widget" style="cursor:pointer">
+    <span style="font-size:18px">🎯</span>
+    <span style="font-size:12px;color:var(--t3)">טוען יעד יומי...</span>
+  </div>
+  <!-- Next Events -->
+  <div style="background:var(--bg2);border:1px solid rgba(240,180,41,.2);border-radius:10px;padding:10px 14px;min-width:220px;max-width:280px" id="next-events-widget" style="display:none"></div>
+</div>
 
 <!-- ACCOUNT SELECTOR BAR -->
 <div class="filter-topbar" id="acct-topbar">
@@ -1692,6 +1788,7 @@ body.edit-mode #edit-mode-bar { display:block; }
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="showReportMenu('trades',this)" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(167,139,250,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#a78bfa;font-family:inherit">📊 דוח P&amp;L</button>
       <button onclick="exportCSV()" style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">📤 ייצא CSV</button>
+      <button onclick="exportToExcel()" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(34,197,94,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#22c55e;font-family:inherit">📊 ייצא Excel</button>
       <label style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2)">
         📂 ייבוא CSV <input type="file" accept=".csv" style="display:none" onchange="importCSV(this)">
       </label>
@@ -1758,6 +1855,18 @@ body.edit-mode #edit-mode-bar { display:block; }
       <thead><tr><th>שעה</th><th>עסקאות</th><th>Win %</th><th>P&L נטו $</th><th>P&L נטו ₪</th><th>ממוצע/עסקה</th></tr></thead>
       <tbody id="hour-tbody"></tbody>
     </table>
+  </div>
+
+  <!-- HOUR HEATMAP -->
+  <div class="card" style="margin-top:10px">
+    <div class="ct"><div class="dot" style="background:#f0b429"></div>מפת חום — Win Rate לפי שעה</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:6px">ירוק = שעות חזקות, אדום = שעות חלשות. לחץ על תא לפרטים.</div>
+    <div class="hour-hm-grid" id="hour-hm-grid"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:var(--t3)">
+      <div style="width:12px;height:12px;border-radius:2px;background:rgba(255,77,77,.6)"></div><span>הפסד</span>
+      <div style="width:12px;height:12px;border-radius:2px;background:rgba(240,180,41,.6)"></div><span>אזור</span>
+      <div style="width:12px;height:12px;border-radius:2px;background:rgba(0,210,106,.6)"></div><span>רווח</span>
+    </div>
   </div>
 
   <!-- STRATEGY STATS -->
@@ -2336,6 +2445,23 @@ body.edit-mode #edit-mode-bar { display:block; }
 
   <!-- METRICS SUMMARY -->
   <div class="mrow" id="admin-metrics" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px"></div>
+
+  <!-- ACTIVITY CHART + ACTION LOG -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div class="admin-section">
+      <div class="admin-section-title"><div class="dot" style="background:#4da6ff"></div>כניסות משתמשים — 7 ימים אחרונים</div>
+      <div class="adm-chart-wrap"><canvas id="adm-activity-canvas"></canvas></div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title" style="display:flex;align-items:center;gap:8px">
+        <div class="dot" style="background:#a78bfa"></div>לוג פעולות אדמין
+        <button onclick="renderAdminLogs()" style="margin-right:auto;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--t2);cursor:pointer;font-family:inherit">🔄</button>
+      </div>
+      <div id="adm-logs-list" style="max-height:120px;overflow-y:auto;font-size:11px">
+        <div style="color:var(--t3);padding:10px">לחץ 🔄 לטעינה</div>
+      </div>
+    </div>
+  </div>
 
   <!-- USER MANAGEMENT -->
   <div class="admin-section" style="border-color:rgba(0,210,106,.2)">
@@ -3046,6 +3172,21 @@ body.edit-mode #edit-mode-bar { display:block; }
     </div>
 
     <div class="fr">
+      <label>🏷️ תגיות לעסקה</label>
+      <div class="tags-input-wrap" id="tags-wrap" onclick="document.getElementById('tag-input').focus()">
+        <div id="tags-display" style="display:contents"></div>
+        <input class="tags-real-input" id="tag-input" placeholder="הוסף תגית + Enter (לדוג': FOMO, Breakout, Revenge...)" onkeydown="addTradeTag(event)">
+      </div>
+      <div style="font-size:9px;color:var(--t3);margin-top:3px">הקש Enter או פסיק להוספת תגית</div>
+    </div>
+    <div class="fr">
+      <label>📉 Stop Loss (לחישוב R:R)</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" id="ta-stop" step="0.01" placeholder="מחיר ה-Stop Loss שלך" oninput="_updateRR()" style="flex:1;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
+        <span id="ta-rr-display" style="font-size:12px;font-weight:600;min-width:60px;text-align:center"></span>
+      </div>
+    </div>
+    <div class="fr">
       <label>הערות על העסקה</label>
       <textarea id="ta-notes" placeholder="מה עבד? מה לא? מה למדתי? כניסה/יציאה?" style="height:70px;resize:vertical"></textarea>
     </div>
@@ -3426,6 +3567,11 @@ function renderOV() {
       <div class="co-val">$${v.toFixed(2)}</div>
     </div>`).join('');
   setTimeout(()=>document.querySelectorAll('.co-b').forEach(b=>{b.style.width=b.dataset.w+'%';}), 50);
+
+  // ── NEW FEATURE WIDGETS ──
+  renderStreak();
+  renderDailyGoal();
+  renderNextEventsWidget();
 }
 
 // EXPENSES
@@ -6855,6 +7001,12 @@ function showApp() {
   }
   // ── START ECONOMIC CALENDAR 3-STAR ALERTS ──
   setTimeout(_startEcalAlerts, 2000);
+  // ── NEW FEATURES INIT ──
+  _initTheme();
+  _updateNavAvatar();
+  loadDailyGoal();
+  _initSessionTimeout();
+  setTimeout(_initAutoBackup, 5000);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -7052,6 +7204,9 @@ async function renderAdminPanel() {
   // Check for users awaiting welcome message
   const pending = await _checkWelcomePending();
   _renderWelcomeBadge(pending.length);
+  // New admin features
+  renderAdminActivityChart();
+  renderAdminLogs();
 }
 
 // ── FEATURE MATRIX (admin) ──
@@ -8375,7 +8530,29 @@ function openTradeAnnotate(ti) {
       ? `חישוב אוטומטי: $${autoComm} (${t.qty} חוזים × $${commSettings.ratePerContract})`
       : 'חישוב עמלות כבוי — ניתן להזין ידנית';
   }
+  // Tags
+  _taTags = Array.isArray(t.tags) ? [...t.tags] : [];
+  _renderTagsInput();
+  // Stop loss R:R
+  const stopEl = document.getElementById('ta-stop');
+  if (stopEl) { stopEl.value = t.stopLoss || ''; _updateRR(t); }
   document.getElementById('ta-modal').classList.add('open');
+}
+
+function _updateRR(t) {
+  const stopEl = document.getElementById('ta-stop');
+  const rrEl   = document.getElementById('ta-rr-display');
+  if (!stopEl || !rrEl) return;
+  const stop  = parseFloat(stopEl.value);
+  const entry = parseFloat(t?.entry || (tradesList[_taIdx]?.entry) || 0);
+  const exit  = parseFloat(t?.exit  || (tradesList[_taIdx]?.exit)  || 0);
+  if (!stop || !entry || !exit) { rrEl.textContent = ''; return; }
+  const risk   = Math.abs(entry - stop);
+  const reward = Math.abs(exit  - entry);
+  if (!risk) { rrEl.textContent = ''; return; }
+  const rr = (reward/risk).toFixed(2);
+  const pos = reward >= risk;
+  rrEl.innerHTML = `<span class="rr-badge ${pos?'rr-pos':'rr-neg'}">R:R ${rr}</span>`;
 }
 
 function taSetStars(n) {
@@ -8461,6 +8638,9 @@ function taSave() {
   tradesList[_taIdx].notes    = document.getElementById('ta-notes').value.trim();
   tradesList[_taIdx].stars    = _taStars;
   tradesList[_taIdx].image    = _taImg || null;
+  tradesList[_taIdx].tags     = [..._taTags];
+  const stopVal = document.getElementById('ta-stop')?.value.trim();
+  tradesList[_taIdx].stopLoss = stopVal ? parseFloat(stopVal) : null;
   const commVal = document.getElementById('ta-comm').value.trim();
   tradesList[_taIdx].commOverride = commVal !== '' ? +parseFloat(commVal).toFixed(2) : null;
   taClose();
@@ -8471,10 +8651,16 @@ function taSave() {
 function taClose() {
   document.getElementById('ta-modal').classList.remove('open');
   _taIdx = -1; _taStars = 0; _taImg = null;
+  _taTags = [];
   document.querySelectorAll('.star-pick').forEach(s=>s.classList.remove('on'));
   const lbl = document.getElementById('ta-stars-lbl');
   if (lbl) lbl.textContent = '';
   _renderTaImgPreview();
+  const stopEl = document.getElementById('ta-stop');
+  if (stopEl) stopEl.value = '';
+  const rrEl = document.getElementById('ta-rr-display');
+  if (rrEl) rrEl.innerHTML = '';
+  _renderTagsInput();
 }
 
 document.getElementById('ta-modal').addEventListener('click', e => { if(e.target===e.currentTarget) taClose(); });
@@ -8540,6 +8726,7 @@ const _origRenderStats = window.renderStats;
 window.renderStats = function() {
   if (_origRenderStats) _origRenderStats();
   renderStrategyStats();
+  renderHourHeatmap();
 };
 
 // Replace renderTJ with extended version (use assignment to avoid hoisting)
@@ -8616,6 +8803,9 @@ window.renderTJ = function renderTJ() {
     const stratHtml = t.strategy
       ? `<span class="strat-badge" onclick="openTradeAnnotate(${ti})" title="${t.strategy}">${t.strategy}</span>`
       : `<span class="strat-none" onclick="openTradeAnnotate(${ti})">+ סווג</span>`;
+    const tagsHtml = (t.tags||[]).length
+      ? `<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px">${(t.tags||[]).map(tg=>`<span class="trade-tag-disp">${tg}</span>`).join('')}</div>`
+      : '';
     const imgHtml = t.image
       ? `<img class="trade-thumb" src="${t.image}" onclick="openImgLightbox(tradesList[${ti}].image)" title="לחץ להגדלה">`
       : `<button class="act" onclick="openTradeAnnotate(${ti})" title="הוסף תמונה" style="font-size:11px;opacity:.4">📷</button>`;
@@ -8630,7 +8820,7 @@ window.renderTJ = function renderTJ() {
       <td class="mono" style="font-size:11px;color:#545f72">${t.sell.toFixed(2)}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
-      <td>${stratHtml}</td>
+      <td><div>${stratHtml}</div>${tagsHtml}</td>
       <td style="white-space:nowrap">${starsHtml}</td>
       <td style="text-align:center">${imgHtml}</td>
       <td>
@@ -9694,6 +9884,443 @@ window.addEventListener('appinstalled', () => {
   if (btn) btn.style.display = 'none';
 });
 
+// ════════════════════════════════════════════════════
+//  THEME TOGGLE (Dark / Light)
+// ════════════════════════════════════════════════════
+function _initTheme() {
+  const saved = localStorage.getItem('fayna_theme') || 'dark';
+  if (saved === 'light') document.body.classList.add('light-mode');
+  else document.body.classList.remove('light-mode');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) { btn.style.display = ''; btn.textContent = saved === 'light' ? '🌙' : '☀️'; }
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('fayna_theme', isLight ? 'light' : 'dark');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+}
+
+// ════════════════════════════════════════════════════
+//  NAV AVATAR
+// ════════════════════════════════════════════════════
+function _getInitials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0,2).toUpperCase();
+}
+
+function _updateNavAvatar() {
+  const el = document.getElementById('nav-avatar');
+  if (!el || !currentUser) return;
+  el.style.display = '';
+  const color = currentUser.avatarColor || '#00d26a';
+  el.style.background = color;
+  el.textContent = _getInitials(currentUser.name || currentUser.email || '?');
+}
+
+// ════════════════════════════════════════════════════
+//  PROFILE MODAL
+// ════════════════════════════════════════════════════
+const _avatarColors = ['#00d26a','#6c63ff','#f59e0b','#ef4444','#3b82f6','#ec4899','#14b8a6','#f97316'];
+
+function openProfileModal() {
+  if (!currentUser) return;
+  const modal = document.getElementById('profile-modal');
+  if (!modal) return;
+  // Big avatar
+  const bigAv = document.getElementById('prof-avatar-big');
+  if (bigAv) {
+    bigAv.textContent = _getInitials(currentUser.name || currentUser.email || '?');
+    bigAv.style.background = currentUser.avatarColor || '#00d26a';
+  }
+  // Color picker
+  _renderAvatarColorPicker();
+  // Fields
+  const nameEl = document.getElementById('prof-name-input');
+  const emailEl = document.getElementById('prof-email-input');
+  const phoneEl = document.getElementById('prof-phone-input');
+  const bioEl   = document.getElementById('prof-bio-input');
+  if (nameEl)  nameEl.value  = currentUser.name  || '';
+  if (emailEl) emailEl.value = currentUser.email || '';
+  if (phoneEl) phoneEl.value = currentUser.phone || '';
+  if (bioEl)   bioEl.value   = currentUser.bio   || '';
+  // Stats
+  const trades = tradesList.length;
+  const wins   = tradesList.filter(t => tradeNet(t) > 0).length;
+  const wr     = trades ? (wins/trades*100).toFixed(0) : 0;
+  const totalPnl = tradesList.reduce((s,t) => s + tradeNet(t), 0);
+  const statEl = document.getElementById('prof-stats-row');
+  if (statEl) statEl.innerHTML =
+    `<div class="prof-stat"><div style="font-size:18px;font-weight:700;color:var(--t1)">${trades}</div><div style="font-size:10px;color:var(--t3)">עסקאות</div></div>
+     <div class="prof-stat"><div style="font-size:18px;font-weight:700;color:${parseFloat(wr)>=50?'var(--gr)':'var(--re)'}">${wr}%</div><div style="font-size:10px;color:var(--t3)">Win Rate</div></div>
+     <div class="prof-stat"><div style="font-size:18px;font-weight:700;color:${totalPnl>=0?'var(--gr)':'var(--re)'}">${totalPnl>=0?'+':''}$${Math.abs(totalPnl).toFixed(0)}</div><div style="font-size:10px;color:var(--t3)">P&L</div></div>`;
+  modal.classList.add('open');
+}
+
+function _renderAvatarColorPicker() {
+  const wrap = document.getElementById('avatar-color-wrap');
+  if (!wrap) return;
+  const cur = currentUser.avatarColor || '#00d26a';
+  wrap.innerHTML = _avatarColors.map(c =>
+    `<button class="acp-btn${c===cur?' selected':''}" style="background:${c}" onclick="selectAvatarColor('${c}')" title="${c}"></button>`
+  ).join('');
+}
+
+function _cycleAvatarColor() {
+  const cur = currentUser.avatarColor || '#00d26a';
+  const idx = _avatarColors.indexOf(cur);
+  const next = _avatarColors[(idx + 1) % _avatarColors.length];
+  selectAvatarColor(next);
+}
+
+function selectAvatarColor(color) {
+  currentUser.avatarColor = color;
+  const bigAv = document.getElementById('prof-avatar-big');
+  if (bigAv) bigAv.style.background = color;
+  _renderAvatarColorPicker();
+  _updateNavAvatar();
+}
+
+async function saveProfile() {
+  if (!currentUser || !currentUser.uid) return;
+  const nameVal  = (document.getElementById('prof-name-input')?.value  || '').trim();
+  const phoneVal = (document.getElementById('prof-phone-input')?.value || '').trim();
+  const bioVal   = (document.getElementById('prof-bio-input')?.value   || '').trim();
+  const color    = currentUser.avatarColor || '#00d26a';
+  try {
+    await db.collection('users').doc(currentUser.uid).update({
+      name: nameVal, phone: phoneVal, bio: bioVal, avatarColor: color
+    });
+    currentUser.name  = nameVal;
+    currentUser.phone = phoneVal;
+    currentUser.bio   = bioVal;
+    _updateNavAvatar();
+    document.getElementById('profile-modal')?.classList.remove('open');
+    showToast('✅ הפרופיל עודכן בהצלחה');
+  } catch(e) {
+    showToast('❌ שגיאה בשמירה: ' + e.message);
+  }
+}
+
+document.addEventListener('click', e => {
+  const modal = document.getElementById('profile-modal');
+  if (modal && e.target === modal) modal.classList.remove('open');
+});
+
+// ════════════════════════════════════════════════════
+//  DAILY GOAL WIDGET
+// ════════════════════════════════════════════════════
+let _dailyGoal = 0;
+
+function loadDailyGoal() {
+  _dailyGoal = parseFloat(localStorage.getItem('fayna_daily_goal') || '0');
+  renderDailyGoal();
+}
+
+function setDailyGoal() {
+  const val = parseFloat(prompt('הזן יעד יומי ב-$ (למשל 200):') || '0');
+  if (isNaN(val) || val < 0) return;
+  _dailyGoal = val;
+  localStorage.setItem('fayna_daily_goal', val);
+  renderDailyGoal();
+}
+
+function renderDailyGoal() {
+  const el = document.getElementById('daily-goal-widget');
+  if (!el) return;
+  const today = new Date().toISOString().slice(0,10);
+  const todayPnl = tradesList.filter(t => (t.date||'').slice(0,10) === today).reduce((s,t) => s+tradeNet(t), 0);
+  if (!_dailyGoal) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--t3);margin-bottom:4px">🎯 יעד יומי</div>
+      <div style="font-size:11px;color:var(--t3)">לא הוגדר <button onclick="setDailyGoal()" style="background:none;border:none;color:var(--ac);cursor:pointer;font-size:11px;padding:0">הגדר</button></div>`;
+    return;
+  }
+  const pct = Math.min(100, Math.max(0, (todayPnl/_dailyGoal)*100));
+  const color = todayPnl >= _dailyGoal ? 'var(--gr)' : todayPnl >= 0 ? 'var(--ac)' : 'var(--re)';
+  const icon  = todayPnl >= _dailyGoal ? '🏆' : todayPnl >= 0 ? '🎯' : '⚠️';
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <span style="font-size:11px;color:var(--t3)">${icon} יעד יומי</span>
+      <span style="font-size:11px;font-weight:700;color:${color}">${todayPnl>=0?'+':''}$${todayPnl.toFixed(0)} / $${_dailyGoal}</span>
+    </div>
+    <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:3px">
+      <span style="font-size:10px;color:var(--t3)">${pct.toFixed(0)}% הושג</span>
+      <button onclick="setDailyGoal()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:10px;padding:0">✏️ שנה</button>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════
+//  STREAK COUNTER
+// ════════════════════════════════════════════════════
+function _calcStreak() {
+  if (!tradesList.length) return { n:0, type:'neutral' };
+  const sorted = [...tradesList].sort((a,b) => new Date(b.date)-new Date(a.date));
+  const first  = tradeNet(sorted[0]) > 0 ? 'win' : tradeNet(sorted[0]) < 0 ? 'loss' : 'neutral';
+  let n = 0;
+  for (const t of sorted) {
+    const r = tradeNet(t) > 0 ? 'win' : tradeNet(t) < 0 ? 'loss' : 'neutral';
+    if (r === first || first === 'neutral') n++;
+    else break;
+  }
+  return { n, type: first };
+}
+
+function renderStreak() {
+  const el = document.getElementById('streak-display');
+  if (!el) return;
+  const { n, type } = _calcStreak();
+  if (!n) { el.innerHTML = '<span style="color:var(--t3);font-size:12px">אין עסקאות</span>'; return; }
+  const cls   = type === 'win' ? 'streak-win' : type === 'loss' ? 'streak-loss' : 'streak-neutral';
+  const icon  = type === 'win' ? '🔥' : type === 'loss' ? '❄️' : '➖';
+  const label = type === 'win' ? 'ניצחונות ברצף' : type === 'loss' ? 'הפסדים ברצף' : 'ניטרלי';
+  el.innerHTML = `<span class="streak-badge ${cls}">${icon} ${n} ${label}</span>`;
+}
+
+// ════════════════════════════════════════════════════
+//  NEXT EVENTS WIDGET (overview)
+// ════════════════════════════════════════════════════
+function renderNextEventsWidget() {
+  const el = document.getElementById('next-events-widget');
+  if (!el) return;
+  const now  = Date.now();
+  const evs  = (_ecalCache || []).filter(e => new Date(e.date).getTime() > now)
+                                  .sort((a,b) => new Date(a.date)-new Date(b.date))
+                                  .slice(0,3);
+  if (!evs.length) { el.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:4px">אין אירועים קרובים היום</div>'; return; }
+  el.innerHTML = evs.map(ev => {
+    const mins = Math.round((new Date(ev.date)-now)/60000);
+    const timeStr = mins < 60 ? `עוד ${mins} דק'` : `עוד ${Math.round(mins/60)}ש'`;
+    return `<div class="next-event-item"><span class="next-event-time">${timeStr}</span><span class="next-event-title">${ev.title||ev.country||''}</span></div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════
+//  TRADE TAGS
+// ════════════════════════════════════════════════════
+let _taTags = [];
+
+function _renderTagsInput() {
+  const disp = document.getElementById('tags-display');
+  if (!disp) return;
+  disp.innerHTML = _taTags.map((tag,i) =>
+    `<span class="tag-bubble">${tag}<span class="tag-remove" onclick="removeTradeTag(${i})">×</span></span>`
+  ).join('');
+}
+
+function addTradeTag(e) {
+  if (e.key !== 'Enter' && e.key !== ',') return;
+  e.preventDefault();
+  const inp = document.getElementById('tag-input');
+  const val = inp.value.trim().replace(/,/g,'');
+  if (!val || _taTags.includes(val) || _taTags.length >= 8) { inp.value=''; return; }
+  _taTags.push(val);
+  inp.value = '';
+  _renderTagsInput();
+}
+
+function removeTradeTag(i) {
+  _taTags.splice(i,1);
+  _renderTagsInput();
+}
+
+// ════════════════════════════════════════════════════
+//  HOUR HEATMAP
+// ════════════════════════════════════════════════════
+function renderHourHeatmap() {
+  const grid = document.getElementById('hour-hm-grid');
+  if (!grid) return;
+  const hourData = {};
+  for (let h=0; h<24; h++) hourData[h] = {wins:0, total:0};
+  tradesList.forEach(t => {
+    const h = parseInt((t.btime||'00:00').slice(0,2), 10);
+    if (isNaN(h)) return;
+    hourData[h].total++;
+    if (tradeNet(t) > 0) hourData[h].wins++;
+  });
+  const maxTrades = Math.max(...Object.values(hourData).map(d=>d.total), 1);
+  grid.innerHTML = Array.from({length:24}, (_,h) => {
+    const d   = hourData[h];
+    const wr  = d.total ? d.wins/d.total : null;
+    const opacity = d.total ? 0.2 + 0.8*(d.total/maxTrades) : 0.07;
+    const color = wr === null ? 'var(--bg4)' : wr >= 0.6 ? `rgba(0,210,106,${opacity})` : wr >= 0.4 ? `rgba(245,158,11,${opacity})` : `rgba(239,68,68,${opacity})`;
+    const label = wr !== null ? `${(wr*100).toFixed(0)}%` : '—';
+    const hStr  = String(h).padStart(2,'0') + ':00';
+    return `<div class="hour-hm-cell" style="background:${color}" title="${hStr}: ${d.total} עסקאות, ${label} Win Rate">
+      <div style="font-size:9px;color:var(--t3)">${hStr}</div>
+      <div style="font-size:11px;font-weight:600;color:var(--t1)">${label}</div>
+      <div style="font-size:9px;color:var(--t3)">${d.total}x</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════
+//  ADMIN ACTIVITY CHART
+// ════════════════════════════════════════════════════
+let _admActivityChart = null;
+
+async function renderAdminActivityChart() {
+  const canvas = document.getElementById('adm-activity-canvas');
+  if (!canvas) return;
+  // Build last-7-days labels
+  const labels = [], counts = [];
+  for (let i=6; i>=0; i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    labels.push(d.toLocaleDateString('he-IL',{weekday:'short',day:'numeric'}));
+    counts.push(0);
+  }
+  try {
+    const since = new Date(); since.setDate(since.getDate()-6); since.setHours(0,0,0,0);
+    const snap = await db.collection('loginLogs')
+      .where('action','==','login')
+      .where('timestamp','>=', firebase.firestore.Timestamp.fromDate(since))
+      .get();
+    snap.forEach(doc => {
+      const ts = doc.data().timestamp?.toDate?.();
+      if (!ts) return;
+      const diff = Math.floor((Date.now()-ts.getTime())/(86400000));
+      const idx  = 6 - diff;
+      if (idx >= 0 && idx < 7) counts[idx]++;
+    });
+  } catch(e) { console.warn('activity chart error', e); }
+  if (_admActivityChart) _admActivityChart.destroy();
+  _admActivityChart = new Chart(canvas, {
+    type:'bar',
+    data:{ labels, datasets:[{ data:counts, backgroundColor:'rgba(108,99,255,0.6)', borderRadius:4 }]},
+    options:{
+      responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:'#8892a4',font:{size:9}}},y:{ticks:{color:'#8892a4',font:{size:9}},beginAtZero:true,precision:0}}
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  ADMIN ACTION LOG
+// ════════════════════════════════════════════════════
+async function _logAdminAction(action, details) {
+  if (!currentUser?.uid) return;
+  try {
+    await db.collection('adminLogs').add({
+      uid: currentUser.uid, email: currentUser.email||'',
+      action, details: details||'',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch(e) {}
+}
+
+async function renderAdminLogs() {
+  const el = document.getElementById('adm-logs-list');
+  if (!el) return;
+  el.innerHTML = '<div style="font-size:11px;color:var(--t3)">טוען לוג...</div>';
+  try {
+    const snap = await db.collection('adminLogs').orderBy('timestamp','desc').limit(20).get();
+    if (snap.empty) { el.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:8px">אין פעולות עדיין</div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const data = d.data();
+      const ts   = data.timestamp?.toDate?.()?.toLocaleString('he-IL') || '—';
+      return `<div style="padding:5px 0;border-bottom:1px solid var(--border1);font-size:11px">
+        <span style="color:var(--t3)">${ts}</span>
+        <span style="color:var(--t1);margin-right:6px">${data.action||''}</span>
+        <span style="color:var(--t3)">${data.details||''}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--re)">שגיאה: ${e.message}</div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  EXCEL EXPORT (SheetJS)
+// ════════════════════════════════════════════════════
+function exportToExcel() {
+  if (!tradesList.length) { showToast('אין עסקאות לייצוא'); return; }
+  if (typeof XLSX === 'undefined') { showToast('❌ ספריית Excel לא נטענה'); return; }
+  const rows = tradesList.map(t => ({
+    'תאריך': t.date||'',
+    'שעת כניסה': t.btime||'',
+    'שעת יציאה': t.etime||'',
+    'סמל': t.sym||'',
+    'כיוון': t.side||'',
+    'כמות': t.qty||0,
+    'מחיר כניסה': t.entry||0,
+    'מחיר יציאה': t.exit||0,
+    'P&L גולמי $': t.gross||0,
+    'עמלה $': t.comm||0,
+    'P&L נטו $': +tradeNet(t).toFixed(2),
+    'משך': t.dur||'',
+    'אסטרטגיה': t.strategy||'',
+    'תגיות': (t.tags||[]).join(', '),
+    'הערות': t.notes||'',
+    'דירוג': t.stars||0,
+    'חשבון': t.account||''
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'עסקאות');
+  XLSX.writeFile(wb, `fayna-trades-${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('✅ קובץ Excel הורד!');
+}
+
+// ════════════════════════════════════════════════════
+//  AUTO-BACKUP REMINDER
+// ════════════════════════════════════════════════════
+function _initAutoBackup() {
+  const lastKey = 'fayna_last_backup_remind';
+  const last    = parseInt(localStorage.getItem(lastKey)||'0', 10);
+  const week    = 7*24*60*60*1000;
+  if (Date.now() - last < week) return;
+  setTimeout(() => {
+    if (!tradesList.length) return;
+    showToast('💾 תזכורת: מומלץ לגבות את נתוני המסחר שלך! (ייצוא → JSON)');
+    localStorage.setItem(lastKey, Date.now());
+  }, 10000);
+}
+
+// ════════════════════════════════════════════════════
+//  SESSION TIMEOUT
+// ════════════════════════════════════════════════════
+let _sessionTimer = null, _sessionWarnTimer = null;
+const SESSION_IDLE_MS = 30 * 60 * 1000; // 30 min idle
+const SESSION_WARN_BEFORE = 60 * 1000;  // warn 60s before
+
+function _initSessionTimeout() {
+  ['click','keydown','mousemove','touchstart','scroll'].forEach(ev =>
+    document.addEventListener(ev, _resetSessionTimer, {passive:true})
+  );
+  _resetSessionTimer();
+}
+
+function _resetSessionTimer() {
+  clearTimeout(_sessionTimer);
+  clearTimeout(_sessionWarnTimer);
+  const bar = document.getElementById('session-timeout-bar');
+  if (bar) bar.style.display = 'none';
+  _sessionWarnTimer = setTimeout(_sessionWarning, SESSION_IDLE_MS - SESSION_WARN_BEFORE);
+  _sessionTimer     = setTimeout(() => {
+    const bar2 = document.getElementById('session-timeout-bar');
+    if (bar2) bar2.style.display = 'none';
+    showToast('⏰ התנתקת אוטומטית עקב חוסר פעילות');
+    setTimeout(() => firebase.auth().signOut(), 1500);
+  }, SESSION_IDLE_MS);
+}
+
+function _sessionWarning() {
+  const bar = document.getElementById('session-timeout-bar');
+  if (!bar) return;
+  bar.style.display = 'flex';
+  let secs = 60;
+  const cd = document.getElementById('session-countdown');
+  if (cd) cd.textContent = secs;
+  const iv = setInterval(() => {
+    secs--;
+    if (cd) cd.textContent = secs;
+    if (secs <= 0) { clearInterval(iv); bar.style.display = 'none'; }
+  }, 1000);
+}
+
 </script>
 
 <!-- ── UPGRADE / FEATURE GATE MODAL ── -->
@@ -9738,5 +10365,55 @@ window.addEventListener('appinstalled', () => {
     <button class="chat-send-btn" onclick="chatSend()">➤</button>
   </div>
 </div>
+
+<!-- ═══ PROFILE EDIT MODAL ═══ -->
+<div class="modal-bg" id="profile-modal">
+  <div class="modal" style="width:420px">
+    <h3>👤 פרופיל אישי <button class="cx" onclick="document.getElementById('profile-modal').classList.remove('open')">×</button></h3>
+    <!-- Avatar big -->
+    <div id="prof-avatar-big" class="profile-avatar-big" onclick="_cycleAvatarColor()" title="לחץ לשינוי צבע">
+      <span id="prof-initials">?</span>
+    </div>
+    <div style="text-align:center;font-size:10px;color:var(--t3);margin-bottom:10px">בחר צבע לאווטאר:</div>
+    <div class="avatar-color-pick" id="avatar-color-pick"></div>
+    <div style="height:14px"></div>
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px" id="prof-stats-row">
+      <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-trades">—</div><div class="prof-stat-lbl">עסקאות</div></div>
+      <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-wr">—</div><div class="prof-stat-lbl">Win Rate</div></div>
+      <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-pnl">—</div><div class="prof-stat-lbl">P&L נטו</div></div>
+    </div>
+    <div class="fr">
+      <label>שם מלא</label>
+      <input type="text" id="prof-name" placeholder="ישראל ישראלי">
+    </div>
+    <div class="fr">
+      <label>אימייל</label>
+      <input type="text" id="prof-email-disp" readonly style="opacity:.5;cursor:not-allowed">
+    </div>
+    <div class="fr">
+      <label>טלפון</label>
+      <input type="tel" id="prof-phone" placeholder="050-0000000" dir="ltr">
+    </div>
+    <div class="fr">
+      <label>ביו / תיאור קצר</label>
+      <textarea id="prof-bio" placeholder="כמה מילים על עצמך, הסגנון שלך, המטרות..." style="height:60px;resize:vertical"></textarea>
+    </div>
+    <div style="margin-bottom:14px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:11px;color:var(--t3)">
+      🔒 לשינוי סיסמה — השתמש בכפתור "שכחת סיסמה" בעמוד הכניסה
+    </div>
+    <div class="fax">
+      <button class="bn" onclick="document.getElementById('profile-modal').classList.remove('open')">ביטול</button>
+      <button class="bs" onclick="saveProfile()">💾 שמור שינויים</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESSION TIMEOUT BAR ═══ -->
+<div id="session-timeout-bar">
+  ⏰ לא זוהתה פעילות — תתנתק אוטומטית בעוד <strong id="session-countdown">60</strong> שניות
+  <button onclick="_resetSessionTimer()" style="margin-right:12px;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;cursor:pointer;font-family:inherit;font-size:12px">הישאר מחובר</button>
+</div>
+
 </body>
 </html>
