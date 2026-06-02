@@ -7,21 +7,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fayna Trading">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#060d1e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/jpeg" href="fayna_logo.jpg">
 <link rel="apple-touch-icon" href="fayna_logo.jpg">
 <title>Fayna Trading</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-:root{--bg0:#0a0d12;--bg1:#111520;--bg2:#161b27;--bg3:#1e2535;--bg4:#252d40;
---border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
---t1:#e8ecf4;--t2:#8892a4;--t3:#545f72;
---gr:#00d26a;--gd:rgba(0,210,106,.12);--re:#ff4d4d;--rd:rgba(255,77,77,.12);
---go:#f0b429;--yd:rgba(240,180,41,.12);--bl:#4da6ff;--bd:rgba(77,166,255,.10);
---pu:#a78bfa;--pd:rgba(167,139,250,.10);--ac:#00d26a}
+:root{--bg0:#060d1e;--bg1:#0b1530;--bg2:#101d3d;--bg3:#162548;--bg4:#1d2f58;
+--border:rgba(0,160,210,0.09);--border2:rgba(0,160,210,0.18);
+--t1:#d8eaff;--t2:#6a8fbb;--t3:#3d5878;
+--gr:#2ec87a;--gd:rgba(46,200,122,.12);--re:#ff4d4d;--rd:rgba(255,77,77,.12);
+--go:#c8a030;--yd:rgba(200,160,48,.12);--bl:#00bcd4;--bd:rgba(0,188,212,.10);
+--pu:#a78bfa;--pd:rgba(167,139,250,.10);--ac:#00bcd4}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);color:var(--t1);font-family:'IBM Plex Sans Hebrew',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+body{background:radial-gradient(ellipse at 50% 0%, #0d1d40 0%, #060d1e 50%);color:var(--t1);font-family:'IBM Plex Sans Hebrew',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
 .topnav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:16px;height:52px;position:sticky;top:0;z-index:200}
 .logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;white-space:nowrap;color:var(--t1)}
 .logo-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -50,14 +50,14 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
 .tbl tbody tr:hover td{background:var(--bg3)}
 .bdg{display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;font-size:10px;font-weight:500}
 .bx{background:var(--rd);color:var(--re);border:1px solid rgba(255,77,77,.2)}
-.bi{background:var(--gd);color:var(--gr);border:1px solid rgba(0,210,106,.2)}
+.bi{background:var(--gd);color:var(--gr);border:1px solid rgba(46,200,122,.2)}
 .bw{background:var(--pd);color:var(--pu);border:1px solid rgba(167,139,250,.2)}
 .cat{display:inline-flex;align-items:center;padding:2px 8px;border-radius:14px;font-size:10px;font-weight:500;cursor:pointer;border:1px solid transparent}
 .cat:hover{opacity:.75}
-.cm{background:rgba(77,166,255,.15);color:#4da6ff;border-color:rgba(77,166,255,.3)}
-.cl{background:rgba(240,180,41,.15);color:#f0b429;border-color:rgba(240,180,41,.3)}
+.cm{background:rgba(0,188,212,.15);color:#00bcd4;border-color:rgba(0,188,212,.3)}
+.cl{background:rgba(200,160,48,.15);color:#c8a030;border-color:rgba(200,160,48,.3)}
 .cr2{background:rgba(170,170,170,.12);color:#aaa;border-color:rgba(170,170,170,.3)}
-.ck{background:rgba(0,210,106,.12);color:#00d26a;border-color:rgba(0,210,106,.3)}
+.ck{background:rgba(46,200,122,.12);color:#2ec87a;border-color:rgba(46,200,122,.3)}
 .cq{background:rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)}
 .ca{background:rgba(255,107,107,.12);color:#ff6b6b;border-color:rgba(255,107,107,.3)}
 .cww{background:rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)}
@@ -108,7 +108,7 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
 .cal-day .dn{font-size:10px;color:var(--t3);margin-bottom:3px}
 .cal-day .dpnl{font-size:14px;font-weight:600;margin-bottom:2px}
 .cal-day .dinfo{font-size:9px;color:rgba(255,255,255,.4)}
-.cal-day.win{background:rgba(0,100,50,.35)!important}
+.cal-day.win{background:rgba(0,80,100,.40)!important}
 .cal-day.loss{background:rgba(120,20,20,.35)!important}
 .cal-week{background:var(--bg3);padding:8px 6px;display:flex;flex-direction:column;justify-content:center}
 .cal-week .wl{font-size:9px;color:var(--t3);margin-bottom:3px}
