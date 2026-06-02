@@ -1,10 +1,12 @@
-// Fayna Trading — Service Worker v2
-const CACHE = 'fayna-v2';
+// Fayna Trading — Service Worker v3
+const CACHE = 'fayna-v3';
+const BASE = '/fayna-trading/';
 const STATIC = [
-  './index.html',
-  './manifest.json',
-  './fayna_logo.jpg',
-  './sw.js',
+  BASE + 'index.html',
+  BASE + 'manifest.json',
+  BASE + 'fayna_logo.jpg',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png',
 ];
 
 self.addEventListener('install', e => {
@@ -35,7 +37,8 @@ self.addEventListener('fetch', e => {
   if (url.hostname.includes('firebase') ||
       url.hostname.includes('googleapis') ||
       url.hostname.includes('firestore') ||
-      url.hostname.includes('web3forms')) return;
+      url.hostname.includes('web3forms') ||
+      url.hostname.includes('gstatic')) return;
 
   // Network-first with cache fallback
   e.respondWith(
