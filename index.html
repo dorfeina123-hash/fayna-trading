@@ -232,7 +232,7 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
   .mob-bottom-nav{display:flex}
   /* Auth screens */
   .auth-box{padding:22px 16px;margin:10px;width:calc(100vw - 20px);max-height:calc(100dvh - 20px);overflow-y:auto;border-radius:16px}
-  .welcome-back-box{padding:30px 22px;width:calc(100vw - 20px)}
+  .welcome-back-box{padding:0 0 24px;width:calc(100vw - 20px)}
   /* Nav buttons */
   #pwa-install-btn{font-size:10px;padding:4px 8px;gap:3px}
   #nav-instagram-btn{width:26px;height:26px}
@@ -242,31 +242,55 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
   .zm-row{grid-template-columns:repeat(3,1fr);gap:7px}
   .zm-val{font-size:20px}
 }
+
 @media(max-width:480px){
-  .topnav{height:46px;padding:0 8px;gap:5px}
-  .logo-icon img{width:26px!important;height:26px!important}
+  /* ── Navbar ── */
+  .topnav{height:44px;padding:0 8px;gap:5px}
+  /* Logo: image only, hide text */
+  .logo-text{display:none}
+  .logo-icon img{width:30px!important;height:30px!important;border-radius:50%}
+  .logo{gap:0}
+  /* User badge: plan label only, no name/dot */
+  .nav-user-badge{padding:2px 7px;gap:0;border-radius:12px}
+  .nav-user-name{display:none}
+  .nav-user-dot{display:none}
+  /* Avatar smaller */
+  .nav-avatar{width:26px;height:26px;font-size:10px}
+  /* All icon buttons in nav */
+  #nav-instagram-btn{width:26px;height:26px}
+  #nav-undo-btn{width:26px;height:26px}
+  /* Hide logout (in hamburger menu) */
+  #nav-logout-btn{display:none!important}
+  /* PWA install — icon only */
+  #pwa-install-btn{font-size:0;padding:5px;width:26px;height:26px;border-radius:50%;justify-content:center}
+  #pwa-install-btn::before{content:'📲';font-size:13px}
+
+  /* ── Main layout ── */
   .main{padding:6px;padding-bottom:68px}
   .mrow{grid-template-columns:1fr 1fr;gap:6px}
+  .mc{padding:9px 10px}
   .mc-v{font-size:16px}
   .mc-l{font-size:9px}
   .btn-p{padding:5px 8px;font-size:11px}
-  /* Auth box small phones */
-  .auth-box{padding:18px 14px;border-radius:14px}
-  .welcome-back-box{padding:24px 16px}
-  .auth-tab{font-size:12px;padding:7px 12px}
-  .auth-submit{padding:12px;font-size:14px}
-  .auth-field input{font-size:16px} /* prevent iOS zoom on input */
-  /* Touch targets */
-  .act{min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
-  .fb{padding:5px 10px;min-height:32px}
-  /* zm cards small */
+
+  /* ── zm metric cards ── */
   .zm-row{grid-template-columns:repeat(2,1fr)}
   .zm-val{font-size:18px}
   .zm{padding:10px 12px}
-  /* Hide nav status dot */
+
+  /* ── Auth / welcome ── */
+  .auth-box{padding:18px 14px;border-radius:14px}
+  .welcome-back-box{padding:0 0 20px;width:calc(100vw - 16px)}
+  .auth-tab{font-size:12px;padding:7px 12px}
+  .auth-submit{padding:12px;font-size:14px}
+  .auth-field input{font-size:16px} /* prevent iOS zoom */
+
+  /* ── Touch targets ── */
+  .act{min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+  .fb{padding:5px 10px;min-height:32px}
+
+  /* ── Hide clutter ── */
   #nav-status{display:none}
-  /* PWA install btn smaller */
-  #pwa-install-btn{font-size:9px;padding:3px 7px}
 }
 
 /* ── ANIMATIONS ── */
@@ -1373,7 +1397,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- ═══════ ADMIN PANEL TAB (hidden until admin login) ═══════ -->
 
 <nav class="topnav">
-  <div class="logo"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:block"></div>Fayna Trading <span id="nav-status" style="font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.3px">● live</span></div>
+  <div class="logo"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:block"></div><span class="logo-text">Fayna Trading <span id="nav-status" style="font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.3px">● live</span></span></div>
   <div class="nav-tabs">
     <button class="nt active" onclick="sw('overview',this)">סקירה</button>
     <div class="nav-sep"></div>
