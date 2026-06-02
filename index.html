@@ -3236,22 +3236,36 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
      HELP TAB
 ════════════════════════════════════ -->
 <div class="tp" id="tp-help">
-  <div style="max-width:860px;margin:0 auto">
-    <div style="text-align:center;padding:24px 0 20px">
-      <div style="font-size:32px;margin-bottom:8px">📚</div>
+  <div style="max-width:900px;margin:0 auto">
+    <div style="text-align:center;padding:24px 0 16px">
+      <div style="font-size:36px;margin-bottom:8px">📚</div>
       <div style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:6px">מרכז העזרה</div>
       <div style="font-size:13px;color:var(--t2)">כל מה שצריך לדעת על Fayna Trading Journal</div>
+    </div>
+
+    <!-- PDF GUIDE BANNER -->
+    <div style="background:linear-gradient(135deg,rgba(0,210,106,.12),rgba(74,143,168,.10));border:1px solid rgba(0,210,106,.25);border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="font-size:36px;flex-shrink:0">📄</div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">מדריך המשתמש המלא — PDF</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6">הסבר מלא על כל הפיצ'רים, מסנכרון עסקאות ועד ניהול הוצאות — מומלץ למתחילים ולמתקדמים כאחד.</div>
+      </div>
+      <a href="https://dorfeina123-hash.github.io/fayna-trading/Fayna_Trading_Guide.pdf" target="_blank"
+         style="display:inline-flex;align-items:center;gap:7px;padding:10px 20px;background:linear-gradient(135deg,#00d26a,#00a854);color:#000;font-weight:700;font-size:13px;border-radius:9px;text-decoration:none;white-space:nowrap;flex-shrink:0">
+        ⬇️ הורד מדריך PDF
+      </a>
     </div>
 
     <!-- QUICK TABS -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px" id="help-tabs">
       <button class="fb active" onclick="showHelpSection('overview',this)">🏠 סקירה</button>
-      <button class="fb" onclick="showHelpSection('expenses',this)">💸 הוצאות</button>
       <button class="fb" onclick="showHelpSection('trades',this)">📈 עסקאות</button>
+      <button class="fb" onclick="showHelpSection('expenses',this)">💸 הוצאות</button>
       <button class="fb" onclick="showHelpSection('stats',this)">📊 סטטיסטיקות</button>
       <button class="fb" onclick="showHelpSection('calendar',this)">📅 לוח שנה</button>
       <button class="fb" onclick="showHelpSection('sync',this)">🔄 סנכרון</button>
       <button class="fb" onclick="showHelpSection('billing',this)">💳 תשלום</button>
+      <button class="fb" onclick="showHelpSection('tour',this)">🧭 סיור מודרך</button>
       <button class="fb" onclick="showHelpSection('contact',this)">💬 צור קשר</button>
     </div>
 
@@ -3260,70 +3274,307 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 
       <!-- OVERVIEW -->
       <div class="help-section" id="help-overview">
+        <!-- Hero mockup -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px;overflow:hidden">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 מראה לשונית הסקירה</div>
+          <!-- KPI cards row -->
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
+            <div style="background:rgba(0,210,106,.1);border:1px solid rgba(0,210,106,.2);border-radius:8px;padding:8px 6px;text-align:center">
+              <div style="font-size:9px;color:var(--t3)">Net P&L</div>
+              <div style="font-size:13px;font-weight:700;color:#00d26a">+$2,450</div>
+            </div>
+            <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
+              <div style="font-size:9px;color:var(--t3)">Win %</div>
+              <div style="font-size:13px;font-weight:700;color:var(--t1)">64%</div>
+            </div>
+            <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
+              <div style="font-size:9px;color:var(--t3)">Profit F.</div>
+              <div style="font-size:13px;font-weight:700;color:#4da6ff">2.1</div>
+            </div>
+            <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
+              <div style="font-size:9px;color:var(--t3)">Day Win</div>
+              <div style="font-size:13px;font-weight:700;color:var(--t1)">70%</div>
+            </div>
+            <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
+              <div style="font-size:9px;color:var(--t3)">Avg Win</div>
+              <div style="font-size:13px;font-weight:700;color:#00d26a">$180</div>
+            </div>
+          </div>
+          <!-- mini heatmap -->
+          <div style="display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-bottom:6px">
+            <div style="height:14px;border-radius:3px;background:rgba(0,210,106,.6)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.3)"></div><div style="height:14px;border-radius:3px;background:rgba(220,53,69,.4)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.8)"></div><div style="height:14px;border-radius:3px;background:var(--bg4)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.5)"></div><div style="height:14px;border-radius:3px;background:rgba(220,53,69,.3)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.7)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.4)"></div><div style="height:14px;border-radius:3px;background:var(--bg4)"></div><div style="height:14px;border-radius:3px;background:rgba(220,53,69,.5)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.9)"></div><div style="height:14px;border-radius:3px;background:rgba(0,210,106,.3)"></div><div style="height:14px;border-radius:3px;background:var(--bg4)"></div>
+          </div>
+          <div style="font-size:10px;color:var(--t3);text-align:center">Progress Tracker — ירוק=רווח, אדום=הפסד, אפור=אין מסחר</div>
+        </div>
+
         <div class="zcl" style="margin-bottom:12px">
           <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>🏠 לשונית סקירה (Dashboard)</div></div>
-          <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:12px">לשונית הסקירה היא ה-Dashboard הראשי שלך — כאן תמצא את כל המספרים החשובים במקום אחד.</p>
+          <p style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:10px">לשונית הסקירה היא ה-Dashboard הראשי — כל המספרים החשובים במקום אחד, מתעדכן אוטומטית.</p>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📊 כרטיסי מדדים עליונים:</strong> Net P&L, Win %, Profit Factor, Day Win %, Avg Win/Loss — כל המדדים המרכזיים של חשבון המסחר שלך.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🌡️ ניקוד מסחר (Radar):</strong> גרף עכביש שמציג ניקוד על 6 מדדים: Win Rate, Profit Factor, Consistency, Risk, Volume, Execution.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🗓️ Progress Tracker:</strong> Heatmap של פעילות מסחר לפי ימים — ירוק = רווח, אדום = הפסד.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📅 לוח שנה מיני:</strong> ניווט קדימה/אחורה בחודשים, לחץ על יום עם עסקאות לראות פרטים.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🔽 Drawdown:</strong> גרף שמציג את המשיכות מהשיא — כמה ירדת מהשיא המקסימלי.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">⏰ ביצועי שעה (Scatter):</strong> כל עסקה ממוקמת לפי שעת ביצוע ורווח/הפסד — גלה באיזו שעה אתה מצטיין.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- EXPENSES -->
-      <div class="help-section" id="help-expenses" style="display:none">
-        <div class="zcl" style="margin-bottom:12px">
-          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>💸 ניהול הוצאות</div></div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📝 יומן הוצאות:</strong> רשום כל הוצאה הקשורה למסחר — עלות מבחן, לייב, כלים, קורסים ועוד. כל רשומה כוללת תאריך, חברה, קטגוריה, סכום בדולר ושווי ₪ לפי שער.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">💰 משיכות:</strong> תעד משיכות רווח מחשבונות פרופ. המערכת מחשבת ברוטו, עמלה %, ונטו $ ו-₪ אוטומטית.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📊 P&L:</strong> תצוגה כוללת של רווח והפסד — כולל הוצאות, משיכות, רווחי מסחר, וסיכום נטו.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">✏️ הוצאות חופשיות:</strong> לכל מה שלא מתאים לקטגוריות הרגילות — עמלות מסחר, ציוד, מנויים, שכ"ל. כולל שדה הערה חופשי.</div>
-            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">💡 <strong style="color:var(--gr)">טיפ:</strong> לחץ + הוספה בפינה העליונה להוספה מהירה. ניתן גם לגרור שורות לשינוי סדר.</div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">📊</span>
+              <div><strong style="color:var(--t1)">כרטיסי KPI עליונים</strong><br>Net P&L, Win %, Profit Factor, Day Win %, Avg Win/Loss, Total Trades — כל המדדים המרכזיים. צבע ירוק = חיובי, אדום = שלילי.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">🕸️</span>
+              <div><strong style="color:var(--t1)">ניקוד מסחר — Radar Chart</strong><br>גרף עכביש עם 6 מדדים: Win Rate, Profit Factor, Consistency, Risk Management, Volume, Execution. ככל שהעיגול גדול יותר — ביצועים טובים יותר.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">🗓️</span>
+              <div><strong style="color:var(--t1)">Progress Tracker (Heatmap)</strong><br>טבלת ימים צבעונית — ירוק = יום רווחי, אדום = יום הפסד. מבט מהיר על קצב המסחר שלך לאורך החודש.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">📅</span>
+              <div><strong style="color:var(--t1)">לוח שנה מיני</strong><br>לחץ על יום עם עסקאות לראות את כל הפרטים. ניווט ◀▶ בין חודשים. ימי רווח/הפסד מוצבעים.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">📉</span>
+              <div><strong style="color:var(--t1)">Drawdown Chart</strong><br>גרף המראה כמה ירדת מהשיא המקסימלי. מאפשר לעקוב אחרי ניהול הסיכון שלך לאורך זמן.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">⏰</span>
+              <div><strong style="color:var(--t1)">Scatter — ביצועי שעה</strong><br>כל עסקה מוצגת כנקודה לפי שעת הכניסה ו-P&L. גלה באיזו שעה אתה מסחר הכי טוב.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:18px;flex-shrink:0">📰</span>
+              <div><strong style="color:var(--t1)">לוח אירועים כלכליים</strong><br>אירועי מאקרו קרובים (FOMC, NFP, CPI) ישירות בדשבורד. לחץ על אירוע לפרטים נוספים.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              💡 <strong style="color:var(--gr)">טיפ:</strong> כל הגרפים מתעדכנים אוטומטית ברגע שמוסיפים עסקאות חדשות — אין צורך לרענן.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- TRADES -->
       <div class="help-section" id="help-trades" style="display:none">
+        <!-- mockup -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 לשונית יומן עסקאות</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <div style="padding:6px 14px;background:rgba(74,143,168,.2);border:1px solid rgba(74,143,168,.4);border-radius:20px;font-size:11px;color:#4a8fa8;font-weight:600">📂 ייבא CSV</div>
+            <div style="padding:6px 14px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:20px;font-size:11px;color:#a78bfa;font-weight:600">🧩 תוסף Chrome</div>
+            <div style="padding:6px 14px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--t2)">🔍 הכל ▾</div>
+            <div style="padding:6px 14px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--t2)">Win / Loss</div>
+          </div>
+          <!-- trade rows -->
+          <div style="font-size:11px;display:flex;flex-direction:column;gap:4px">
+            <div style="display:grid;grid-template-columns:80px 60px 50px 1fr 70px;gap:8px;padding:7px 10px;background:rgba(0,210,106,.06);border:1px solid rgba(0,210,106,.15);border-radius:7px;align-items:center">
+              <span style="color:var(--t3);font-size:10px">02/06/2025</span>
+              <span style="font-weight:700;color:var(--t1)">MES</span>
+              <span style="color:var(--t3)">Long</span>
+              <div style="height:6px;background:rgba(0,210,106,.3);border-radius:3px;overflow:hidden"><div style="width:70%;height:100%;background:#00d26a;border-radius:3px"></div></div>
+              <span style="color:#00d26a;font-weight:700;text-align:right">+$245</span>
+            </div>
+            <div style="display:grid;grid-template-columns:80px 60px 50px 1fr 70px;gap:8px;padding:7px 10px;background:rgba(220,53,69,.05);border:1px solid rgba(220,53,69,.12);border-radius:7px;align-items:center">
+              <span style="color:var(--t3);font-size:10px">01/06/2025</span>
+              <span style="font-weight:700;color:var(--t1)">MNQ</span>
+              <span style="color:var(--t3)">Short</span>
+              <div style="height:6px;background:rgba(220,53,69,.2);border-radius:3px;overflow:hidden"><div style="width:30%;height:100%;background:#dc3545;border-radius:3px"></div></div>
+              <span style="color:#dc3545;font-weight:700;text-align:right">-$80</span>
+            </div>
+          </div>
+        </div>
+
         <div class="zcl" style="margin-bottom:12px">
-          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>📈 יומן עסקאות</div></div>
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>📈 יומן עסקאות — כיצד לייבא</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📂 ייבוא CSV:</strong> יצא Performance Report מ-Tradovate ← לחץ "ייבא CSV" בלשונית העסקאות. תומך בייבוא מרובה קבצים בבת אחת.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🧩 תוסף Chrome:</strong> הורד את תוסף DorTrading לסנכרון אוטומטי מהדפדפן. ראה מדריך התקנה בראש הלשונית.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">💱 עמלות:</strong> המערכת מחשבת עמלה $0.25 לחוזה מיקרו round trip (מאומת מ-Tradovate). שנה בלשונית "הוצאות חופשיות".</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🔍 סינון:</strong> סנן לפי Win/Loss, סימול, תאריך. לחץ על שם סימול לסינון לפיו.</div>
-            <div style="padding:10px 12px;background:rgba(240,180,41,.05);border-radius:8px;border:1px solid rgba(240,180,41,.15);font-size:12px;color:var(--t2);line-height:1.7">⚠️ <strong style="color:var(--go)">חשבונות פרופ:</strong> TakeProfit, Apex, Bulenox חוסמים API — השתמש בייבוא CSV ידני.</div>
+
+            <!-- CSV method -->
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(74,143,168,.08),rgba(74,143,168,.04));border:1px solid rgba(74,143,168,.25);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#4a8fa8;margin-bottom:8px">📂 שיטה 1 — ייבוא CSV מ-Tradovate</div>
+              <div style="font-size:11px;color:var(--t2);line-height:1.9">
+                <strong style="color:var(--t1)">צעד 1:</strong> ב-Tradovate → Reports → Performance → Export CSV<br>
+                <strong style="color:var(--t1)">צעד 2:</strong> בלשונית "יומן עסקאות" לחץ <span style="background:rgba(74,143,168,.2);padding:1px 7px;border-radius:4px;color:#4a8fa8;font-weight:600">📂 ייבא CSV</span><br>
+                <strong style="color:var(--t1)">צעד 3:</strong> בחר את הקובץ (ניתן לבחור מרובים בבת אחת)<br>
+                <strong style="color:var(--t1)">צעד 4:</strong> המערכת מייבאת, מחשבת עמלות ושומרת הכל אוטומטית ✅
+              </div>
+            </div>
+
+            <!-- Chrome extension -->
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(167,139,250,.04));border:1px solid rgba(167,139,250,.25);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px">🧩 שיטה 2 — תוסף Chrome (סנכרון אוטומטי)</div>
+              <div style="font-size:11px;color:var(--t2);line-height:1.9">
+                <strong style="color:var(--t1)">צעד 1:</strong> לחץ "הורד תוסף Chrome" בראש לשונית העסקאות<br>
+                <strong style="color:var(--t1)">צעד 2:</strong> פתח Chrome → chrome://extensions → "מצב מפתח" ON<br>
+                <strong style="color:var(--t1)">צעד 3:</strong> גרור את קובץ .zip לחלון ה-Extensions<br>
+                <strong style="color:var(--t1)">צעד 4:</strong> פתח Tradovate בדפדפן → לחץ על אייקון התוסף → "Sync Now"
+              </div>
+            </div>
+
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">💱</span>
+              <div><strong style="color:var(--t1)">חישוב עמלות אוטומטי</strong><br>המערכת מחשבת $0.25 לחוזה מיקרו round-trip (MES/MNQ) — מאומת מ-Tradovate. לשינוי: לשונית הוצאות ← הוצאות חופשיות.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🔍</span>
+              <div><strong style="color:var(--t1)">סינון ועריכה</strong><br>סנן לפי Win/Loss, סימול, תאריך. לחץ על שם סימול לסינון לפיו. לחץ על עסקה לעריכה ידנית או הוספת הערה/צילום מסך.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📝</span>
+              <div><strong style="color:var(--t1)">הוספת הערות לעסקה</strong><br>לחץ על כל עסקה בטבלה → נפתח חלון עריכה → הוסף הערה, תגיות (Breakout / Revenge / FOMO וכו') וצילום מסך.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(240,180,41,.05);border-radius:8px;border:1px solid rgba(240,180,41,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              ⚠️ <strong style="color:var(--go)">חשבונות פרופ (Apex, Bulenox, TakeProfit):</strong> חוסמים גישת API ישירה — השתמש בייבוא CSV בלבד.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPENSES -->
+      <div class="help-section" id="help-expenses" style="display:none">
+        <!-- mockup -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 לשונית הוצאות</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <div style="padding:5px 12px;background:rgba(220,53,69,.15);border-bottom:2px solid #dc3545;font-size:11px;color:#dc3545;font-weight:600;border-radius:4px 4px 0 0;cursor:pointer">📋 יומן הוצאות</div>
+            <div style="padding:5px 12px;background:var(--bg4);font-size:11px;color:var(--t3);border-radius:4px 4px 0 0">💰 משיכות</div>
+            <div style="padding:5px 12px;background:var(--bg4);font-size:11px;color:var(--t3);border-radius:4px 4px 0 0">📊 P&L</div>
+            <div style="padding:5px 12px;background:var(--bg4);font-size:11px;color:var(--t3);border-radius:4px 4px 0 0">✏️ חופשיות</div>
+          </div>
+          <div style="font-size:11px;display:flex;flex-direction:column;gap:4px">
+            <div style="display:grid;grid-template-columns:80px 80px 60px 1fr 70px;gap:8px;padding:7px 10px;background:var(--bg4);border-radius:7px;align-items:center">
+              <span style="color:var(--t3);font-size:10px">01/06/2025</span>
+              <span style="color:var(--t1);font-weight:600">BULENOX</span>
+              <span style="background:rgba(220,53,69,.15);color:#dc3545;padding:2px 6px;border-radius:4px;font-size:9px;text-align:center">מבחן</span>
+              <span style="color:var(--t2)">PA חשבון $50K</span>
+              <span style="color:#dc3545;font-weight:700;text-align:right">-$149</span>
+            </div>
+            <div style="display:grid;grid-template-columns:80px 80px 60px 1fr 70px;gap:8px;padding:7px 10px;background:var(--bg4);border-radius:7px;align-items:center">
+              <span style="color:var(--t3);font-size:10px">15/05/2025</span>
+              <span style="color:var(--t1);font-weight:600">APEX</span>
+              <span style="background:rgba(240,180,41,.15);color:#f0b429;padding:2px 6px;border-radius:4px;font-size:9px;text-align:center">ריסט</span>
+              <span style="color:var(--t2)">ריסט חשבון</span>
+              <span style="color:#dc3545;font-weight:700;text-align:right">-$99</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="zcl" style="margin-bottom:12px">
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>💸 ניהול הוצאות — כל הלשוניות</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📋</span>
+              <div><strong style="color:var(--t1)">יומן הוצאות</strong><br>רשום כל הוצאה — מבחן, לייב, ריסט, כלים, קורסים. כולל: תאריך, חברה, קטגוריה, סכום בדולר ושווי ₪ לפי שער דולר מעודכן.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">💰</span>
+              <div><strong style="color:var(--t1)">משיכות</strong><br>תעד משיכות רווח מחשבונות פרופ. הזן ברוטו + אחוז עמלה → המערכת מחשבת נטו בדולר ובשקל אוטומטית.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📊</span>
+              <div><strong style="color:var(--t1)">P&L מלא</strong><br>תצוגה כוללת: רווחי מסחר + משיכות − הוצאות = רווח נטו. מוצג בדולר ובשקל. כולל גרף עמודות חודשי.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">✏️</span>
+              <div><strong style="color:var(--t1)">הוצאות חופשיות</strong><br>לכל מה שלא ברשימה: עמלות מסחר, ציוד, מנויים, שכ"ל. שדה הערה חופשי לכל רשומה.</div>
+            </div>
+
+            <!-- recurring expenses -->
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(0,210,106,.08),rgba(0,210,106,.04));border:1px solid rgba(0,210,106,.2);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#00d26a;margin-bottom:6px">🔁 הוצאות חוזרות חודשיות (חדש!)</div>
+              <div style="font-size:11px;color:var(--t2);line-height:1.8">
+                בטופס הוספה, סמן ✅ <strong style="color:var(--t1)">"חוזרת חודשית"</strong> → הוסף שם כלי (לדוגמה: TradingView Pro) ויום בחודש.<br>
+                <strong>המערכת תוסיף את ההוצאה אוטומטית כל חודש</strong> — ללא צורך לזכור להזין ידנית.
+              </div>
+            </div>
+
+            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              💡 <strong style="color:var(--gr)">טיפ:</strong> לחץ + הוספה בפינה הימנית העליונה להוספה מהירה. ניתן לסנן לפי קטגוריה ולייצא לאקסל.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- STATS -->
       <div class="help-section" id="help-stats" style="display:none">
+        <!-- mockup -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 לשונית סטטיסטיקות</div>
+          <!-- mini equity curve -->
+          <div style="position:relative;height:60px;background:var(--bg4);border-radius:8px;overflow:hidden;margin-bottom:6px">
+            <svg viewBox="0 0 300 60" style="width:100%;height:100%">
+              <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d26a" stop-opacity=".3"/><stop offset="100%" stop-color="#00d26a" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,50 L30,44 L60,38 L90,42 L120,30 L150,25 L180,20 L210,15 L240,18 L270,10 L300,8" stroke="#00d26a" stroke-width="2" fill="none"/>
+              <path d="M0,50 L30,44 L60,38 L90,42 L120,30 L150,25 L180,20 L210,15 L240,18 L270,10 L300,8 L300,60 L0,60Z" fill="url(#hg)"/>
+            </svg>
+          </div>
+          <div style="font-size:10px;color:var(--t3);text-align:center">עקומת הון מצטברת — P&L לאורך זמן</div>
+        </div>
+
         <div class="zcl" style="margin-bottom:12px">
-          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>📊 סטטיסטיקות</div></div>
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>📊 סטטיסטיקות מתקדמות</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📉 עקומת הון:</strong> גרף P&L מצטבר לאורך זמן — רואים את הצמיחה/ירידה של החשבון.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📅 P&L יומי:</strong> ביצועים לכל יום מסחר — עמודות ירוק/אדום לפי רווח/הפסד.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🏆 Top 10 / Bottom 10:</strong> 10 העסקאות הכי רווחיות והכי גרועות שלך.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">📆 לפי יום שבוע:</strong> באיזה יום בשבוע אתה מרוויח הכי הרבה? Win Rate, P&L וממוצע לכל יום.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">⏰ לפי שעה:</strong> ביצועים לפי שעת פתיחת עסקה — גלה את השעות הכי רווחיות שלך.</div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📈</span>
+              <div><strong style="color:var(--t1)">עקומת הון (Equity Curve)</strong><br>גרף P&L מצטבר לאורך זמן — רואים את צמיחת/ירידת החשבון. ניתן להגדיל/לצמצם לתקופה ספציפית.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📅</span>
+              <div><strong style="color:var(--t1)">P&L יומי</strong><br>עמודות ירוק/אדום לכל יום מסחר. סה"כ ימים רווחיים/מפסידים ואחוז הצלחה יומי.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🏆</span>
+              <div><strong style="color:var(--t1)">Top 10 / Bottom 10</strong><br>10 העסקאות הכי רווחיות מול 10 הגרועות. מעולה לזיהוי דפוסים — מה עשית בעסקאות הטובות?</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📆</span>
+              <div><strong style="color:var(--t1)">ניתוח לפי יום שבוע</strong><br>Win Rate, P&L ממוצע וסה"כ עסקאות לכל יום — ראשון עד שישי. גלה באיזה יום אתה הכי חזק.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">⏰</span>
+              <div><strong style="color:var(--t1)">ניתוח לפי שעה</strong><br>ביצועים לפי שעת פתיחת עסקה (6:00–22:00). גרף עמודות — ירוק = שעה רווחית בממוצע.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🎯</span>
+              <div><strong style="color:var(--t1)">ניתוח לפי סימול</strong><br>השוואה בין MES, MNQ ושאר הסימולים — Win Rate ו-P&L ממוצע לכל אחד.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(167,139,250,.05);border-radius:8px;border:1px solid rgba(167,139,250,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              💡 <strong style="color:#a78bfa">טיפ:</strong> לחץ על עמודה בגרף P&L יומי כדי לסנן ולראות את כל עסקאות אותו יום.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- CALENDAR -->
       <div class="help-section" id="help-calendar" style="display:none">
+        <!-- mockup -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 לוח שנה מסחר</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+            <div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">א</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ב</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ג</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ד</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ה</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ו</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ש</div>
+            <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">28</div>
+            <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">29</div>
+            <div style="padding:6px 4px;border-radius:6px;background:rgba(0,210,106,.2);text-align:center;font-size:10px;color:#00d26a;font-weight:700;border:1px solid rgba(0,210,106,.3)">2<br><span style="font-size:8px">+$245</span></div>
+            <div style="padding:6px 4px;border-radius:6px;background:rgba(220,53,69,.15);text-align:center;font-size:10px;color:#dc3545;font-weight:700;border:1px solid rgba(220,53,69,.2)">3<br><span style="font-size:8px">-$80</span></div>
+            <div style="padding:6px 4px;border-radius:6px;background:rgba(0,210,106,.3);text-align:center;font-size:10px;color:#00d26a;font-weight:700;border:1px solid rgba(0,210,106,.4)">4<br><span style="font-size:8px">+$380</span></div>
+            <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">5</div>
+            <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">6</div>
+          </div>
+        </div>
+
         <div class="zcl" style="margin-bottom:12px">
           <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>📅 לוח שנה מסחר</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🟢 ירוק / 🔴 אדום:</strong> ימים ירוקים = יום רווחי, אדומים = הפסד. רואים בבירור את ימי המסחר שלך.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🖱️ לחץ על יום:</strong> לחיצה על יום שיש בו עסקאות מציגה את כל העסקאות של אותו יום.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">◀ ▶ ניווט:</strong> לחץ על החצים לניווט בין חודשים. הסיכום שבועי מוצג בטור הימני.</div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🟢</span>
+              <div><strong style="color:var(--t1)">צבעי ימים</strong><br>ירוק = יום רווחי, אדום = יום הפסד, אפור = אין מסחר. הצבע מתכהה ככל שהסכום גדול יותר — קל לראות את הימים הכי חזקים.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">👆</span>
+              <div><strong style="color:var(--t1)">לחיצה על יום</strong><br>לחץ על כל יום עם עסקאות → נפתח חלון עם כל העסקאות של אותו יום, כולל סה"כ P&L, Win Rate יומי ופרטי כל עסקה.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">◀▶</span>
+              <div><strong style="color:var(--t1)">ניווט חודשים</strong><br>לחץ על החצים לניווט קדימה/אחורה בחודשים. הסיכום השבועי (ימין) מתעדכן אוטומטית.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📰</span>
+              <div><strong style="color:var(--t1)">אירועים כלכליים</strong><br>אייקוני אירועים (💥🔔) מוצגים על ימי לוח השנה — FOMC, NFP, CPI ועוד. לחץ לפרטים על האירוע.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              💡 <strong style="color:var(--gr)">טיפ:</strong> לוח השנה מסנכרן אוטומטית עם יומן העסקאות — אין צורך בהזנה כפולה.
+            </div>
           </div>
         </div>
       </div>
@@ -3333,45 +3584,45 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
         <div class="zcl" style="margin-bottom:12px">
           <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>🔄 סנכרון Live</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🧩 תוסף Chrome:</strong> הדרך הקלה ביותר לסנכרן — הורד התוסף מלשונית יומן עסקאות, התקן, פתח Tradovate ולחץ על האייקון.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🔌 חיבור API:</strong> כנס לטאב "סנכרון Live", מלא שם משתמש, סיסמה, CID ו-Secret של Tradovate, לחץ "Live". <br>⚠️ חשבונות פרופ לרוב חוסמים API — תשתמש בתוסף Chrome במקום.</div>
-            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">🔒 <strong style="color:var(--gr)">אבטחה:</strong> הפרטים שלך נשמרים רק ב-RAM המקומי — לא נשלחים לאף שרת חיצוני.</div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🧩</span>
+              <div><strong style="color:var(--t1)">תוסף Chrome (מומלץ)</strong><br>הדרך הקלה — הורד מלשונית יומן עסקאות, התקן ב-Chrome, פתח Tradovate ולחץ על אייקון התוסף לסנכרון.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🔌</span>
+              <div><strong style="color:var(--t1)">חיבור API ישיר</strong><br>לשונית "סנכרון Live" ← מלא שם משתמש, סיסמה, CID ו-Secret של Tradovate ← לחץ "Live".<br>⚠️ חשבונות פרופ חוסמים API — עבור לתוסף Chrome.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              🔒 <strong style="color:var(--gr)">אבטחה:</strong> פרטי ה-API נשמרים ב-RAM המקומי בלבד — לא נשלחים לשרת חיצוני.
+            </div>
           </div>
         </div>
 
-        <!-- iPhone / Mobile access -->
+        <!-- Mobile access -->
         <div class="zcl" style="margin-bottom:12px">
-          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#4da6ff"></div>📱 גישה מאייפון / מובייל</div></div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:12px">הנתונים שלך מסונכרנים אוטומטית דרך <strong style="color:var(--t1)">Firebase</strong> — התחבר עם אותו חשבון מכל מכשיר ותראה את הנתונים מיד.</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(77,166,255,.08),rgba(77,166,255,.04));border:1px solid rgba(77,166,255,.2);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#4da6ff;margin-bottom:8px">🖥️ שיטה 1 — שרת מקומי (הכי פשוט)</div>
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#4da6ff"></div>📱 גישה מנייד / אייפון</div></div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:12px">הנתונים מסונכרנים אוטומטית דרך <strong style="color:var(--t1)">Firebase</strong> — התחבר עם אותו חשבון מכל מכשיר ותראה הכל מיד.</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <!-- method: website -->
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(0,210,106,.08),rgba(0,210,106,.04));border:1px solid rgba(0,210,106,.2);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#00d26a;margin-bottom:8px">✅ שיטה מומלצת — גישה ישירה דרך הדפדפן</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
-                <strong style="color:var(--t1)">צעד 1:</strong> פתח CMD/PowerShell במחשב ↗<br>
-                <code style="background:var(--bg4);padding:2px 7px;border-radius:4px;font-size:10px;color:#00d26a">cd "C:\Users\HP\Desktop\Dor\מסחר\קלוד"</code><br>
-                <strong style="color:var(--t1)">צעד 2:</strong> הרץ:<br>
-                <code style="background:var(--bg4);padding:2px 7px;border-radius:4px;font-size:10px;color:#00d26a">python -m http.server 8080</code><br>
-                <strong style="color:var(--t1)">צעד 3:</strong> מצא את כתובת ה-IP של המחשב:<br>
-                <code style="background:var(--bg4);padding:2px 7px;border-radius:4px;font-size:10px;color:#00d26a">ipconfig</code> (חפש IPv4 — לדוגמה: 192.168.1.5)<br>
-                <strong style="color:var(--t1)">צעד 4:</strong> באייפון פתח Safari וכנס לכתובת:<br>
-                <code style="background:var(--bg4);padding:2px 7px;border-radius:4px;font-size:10px;color:#f0b429">http://192.168.1.5:8080/dor_trading_v2.html</code>
+                פתח <strong style="color:var(--t1)">Safari / Chrome</strong> בנייד וגלוש ל:<br>
+                <code style="background:var(--bg4);padding:3px 10px;border-radius:5px;font-size:11px;color:#00d26a;display:inline-block;margin:4px 0;direction:ltr">dorfeina123-hash.github.io/fayna-trading</code><br>
+                התחבר עם אותו חשבון — כל הנתונים יופיעו מיד.
               </div>
             </div>
-            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(167,139,250,.04));border:1px solid rgba(167,139,250,.2);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px">☁️ שיטה 2 — העלאה לאינטרנט (גישה מכל מקום)</div>
+            <!-- add to home screen -->
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(77,166,255,.08),rgba(77,166,255,.04));border:1px solid rgba(77,166,255,.2);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#4da6ff;margin-bottom:8px">📲 הוסף למסך הבית (כמו אפליקציה)</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
-                <strong style="color:var(--t1)">GitHub Pages (חינמי):</strong><br>
-                1. צור חשבון GitHub → New Repository<br>
-                2. העלה את קובץ ה-HTML כ-index.html<br>
-                3. Settings → Pages → Deploy from branch<br>
-                4. הקובץ יהיה זמין בכתובת: <code style="background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:10px;color:#00d26a">username.github.io/repo</code>
+                <strong style="color:var(--t1)">iPhone (Safari):</strong> לחץ על אייקון שיתוף ⬆️ → "הוסף למסך הבית" → "הוסף"<br>
+                <strong style="color:var(--t1)">Android (Chrome):</strong> תפריט ⋮ → "הוסף למסך הבית"<br>
+                האפליקציה תופיע עם אייקון Fayna ותיפתח במסך מלא ללא שורת הדפדפן.
               </div>
             </div>
             <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
-              ✅ <strong style="color:var(--gr)">הנתונים מסונכרנים אוטומטית:</strong> Firebase מסנכרן את כל הנתונים בין המחשב לאייפון בזמן אמת — ברגע שאתה מתחבר עם אותו חשבון, תראה הכל.
-            </div>
-            <div style="padding:10px 12px;background:rgba(240,180,41,.05);border-radius:8px;border:1px solid rgba(240,180,41,.2);font-size:12px;color:var(--t2);line-height:1.7">
-              📱 <strong style="color:#f0b429">טיפ Safari:</strong> ניתן להוסיף את האתר למסך הבית — לחץ "שיתוף" ← "הוסף למסך הבית" לגישה מהירה כמו אפליקציה.
+              ✅ <strong style="color:var(--gr)">סנכרון אוטומטי:</strong> Firebase מסנכרן בין כל המכשירים בזמן אמת — עסקאות שהוזנו במחשב יופיעו מיד בנייד.
             </div>
           </div>
         </div>
@@ -3382,29 +3633,145 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
         <div class="zcl" style="margin-bottom:12px">
           <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>💳 תשלום וחבילות</div></div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">🆓 חינמי:</strong> גישה בסיסית — יומן הוצאות, ייבוא CSV, סטטיסטיקות בסיסיות.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--gr)">⭐ Pro:</strong> גישה מלאה — לוח שנה, P&L מלא, סטטיסטיקות מלאות, סנכרון Live, גיבוי ושחזור.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--pu)">💎 Lifetime:</strong> תשלום חד-פעמי — הכל כולל לנצח, עדכונים עתידיים, תמיכה עדיפות.</div>
-            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7"><strong style="color:var(--t1)">💙📱💳 אמצעי תשלום:</strong> ביט, פייבוקס, כרטיס אשראי (Stripe). כל האמצעים זמינים לכל חבילה.</div>
+
+            <!-- plan cards -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px">
+              <div style="padding:14px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;text-align:center">
+                <div style="font-size:18px;margin-bottom:6px">🆓</div>
+                <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px">חינמי</div>
+                <div style="font-size:10px;color:var(--t3);line-height:1.6">יומן הוצאות<br>ייבוא CSV<br>סטטיסטיקות בסיסיות</div>
+              </div>
+              <div style="padding:14px 12px;background:rgba(0,210,106,.07);border:1px solid rgba(0,210,106,.25);border-radius:10px;text-align:center">
+                <div style="font-size:18px;margin-bottom:6px">⭐</div>
+                <div style="font-size:13px;font-weight:700;color:#00d26a;margin-bottom:4px">Pro</div>
+                <div style="font-size:10px;color:var(--t3);line-height:1.6">כל הפיצ'רים<br>לוח שנה + P&L מלא<br>סנכרון Live + גיבוי</div>
+              </div>
+              <div style="padding:14px 12px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25);border-radius:10px;text-align:center">
+                <div style="font-size:18px;margin-bottom:6px">💎</div>
+                <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:4px">Lifetime</div>
+                <div style="font-size:10px;color:var(--t3);line-height:1.6">תשלום חד-פעמי<br>עדכונים לנצח<br>תמיכה עדיפות</div>
+              </div>
+            </div>
+
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">💳</span>
+              <div><strong style="color:var(--t1)">אמצעי תשלום</strong><br>ביט, פייבוקס, כרטיס אשראי (Stripe). כל האמצעים זמינים לכל חבילה.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🔄</span>
+              <div><strong style="color:var(--t1)">שדרוג / ביטול</strong><br>צור קשר עם דור בצ'אט או ב-WhatsApp לכל שינוי בחבילה. שדרוג זמין בכל עת.</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(0,210,106,.05);border-radius:8px;border:1px solid rgba(0,210,106,.15);font-size:12px;color:var(--t2);line-height:1.7">
+              💡 <strong style="color:var(--gr)">הטבה:</strong> משתמשי Lifetime מקבלים גישה לכל פיצ'ר חדש שיתווסף בעתיד — ללא תשלום נוסף.
+            </div>
           </div>
+        </div>
+      </div>
+
+      <!-- GUIDED TOUR -->
+      <div class="help-section" id="help-tour" style="display:none">
+        <!-- mockup: tour tooltip -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📸 כך נראה הסיור המודרך</div>
+          <div style="position:relative;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border2)">
+            <!-- fake navbar -->
+            <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+              <div style="padding:5px 14px;background:rgba(74,143,168,.2);border-radius:6px;font-size:11px;color:#4a8fa8;font-weight:600">🏠 סקירה</div>
+              <div style="padding:5px 14px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--t3)">📈 עסקאות</div>
+              <div style="padding:5px 14px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--t3)">💸 הוצאות</div>
+            </div>
+            <!-- tour tooltip -->
+            <div style="background:linear-gradient(135deg,rgba(74,143,168,.15),rgba(74,143,168,.08));border:1.5px solid rgba(74,143,168,.5);border-radius:12px;padding:14px 16px;max-width:300px;position:relative">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <span style="font-size:10px;color:#4a8fa8;font-weight:600">שלב 1 / 8</span>
+                <span style="font-size:10px;color:var(--t3);cursor:pointer">✕ סיים</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:5px">🏠 לשונית סקירה</div>
+              <div style="font-size:12px;color:var(--t2);line-height:1.6">כאן תמצא את כל המדדים המרכזיים שלך — P&L, Win Rate, Profit Factor ועוד, הכל במקום אחד.</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+                <div style="display:flex;gap:4px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#4a8fa8"></div>
+                  <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+                  <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+                </div>
+                <button style="padding:6px 16px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer">הבא ←</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="zcl" style="margin-bottom:12px">
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--ac)"></div>🧭 הסיור המודרך</div></div>
+          <p style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:10px">הסיור המודרך מלמד אותך את כל לשוניות המערכת בצעדים קצרים — מושלם למשתמשים חדשים ולמי שרוצה לרענן.</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🚀</span>
+              <div><strong style="color:var(--t1)">הפעלה אוטומטית</strong><br>הסיור מופעל אוטומטית בכניסה הראשונה לאחר הרשמה. בכל כניסה עוקבת — לא יפריע שוב.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">🔄</span>
+              <div><strong style="color:var(--t1)">הפעלה מחדש</strong><br>לחץ על כפתור <strong style="color:var(--ac)">🧭 סיור מודרך</strong> בתפריט הימני העליון (⚙) בכל עת להפעלה חוזרת.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:16px;flex-shrink:0">📍</span>
+              <div><strong style="color:var(--t1)">מה כולל הסיור (8 שלבים)</strong><br>סקירה · עסקאות · ייבוא CSV · הוצאות · סטטיסטיקות · לוח שנה · סנכרון · P&L</div>
+            </div>
+            <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(74,143,168,.1),rgba(74,143,168,.05));border:1px solid rgba(74,143,168,.25);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:var(--ac);margin-bottom:8px">▶ הפעל סיור עכשיו</div>
+              <div style="font-size:11px;color:var(--t2);margin-bottom:10px">לחץ על הכפתור ויתחיל הסיור מהסקירה — ניתן לעצור בכל עת עם כפתור "סיים סיור".</div>
+              <button onclick="startTour()" style="padding:9px 22px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🧭 התחל סיור מודרך</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PDF guide reminder -->
+        <div class="zcl" style="margin-bottom:12px">
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#00d26a"></div>📄 מדריך PDF מלא</div></div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:12px">מעדיף לקרוא בשקט? המדריך המלא זמין בPDF — מכסה את כל הפיצ'רים עם דוגמאות מספריות.</div>
+          <a href="https://dorfeina123-hash.github.io/fayna-trading/Fayna_Trading_Guide.pdf" target="_blank"
+             style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#00d26a,#00a854);color:#000;font-weight:700;font-size:12px;border-radius:9px;text-decoration:none">
+            ⬇️ הורד מדריך PDF
+          </a>
         </div>
       </div>
 
       <!-- CONTACT -->
       <div class="help-section" id="help-contact" style="display:none">
         <div class="zcl" style="margin-bottom:12px">
-          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>💬 צור קשר</div></div>
-          <div style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7">
-            יש שאלה? בעיה טכנית? רוצה להציע פיצ'ר חדש? אנחנו כאן!
+          <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>💬 צור קשר עם דור</div></div>
+          <div style="font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.7">
+            יש שאלה? בעיה טכנית? רוצה להציע פיצ'ר חדש? כתוב — אני עונה תוך שעות ספורות.
+          </div>
+
+          <!-- response time banner -->
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(0,210,106,.07);border:1px solid rgba(0,210,106,.2);border-radius:9px;text-align:center">
+              <div style="font-size:18px;margin-bottom:3px">⚡</div>
+              <div style="font-size:11px;font-weight:700;color:#00d26a">זמן תגובה</div>
+              <div style="font-size:10px;color:var(--t3)">עד 3 שעות</div>
+            </div>
+            <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(74,143,168,.07);border:1px solid rgba(74,143,168,.2);border-radius:9px;text-align:center">
+              <div style="font-size:18px;margin-bottom:3px">🕐</div>
+              <div style="font-size:11px;font-weight:700;color:#4a8fa8">שעות זמינות</div>
+              <div style="font-size:10px;color:var(--t3)">א–ה · 9:00–18:00</div>
+            </div>
+            <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:9px;text-align:center">
+              <div style="font-size:18px;margin-bottom:3px">🌐</div>
+              <div style="font-size:11px;font-weight:700;color:#a78bfa">שפות</div>
+              <div style="font-size:10px;color:var(--t3)">עברית / English</div>
+            </div>
           </div>
 
           <!-- CHAT WIDGET -->
           <div id="contact-chat-wrap" style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:18px;margin-bottom:16px">
-            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:12px;display:flex;align-items:center;gap:8px">💬 צ'אט ישיר עם דור <span style="font-size:10px;background:rgba(0,210,106,.15);color:#00d26a;padding:1px 8px;border-radius:10px">online</span></div>
-            <div id="chat-messages" style="height:240px;overflow-y:auto;background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+              💬 צ'אט ישיר עם דור
+              <span style="font-size:10px;background:rgba(0,210,106,.15);color:#00d26a;padding:1px 8px;border-radius:10px;font-weight:600">● online</span>
+            </div>
+            <div id="chat-messages" style="height:220px;overflow-y:auto;background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;gap:8px;align-items:flex-start">
-                <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#6c3fc5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">D</div>
-                <div style="background:var(--bg4);border-radius:8px 8px 8px 0;padding:9px 12px;font-size:12px;color:var(--t2);line-height:1.5;max-width:80%">
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#6c3fc5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">D</div>
+                <div style="background:var(--bg4);border-radius:8px 8px 8px 0;padding:10px 13px;font-size:12px;color:var(--t2);line-height:1.6;max-width:82%">
                   שלום! 👋 אני דור. כתוב כאן את שאלתך ואחזור אליך בהקדם במייל שרשמת בהרשמה.
                 </div>
               </div>
@@ -3412,7 +3779,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
             <div style="display:flex;gap:8px">
               <input type="text" id="chat-input" placeholder="כתוב הודעה..." onkeydown="if(event.key==='Enter')sendChatMessage()"
                 style="flex:1;padding:9px 12px;font-size:12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:rtl">
-              <button onclick="sendChatMessage()" style="padding:9px 18px;background:var(--pu);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">שלח ✈️</button>
+              <button onclick="sendChatMessage()" style="padding:9px 20px;background:var(--pu);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">שלח ✈️</button>
             </div>
             <div id="chat-status" style="font-size:10px;color:#545f72;margin-top:6px;min-height:14px"></div>
           </div>
@@ -3420,29 +3787,66 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
           <!-- EMAIL + WHATSAPP CONTACT CARDS -->
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <div id="contact-email-wrap" style="flex:1;min-width:200px">
-              <div id="contact-email-link"
-                onclick="openContactEmail()"
-                style="display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .15s;cursor:pointer"
-                onmouseenter="this.style.borderColor='rgba(77,166,255,.4)';this.style.color='#e8ecf4'"
-                onmouseleave="this.style.borderColor='';this.style.color=''">
-                <div style="font-size:24px">📧</div>
+              <div id="contact-email-link" onclick="openContactEmail()" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;cursor:pointer;transition:all .15s"
+                onmouseenter="this.style.borderColor='rgba(77,166,255,.4)';this.style.background='rgba(77,166,255,.06)'"
+                onmouseleave="this.style.borderColor='';this.style.background=''">
+                <div style="width:42px;height:42px;border-radius:10px;background:rgba(77,166,255,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📧</div>
                 <div>
-                  <div style="font-size:12px;font-weight:600;color:var(--t1)">שלח מייל</div>
-                  <div id="contact-email-display" style="font-size:10px;color:#545f72">dorfeina123@gmail.com</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--t1)">שלח מייל</div>
+                  <div id="contact-email-display" style="font-size:10px;color:#545f72;margin-top:1px">dorfeina123@gmail.com</div>
+                  <div style="font-size:10px;color:var(--t3)">תגובה תוך 3 שעות</div>
                 </div>
               </div>
             </div>
             <div id="contact-wa-wrap" style="flex:1;min-width:200px">
               <a id="whatsapp-link" href="https://wa.me/972500000000" target="_blank"
-                style="display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .15s"
-                onmouseenter="this.style.borderColor='rgba(0,210,106,.4)';this.style.color='#e8ecf4'"
-                onmouseleave="this.style.borderColor='';this.style.color=''">
-                <div style="font-size:24px">📱</div>
+                style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;text-decoration:none;transition:all .15s"
+                onmouseenter="this.style.borderColor='rgba(0,210,106,.4)';this.style.background='rgba(0,210,106,.06)'"
+                onmouseleave="this.style.borderColor='';this.style.background=''">
+                <div style="width:42px;height:42px;border-radius:10px;background:rgba(0,210,106,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📱</div>
                 <div>
-                  <div style="font-size:12px;font-weight:600;color:var(--t1)">WhatsApp</div>
-                  <div id="contact-wa-display" style="font-size:10px;color:#545f72">זמינות: א-ה 9:00-18:00</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--t1)">WhatsApp</div>
+                  <div id="contact-wa-display" style="font-size:10px;color:#545f72;margin-top:1px">זמינות: א-ה 9:00-18:00</div>
+                  <div style="font-size:10px;color:var(--t3)">הכי מהיר לתגובה</div>
                 </div>
               </a>
+            </div>
+          </div>
+
+          <!-- FAQ quick -->
+          <div style="margin-top:16px">
+            <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:10px">❓ שאלות נפוצות</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <details style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:0">
+                <summary style="padding:10px 12px;font-size:12px;color:var(--t1);cursor:pointer;list-style:none;display:flex;justify-content:space-between">
+                  <span>איך מייבאים עסקאות מ-Tradovate?</span><span style="color:var(--t3)">›</span>
+                </summary>
+                <div style="padding:0 12px 10px;font-size:11px;color:var(--t2);line-height:1.8">עבור ל-Reports → Performance → Export CSV ב-Tradovate. חזור לאפליקציה → לשונית עסקאות → "ייבא CSV" ובחר את הקובץ.</div>
+              </details>
+              <details style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:0">
+                <summary style="padding:10px 12px;font-size:12px;color:var(--t1);cursor:pointer;list-style:none;display:flex;justify-content:space-between">
+                  <span>האם הנתונים שלי מסונכרנים בין מכשירים?</span><span style="color:var(--t3)">›</span>
+                </summary>
+                <div style="padding:0 12px 10px;font-size:11px;color:var(--t2);line-height:1.8">כן! Firebase מסנכרן בזמן אמת. התחבר עם אותו חשבון גוגל / מייל מכל מכשיר — הכל יופיע מיד.</div>
+              </details>
+              <details style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:0">
+                <summary style="padding:10px 12px;font-size:12px;color:var(--t1);cursor:pointer;list-style:none;display:flex;justify-content:space-between">
+                  <span>שכחתי לסיים את הסיור המודרך — איך מפעילים שוב?</span><span style="color:var(--t3)">›</span>
+                </summary>
+                <div style="padding:0 12px 10px;font-size:11px;color:var(--t2);line-height:1.8">לחץ על ⚙ בפינה הימנית העליונה → "סיור מודרך". אפשר גם מלשונית עזרה → סיור מודרך → "התחל סיור".</div>
+              </details>
+              <details style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:0">
+                <summary style="padding:10px 12px;font-size:12px;color:var(--t1);cursor:pointer;list-style:none;display:flex;justify-content:space-between">
+                  <span>מה ההבדל בין חבילת Pro ל-Lifetime?</span><span style="color:var(--t3)">›</span>
+                </summary>
+                <div style="padding:0 12px 10px;font-size:11px;color:var(--t2);line-height:1.8">Pro הוא מנוי חודשי/שנתי. Lifetime הוא תשלום חד-פעמי שנותן גישה לכל תכונה עתידית ללא תשלום נוסף.</div>
+              </details>
+              <details style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:0">
+                <summary style="padding:10px 12px;font-size:12px;color:var(--t1);cursor:pointer;list-style:none;display:flex;justify-content:space-between">
+                  <span>איך מוסיפים הוצאה חוזרת חודשית?</span><span style="color:var(--t3)">›</span>
+                </summary>
+                <div style="padding:0 12px 10px;font-size:11px;color:var(--t2);line-height:1.8">לשונית הוצאות → + הוספה → סמן ✅ "חוזרת חודשית" → הזן שם כלי ויום בחודש. ההוצאה תיכנס אוטומטית מדי חודש.</div>
+              </details>
             </div>
           </div>
         </div>
