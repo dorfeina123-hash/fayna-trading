@@ -1429,6 +1429,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <!-- Avatar circle -->
     <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()" title="פרופיל אישי" style="display:none;background:#00d26a">?</div>
     <button id="pwa-install-btn" onclick="installPWA()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
+    <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,160,0,.35);background:rgba(255,160,0,.1);color:#f0b429;cursor:pointer;flex-shrink:0;transition:all .2s;padding:0" onmouseover="this.style.background='rgba(255,160,0,.25)'" onmouseout="this.style.background='rgba(255,160,0,.1)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
     <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
     <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#545f72;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
     <!-- Hamburger for mobile -->
@@ -1510,19 +1511,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </button>
 </div>
 
-  <!-- SAVE/LOAD BAR -->
-  <div id="save-bar" style="background:var(--bg1);border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:10px;font-size:11px">
-    <span style="color:var(--t3)">💾 נתונים:</span>
-    <button class="fb" onclick="saveData()" style="padding:3px 10px;font-size:10px">שמור</button>
-    <button class="fb" onclick="loadData()" style="padding:3px 10px;font-size:10px">טען</button>
-    <button class="fb" onclick="exportAll()" style="padding:3px 10px;font-size:10px">📤 ייצא JSON</button>
-    <label style="padding:3px 10px;border-radius:5px;font-size:10px;cursor:pointer;border:1px solid var(--border2);color:var(--t2)">📥 ייבא JSON <input type="file" accept=".json" style="display:none" onchange="importAll(this)"></label>
-    <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gr);background:rgba(0,210,106,.08);border:1px solid rgba(0,210,106,.2);border-radius:10px;padding:2px 8px" title="שמירה אוטומטית פעילה — נשמר בסגירת הדפדפן ובמעבר בין טאבים">
-      <span style="width:5px;height:5px;border-radius:50%;background:var(--gr);animation:pulse 2s infinite"></span>
-      שמירה אוטומטית
-    </span>
-    <span id="save-status" style="color:var(--t3);font-size:10px"></span>
-  </div>
+  <!-- save-status hidden span kept for JS compatibility -->
+  <span id="save-status" style="display:none"></span>
 
 <!-- ═══════════════ INDEX TICKER BANNER — TradingView Live ═══════════════ -->
 <div id="index-banner">
@@ -5813,8 +5803,75 @@ function delRecurring(id) {
   renderAll(); saveData();
 }
 
+// ════════════════════════════════════════════════════
+//  UNDO STACK
+// ════════════════════════════════════════════════════
+const _undoStack = [];
+const _UNDO_MAX  = 30;
+
+function _pushUndo() {
+  _undoStack.push({
+    records:            JSON.stringify(records),
+    recurringTemplates: JSON.stringify(recurringTemplates),
+    tradesList:         JSON.stringify(tradesList),
+    customExpenses:     JSON.stringify(customExpenses),
+    pnlOn:              JSON.stringify(pnlOn),
+    commSettings:       JSON.stringify(commSettings),
+  });
+  if (_undoStack.length > _UNDO_MAX) _undoStack.shift();
+  _updateUndoBtn();
+}
+
+function _updateUndoBtn() {
+  const btn = document.getElementById('nav-undo-btn');
+  if (!btn) return;
+  if (_undoStack.length > 0) {
+    btn.style.display = 'flex';
+    btn.title = `בטל פעולה אחרונה (${_undoStack.length} שלבים זמינים) · Ctrl+Z`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function undoLast() {
+  if (!_undoStack.length) { showToast('אין פעולות לביטול'); return; }
+  const snap = _undoStack.pop();
+  try {
+    records            = JSON.parse(snap.records);
+    recurringTemplates = JSON.parse(snap.recurringTemplates);
+    tradesList         = JSON.parse(snap.tradesList);
+    customExpenses     = JSON.parse(snap.customExpenses);
+    pnlOn              = JSON.parse(snap.pnlOn);
+    commSettings       = JSON.parse(snap.commSettings);
+  } catch(e) { showToast('שגיאה בשחזור'); return; }
+  // Save restored state and re-render without pushing to undo stack
+  localStorage.setItem('dor_records',   JSON.stringify(records));
+  localStorage.setItem('dor_recurring', JSON.stringify(recurringTemplates));
+  localStorage.setItem('dor_trades',    JSON.stringify(tradesList));
+  localStorage.setItem('dor_custom',    JSON.stringify(customExpenses));
+  localStorage.setItem('dor_pnlOn',     JSON.stringify(pnlOn));
+  localStorage.setItem('dor_comm',      JSON.stringify(commSettings));
+  _cloudSave();
+  renderAll();
+  _updateUndoBtn();
+  showToast('✅ הפעולה בוטלה בהצלחה');
+}
+
+// Ctrl+Z keyboard shortcut
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    // Only if not focused inside a text input/textarea
+    const tag = document.activeElement?.tagName;
+    if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+      e.preventDefault();
+      undoLast();
+    }
+  }
+});
+
 function saveData() {
   try {
+    _pushUndo(); // snapshot before overwriting
     localStorage.setItem('dor_records', JSON.stringify(records));
     localStorage.setItem('dor_recurring', JSON.stringify(recurringTemplates));
     localStorage.setItem('dor_trades', JSON.stringify(tradesList));
@@ -5822,8 +5879,6 @@ function saveData() {
     localStorage.setItem('dor_pnlOn', JSON.stringify(pnlOn));
     localStorage.setItem('dor_comm', JSON.stringify(commSettings));
     localStorage.setItem('dor_saved', new Date().toLocaleString('he-IL'));
-    document.getElementById('save-status').textContent = '✅ נשמר: ' + new Date().toLocaleTimeString('he-IL');
-    showToast('נתונים נשמרו בהצלחה');
     _cloudSave(); // also sync to cloud
   } catch(e) { alert('שגיאה בשמירה: ' + e.message); }
 }
