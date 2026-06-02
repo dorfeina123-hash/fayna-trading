@@ -6591,7 +6591,8 @@ let contactSettings = {
 //  INIT
 // ──────────────────────────────────────────────────────────────
 let _authInitialized = false;
-let _registering = false; // prevents onAuthStateChanged firing during registration
+let _registering  = false; // prevents onAuthStateChanged firing during registration
+let _manualLogin  = false; // set when user explicitly presses login/google button → skip welcome screen
 
 function initAuth() {
   if (_authInitialized) return;
@@ -6612,7 +6613,8 @@ function initAuth() {
             await db.collection('users').doc(fbUser.uid).set(adminData);
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
-            _showWelcomeBack();
+            if (_manualLogin) { _manualLogin = false; showApp(); }
+            else { _showWelcomeBack(); }
             return;
           }
           await auth.signOut();
@@ -6626,7 +6628,8 @@ function initAuth() {
           return;
         }
         loadSettingsFromFirestore().catch(()=>{});
-        _showWelcomeBack();
+        if (_manualLogin) { _manualLogin = false; showApp(); }
+        else { _showWelcomeBack(); }
       } catch(e) {
         clearTimeout(_fsTimer);
         console.error('Auth state error:', e);
@@ -6815,6 +6818,7 @@ async function doLogin() {
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
     await auth.setPersistence(persistence);
+    _manualLogin = true; // user pressed login → skip welcome screen
     await auth.signInWithEmailAndPassword(email, pass);
     clearTimeout(_loginTimer);
     if (remember) {
@@ -10022,6 +10026,7 @@ function _togglePwd(inputId, btnId) {
 //  GOOGLE SIGN-IN (login + register unified)
 // ════════════════════════════════════════════════════
 async function doGoogleAuth() {
+  _manualLogin = true; // Google login is explicit → skip welcome screen
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
   const loginMsg = document.getElementById('login-msg');
