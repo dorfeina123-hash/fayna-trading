@@ -195,12 +195,14 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
 .mob-nav-sep{height:1px;background:var(--border);margin:8px 0}
 
 /* ── MOBILE BOTTOM NAV BAR ── */
-.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg1);border-top:1px solid var(--border2);z-index:500;height:58px;align-items:stretch;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 24px rgba(0,0,0,.5)}
-.mob-bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--t3);font-family:inherit;font-size:9px;font-weight:500;cursor:pointer;padding:6px 2px;transition:color .15s;min-width:44px;-webkit-tap-highlight-color:transparent}
-.mob-bnav-btn .mbn-icon{font-size:19px;line-height:1;transition:transform .15s}
+.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(16,18,26,.97);border-top:1px solid rgba(255,255,255,.08);z-index:500;height:60px;align-items:stretch;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -1px 0 rgba(255,255,255,.04),0 -8px 32px rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.mob-bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--t3);font-family:inherit;font-size:9px;font-weight:500;cursor:pointer;padding:6px 2px;transition:color .2s,transform .15s;min-width:44px;-webkit-tap-highlight-color:transparent;position:relative}
+.mob-bnav-btn .mbn-icon{font-size:20px;line-height:1;transition:transform .2s,filter .2s}
 .mob-bnav-btn.active{color:var(--ac)}
-.mob-bnav-btn.active .mbn-icon{transform:scale(1.15)}
-.mob-bnav-btn:active .mbn-icon{transform:scale(.9)}
+.mob-bnav-btn.active .mbn-icon{transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(74,143,168,.5))}
+.mob-bnav-btn.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2px;background:var(--ac);border-radius:0 0 3px 3px}
+.mob-bnav-btn:active{transform:scale(.93)}
+.mob-bnav-btn:active .mbn-icon{transform:scale(.88)}
 
 @media(max-width:768px){
   .topnav{gap:6px;padding:0 10px;height:50px}
@@ -212,7 +214,8 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
   #index-banner{height:46px;min-height:46px}
   #idx-controls{display:none}
   #tv-ticker-widget{border-radius:0}
-  .main{padding:8px;padding-bottom:72px}
+  .main{padding:8px;padding-bottom:100px}
+  .sth{max-height:calc(100dvh - 440px);min-height:160px;padding-bottom:16px}
   /* Tables — horizontal scroll */
   .card{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 11px}
   .tbl{font-size:11px;min-width:480px}
@@ -241,6 +244,53 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
   /* zm cards */
   .zm-row{grid-template-columns:repeat(3,1fr);gap:7px}
   .zm-val{font-size:20px}
+
+  /* ── Overview top widgets (streak + goal + events) ── */
+  #overview-top-widgets{grid-template-columns:1fr 1fr!important;row-gap:8px}
+  #overview-top-widgets>div:first-child{min-width:0!important}
+  #next-events-widget{grid-column:1/-1!important;min-width:0!important;max-width:none!important}
+  .goal-widget{margin-bottom:0}
+
+  /* ── Trades tab header buttons ── */
+  #tp-trades>div:first-child{flex-wrap:wrap;gap:6px;align-items:flex-start}
+  #tp-trades>div:first-child>div:last-child{flex-wrap:wrap;gap:5px}
+  #tp-trades>div:first-child>div:last-child button,
+  #tp-trades>div:first-child>div:last-child label{font-size:10px!important;padding:5px 8px!important}
+
+  /* ── Filter topbar ── */
+  .filter-topbar{gap:6px;padding:8px 0;margin-bottom:10px}
+  .ftb-btn{font-size:11px;padding:5px 9px}
+
+  /* ── Calendar ── */
+  .cal-day{min-height:72px;padding:4px 5px}
+  .cal-day .dpnl{font-size:12px}
+  .cal-day .dinfo{font-size:8px}
+  .cal-head{font-size:9px;padding:5px 2px}
+  .cal-nav-title{font-size:14px}
+  .cal-stats{flex-wrap:wrap;gap:8px;font-size:11px}
+
+  /* ── Overview metric cards ── */
+  .zm{padding:12px 13px}
+  .zm-label{font-size:9px;letter-spacing:.4px}
+  .zm-sub{font-size:9px}
+
+  /* ── Overview charts ── */
+  .zcl{padding:12px 13px}
+  .radar-wrap{height:170px}
+
+  /* ── Recent trades row ── */
+  .zt-date{min-width:60px;font-size:10px}
+  .zt-sym{min-width:40px;font-size:11px}
+  .zt-pnl{font-size:12px}
+
+  /* ── Last import bar ── */
+  .last-import{font-size:9px;flex-wrap:wrap}
+
+  /* ── Stats tab tables ── */
+  .g2 .card,.g3 .card{overflow-x:auto}
+
+  /* ── Modal wider on mobile ── */
+  .modal{width:calc(100vw - 16px)!important;padding:16px 14px;max-height:calc(100dvh - 40px)}
 }
 
 @media(max-width:480px){
@@ -266,7 +316,8 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
   #pwa-install-btn::before{content:'📲';font-size:13px}
 
   /* ── Main layout ── */
-  .main{padding:6px;padding-bottom:68px}
+  .main{padding:6px;padding-bottom:96px}
+  .sth{max-height:calc(100dvh - 420px);min-height:140px;padding-bottom:16px}
   .mrow{grid-template-columns:1fr 1fr;gap:6px}
   .mc{padding:9px 10px}
   .mc-v{font-size:16px}
@@ -291,6 +342,36 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
 
   /* ── Hide clutter ── */
   #nav-status{display:none}
+
+  /* ── Overview widgets stack single column ── */
+  #overview-top-widgets{grid-template-columns:1fr!important}
+  #next-events-widget{grid-column:1/-1!important}
+
+  /* ── Trades header — stack title above buttons ── */
+  #tp-trades>div:first-child{flex-direction:column;align-items:stretch;gap:8px}
+  #tp-trades>div:first-child>div:first-child>div:last-child{font-size:9px}
+  #tp-trades>div:first-child>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  #tp-trades>div:first-child>div:last-child button,
+  #tp-trades>div:first-child>div:last-child label{font-size:10px!important;padding:6px 4px!important;justify-content:center;text-align:center}
+
+  /* ── Calendar cells smaller ── */
+  .cal-day{min-height:58px;padding:3px 4px}
+  .cal-day .dpnl{font-size:11px}
+  .cal-head{font-size:8px;padding:4px 1px}
+  .cal-nav-title{font-size:13px}
+
+  /* ── Filter topbar compact ── */
+  .ftb-btn{font-size:10px;padding:5px 8px;gap:4px}
+  #date-range-txt{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ── Charts height reduce ── */
+  .radar-wrap{height:150px}
+  .zcl{padding:10px 11px}
+
+  /* ── Recent trades compact ── */
+  .zt-date{min-width:54px;font-size:9px}
+  .zt-sym{font-size:10px;min-width:36px}
+  .zt-pnl{font-size:11px}
 }
 
 /* ══════════════════════════════════════════════
@@ -327,13 +408,13 @@ input,select,textarea{font-size:16px!important}
 .topnav{padding-top:env(safe-area-inset-top,0px)}
 .mob-bottom-nav{
   padding-bottom:env(safe-area-inset-bottom,0px);
-  height:calc(58px + env(safe-area-inset-bottom,0px));
+  height:calc(60px + env(safe-area-inset-bottom,0px));
 }
 @media(max-width:768px){
-  .main{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .main{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 }
 @media(max-width:480px){
-  .main{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
+  .main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 }
 
 /* Smooth scrolling */
@@ -7544,6 +7625,8 @@ function showApp() {
   }
   // ── START ECONOMIC CALENDAR 3-STAR ALERTS ──
   setTimeout(_startEcalAlerts, 2000);
+  // ── AUTO TOUR for new / first-time users ──
+  setTimeout(() => { if (!_tourHasDone()) startTour(); }, 1800);
   // ── NEW FEATURES INIT ──
   _initTheme();
   _updateNavAvatar();
@@ -7582,6 +7665,7 @@ async function loadSettingsFromFirestore() {
       });
     }
     if (d.guideUrl) window._guideUrl = d.guideUrl;
+    if (!window._guideUrl) window._guideUrl = 'https://dorfeina123-hash.github.io/fayna-trading/Fayna_Trading_Guide.pdf';
     if (d.instagramUrl) { window._instagramUrl = d.instagramUrl; _applyInstagramUrl(d.instagramUrl); }
     if (EJS_CONFIG.publicKey) emailjs.init(EJS_CONFIG.publicKey);
   } catch(e) { console.warn('loadSettings:', e); }
@@ -11154,9 +11238,29 @@ function _tourRender() {
   tip.style.left = left + 'px';
 }
 
-function _tourNext() { _tourStep++; _tourRender(); }
+function _tourNext() {
+  if (_tourStep === _tourSteps.length - 1) {
+    _tourMarkDone();
+    _tourCleanup();
+    return;
+  }
+  _tourStep++;
+  _tourRender();
+}
 function _tourPrev() { _tourStep--; _tourRender(); }
-function _tourEnd()  { _tourCleanup(); }
+function _tourEnd()  { _tourMarkDone(); _tourCleanup(); }
+function _tourMarkDone() {
+  try {
+    const key = 'tourDone_' + (currentUser?.uid || 'guest');
+    localStorage.setItem(key, '1');
+  } catch(e) {}
+}
+function _tourHasDone() {
+  try {
+    const key = 'tourDone_' + (currentUser?.uid || 'guest');
+    return localStorage.getItem(key) === '1';
+  } catch(e) { return false; }
+}
 function _tourCleanup() {
   document.getElementById('tour-mask-wrap')?.remove();
   document.getElementById('tour-tip')?.remove();
