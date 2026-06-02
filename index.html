@@ -7122,6 +7122,7 @@ async function _startEcalAlerts() {
   const ok = await _fetchEcalEvents();
   if (!ok) { setTimeout(_startEcalAlerts, 60_000); return; } // retry in 1 min if failed
   const todayEvents = _scheduleTodayAlerts();
+  renderNextEventsWidget?.(); // update widget now that data is loaded
   _showTodayEcalBriefing(todayEvents);
   _scheduleMidnightRefresh();
   _scheduleHourlyRefresh();
