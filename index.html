@@ -7876,15 +7876,15 @@ async function renderAdminPanel() {
   renderAdminActivityChart();
   renderAdminLogs();
   refreshLoginLogs();
-  // Show current guide URL if already uploaded
-  if (window._guideUrl) {
-    const d = document.getElementById('guide-url-display');
-    const l = document.getElementById('guide-url-link');
-    if (d) d.style.display = '';
-    if (l) { l.href = window._guideUrl; l.textContent = window._guideUrl; }
-    const s = document.getElementById('guide-upload-status');
-    if (s) { s.style.color = '#00d26a'; s.textContent = '✅ PDF פעיל'; }
-  }
+  // Show current guide URL
+  const _gu = window._guideUrl || 'https://dorfeina123-hash.github.io/fayna-trading/Fayna_Trading_Guide.pdf';
+  window._guideUrl = _gu;
+  const _gd = document.getElementById('guide-url-display');
+  const _gl = document.getElementById('guide-url-link');
+  const _gs = document.getElementById('guide-upload-status');
+  if (_gd) _gd.style.display = '';
+  if (_gl) { _gl.href = _gu; _gl.textContent = _gu; }
+  if (_gs) { _gs.style.color = '#00d26a'; _gs.textContent = '✅ PDF פעיל'; }
   // Populate Instagram field
   const igInput = document.getElementById('instagram-url-input');
   if (igInput && window._instagramUrl) igInput.value = window._instagramUrl;
