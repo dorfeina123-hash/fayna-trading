@@ -1517,7 +1517,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- ═══════ ADMIN PANEL TAB (hidden until admin login) ═══════ -->
 
 <nav class="topnav">
-  <div class="logo"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:38px;height:38px;border-radius:50%;object-fit:cover;display:block"></div><span class="logo-text">Fayna Trading <span id="nav-status" style="font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.3px">● live</span></span></div>
+  <div class="logo" onclick="sw('overview',document.querySelector('.nt'))" style="cursor:pointer" title="חזור לסקירה"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:38px;height:38px;border-radius:50%;object-fit:cover;display:block"></div></div>
   <div class="nav-user-badge" id="nav-user-info" onclick="paOpenPersonal()" title="לחץ לאזור האישי" style="cursor:pointer">
     <div class="nav-user-dot"></div>
     <span class="nav-user-plan free" id="nav-plan-badge">FREE</span>
@@ -11082,12 +11082,14 @@ function paSaveProfile() {
 
 // ── GUIDED TOUR ──
 const _tourSteps = [
-  { sel:'#tp-overview .mrow',          title:'סקירה כללית',      text:'כל הנתונים החשובים שלך במקום אחד — P&L, Win Rate, סטריקים ומדדי ביצוע.' },
-  { sel:'.btn-p',                       title:'הוספת עסקה',       text:'לחץ כאן בכל עת כדי לתעד עסקה חדשה ביומן המסחר שלך.' },
-  { sel:'.nt[onclick*="trades"]',       title:'יומן עסקאות',      text:'כל העסקאות שלך עם פילטרים, מיון, עריכה ומחיקה.' },
-  { sel:'.nt[onclick*="stats"]',        title:'סטטיסטיקות',       text:'ניתוח מעמיק של הביצועים — גרפים, התפלגות לפי יום/שעה/נכס.' },
-  { sel:'.nt[onclick*="calendar"]',     title:'לוח שנה',          text:'תצוגה חזותית של ימי המסחר עם P&L ומידע יומי.' },
-  { sel:'.nt[onclick*="personal"]',     title:'אזור אישי',        text:'ניהול הפרופיל, שינוי סיסמה וחיבורים לפלטפורמות מסחר.' },
+  { sel:'.logo',                        title:'לוגו Fayna Trading', text:'לחיצה על הלוגו תחזיר אותך תמיד לדף הסקירה הראשי.' },
+  { sel:'#tp-overview .mrow',           title:'כרטיסי סקירה',      text:'כאן תראה סיכום חי של הביצועים שלך — P&L יומי, Win Rate, מספר עסקאות וסטריק ימים רצופים.' },
+  { sel:'.btn-p',                       title:'הוספת עסקה חדשה',   text:'לחץ כאן בכל עת להוספת עסקה. מלא כיוון (Long/Short), נכס, כניסה, יציאה, כמות ועוד.' },
+  { sel:'.nt[onclick*="trades"]',       title:'יומן עסקאות',       text:'טבלת כל העסקאות שלך עם אפשרות לחיפוש, סינון לפי תאריך/נכס/כיוון, עריכה ומחיקה.' },
+  { sel:'.nt[onclick*="calendar"]',     title:'לוח שנה',           text:'תצוגת חודש/שבוע — כל יום מסחר מוצג עם P&L וצבע שמסמן רווח (ירוק) או הפסד (אדום).' },
+  { sel:'.nt[onclick*="stats"]',        title:'סטטיסטיקות',        text:'גרפים וניתוח מעמיק: התפלגות לפי שעות, ימים, נכסים, אסטרטגיות ועוד.' },
+  { sel:'#nav-user-info',              title:'האזור האישי שלך',   text:'לחץ על הכרטיס כאן כדי להיכנס לאזור האישי — ניהול פרופיל, סיסמה וחיבור לפלטפורמות.' },
+  { sel:'button[onclick="startTour()"]',title:'סיור מודרך',        text:'לחץ על ה-? בכל עת כדי להפעיל מחדש את הסיור המודרך.' },
 ];
 let _tourStep = 0;
 let _tourEl   = null;
