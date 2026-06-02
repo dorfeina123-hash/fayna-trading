@@ -6900,6 +6900,18 @@ async function _ffFetch(week) {
   return [];
 }
 
+// ForexFactory gives times in EST/EDT (New York). Convert to UTC properly.
+function _ffParseDate(dateStr) {
+  if (!dateStr) return null;
+  // If already has timezone offset (e.g. "...+00:00" or "...Z") — use as-is
+  if (/[Zz]$/.test(dateStr) || /[+-]\d{2}:\d{2}$/.test(dateStr)) return new Date(dateStr);
+  // Otherwise treat as EDT (UTC-4) during summer, EST (UTC-5) during winter
+  // June–Nov = EDT (UTC-4), Dec–Mar = EST (UTC-5)
+  const month = parseInt((dateStr.split('T')[0]||'').split('-')[1]||'1', 10);
+  const offset = (month >= 3 && month <= 11) ? '-04:00' : '-05:00';
+  return new Date(dateStr + offset);
+}
+
 async function _fetchEcalEvents(forceRefresh) {
   const todayKey = new Date().toISOString().slice(0, 10); // e.g. "2026-06-02"
   // Use localStorage cache — valid only for today
@@ -6922,7 +6934,10 @@ async function _fetchEcalEvents(forceRefresh) {
     const k = ev.date + ev.title;
     if (seen.has(k)) return false;
     seen.add(k); return true;
-  });
+  }).map(ev => ({
+    ...ev,
+    _parsedDate: _ffParseDate(ev.date)?.toISOString() || ev.date // store parsed UTC date
+  }));
   // Save to localStorage with today's date key
   try {
     localStorage.setItem('fayna_ecal_cache', JSON.stringify({ date: todayKey, events: _ecalCache }));
@@ -6940,14 +6955,14 @@ function _scheduleTodayAlerts() {
   // Fire at 15, 10, and 5 minutes before each event
   const ALERTS   = [15, 10, 5];
 
-  const todayEvents = _ecalCache.filter(ev => new Date(ev.date).toDateString() === todayStr);
+  const todayEvents = _ecalCache.filter(ev => new Date(ev._parsedDate||ev.date).toDateString() === todayStr);
 
   for (const ev of todayEvents) {
     for (const mins of ALERTS) {
-      const alertAt = new Date(ev.date).getTime() - mins * 60 * 1000;
+      const alertAt = new Date(ev._parsedDate||ev.date).getTime() - mins * 60 * 1000;
       const delay   = alertAt - Date.now();
       if (delay <= 0) continue; // already past this window
-      const t = setTimeout(() => _showEcalAlertBar(ev.title, ev.country, new Date(ev.date), mins), delay);
+      const t = setTimeout(() => _showEcalAlertBar(ev.title, ev.country, new Date(ev._parsedDate||ev.date), mins), delay);
       _ecalDayTimers.push(t);
     }
   }
@@ -6955,14 +6970,14 @@ function _scheduleTodayAlerts() {
 }
 
 function _showTodayEcalBriefing(todayEvents) {
-  const future = todayEvents.filter(ev => new Date(ev.date) > new Date());
+  const future = todayEvents.filter(ev => new Date(ev._parsedDate||ev.date) > new Date());
   if (!future.length) return;
   let toast = document.getElementById('_ecal-briefing');
   if (toast) toast.remove();
   toast = document.createElement('div'); toast.id = '_ecal-briefing';
   toast.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:9998;direction:rtl;max-width:320px;animation:ecal-slide-down .4s ease';
   const rows = future.map(ev => {
-    const t = new Date(ev.date).toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+    const t = new Date(ev._parsedDate||ev.date).toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
     return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <span style="font-size:10px;color:#f0b429;font-family:monospace;flex-shrink:0;min-width:38px">${t}</span>
       <span style="font-size:11px;color:#e8ecf4">${ev.title}</span>
@@ -7013,7 +7028,7 @@ function _showEcalAlertBar(title, country, evDate, minsLeft) {
   document.body.appendChild(bar);
   // Auto-remove only when the event time is reached
   const msUntilEvent = evDate.getTime() - Date.now();
-  if (msUntilEvent > 0) setTimeout(() => { document.getElementById('_ecal-alert-bar')?.remove(); }, msUntilEvent);
+  if (msUntilEvent > 0 && msUntilEvent < 3600000) setTimeout(() => { document.getElementById('_ecal-alert-bar')?.remove(); }, msUntilEvent);
   if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
     new Notification('⚠️ Fayna Trading — הודעה כלכלית חשובה', {
       body: `בעוד ${minsLeft} דקות: ${title} (${timeStr})`,
@@ -7035,6 +7050,13 @@ function _scheduleMidnightRefresh() {
 }
 
 async function _startEcalAlerts() {
+  // Clear old cache if it doesn't have _parsedDate (force re-parse with timezone fix)
+  try {
+    const cached = JSON.parse(localStorage.getItem('fayna_ecal_cache') || '{}');
+    if (Array.isArray(cached.events) && cached.events.length && !cached.events[0]._parsedDate) {
+      localStorage.removeItem('fayna_ecal_cache'); // force refetch with timezone fix
+    }
+  } catch(e) {}
   const ok = await _fetchEcalEvents();
   if (!ok) { setTimeout(_startEcalAlerts, 60_000); return; } // retry in 1 min if failed
   const todayEvents = _scheduleTodayAlerts();
@@ -10415,8 +10437,8 @@ function renderNextEventsWidget() {
   const now  = Date.now();
   const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
   const evs  = (_ecalCache || [])
-    .filter(e => { const d = new Date(e.date).getTime(); return d > now && d <= todayEnd.getTime(); })
-    .sort((a,b) => new Date(a.date)-new Date(b.date))
+    .filter(e => { const d = new Date(e._parsedDate||e.date).getTime(); return d > now && d <= todayEnd.getTime(); })
+    .sort((a,b) => new Date(a._parsedDate||a.date)-new Date(b._parsedDate||b.date))
     .slice(0,4);
   const refreshBtn = `<button onclick="ecalForceRefresh()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:10px;padding:0;float:left" title="רענן">🔄</button>`;
   if (!evs.length) {
@@ -10425,7 +10447,7 @@ function renderNextEventsWidget() {
   }
   el.innerHTML = `<div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:3px;display:flex;justify-content:space-between">🗓 הודעות ⭐⭐⭐ היום ${refreshBtn}</div>` +
     evs.map(ev => {
-      const mins = Math.round((new Date(ev.date)-now)/60000);
+      const mins = Math.round((new Date(ev._parsedDate||ev.date)-now)/60000);
       const h = Math.floor(mins/60), m = mins%60;
       const timeStr = mins < 0 ? 'כעת' : mins < 60 ? `עוד ${mins} דק'` : `עוד ${h}ש' ${m>0?m+"דק'":''}`;
       const clr = mins <= 10 ? '#ff4d4d' : mins <= 30 ? '#f0b429' : 'var(--t3)';
