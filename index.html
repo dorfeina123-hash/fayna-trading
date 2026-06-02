@@ -693,6 +693,9 @@ body::before {
 .auth-switch { text-align: center; font-size: 12px; color: #8892a4; margin-top: 16px; }
 .auth-switch span { color: #00d26a; cursor: pointer; }
 .auth-switch span:hover { text-decoration: underline; }
+.auth-instagram { text-align:center; margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
+.auth-instagram a { display:inline-flex; align-items:center; gap:7px; color:#c13584; font-size:12px; text-decoration:none; padding:6px 14px; border-radius:20px; border:1px solid rgba(193,53,132,.3); background:rgba(193,53,132,.07); transition:all .2s; }
+.auth-instagram a:hover { background:rgba(193,53,132,.15); border-color:rgba(193,53,132,.5); }
 
 /* ── ADMIN PANEL ── */
 .admin-section {
@@ -1223,6 +1226,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 </head>
 <body>
 <div id="toast-container"></div>
@@ -1232,9 +1236,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 ════════════════════════════════════════════ -->
 <div id="auth-screen">
   <div class="auth-box">
-    <div class="auth-logo">
-      <div class="auth-logo-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="url(#fn2)"/><polyline points="6,37 14,25 22,30 42,11" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><circle cx="42" cy="11" r="4" fill="#000" opacity=".8"/><line x1="36" y1="9" x2="36" y2="17" stroke="#000" stroke-width="2.5" stroke-linecap="round" opacity=".55"/><defs><linearGradient id="fn2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e676"/><stop offset="100%" stop-color="#00a854"/></linearGradient></defs></svg></div>
-      <div class="auth-logo-text">Fayna Trading</div>
+    <div class="auth-logo" style="flex-direction:column;gap:6px">
+      <img src="fayna_logo.jpg" style="width:100px;height:100px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,255,255,0.1)">
     </div>
     <div id="auth-debug-bar" style="background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;padding:8px 12px;margin-bottom:16px;display:none;font-size:11px;color:#ff6b6b;text-align:center">
       ⚠️ בעיית כניסה? 
@@ -1282,6 +1285,14 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       </div>
     </div>
 
+    <!-- INSTAGRAM LINK (shown only if set by admin) -->
+    <div id="auth-instagram-wrap" class="auth-instagram" style="display:none">
+      <a id="auth-instagram-link" href="#" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <span id="auth-instagram-label">עקבו אחרינו באינסטגרם</span>
+      </a>
+    </div>
+
     <!-- REGISTER -->
     <div id="auth-register-form" style="display:none">
       <div class="auth-field">
@@ -1322,7 +1333,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- ═══════ ADMIN PANEL TAB (hidden until admin login) ═══════ -->
 
 <nav class="topnav">
-  <div class="logo"><div class="logo-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="26" height="26" rx="6" fill="url(#fn1)"/><polyline points="3,20 8,13 13,16 23,6" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><circle cx="23" cy="6" r="2.5" fill="#000" opacity=".85"/><line x1="20" y1="5" x2="20" y2="9" stroke="#000" stroke-width="1.8" stroke-linecap="round" opacity=".6"/><defs><linearGradient id="fn1" x1="0" y1="0" x2="26" y2="26" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e676"/><stop offset="100%" stop-color="#00a854"/></linearGradient></defs></svg></div>Fayna Trading <span id="nav-status" style="font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.3px">● live</span></div>
+  <div class="logo"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:block"></div>Fayna Trading <span id="nav-status" style="font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.3px">● live</span></div>
   <div class="nav-tabs">
     <button class="nt active" onclick="sw('overview',this)">סקירה</button>
     <div class="nav-sep"></div>
@@ -1379,6 +1390,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <!-- Avatar circle -->
     <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()" title="פרופיל אישי" style="display:none;background:#00d26a">?</div>
     <button id="pwa-install-btn" onclick="installPWA()" style="display:none;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
+    <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="עקבו אחרינו באינסטגרם" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
     <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#545f72;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
     <!-- Hamburger for mobile -->
     <button class="mob-menu-btn" id="mob-menu-btn" onclick="mobNavOpen()" title="תפריט">☰</button>
@@ -2568,11 +2580,12 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <span>סה"כ: <strong id="adm-user-count" style="color:#e8ecf4">0</strong> משתמשים</span>
       <span id="adm-filter-status" style="color:#a78bfa"></span>
       <div style="margin-right:auto;display:flex;gap:6px">
-        <button class="fb active" data-uf="all"     onclick="setUserFilter('all',this)">הכל</button>
-        <button class="fb"        data-uf="active"  onclick="setUserFilter('active',this)">פעילים</button>
-        <button class="fb"        data-uf="pending" onclick="setUserFilter('pending',this)">ממתינים</button>
-        <button class="fb"        data-uf="blocked" onclick="setUserFilter('blocked',this)">חסומים</button>
-        <button class="fb"        data-uf="pro"     onclick="setUserFilter('pro',this)">Pro+</button>
+        <button class="fb active" data-uf="all"      onclick="setUserFilter('all',this)">הכל</button>
+        <button class="fb"        data-uf="active"   onclick="setUserFilter('active',this)">פעילים</button>
+        <button class="fb"        data-uf="pending"  onclick="setUserFilter('pending',this)">ממתינים</button>
+        <button class="fb"        data-uf="blocked"  onclick="setUserFilter('blocked',this)">חסומים</button>
+        <button class="fb"        data-uf="pro"      onclick="setUserFilter('pro',this)">Pro+</button>
+        <button class="fb"        data-uf="optout"   onclick="setUserFilter('optout',this)" style="color:#ff4d4d;border-color:rgba(255,77,77,.3)">🔕 מסורים (<span id="adm-optout-count">0</span>)</button>
       </div>
     </div>
 
@@ -2715,6 +2728,39 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   <!-- SYSTEM SETTINGS -->
   <div class="admin-section">
     <div class="admin-section-title"><div class="dot" style="background:#00d26a"></div>הגדרות מערכת</div>
+
+    <!-- GUIDE PDF UPLOAD -->
+    <div style="background:rgba(0,210,106,.07);border:1px solid rgba(0,210,106,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;color:#00d26a;margin-bottom:10px;display:flex;align-items:center;gap:7px">📄 מדריך למשתמש — PDF במייל ברוכים הבאים</div>
+      <div style="font-size:11px;color:#8892a4;margin-bottom:10px">העלה קובץ PDF שיישלח אוטומטית לכל משתמש חדש שנרשם.</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label style="padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(0,210,106,.35);color:#00d26a;background:rgba(0,210,106,.12);font-family:inherit;white-space:nowrap">
+          📤 העלה PDF
+          <input type="file" accept=".pdf" style="display:none" onchange="adminUploadGuidePDF(this)">
+        </label>
+        <span id="guide-upload-status" style="font-size:11px;color:#8892a4"></span>
+      </div>
+      <div id="guide-url-display" style="margin-top:10px;display:none">
+        <div style="font-size:10px;color:#545f72;margin-bottom:4px">קישור נוכחי:</div>
+        <a id="guide-url-link" href="#" target="_blank" style="font-size:10px;color:#4da6ff;word-break:break-all;direction:ltr;display:block"></a>
+      </div>
+    </div>
+
+    <!-- INSTAGRAM LINK SETTING -->
+    <div style="background:rgba(193,53,132,.07);border:1px solid rgba(193,53,132,.25);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;color:#e1306c;margin-bottom:8px;display:flex;align-items:center;gap:7px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        קישור אינסטגרם
+      </div>
+      <div style="font-size:11px;color:#8892a4;margin-bottom:10px">הקישור יוצג במסך ההתחברות ובהודעות ברוכים הבאים למשתמשים חדשים.</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="url" id="instagram-url-input" placeholder="https://instagram.com/yourprofile" dir="ltr"
+          style="flex:1;min-width:200px;padding:8px 10px;font-size:12px;border:1px solid rgba(193,53,132,.3);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+        <button onclick="saveInstagramUrl()" style="padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(193,53,132,.4);color:#e1306c;background:rgba(193,53,132,.15);font-family:inherit;white-space:nowrap">💾 שמור</button>
+        <button onclick="clearInstagramUrl()" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:#545f72;background:transparent;font-family:inherit" title="הסר קישור">✕</button>
+      </div>
+      <div id="instagram-save-status" style="font-size:11px;margin-top:7px;min-height:14px"></div>
+    </div>
 
     <!-- ADMIN CREDENTIALS CHANGE -->
     <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
@@ -7173,6 +7219,8 @@ async function loadSettingsFromFirestore() {
         if (d.planFeatures[p]) Object.assign(planFeatures[p], d.planFeatures[p]);
       });
     }
+    if (d.guideUrl) window._guideUrl = d.guideUrl;
+    if (d.instagramUrl) { window._instagramUrl = d.instagramUrl; _applyInstagramUrl(d.instagramUrl); }
     if (EJS_CONFIG.publicKey) emailjs.init(EJS_CONFIG.publicKey);
   } catch(e) { console.warn('loadSettings:', e); }
 }
@@ -7205,7 +7253,10 @@ async function _getUsers() {
   }
 }
 
-const _WELCOME_MSG = `🔥 ברוכים הבאים למערכת של\nFayna Trading 📊\n\nשמחים שהצטרפתם 🙌\nהמערכת נבנתה כדי לעזור לכם לנהל את המסחר בצורה חכמה, מסודרת ומקצועית יותר 🚀\n\n💡 נשמח מאוד לשמוע מכם חוות דעת, רעיונות ושיפורים — המטרה היא להמשיך לפתח את המערכת יחד איתכם.\n\n❓לכל שאלה או עזרה:\n🤖 יש באתר צ׳אט חכם שזמין עבורכם\n👤 או שאפשר לפנות ישירות לדור\n\nמאחלים לכם הצלחה גדולה במסחר 📈\nFayna Trading Team 💙`;
+function _getWelcomeMsg() {
+  const igLine = window._instagramUrl ? `\n📸 עקבו אחרינו באינסטגרם:\n${window._instagramUrl}` : '';
+  return `🔥 ברוכים הבאים למערכת של\nFayna Trading 📊\n\nשמחים שהצטרפתם 🙌\nהמערכת נבנתה כדי לעזור לכם לנהל את המסחר בצורה חכמה, מסודרת ומקצועית יותר 🚀\n\n💡 נשמח מאוד לשמוע מכם חוות דעת, רעיונות ושיפורים — המטרה היא להמשיך לפתח את המערכת יחד איתכם.\n\n❓לכל שאלה או עזרה:\n🤖 יש באתר צ׳אט חכם שזמין עבורכם\n👤 או שאפשר לפנות ישירות לדור${igLine}\n\nמאחלים לכם הצלחה גדולה במסחר 📈\nFayna Trading Team 💙`;
+}
 
 async function _checkWelcomePending() {
   try {
@@ -7227,7 +7278,7 @@ async function _checkWelcomePending() {
 
 async function sendWelcomeWA(users) {
   if (!users || !users.length) { showToast('אין משתמשים ממתינים','info'); return; }
-  const encoded = encodeURIComponent(_WELCOME_MSG);
+  const encoded = encodeURIComponent(_getWelcomeMsg());
   let qi = 0;
   let timer = null;
   // Build modal
@@ -7328,6 +7379,42 @@ function _renderWelcomeBadge(count) {
   `;
 }
 
+async function adminUploadGuidePDF(inp) {
+  const file = inp.files[0];
+  if (!file) return;
+  inp.value = '';
+  const statusEl = document.getElementById('guide-upload-status');
+  const urlDisplay = document.getElementById('guide-url-display');
+  const urlLink    = document.getElementById('guide-url-link');
+  if (statusEl) { statusEl.style.color = '#8892a4'; statusEl.textContent = 'מעלה... 0%'; }
+  try {
+    const storage = firebase.storage();
+    const ref = storage.ref('guides/Fayna_Trading_Guide.pdf');
+    const task = ref.put(file, { contentType: 'application/pdf' });
+    task.on('state_changed',
+      snap => {
+        const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+        if (statusEl) statusEl.textContent = `מעלה... ${pct}%`;
+      },
+      err => {
+        if (statusEl) { statusEl.style.color = '#ff4d4d'; statusEl.textContent = '❌ שגיאה: ' + err.message; }
+      },
+      async () => {
+        const url = await task.snapshot.ref.getDownloadURL();
+        window._guideUrl = url;
+        await db.collection('settings').doc('prefs').set({ guideUrl: url }, { merge: true });
+        if (statusEl) { statusEl.style.color = '#00d26a'; statusEl.textContent = '✅ הועלה בהצלחה!'; }
+        if (urlDisplay) urlDisplay.style.display = '';
+        if (urlLink) { urlLink.href = url; urlLink.textContent = url; }
+        _logAdminAction('העלאת PDF מדריך', file.name);
+        showToast('✅ PDF מדריך הועלה ויישלח בכל מייל ברוכים הבאים', 'success', 4000);
+      }
+    );
+  } catch(e) {
+    if (statusEl) { statusEl.style.color = '#ff4d4d'; statusEl.textContent = '❌ שגיאה: ' + e.message; }
+  }
+}
+
 async function renderAdminPanel() {
   await renderAdminMetrics();
   await refreshAdminUsers();
@@ -7342,6 +7429,54 @@ async function renderAdminPanel() {
   // New admin features
   renderAdminActivityChart();
   renderAdminLogs();
+  refreshLoginLogs();
+  // Show current guide URL if already uploaded
+  if (window._guideUrl) {
+    const d = document.getElementById('guide-url-display');
+    const l = document.getElementById('guide-url-link');
+    if (d) d.style.display = '';
+    if (l) { l.href = window._guideUrl; l.textContent = window._guideUrl; }
+    const s = document.getElementById('guide-upload-status');
+    if (s) { s.style.color = '#00d26a'; s.textContent = '✅ PDF פעיל'; }
+  }
+  // Populate Instagram field
+  const igInput = document.getElementById('instagram-url-input');
+  if (igInput && window._instagramUrl) igInput.value = window._instagramUrl;
+}
+
+function _applyInstagramUrl(url) {
+  const wrap = document.getElementById('auth-instagram-wrap');
+  const link = document.getElementById('auth-instagram-link');
+  if (!wrap || !link) return;
+  if (url) {
+    link.href = url;
+    // Extract handle from URL for label
+    const handle = url.replace(/\/$/, '').split('/').pop();
+    const lbl = document.getElementById('auth-instagram-label');
+    if (lbl && handle) lbl.textContent = '@' + handle;
+    wrap.style.display = '';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+async function saveInstagramUrl() {
+  const input = document.getElementById('instagram-url-input');
+  const status = document.getElementById('instagram-save-status');
+  const url = (input?.value || '').trim();
+  if (url && !url.startsWith('http')) { if(status){status.style.color='#ff4d4d';status.textContent='❌ יש להזין כתובת URL מלאה (עם https://)';} return; }
+  try {
+    await db.collection('settings').doc('prefs').set({ instagramUrl: url }, { merge: true });
+    window._instagramUrl = url;
+    _applyInstagramUrl(url);
+    if (status) { status.style.color = '#00d26a'; status.textContent = url ? '✅ נשמר בהצלחה!' : '✅ הוסר בהצלחה'; setTimeout(()=>{ if(status) status.textContent=''; }, 3000); }
+  } catch(e) { if(status){status.style.color='#ff4d4d';status.textContent='❌ שגיאה: '+e.message;} }
+}
+
+async function clearInstagramUrl() {
+  const input = document.getElementById('instagram-url-input');
+  if (input) input.value = '';
+  await saveInstagramUrl();
 }
 
 // ── FEATURE MATRIX (admin) ──
@@ -7473,27 +7608,6 @@ async function renderAdminMetrics() {
 
 async function renderAdminUsers() { await refreshAdminUsers(); }
 
-async function renderLoginLogs() {
-  const logsEl=document.getElementById('admin-login-logs');
-  if (!logsEl) return;
-  try {
-    const snap=await db.collection('loginLogs').orderBy('timestamp','desc').limit(50).get();
-    if (snap.empty) { logsEl.innerHTML='<div style="color:#545f72;text-align:center;padding:20px">אין לוגים עדיין</div>'; return; }
-    const icons={login:'🟢',register:'✨',logout:'🔴'};
-    const labels={login:'כניסה',register:'הרשמה',logout:'יציאה'};
-    logsEl.innerHTML=snap.docs.map(d=>{
-      const l=d.data(), ts=l.timestamp?.toDate?l.timestamp.toDate():new Date();
-      return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px">
-        <span style="flex-shrink:0">${icons[l.action]||'•'}</span>
-        <span style="color:#e8ecf4;min-width:110px;flex-shrink:0">${l.name||'—'}</span>
-        <span style="color:#4da6ff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.email}</span>
-        <span style="color:#545f72;min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
-        <span style="color:#545f72;min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
-      </div>`;
-    }).join('');
-  } catch(e) { logsEl.innerHTML='<div style="color:#ff4d4d;padding:10px">שגיאה — בדוק הרשאות Firestore</div>'; }
-}
-
 // ──────────────────────────────────────────────────────────────
 //  ADMIN PANEL — ENHANCED USER MANAGEMENT
 // ──────────────────────────────────────────────────────────────
@@ -7585,6 +7699,12 @@ function _renderUsersTable() {
   if (_adminUserFilter === 'pending') users = users.filter(u => u.status === 'pending');
   if (_adminUserFilter === 'blocked') users = users.filter(u => u.status === 'blocked');
   if (_adminUserFilter === 'pro')     users = users.filter(u => u.plan === 'pro' || u.plan === 'lifetime');
+  if (_adminUserFilter === 'optout')  users = users.filter(u => u.emailOptOut === true);
+
+  // Update opt-out count badge
+  const optOutCount = _adminUsersCache.filter(u => u.emailOptOut === true).length;
+  const optOutEl = document.getElementById('adm-optout-count');
+  if (optOutEl) optOutEl.textContent = optOutCount;
 
   users.sort((a, b) => {
     let va = a[_adminSortField], vb = b[_adminSortField];
@@ -7638,6 +7758,7 @@ function _renderUsersTable() {
           <option value="lifetime" ${(u.plan||'free')==='lifetime'?'selected':''}>Lifetime</option>
         </select>
         <button onclick="adminQuickReset('${u.email}')" title="איפוס סיסמה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:rgba(240,180,41,.12);color:#f0b429;font-family:inherit">🔑</button>
+        ${u.emailOptOut ? `<button onclick="adminResubscribe('${u.uid}')" title="החזר לרשימת תפוצה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(255,77,77,.3);background:rgba(255,77,77,.1);color:#ff4d4d;font-family:inherit">🔕</button>` : ''}
         <button onclick="adminQuickBlock('${u.uid}','${u.status||'active'}')" title="${isBlocked?'בטל חסימה':'חסום'}" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:${isBlocked?'rgba(0,210,106,.12)':'rgba(255,77,77,.12)'};color:${isBlocked?'#00d26a':'#ff4d4d'};font-family:inherit">${isBlocked?'✅':'🚫'}</button>
         <button onclick="openUserDetail('${u.uid}')" title="פרטים נוספים" style="padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8892a4;font-family:inherit">⋯</button>
       </td>
@@ -7802,6 +7923,7 @@ async function udpSavePlan() {
   if (!_udpCurrentUid) return;
   const plan = document.getElementById('udp-plan-sel')?.value || 'pro';
   await db.collection('users').doc(_udpCurrentUid).update({ plan });
+  _logAdminAction('שינוי חבילה', `${_udpCurrentUser?.email||_udpCurrentUid} → ${plan}`);
   _udpCurrentUser.plan = plan;
   const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
   if (idx >= 0) _adminUsersCache[idx].plan = plan;
@@ -7817,7 +7939,9 @@ async function adminQuickPlan(uid, plan, selectEl) {
   try {
     await db.collection('users').doc(uid).update({ plan });
     const idx = _adminUsersCache.findIndex(u => u.uid === uid);
+    const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
     if (idx >= 0) _adminUsersCache[idx].plan = plan;
+    _logAdminAction('שינוי חבילה', `${uname} → ${plan}`);
     renderAdminMetrics();
     showToast(`חבילה עודכנה ל-${plan} ✅`, 'success');
   } catch(e) {
@@ -7857,6 +7981,7 @@ async function udpResetPassword() {
   const msgEl = document.getElementById('udp-action-msg');
   try {
     await auth.sendPasswordResetEmail(email);
+    _logAdminAction('איפוס סיסמה', email);
     if (msgEl) { msgEl.style.color='#00d26a'; msgEl.textContent='✅ מייל איפוס נשלח בהצלחה'; }
     showToast('מייל איפוס נשלח ✅','success');
   } catch(e) {
@@ -7870,6 +7995,7 @@ async function udpToggleBlock() {
   const label = newStatus === 'blocked' ? `לחסום את ${_udpCurrentUser.name}?` : `לבטל חסימת ${_udpCurrentUser.name}?`;
   if (!confirm(label)) return;
   await db.collection('users').doc(_udpCurrentUid).update({ status: newStatus });
+  _logAdminAction(newStatus === 'blocked' ? 'חסימת משתמש' : 'ביטול חסימה', _udpCurrentUser?.email||_udpCurrentUid);
   _udpCurrentUser.status = newStatus;
   const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
   if (idx >= 0) _adminUsersCache[idx].status = newStatus;
@@ -7906,7 +8032,9 @@ function udpCopyEmail() {
 async function udpDeleteUser() {
   if (!_udpCurrentUid || !_udpCurrentUser) return;
   if (!confirm(`מחק את ${_udpCurrentUser.name} (${_udpCurrentUser.email})?\nהנתונים יימחקו לצמיתות.`)) return;
+  const deletedEmail = _udpCurrentUser.email;
   await db.collection('users').doc(_udpCurrentUid).delete();
+  _logAdminAction('מחיקת משתמש', deletedEmail);
   _adminUsersCache = _adminUsersCache.filter(u => u.uid !== _udpCurrentUid);
   closeUserDetail();
   _renderUsersTable(); renderAdminMetrics();
@@ -7923,10 +8051,21 @@ async function udpSaveNote() {
   if (msgEl) { msgEl.style.color='#00d26a'; msgEl.textContent='✅ הערה נשמרה'; setTimeout(()=>{msgEl.textContent='';},2500); }
 }
 
+async function adminResubscribe(uid) {
+  if (!confirm('להחזיר משתמש זה לרשימת התפוצה?')) return;
+  await db.collection('users').doc(uid).update({ emailOptOut: false });
+  const idx = _adminUsersCache.findIndex(u => u.uid === uid);
+  const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
+  if (idx >= 0) _adminUsersCache[idx].emailOptOut = false;
+  _logAdminAction('החזרה לתפוצה', uname);
+  _renderUsersTable();
+  showToast('✅ המשתמש הוחזר לרשימת התפוצה', 'success');
+}
+
 function adminQuickReset(email) {
   if (!confirm(`שלח מייל איפוס סיסמה אל:\n${email}?`)) return;
   auth.sendPasswordResetEmail(email)
-    .then(() => showToast('מייל איפוס נשלח ✅','success'))
+    .then(() => { _logAdminAction('איפוס סיסמה', email); showToast('מייל איפוס נשלח ✅','success'); })
     .catch(e => showToast('שגיאה: '+e.message,'error'));
 }
 
@@ -7936,7 +8075,9 @@ async function adminQuickBlock(uid, currentStatus) {
   if (!confirm(msg)) return;
   await db.collection('users').doc(uid).update({ status: newStatus });
   const idx = _adminUsersCache.findIndex(u => u.uid === uid);
+  const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
   if (idx >= 0) _adminUsersCache[idx].status = newStatus;
+  _logAdminAction(newStatus === 'blocked' ? 'חסימת משתמש' : 'ביטול חסימה', uname);
   _renderUsersTable();
   showToast(newStatus === 'blocked' ? '🚫 משתמש נחסם' : '✅ חסימה בוטלה', newStatus === 'blocked' ? 'error' : 'success');
 }
@@ -7976,6 +8117,7 @@ async function adminInviteUser() {
   if (!email.includes('@')){ if(msg){msg.style.color='#ff4d4d';msg.textContent='נא להזין כתובת מייל תקינה';} return; }
   if (!phone)             { if(msg){msg.style.color='#ff4d4d';msg.textContent='נא להזין מספר טלפון';} return; }
   await db.collection('invites').doc(email).set({ name, email, phone, plan, invitedAt:firebase.firestore.FieldValue.serverTimestamp() });
+  _logAdminAction('הזמנת משתמש', `${name} (${email}) — חבילת ${plan}`);
   if(msg){msg.style.color='#00d26a';msg.textContent=`✅ ${name} הוזמן! כשירשם יקבל חבילת ${plan} אוטומטית`;}
   document.getElementById('inv-name').value='';
   document.getElementById('inv-email').value='';
@@ -8056,14 +8198,22 @@ async function saveAdminBanner() {
 }
 
 // ── Branded Email HTML builder ────────────────────────────────
-function _buildEmailHTML(userName, msg) {
+function _buildEmailHTML(userName, msg, uid) {
   const yr = new Date().getFullYear();
+  const base = window.location.origin + window.location.pathname;
+  const unsubUrl = uid ? `${base}?unsub=${uid}` : '';
+  const unsubBlock = unsubUrl
+    ? `<div style="margin-top:22px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center">
+        <p style="font-size:11px;color:#a0aec0;margin:0 0 6px">לא רוצה לקבל עדכונים? <a href="${unsubUrl}" style="color:#a0aec0;text-decoration:underline">הסר אותי מרשימת התפוצה</a></p>
+        <p style="font-size:10px;color:#c8cdd4;margin:0">ניתן גם להשיב למייל זה עם המילה <strong>הסר</strong></p>
+       </div>`
+    : '';
   return `<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#f0f2f5;font-family:Arial,'Arial Hebrew',sans-serif;direction:rtl}.w{max-width:600px;margin:28px auto}.c{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,.13)}.hd{background:linear-gradient(135deg,#070b12 0%,#162035 55%,#0d1626 100%);padding:38px 44px;text-align:center}.lg{font-size:30px;font-weight:800;color:#00d26a;letter-spacing:-.5px;margin-bottom:6px}.lg span{color:#fff}.tg{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:3.5px;text-transform:uppercase}.bar{height:3px;background:linear-gradient(90deg,#00d26a,#4da6ff,#a78bfa)}.bd{padding:36px 44px}.gr{font-size:16px;font-weight:600;color:#1a202c;margin-bottom:18px}.mb{background:#f7fafc;border-right:4px solid #00d26a;border-radius:0 8px 8px 0;padding:18px 22px;margin:18px 0;font-size:15px;line-height:1.8;color:#2d3748;white-space:pre-wrap}.fi{font-size:11px;color:#a0aec0;margin-top:18px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center}.ft{background:#070b12;padding:28px 44px;text-align:center}.fn{font-size:15px;font-weight:700;color:#00d26a;margin-bottom:3px}.fs{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin-bottom:14px}.fc{font-size:10px;color:rgba(255,255,255,.18)}</style>
 </head><body><div class="w"><div class="c">
 <div class="hd"><div class="lg">🌙 Fayna<span> Trading</span></div><div class="tg">Professional Trading Journal</div></div>
 <div class="bar"></div>
-<div class="bd"><div class="gr">שלום ${userName},</div><div class="mb">${msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div><div class="fi">הודעה זו נשלחה ממערכת Fayna Trading</div></div>
+<div class="bd"><div class="gr">שלום ${userName},</div><div class="mb">${msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>${unsubBlock}</div>
 <div class="ft"><div class="fn">Fayna Trading</div><div class="fs">PROFESSIONAL TRADING JOURNAL &amp; ANALYTICS</div><div class="fc">© ${yr} Fayna Trading · כל הזכויות שמורות</div></div>
 </div></div></body></html>`;
 }
@@ -8079,7 +8229,7 @@ async function sendNotifEmail(msg) {
   const prog = document.getElementById('adm-notif-progress');
   const res  = await _getUsers();
   const all  = Array.isArray(res) ? res : [];
-  const targets = all.filter(u => u.email && !u.isAdmin && u.status !== 'suspended');
+  const targets = all.filter(u => u.email && !u.isAdmin && u.status !== 'suspended' && !u.emailOptOut);
   if (!targets.length) { showToast('אין משתמשים פעילים עם מייל','warn'); return; }
 
   // No EmailJS → show preview modal with mailto links
@@ -8098,7 +8248,7 @@ async function sendNotifEmail(msg) {
         user_name:    u.name || 'משתמש יקר',
         subject:      '📢 הודעה מ-Fayna Trading',
         message:      msg,
-        html_message: _buildEmailHTML(u.name || 'משתמש יקר', msg),
+        html_message: _buildEmailHTML(u.name || 'משתמש יקר', msg, u.uid),
         from_name:    'Fayna Trading',
       });
       sent++;
@@ -8113,8 +8263,10 @@ async function sendNotifEmail(msg) {
 function _showEmailBroadcastModal(msg, targets) {
   const subj = encodeURIComponent('📢 הודעה מ-Fayna Trading');
   const body = encodeURIComponent(`שלום,\n\n${msg}\n\n---\nFayna Trading — Professional Trading Journal`);
+  const base = window.location.origin + window.location.pathname;
   const rows = targets.map(u => {
-    const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading`)}`;
+    const unsubLine = u.uid ? `\n\n---\nלהסרה מרשימת התפוצה: ${base}?unsub=${u.uid}` : '';
+    const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name||'—'}</div><div style="font-size:10px;color:#4da6ff;direction:ltr">${u.email}</div></div>
       <a href="${ml}" style="flex-shrink:0;padding:5px 12px;background:rgba(77,166,255,.15);color:#4da6ff;border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(77,166,255,.3);white-space:nowrap">📧 פתח מייל</a>
@@ -8427,6 +8579,54 @@ async function sendRegistrationEmail(user) {
       })
     });
   } catch(e) { console.warn('Email notification failed:', e); }
+
+  // Welcome email to the new user
+  const guideUrl = window._guideUrl || '';
+  const guideBtn = guideUrl
+    ? `<div style="text-align:center;margin:24px 0">
+        <a href="${guideUrl}" target="_blank"
+           style="display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#00d26a,#00a854);color:#000;font-weight:700;font-size:14px;border-radius:9px;text-decoration:none">
+          📄 הורד מדריך למשתמש PDF
+        </a>
+        <div style="font-size:11px;color:#545f72;margin-top:8px">המדריך מסביר איך לייבא עסקאות, לנהל הוצאות ולהשתמש במערכת</div>
+      </div>`
+    : '';
+  const welcomeHtml = `
+<div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#0a0d12;color:#e8ecf4;border-radius:12px;overflow:hidden;border:1px solid #252d40">
+  <div style="background:linear-gradient(135deg,#00d26a,#00a854);padding:24px 28px">
+    <div style="font-size:22px;font-weight:700;color:#000">📈 Fayna Trading</div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.7);margin-top:4px">ברוך הבא לפלטפורמה!</div>
+  </div>
+  <div style="padding:28px">
+    <p style="font-size:16px;margin:0 0 16px">היי ${user.name} 👋</p>
+    <p style="margin:0 0 16px;line-height:1.7">ברוך הבא ל-<strong>Fayna Trading Journal</strong> — המקום שלך לתעד, לנתח ולשפר את המסחר שלך.</p>
+    <p style="margin:0 0 4px;line-height:1.7">אתה מוזמן להתחיל להוסיף עסקאות, לעקוב אחרי הביצועים שלך ולגדול כסוחר 📊</p>
+    ${guideBtn}
+    ${window._instagramUrl ? `<div style="text-align:center;margin:20px 0">
+      <a href="${window._instagramUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:20px;border:1px solid rgba(193,53,132,.4);background:rgba(193,53,132,.1);color:#e1306c;text-decoration:none;font-size:13px;font-weight:600">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        עקבו אחרינו באינסטגרם
+      </a>
+    </div>` : ''}
+    <div style="background:#161b27;border-radius:8px;padding:16px;font-size:13px;color:#8892a4;text-align:center">
+      לשאלות ועזרה — תמיד אפשר לפנות דרך הצ'אט באפליקציה.<br>
+      <span style="color:#00d26a;font-weight:600">Fayna Trading</span>
+    </div>
+  </div>
+</div>`;
+  try {
+    await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        to: user.email,
+        subject: `ברוך הבא ל-Fayna Trading, ${user.name}! 🚀`,
+        from_name: 'Fayna Trading',
+        html: welcomeHtml
+      })
+    });
+  } catch(e) { console.warn('Welcome email failed:', e); }
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -8460,9 +8660,87 @@ function emergencyReset() {
 }
 
 // ──────────────────────────────────────────────────────────────
+//  UNSUBSCRIBE HANDLER  (?unsub=UID)
+// ──────────────────────────────────────────────────────────────
+async function _handleUnsubParam() {
+  const uid = new URLSearchParams(window.location.search).get('unsub');
+  if (!uid) return;
+
+  // Clean URL immediately so refresh doesn't retrigger
+  history.replaceState(null, '', window.location.pathname);
+
+  // Show confirmation screen before doing anything
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:#0a0d12;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:#111520;border:1px solid #252d40;border-radius:16px;max-width:420px;width:100%;padding:36px 32px;text-align:center;direction:rtl">
+      <div style="font-size:36px;margin-bottom:14px">📧</div>
+      <div style="font-size:18px;font-weight:700;color:#e8ecf4;margin-bottom:10px">הסרה מרשימת התפוצה</div>
+      <div style="font-size:13px;color:#8892a4;line-height:1.7;margin-bottom:28px">
+        לאחר האישור לא תקבל יותר הודעות ועדכונים מ-Fayna Trading.<br>
+        תוכל לפנות לתמיכה בכל עת לביטול.
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button id="_unsub-confirm" style="padding:11px 28px;background:#ff4d4d;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✓ אשר הסרה</button>
+        <button id="_unsub-cancel"  style="padding:11px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#8892a4;font-size:14px;cursor:pointer;font-family:inherit">ביטול</button>
+      </div>
+      <div id="_unsub-msg" style="margin-top:16px;font-size:12px;min-height:18px"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('_unsub-cancel').onclick = () => overlay.remove();
+
+  document.getElementById('_unsub-confirm').onclick = async () => {
+    const btn = document.getElementById('_unsub-confirm');
+    const msgEl = document.getElementById('_unsub-msg');
+    btn.disabled = true; btn.textContent = 'מעבד...';
+    try {
+      // Get user info for admin notification
+      const snap = await db.collection('users').doc(uid).get();
+      const userData = snap.exists ? snap.data() : {};
+
+      // Mark opted-out in Firestore
+      await db.collection('users').doc(uid).update({ emailOptOut: true });
+
+      // Notify admin via Web3Forms
+      const WEB3FORMS_KEY = '8ef4276d-2519-4d4f-8a84-b84cd6f46419';
+      const dateStr = new Date().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'});
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `🔕 הסרה מרשימת תפוצה: ${userData.name || uid}`,
+          from_name: 'Fayna Trading — Unsubscribe',
+          html: `<div dir="rtl" style="font-family:Arial,sans-serif;padding:20px">
+            <h3 style="color:#ff4d4d">🔕 משתמש הסיר את עצמו מרשימת התפוצה</h3>
+            <table style="width:100%;border-collapse:collapse;margin-top:14px">
+              <tr><td style="padding:8px;color:#666;width:80px">שם</td><td style="padding:8px;font-weight:600">${userData.name||'—'}</td></tr>
+              <tr><td style="padding:8px;color:#666">אימייל</td><td style="padding:8px"><a href="mailto:${userData.email||''}">${userData.email||'—'}</a></td></tr>
+              <tr><td style="padding:8px;color:#666">טלפון</td><td style="padding:8px">${userData.phone||'—'}</td></tr>
+              <tr><td style="padding:8px;color:#666">תאריך</td><td style="padding:8px">${dateStr}</td></tr>
+            </table>
+          </div>`
+        })
+      }).catch(()=>{});
+
+      // Show success
+      overlay.querySelector('div > div').innerHTML = `
+        <div style="font-size:36px;margin-bottom:14px">✅</div>
+        <div style="font-size:18px;font-weight:700;color:#00d26a;margin-bottom:10px">הוסרת בהצלחה</div>
+        <div style="font-size:13px;color:#8892a4;line-height:1.7;margin-bottom:24px">לא תקבל יותר הודעות שיווקיות ממנו.</div>
+        <button onclick="document.querySelector('[id^=_unsub]')?.closest('div[style*=fixed]')?.remove()" style="padding:10px 28px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#e8ecf4;font-size:13px;cursor:pointer;font-family:inherit">סגור</button>`;
+    } catch(e) {
+      if (msgEl) { msgEl.style.color='#ff4d4d'; msgEl.textContent='שגיאה: ' + e.message; }
+      btn.disabled = false; btn.textContent = '✓ אשר הסרה';
+    }
+  };
+}
+
+// ──────────────────────────────────────────────────────────────
 //  BOOT
 // ──────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{ try{initAuth();}catch(e){console.error(e);} _initRememberMe(); });
+document.addEventListener('DOMContentLoaded',()=>{ try{initAuth();}catch(e){console.error(e);} _initRememberMe(); _handleUnsubParam(); window._instagramUrl='https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4'; _applyInstagramUrl(window._instagramUrl); });
 if (document.readyState==='complete') { setTimeout(()=>{ try{initAuth();}catch(e){} _initRememberMe(); },50); }
 
 
