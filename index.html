@@ -641,12 +641,13 @@ body::before {
   background: linear-gradient(145deg, rgba(22,27,39,.98), rgba(16,20,30,.99));
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 16px;
-  padding: 44px 40px;
+  padding: 0 0 36px;
   width: 360px;
   max-width: 96vw;
   box-shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 80px rgba(0,210,106,.05);
   direction: rtl;
   text-align: center;
+  overflow: hidden;
 }
 .wb-avatar {
   width: 72px; height: 72px; border-radius: 50%;
@@ -11275,17 +11276,22 @@ function _sessionWarning() {
 <!-- ═══ WELCOME BACK SCREEN ═══ -->
 <div id="welcome-back-screen">
   <div class="welcome-back-box">
-    <!-- Logo -->
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-bottom:28px">
-      <img src="fayna_logo.jpg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.1)">
+    <!-- Cover Banner -->
+    <div style="width:100%;height:150px;overflow:hidden;border-radius:16px 16px 0 0;position:relative;margin-bottom:0">
+      <img src="fayna_logo.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block">
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,.05) 40%, rgba(16,20,30,.85) 100%)"></div>
     </div>
-    <!-- Avatar -->
-    <div class="wb-avatar" id="wb-avatar">?</div>
+    <!-- Avatar overlapping the cover -->
+    <div style="margin-top:-34px;margin-bottom:10px;display:flex;justify-content:center">
+      <div class="wb-avatar" id="wb-avatar" style="margin:0;border:3px solid rgba(16,20,30,1)">?</div>
+    </div>
     <div class="wb-greeting">ברוך השב 👋</div>
     <div class="wb-name" id="wb-name">—</div>
     <div class="wb-email" id="wb-email">—</div>
     <!-- Enter button -->
-    <button class="wb-enter-btn" onclick="_wbEnter()">🚀 כניסה למערכת</button>
+    <div style="padding:0 32px">
+      <button class="wb-enter-btn" onclick="_wbEnter()">🚀 כניסה למערכת</button>
+    </div>
     <!-- Switch user -->
     <button class="wb-switch" onclick="_wbSwitch()">התחבר עם משתמש אחר</button>
   </div>
