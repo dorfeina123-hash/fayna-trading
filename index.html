@@ -10529,11 +10529,87 @@ function _showWelcomeBack() {
     }
   }
 
+  // Time-based greeting
+  const greetEl = document.getElementById('wb-greeting-text');
+  if (greetEl) greetEl.textContent = _getGreeting() + ' 👋';
+
+  // Restore saved cover position
+  _wbCoverApplySaved();
+
   // Hide auth screen, show welcome screen
   const authScr = document.getElementById('auth-screen');
   if (authScr) authScr.style.display = 'none';
   scr.style.display = 'flex';
 }
+
+// ── Cover drag-to-reposition ──────────────────────────
+function _wbCoverApplySaved() {
+  const img = document.getElementById('wb-cover-img');
+  if (!img) return;
+  const saved = JSON.parse(localStorage.getItem('wb_cover_pos') || '{"x":50,"y":50}');
+  img.style.left = saved.x + '%';
+  img.style.top  = saved.y + '%';
+}
+
+(function _initWbCoverDrag() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const wrap = document.getElementById('wb-cover-wrap');
+    const img  = document.getElementById('wb-cover-img');
+    const hint = document.getElementById('wb-cover-hint');
+    if (!wrap || !img) return;
+
+    // Restore saved position
+    const saved = JSON.parse(localStorage.getItem('wb_cover_pos') || '{"x":50,"y":50}');
+    let posX = saved.x, posY = saved.y;
+
+    function applyPos() {
+      img.style.left = posX + '%';
+      img.style.top  = posY + '%';
+    }
+    applyPos();
+
+    let dragging = false, startMX, startMY, startPX, startPY;
+    const W = () => wrap.offsetWidth, H = () => wrap.offsetHeight;
+
+    function onStart(mx, my) {
+      dragging = true;
+      startMX = mx; startMY = my;
+      startPX = posX; startPY = posY;
+      wrap.style.cursor = 'grabbing';
+      if (hint) hint.style.opacity = '0';
+    }
+    function onMove(mx, my) {
+      if (!dragging) return;
+      // Convert pixel delta to percentage of container
+      const dx = ((mx - startMX) / W()) * 100;
+      const dy = ((my - startMY) / H()) * 100;
+      posX = Math.max(10, Math.min(90, startPX - dx)); // invert X for natural feel
+      posY = Math.max(10, Math.min(90, startPY - dy));
+      applyPos();
+    }
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      wrap.style.cursor = 'grab';
+      localStorage.setItem('wb_cover_pos', JSON.stringify({x: posX, y: posY}));
+      if (hint) { hint.style.opacity = '.5'; setTimeout(() => { hint.style.opacity = '0'; }, 1500); }
+    }
+
+    // Mouse
+    wrap.addEventListener('mousedown',  e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup',   () => onEnd());
+
+    // Touch
+    wrap.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, {passive:true});
+    window.addEventListener('touchmove', e => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive:true});
+    window.addEventListener('touchend',  () => onEnd());
+
+    // Show hint on hover
+    wrap.addEventListener('mouseenter', () => { if (hint) hint.style.opacity = '1'; });
+    wrap.addEventListener('mouseleave', () => { if (!dragging && hint) hint.style.opacity = '0'; });
+  });
+})();
 
 function _wbEnter() {
   const scr = document.getElementById('welcome-back-screen');
@@ -11276,16 +11352,18 @@ function _sessionWarning() {
 <!-- ═══ WELCOME BACK SCREEN ═══ -->
 <div id="welcome-back-screen">
   <div class="welcome-back-box">
-    <!-- Cover Banner -->
-    <div style="width:100%;height:120px;overflow:hidden;border-radius:16px 16px 0 0;position:relative;background:linear-gradient(135deg,#0d1520,#111a2e)">
-      <img src="fayna_logo.jpg" style="height:130%;width:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);object-fit:contain;display:block;opacity:.95">
-      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,13,18,.0) 0%, rgba(10,13,18,.65) 100%)"></div>
+    <!-- Cover Banner — draggable -->
+    <div id="wb-cover-wrap" style="width:100%;height:120px;overflow:hidden;border-radius:16px 16px 0 0;position:relative;background:linear-gradient(135deg,#0d1520,#111a2e);cursor:grab;user-select:none">
+      <img id="wb-cover-img" src="fayna_logo.jpg" style="height:130%;width:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);object-fit:contain;display:block;opacity:.95;pointer-events:none">
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,13,18,0) 0%,rgba(10,13,18,.65) 100%);pointer-events:none"></div>
+      <!-- Edit hint -->
+      <div id="wb-cover-hint" style="position:absolute;top:6px;left:8px;font-size:10px;color:rgba(255,255,255,.5);background:rgba(0,0,0,.4);border-radius:6px;padding:2px 7px;pointer-events:none;transition:opacity .3s">✥ גרור להזזה</div>
     </div>
     <!-- User row: avatar + greeting side by side -->
     <div style="display:flex;align-items:center;gap:14px;padding:18px 24px 4px;direction:rtl">
       <div class="wb-avatar" id="wb-avatar" style="margin:0;flex-shrink:0;width:58px;height:58px;font-size:22px;border:2px solid rgba(0,210,106,.4)">?</div>
       <div style="text-align:right;min-width:0">
-        <div class="wb-greeting" style="margin-bottom:2px">ברוך השב 👋</div>
+        <div class="wb-greeting" id="wb-greeting-text" style="margin-bottom:2px">—</div>
         <div class="wb-name" id="wb-name" style="margin-bottom:2px;font-size:20px">—</div>
         <div class="wb-email" id="wb-email" style="margin-bottom:0;font-size:11px">—</div>
       </div>
