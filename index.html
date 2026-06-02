@@ -6900,7 +6900,19 @@ async function _ffFetch(week) {
   return [];
 }
 
-async function _fetchEcalEvents() {
+async function _fetchEcalEvents(forceRefresh) {
+  const todayKey = new Date().toISOString().slice(0, 10); // e.g. "2026-06-02"
+  // Use localStorage cache — valid only for today
+  if (!forceRefresh) {
+    try {
+      const cached = JSON.parse(localStorage.getItem('fayna_ecal_cache') || '{}');
+      if (cached.date === todayKey && Array.isArray(cached.events) && cached.events.length) {
+        _ecalCache = cached.events;
+        return true;
+      }
+    } catch(e) {}
+  }
+  // Fetch fresh data
   const [tw, nw] = await Promise.allSettled([_ffFetch('thisweek'), _ffFetch('nextweek')]);
   const all = [...(tw.value||[]), ...(nw.value||[])];
   if (!all.length) return false;
@@ -6911,6 +6923,10 @@ async function _fetchEcalEvents() {
     if (seen.has(k)) return false;
     seen.add(k); return true;
   });
+  // Save to localStorage with today's date key
+  try {
+    localStorage.setItem('fayna_ecal_cache', JSON.stringify({ date: todayKey, events: _ecalCache }));
+  } catch(e) {}
   return true;
 }
 
@@ -6959,10 +6975,13 @@ function _showTodayEcalBriefing(todayEvents) {
       <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:#545f72;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
     </div>
     ${rows}
-    <div style="font-size:10px;color:#545f72;margin-top:8px">התראה תופיע 5 דקות לפני כל הודעה</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <div style="font-size:10px;color:#545f72">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
+      <button onclick="ecalForceRefresh()" style="background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.25);color:#f0b429;border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
+    </div>
   </div>`;
   document.body.appendChild(toast);
-  setTimeout(() => toast?.remove(), 15_000);
+  setTimeout(() => toast?.remove(), 20_000);
 }
 
 function _showEcalAlertBar(title, country, evDate, minsLeft) {
@@ -7017,12 +7036,35 @@ function _scheduleMidnightRefresh() {
 
 async function _startEcalAlerts() {
   const ok = await _fetchEcalEvents();
-  if (!ok) return;
+  if (!ok) { setTimeout(_startEcalAlerts, 60_000); return; } // retry in 1 min if failed
   const todayEvents = _scheduleTodayAlerts();
   _showTodayEcalBriefing(todayEvents);
   _scheduleMidnightRefresh();
+  _scheduleHourlyRefresh();
   if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
     Notification.requestPermission().catch(()=>{});
+  }
+}
+
+let _ecalHourlyTimer = null;
+function _scheduleHourlyRefresh() {
+  if (_ecalHourlyTimer) clearInterval(_ecalHourlyTimer);
+  _ecalHourlyTimer = setInterval(async () => {
+    // Force-refresh every hour (new events/times may have been added)
+    const ok = await _fetchEcalEvents(true);
+    if (ok) { _scheduleTodayAlerts(); renderNextEventsWidget?.(); }
+  }, 60 * 60 * 1000);
+}
+
+async function ecalForceRefresh() {
+  showToast('🔄 מרענן לוח כלכלי...');
+  const ok = await _fetchEcalEvents(true);
+  if (ok) {
+    _scheduleTodayAlerts();
+    renderNextEventsWidget?.();
+    showToast('✅ לוח כלכלי עודכן!');
+  } else {
+    showToast('❌ לא ניתן לטעון — בדוק חיבור');
   }
 }
 
@@ -10371,15 +10413,24 @@ function renderNextEventsWidget() {
   const el = document.getElementById('next-events-widget');
   if (!el) return;
   const now  = Date.now();
-  const evs  = (_ecalCache || []).filter(e => new Date(e.date).getTime() > now)
-                                  .sort((a,b) => new Date(a.date)-new Date(b.date))
-                                  .slice(0,3);
-  if (!evs.length) { el.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:4px">אין אירועים קרובים היום</div>'; return; }
-  el.innerHTML = evs.map(ev => {
-    const mins = Math.round((new Date(ev.date)-now)/60000);
-    const timeStr = mins < 60 ? `עוד ${mins} דק'` : `עוד ${Math.round(mins/60)}ש'`;
-    return `<div class="next-event-item"><span class="next-event-time">${timeStr}</span><span class="next-event-title">${ev.title||ev.country||''}</span></div>`;
-  }).join('');
+  const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
+  const evs  = (_ecalCache || [])
+    .filter(e => { const d = new Date(e.date).getTime(); return d > now && d <= todayEnd.getTime(); })
+    .sort((a,b) => new Date(a.date)-new Date(b.date))
+    .slice(0,4);
+  const refreshBtn = `<button onclick="ecalForceRefresh()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:10px;padding:0;float:left" title="רענן">🔄</button>`;
+  if (!evs.length) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--t3);padding:4px">אין אירועים קרובים היום ${refreshBtn}</div>`;
+    return;
+  }
+  el.innerHTML = `<div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:3px;display:flex;justify-content:space-between">🗓 הודעות ⭐⭐⭐ היום ${refreshBtn}</div>` +
+    evs.map(ev => {
+      const mins = Math.round((new Date(ev.date)-now)/60000);
+      const h = Math.floor(mins/60), m = mins%60;
+      const timeStr = mins < 0 ? 'כעת' : mins < 60 ? `עוד ${mins} דק'` : `עוד ${h}ש' ${m>0?m+"דק'":''}`;
+      const clr = mins <= 10 ? '#ff4d4d' : mins <= 30 ? '#f0b429' : 'var(--t3)';
+      return `<div class="next-event-item"><span class="next-event-time" style="color:${clr}">${timeStr}</span><span class="next-event-title">${ev.title||''}</span></div>`;
+    }).join('');
 }
 
 // ════════════════════════════════════════════════════
