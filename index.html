@@ -13,15 +13,15 @@
 <link rel="apple-touch-icon" href="fayna_logo.jpg">
 <title>Fayna Trading</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-:root{--bg0:#060d1e;--bg1:#0b1530;--bg2:#101d3d;--bg3:#162548;--bg4:#1d2f58;
---border:rgba(0,160,210,0.09);--border2:rgba(0,160,210,0.18);
---t1:#d8eaff;--t2:#6a8fbb;--t3:#3d5878;
---gr:#2ec87a;--gd:rgba(46,200,122,.12);--re:#ff4d4d;--rd:rgba(255,77,77,.12);
---go:#c8a030;--yd:rgba(200,160,48,.12);--bl:#00bcd4;--bd:rgba(0,188,212,.10);
---pu:#a78bfa;--pd:rgba(167,139,250,.10);--ac:#00bcd4}
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{--bg0:#111318;--bg1:#181c24;--bg2:#1e2330;--bg3:#252b3a;--bg4:#2d3444;
+--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+--t1:#e2e5ea;--t2:#8a96a8;--t3:#56606f;
+--gr:#27a065;--gd:rgba(39,160,101,.11);--re:#e04545;--rd:rgba(224,69,69,.11);
+--go:#b8902a;--yd:rgba(184,144,42,.11);--bl:#4a8fa8;--bd:rgba(74,143,168,.10);
+--pu:#9d85e8;--pd:rgba(157,133,232,.10);--ac:#4a8fa8}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:radial-gradient(ellipse at 50% 0%, #0d1d40 0%, #060d1e 50%);color:var(--t1);font-family:'IBM Plex Sans Hebrew',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
 .topnav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:16px;height:52px;position:sticky;top:0;z-index:200}
 .logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;white-space:nowrap;color:var(--t1)}
 .logo-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -50,14 +50,14 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1d40 0%, #060d1e 50%);colo
 .tbl tbody tr:hover td{background:var(--bg3)}
 .bdg{display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;font-size:10px;font-weight:500}
 .bx{background:var(--rd);color:var(--re);border:1px solid rgba(255,77,77,.2)}
-.bi{background:var(--gd);color:var(--gr);border:1px solid rgba(46,200,122,.2)}
+.bi{background:var(--gd);color:var(--gr);border:1px solid rgba(39,160,101,.2)}
 .bw{background:var(--pd);color:var(--pu);border:1px solid rgba(167,139,250,.2)}
 .cat{display:inline-flex;align-items:center;padding:2px 8px;border-radius:14px;font-size:10px;font-weight:500;cursor:pointer;border:1px solid transparent}
 .cat:hover{opacity:.75}
-.cm{background:rgba(0,188,212,.15);color:#00bcd4;border-color:rgba(0,188,212,.3)}
-.cl{background:rgba(200,160,48,.15);color:#c8a030;border-color:rgba(200,160,48,.3)}
-.cr2{background:rgba(170,170,170,.12);color:#aaa;border-color:rgba(170,170,170,.3)}
-.ck{background:rgba(46,200,122,.12);color:#2ec87a;border-color:rgba(46,200,122,.3)}
+.cm{background:rgba(74,143,168,.14);color:#4a8fa8;border-color:rgba(74,143,168,.28)}
+.cl{background:rgba(184,144,42,.13);color:#b8902a;border-color:rgba(184,144,42,.28)}
+.cr2{background:rgba(150,150,150,.10);color:#999;border-color:rgba(150,150,150,.25)}
+.ck{background:rgba(39,160,101,.11);color:#27a065;border-color:rgba(39,160,101,.28)}
 .cq{background:rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)}
 .ca{background:rgba(255,107,107,.12);color:#ff6b6b;border-color:rgba(255,107,107,.3)}
 .cww{background:rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)}
@@ -108,7 +108,7 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1d40 0%, #060d1e 50%);colo
 .cal-day .dn{font-size:10px;color:var(--t3);margin-bottom:3px}
 .cal-day .dpnl{font-size:14px;font-weight:600;margin-bottom:2px}
 .cal-day .dinfo{font-size:9px;color:rgba(255,255,255,.4)}
-.cal-day.win{background:rgba(0,80,100,.40)!important}
+.cal-day.win{background:rgba(39,160,101,.18)!important}
 .cal-day.loss{background:rgba(120,20,20,.35)!important}
 .cal-week{background:var(--bg3);padding:8px 6px;display:flex;flex-direction:column;justify-content:center}
 .cal-week .wl{font-size:9px;color:var(--t3);margin-bottom:3px}
@@ -724,13 +724,13 @@ body::before {
   position: fixed; inset: 0; z-index: 9999;
   background: radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 60%);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'IBM Plex Sans Hebrew', sans-serif;
+  font-family: 'Heebo', sans-serif;
 }
 #welcome-back-screen {
   position: fixed; inset: 0; z-index: 9998;
   background: radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 60%);
   display: none; align-items: center; justify-content: center;
-  font-family: 'IBM Plex Sans Hebrew', sans-serif;
+  font-family: 'Heebo', sans-serif;
 }
 .welcome-back-box {
   background: linear-gradient(145deg, rgba(22,27,39,.98), rgba(16,20,30,.99));
@@ -4673,7 +4673,7 @@ function _pdfBase(title, body) {
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:11px;color:#1a1a2e;background:#fff;padding:20px 24px;direction:rtl}
+  body{font-family:'Heebo',Arial,sans-serif;font-size:11px;color:#1a1a2e;background:#fff;padding:20px 24px;direction:rtl}
   h1{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:2px}
   h2{font-size:13px;font-weight:600;color:#1e3a5f;margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0;text-transform:uppercase;letter-spacing:.4px}
   .meta{font-size:10px;color:#64748b;margin-bottom:16px}
