@@ -6626,11 +6626,11 @@ async function doRegister() {
     const cred = await auth.createUserWithEmailAndPassword(email, pass);
     const uid  = cred.user.uid;
 
-    // Default plan is free; override only if a pre-approved invite exists
-    let plan='free', status='active';
+    // Default plan is pro for all new users
+    let plan='pro', status='active';
     try {
       const inv = await db.collection('invites').doc(email).get();
-      if (inv.exists) { plan=inv.data().plan||'free'; await db.collection('invites').doc(email).delete(); }
+      if (inv.exists) { plan=inv.data().plan||'pro'; await db.collection('invites').doc(email).delete(); }
     } catch(e) {}
     const isAdm = (email === ADMIN_EMAIL);
     if (isAdm) { plan='lifetime'; }
@@ -6665,8 +6665,8 @@ async function doRegister() {
           // Profile missing — create it now
           _registering = true;
           const isAdm = (email === ADMIN_EMAIL);
-          let plan='free', status='active';
-          try { const inv=await db.collection('invites').doc(email).get(); if(inv.exists){plan=inv.data().plan||'free';await db.collection('invites').doc(email).delete();} } catch(ie){}
+          let plan='pro', status='active';
+          try { const inv=await db.collection('invites').doc(email).get(); if(inv.exists){plan=inv.data().plan||'pro';await db.collection('invites').doc(email).delete();} } catch(ie){}
           if (isAdm) { plan='lifetime'; }
           const userData = { email, name, phone, plan, status, isAdmin:isAdm,
             registeredAt:firebase.firestore.FieldValue.serverTimestamp(),
