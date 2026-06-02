@@ -213,7 +213,8 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
   #idx-controls{display:none}
   #tv-ticker-widget{border-radius:0}
   .main{padding:10px;padding-bottom:68px}
-  .tbl{font-size:11px}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl{font-size:11px;min-width:500px}
   .tbl th,.tbl td{padding:5px 5px}
   .card{padding:11px 12px}
   .mrow{grid-template-columns:repeat(2,1fr)}
@@ -223,12 +224,26 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
   .chat-fab{bottom:74px;right:16px}
   .chat-window{bottom:136px;right:8px;left:8px;width:auto}
   .mob-bottom-nav{display:flex}
+  /* Auth screen mobile */
+  .auth-box{padding:24px 18px;margin:12px;max-height:calc(100vh - 24px);overflow-y:auto}
+  #pwa-install-btn{font-size:10px;padding:4px 8px}
+  #nav-instagram-btn{width:26px;height:26px}
+  /* Tables wrap */
+  .sth{overflow-x:auto;-webkit-overflow-scrolling:touch}
 }
 @media(max-width:480px){
   .mrow{grid-template-columns:1fr 1fr}
   .mc-v{font-size:17px}
   .btn-p{padding:5px 8px;font-size:11px}
   .logo span{display:none}
+  /* Auth screen small phones */
+  .auth-box{padding:20px 14px;border-radius:14px}
+  .auth-tabs{gap:4px}
+  .auth-tab{font-size:12px;padding:7px 14px}
+  .auth-submit{padding:11px}
+  /* Bigger touch targets */
+  .nt{padding:6px 10px;min-height:36px}
+  .act{min-width:28px;min-height:28px;display:inline-flex;align-items:center;justify-content:center}
 }
 
 /* ── ANIMATIONS ── */

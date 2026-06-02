@@ -1,12 +1,13 @@
 {
   "name": "Fayna Trading Journal",
-  "short_name": "Fayna",
+  "short_name": "Fayna Trading",
   "description": "יומן מסחר חכם — עסקאות, הוצאות, P&L וסטטיסטיקות",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0a0d12",
   "theme_color": "#0a0d12",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "lang": "he",
   "dir": "rtl",
   "icons": [
@@ -14,15 +15,14 @@
       "src": "fayna_logo.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "fayna_logo.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
-  "categories": ["finance", "productivity"],
-  "screenshots": []
+  "categories": ["finance", "productivity"]
 }
