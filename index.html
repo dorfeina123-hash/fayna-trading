@@ -2468,7 +2468,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="admin-section-title">
       <div class="dot" style="background:#00d26a"></div>ניהול משתמשים
       <span style="margin-right:auto"></span>
-      <input type="text" class="admin-search" id="user-search" placeholder="🔍 חפש שם / מייל / טלפון..." oninput="filterAdminUsers()" style="margin-left:8px">
+      <input type="text" class="admin-search" id="user-search" placeholder="🔍 חפש שם / מייל / טלפון..." oninput="filterAdminUsers()" autocomplete="off" style="margin-left:8px">
       <button class="fb" onclick="refreshAdminUsers()" style="padding:3px 10px;font-size:10px">🔄 רענן</button>
       <button class="fb" onclick="exportUsersCSV()" style="padding:3px 10px;font-size:10px">📤 CSV</button>
     </div>
@@ -7387,6 +7387,11 @@ async function refreshAdminUsers() {
     return;
   }
   _adminUsersCache = result || [];
+  // Re-clear search AFTER the async fetch in case browser autocomplete fired during the wait
+  _adminUserFilter = 'all';
+  _adminUserSearch = '';
+  const si2 = document.getElementById('user-search');
+  if (si2) si2.value = '';
   _renderUsersTable();
 }
 
@@ -7426,6 +7431,10 @@ function _renderUsersTable() {
   const countEl = document.getElementById('adm-user-count');
   const statEl  = document.getElementById('adm-filter-status');
   if (!tbody) return;
+
+  // Always sync search from DOM — prevents browser-autocomplete race condition
+  const siSync = document.getElementById('user-search');
+  if (siSync) _adminUserSearch = siSync.value.toLowerCase().trim();
 
   let users = [..._adminUsersCache];
 
