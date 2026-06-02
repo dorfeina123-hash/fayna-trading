@@ -591,6 +591,45 @@ body::before {
   display: flex; align-items: center; justify-content: center;
   font-family: 'IBM Plex Sans Hebrew', sans-serif;
 }
+#welcome-back-screen {
+  position: fixed; inset: 0; z-index: 9998;
+  background: radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 60%);
+  display: none; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Sans Hebrew', sans-serif;
+}
+.welcome-back-box {
+  background: linear-gradient(145deg, rgba(22,27,39,.98), rgba(16,20,30,.99));
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  padding: 44px 40px;
+  width: 360px;
+  max-width: 96vw;
+  box-shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 80px rgba(0,210,106,.05);
+  direction: rtl;
+  text-align: center;
+}
+.wb-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; color: #fff;
+  background: #00d26a;
+  overflow: hidden;
+}
+.wb-greeting { font-size: 13px; color: var(--t3); margin-bottom: 4px; }
+.wb-name { font-size: 22px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+.wb-email { font-size: 12px; color: var(--t3); margin-bottom: 28px; }
+.wb-enter-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #00d26a, #00a854);
+  color: #000; font-size: 15px; font-weight: 700;
+  border: none; border-radius: 10px; cursor: pointer;
+  font-family: inherit; margin-bottom: 14px;
+  transition: opacity .2s; letter-spacing: .3px;
+}
+.wb-enter-btn:hover { opacity: .88; }
+.wb-switch { font-size: 12px; color: var(--t3); cursor: pointer; background: none; border: none; font-family: inherit; text-decoration: underline; }
+.wb-switch:hover { color: var(--t1); }
 .auth-box {
   background: linear-gradient(145deg, rgba(22,27,39,.98), rgba(16,20,30,.99));
   border: 1px solid rgba(255,255,255,.1);
@@ -6573,7 +6612,7 @@ function initAuth() {
             await db.collection('users').doc(fbUser.uid).set(adminData);
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
-            showApp();
+            _showWelcomeBack();
             return;
           }
           await auth.signOut();
@@ -6587,7 +6626,7 @@ function initAuth() {
           return;
         }
         loadSettingsFromFirestore().catch(()=>{});
-        showApp();
+        _showWelcomeBack();
       } catch(e) {
         clearTimeout(_fsTimer);
         console.error('Auth state error:', e);
@@ -6601,6 +6640,8 @@ function initAuth() {
 }
 
 function _showAuthScreen(errorMsg) {
+  const wb = document.getElementById('welcome-back-screen');
+  if (wb) wb.style.display = 'none';
   const el = document.getElementById('auth-screen');
   if (el) el.style.display = 'flex';
   // Always re-enable login button so user is never stuck
@@ -6983,6 +7024,8 @@ async function _startEcalAlerts() {
 
 function showApp() {
   document.getElementById('auth-screen').style.display='none';
+  const wb = document.getElementById('welcome-back-screen');
+  if (wb) wb.style.display = 'none';
   const navInfo=document.getElementById('nav-user-info');
   const navLogout=document.getElementById('nav-logout-btn');
   if (navInfo) {
@@ -9918,6 +9961,52 @@ window.addEventListener('appinstalled', () => {
 });
 
 // ════════════════════════════════════════════════════
+//  WELCOME BACK SCREEN
+// ════════════════════════════════════════════════════
+function _showWelcomeBack() {
+  const scr = document.getElementById('welcome-back-screen');
+  if (!scr || !currentUser) { showApp(); return; }
+
+  // Fill in user info
+  const nameEl  = document.getElementById('wb-name');
+  const emailEl = document.getElementById('wb-email');
+  const avEl    = document.getElementById('wb-avatar');
+  const displayName = currentUser.name || currentUser.email || '';
+  if (nameEl)  nameEl.textContent  = displayName;
+  if (emailEl) emailEl.textContent = currentUser.email || '';
+
+  // Avatar — photo or initials
+  if (avEl) {
+    const photo = currentUser.photoData || currentUser.photoURL || '';
+    if (photo) {
+      avEl.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      avEl.style.background = 'transparent';
+    } else {
+      avEl.textContent  = _getInitials ? _getInitials(displayName) : displayName.slice(0,2).toUpperCase();
+      avEl.style.background = currentUser.avatarColor || '#00d26a';
+    }
+  }
+
+  // Hide auth screen, show welcome screen
+  const authScr = document.getElementById('auth-screen');
+  if (authScr) authScr.style.display = 'none';
+  scr.style.display = 'flex';
+}
+
+function _wbEnter() {
+  const scr = document.getElementById('welcome-back-screen');
+  if (scr) scr.style.display = 'none';
+  showApp();
+}
+
+async function _wbSwitch() {
+  const scr = document.getElementById('welcome-back-screen');
+  if (scr) scr.style.display = 'none';
+  await auth.signOut();
+  // _showAuthScreen will be called by onAuthStateChanged
+}
+
+// ════════════════════════════════════════════════════
 //  SHOW / HIDE PASSWORD TOGGLE
 // ════════════════════════════════════════════════════
 function _togglePwd(inputId, btnId) {
@@ -10632,6 +10721,26 @@ function _sessionWarning() {
 </div>
 
 <!-- ═══ SESSION TIMEOUT BAR ═══ -->
+<!-- ═══ WELCOME BACK SCREEN ═══ -->
+<div id="welcome-back-screen">
+  <div class="welcome-back-box">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px">
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="url(#wbg)"/><polyline points="6,37 14,25 22,30 42,11" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><circle cx="42" cy="11" r="4" fill="#000" opacity=".8"/><defs><linearGradient id="wbg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e676"/><stop offset="100%" stop-color="#00a854"/></linearGradient></defs></svg>
+      <span style="font-size:18px;font-weight:700;color:var(--t1)">Fayna Trading</span>
+    </div>
+    <!-- Avatar -->
+    <div class="wb-avatar" id="wb-avatar">?</div>
+    <div class="wb-greeting">ברוך השב 👋</div>
+    <div class="wb-name" id="wb-name">—</div>
+    <div class="wb-email" id="wb-email">—</div>
+    <!-- Enter button -->
+    <button class="wb-enter-btn" onclick="_wbEnter()">🚀 כניסה למערכת</button>
+    <!-- Switch user -->
+    <button class="wb-switch" onclick="_wbSwitch()">התחבר עם משתמש אחר</button>
+  </div>
+</div>
+
 <div id="session-timeout-bar">
   ⏰ לא זוהתה פעילות — תתנתק אוטומטית בעוד <strong id="session-countdown">60</strong> שניות
   <button onclick="_resetSessionTimer()" style="margin-right:12px;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;cursor:pointer;font-family:inherit;font-size:12px">הישאר מחובר</button>
