@@ -1146,7 +1146,7 @@ body.edit-mode #edit-mode-bar { display:block; }
 .nav-user-plan.free{background:rgba(84,95,114,.25);color:#8892a4}
 .nav-user-plan.pro{background:rgba(124,58,237,.25);color:#a78bfa}
 .nav-user-plan.lifetime{background:rgba(240,180,41,.2);color:#f0b429}
-.nav-user-name{font-size:12px;font-weight:600;color:var(--t1);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.nav-user-name{font-size:12px;font-weight:500;color:var(--t2);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
 /* ── AI CHAT WIDGET ── */
 .chat-fab{position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;cursor:pointer;z-index:900;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(124,58,237,.45);transition:all .2s;color:#fff}
 .chat-fab:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(124,58,237,.6)}
@@ -6946,6 +6946,14 @@ async function doLogout() {
 // ──────────────────────────────────────────────────────────────
 //  SHOW APP
 // ──────────────────────────────────────────────────────────────
+function _getGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5  && h < 12) return 'בוקר טוב';
+  if (h >= 12 && h < 17) return 'צהריים טובים';
+  if (h >= 17 && h < 21) return 'ערב טוב';
+  return 'לילה טוב';
+}
+
 function updateNavBadge() {
   if (!currentUser) return;
   const plan   = currentUser.plan || 'free';
@@ -6954,7 +6962,7 @@ function updateNavBadge() {
   if (planEl) {
     planEl.className = 'nav-user-plan ' + plan;
     if (currentUser.isAdmin) {
-      planEl.textContent = '🛡️ ADMIN';
+      planEl.textContent = 'ADMIN';
       planEl.className = 'nav-user-plan lifetime';
     } else {
       planEl.textContent = plan === 'lifetime' ? '👑 LIFETIME' : plan === 'pro' ? '⭐ PRO' : 'FREE';
@@ -6963,7 +6971,7 @@ function updateNavBadge() {
   if (nameEl) {
     const raw = currentUser.name || currentUser.email || '';
     const firstName = raw.split(' ')[0].split('@')[0];
-    nameEl.textContent = firstName ? firstName + '\'s Trading Room' : 'Trading Room';
+    nameEl.textContent = _getGreeting() + (firstName ? ', ' + firstName : '');
   }
 }
 
@@ -7193,9 +7201,8 @@ function showApp() {
     }
     if (nameEl) {
       const raw = currentUser.name || currentUser.email || '';
-      // Build a creative display name: first name + "Trading"
       const firstName = raw.split(' ')[0].split('@')[0];
-      nameEl.textContent = firstName ? firstName + '\'s Trading Room' : 'Trading Room';
+      nameEl.textContent = _getGreeting() + (firstName ? ', ' + firstName : '');
     }
     navInfo.style.display = 'flex';
   }
