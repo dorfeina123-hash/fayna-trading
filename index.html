@@ -1357,6 +1357,31 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .rr-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace}
 .rr-pos{background:rgba(0,210,106,.12);color:#00d26a;border:1px solid rgba(0,210,106,.2)}
 .rr-neg{background:rgba(255,77,77,.12);color:#ff4d4d;border:1px solid rgba(255,77,77,.2)}
+/* ── PERSONAL AREA ── */
+.pa-hero{background:linear-gradient(135deg,#0c1e3f 0%,#0f3255 45%,#165c72 100%);border-radius:14px;padding:44px 28px 36px;text-align:center;margin-bottom:22px;position:relative;overflow:hidden}
+.pa-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(74,143,168,.25) 0%,transparent 70%);pointer-events:none}
+.pa-hero h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:7px;letter-spacing:-.3px}
+.pa-hero p{font-size:13px;color:rgba(255,255,255,.55);font-weight:400}
+.pa-tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0}
+.pa-tab{padding:9px 18px;font-size:13px;font-family:inherit;font-weight:500;background:none;border:none;border-bottom:2px solid transparent;color:var(--t2);cursor:pointer;margin-bottom:-1px;transition:color .15s,border-color .15s;border-radius:0;white-space:nowrap}
+.pa-tab:hover{color:var(--t1)}
+.pa-tab.active{color:var(--t1);border-bottom-color:var(--ac)}
+.pa-sub{display:none}.pa-sub.active{display:block}
+.pa-card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:24px 26px;margin-bottom:14px;max-width:600px}
+.pa-card-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.pa-avatar-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
+.pa-field{margin-bottom:14px}
+.pa-field label{display:block;font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;font-weight:500}
+.pa-field input,.pa-field textarea{width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--t1);font-family:inherit;transition:border-color .15s}
+.pa-field input:focus,.pa-field textarea:focus{outline:none;border-color:var(--ac)}
+.pa-field input[readonly]{opacity:.45;cursor:not-allowed}
+.pa-field .pa-hint{font-size:11px;color:var(--t3);margin-top:4px}
+.pa-actions{display:flex;justify-content:flex-start;gap:8px;margin-top:6px}
+.pa-btn-save{padding:9px 20px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s}
+.pa-btn-save:hover{opacity:.85}
+.pa-btn-ghost{padding:9px 16px;background:transparent;border:1px solid var(--border2);color:var(--t2);border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer}
+.pa-section-divider{height:1px;background:var(--border);margin:20px 0}
+@media(max-width:600px){.pa-hero{padding:28px 16px 24px}.pa-hero h1{font-size:20px}.pa-tabs{overflow-x:auto}.pa-card{padding:18px 16px}}
 </style>
 <!-- ═══ FIREBASE SDK ═══ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1484,6 +1509,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <button class="nt" onclick="sw('stats',this)">סטטיסטיקות</button>
     <button class="nt" onclick="sw('datamgr',this)" style="color:var(--bl)">⚙️ ניהול נתונים</button>
     <div class="nav-sep"></div>
+    <button class="nt" onclick="sw('personal',this)">👤 אזור אישי</button>
     <button class="nav-more-btn" id="nav-more-btn" onclick="toggleSidePanel()">☰ עוד</button>
   </div>
   <!-- WORLD CLOCKS -->
@@ -1523,7 +1549,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <span class="nav-user-name" id="nav-user-name-text">—</span>
     </div>
     <!-- Avatar circle -->
-    <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()" title="פרופיל אישי" style="display:none;background:#00d26a">?</div>
+    <div class="nav-avatar" id="nav-avatar" onclick="paOpenPersonal()" title="אזור אישי" style="display:none;background:var(--ac)">?</div>
     <button id="pwa-install-btn" onclick="installPWA()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
     <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,160,0,.35);background:rgba(255,160,0,.1);color:#f0b429;cursor:pointer;flex-shrink:0;transition:all .2s;padding:0" onmouseover="this.style.background='rgba(255,160,0,.25)'" onmouseout="this.style.background='rgba(255,160,0,.1)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
     <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
@@ -1647,6 +1673,111 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <main class="main">
 
 <!-- OVERVIEW -->
+<div class="tp" id="tp-personal">
+  <!-- Hero Banner -->
+  <div class="pa-hero">
+    <h1>אזור אישי</h1>
+    <p>נהל את הפרופיל, ההגדרות והחיבורים שלך</p>
+  </div>
+  <!-- Sub-tabs -->
+  <div class="pa-tabs">
+    <button class="pa-tab active" onclick="paTab('profile',this)">פרופיל</button>
+    <button class="pa-tab" onclick="paTab('security',this)">אבטחה</button>
+    <button class="pa-tab" onclick="paTab('connections',this)">חיבורים</button>
+  </div>
+
+  <!-- פרופיל -->
+  <div class="pa-sub active" id="pa-profile">
+    <div class="pa-card">
+      <div class="pa-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        פרטים אישיים
+      </div>
+      <!-- Avatar -->
+      <div class="pa-avatar-wrap">
+        <div id="pa-avatar-circle" style="width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;background:var(--ac);cursor:pointer;overflow:hidden;border:3px solid var(--border2);transition:transform .15s" onclick="document.getElementById('pa-photo-input').click()" title="לחץ לשינוי תמונה">
+          <img id="pa-avatar-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
+          <span id="pa-initials">?</span>
+        </div>
+        <input type="file" id="pa-photo-input" accept="image/*" style="display:none" onchange="paLoadPhoto(this)">
+        <div style="font-size:11px;color:var(--t3);margin-top:7px">לחץ לשינוי תמונת פרופיל</div>
+      </div>
+      <div class="pa-field">
+        <label>שם מלא</label>
+        <input type="text" id="pa-name" placeholder="ישראל ישראלי">
+      </div>
+      <div class="pa-field">
+        <label>כתובת מייל</label>
+        <input type="text" id="pa-email" readonly>
+        <div class="pa-hint">לא ניתן לשנות את כתובת המייל</div>
+      </div>
+      <div class="pa-field">
+        <label>טלפון</label>
+        <input type="tel" id="pa-phone" placeholder="050-0000000" dir="ltr">
+      </div>
+      <div class="pa-field">
+        <label>ביו</label>
+        <textarea id="pa-bio" placeholder="כמה מילים על הסגנון והמטרות שלך..." style="height:72px;resize:vertical;width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--t1);font-family:inherit"></textarea>
+      </div>
+      <div class="pa-actions">
+        <button class="pa-btn-save" onclick="paSaveProfile()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          שמור שינויים
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- אבטחה -->
+  <div class="pa-sub" id="pa-security">
+    <div class="pa-card">
+      <div class="pa-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        שינוי סיסמה
+      </div>
+      <div class="pa-field">
+        <label>סיסמה נוכחית</label>
+        <input type="password" id="pa-old-pass" placeholder="הסיסמה הנוכחית" dir="ltr">
+      </div>
+      <div class="pa-field">
+        <label>סיסמה חדשה</label>
+        <input type="password" id="pa-new-pass" placeholder="לפחות 6 תווים" dir="ltr">
+      </div>
+      <div class="pa-actions">
+        <button class="pa-btn-save" onclick="changePassword()">עדכן סיסמה</button>
+      </div>
+      <div class="pa-section-divider"></div>
+      <div style="font-size:12px;color:var(--t3)">
+        שכחת סיסמה?
+        <button onclick="sendResetFromProfile()" style="background:none;border:none;color:var(--ac);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0 4px">שלח קישור איפוס למייל</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- חיבורים -->
+  <div class="pa-sub" id="pa-connections">
+    <div class="pa-card">
+      <div class="pa-card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        חיבור לפלטפורמות
+      </div>
+      <div id="pa-connections-content" style="font-size:13px;color:var(--t2)">
+        <p style="margin-bottom:16px">חבר את יומן המסחר לפלטפורמות שלך לייבוא אוטומטי של עסקאות.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg3);border-radius:9px;border:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:8px;background:rgba(74,143,168,.15);border:1px solid rgba(74,143,168,.25);display:flex;align-items:center;justify-content:center;font-size:18px">📊</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--t1)">Tradovate</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px">ייבוא אוטומטי של עסקאות</div>
+            </div>
+          </div>
+          <button class="pa-btn-ghost" onclick="sw('datamgr',document.querySelector('.nt'))">הגדר</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="tp active" id="tp-overview">
 
 <!-- DAILY TIP -->
@@ -10832,6 +10963,72 @@ function _updateNavAvatar() {
 // ════════════════════════════════════════════════════
 const _avatarColors = ['#00d26a','#6c63ff','#f59e0b','#ef4444','#3b82f6','#ec4899','#14b8a6','#f97316'];
 let _profPhotoData = null; // base64 of new photo, or null
+
+// ── PERSONAL AREA TAB ──
+function paTab(id, btn) {
+  document.querySelectorAll('.pa-sub').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.pa-tab').forEach(el => el.classList.remove('active'));
+  const sub = document.getElementById('pa-' + id);
+  if (sub) sub.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function paOpenPersonal() {
+  if (!currentUser) return;
+  // Navigate to personal tab
+  const btn = document.querySelector('.nt[onclick*="personal"]');
+  sw('personal', btn);
+  // Populate fields
+  const nameEl  = document.getElementById('pa-name');
+  const emailEl = document.getElementById('pa-email');
+  const phoneEl = document.getElementById('pa-phone');
+  const bioEl   = document.getElementById('pa-bio');
+  if (nameEl)  nameEl.value  = currentUser.name  || '';
+  if (emailEl) emailEl.value = currentUser.email || '';
+  if (phoneEl) phoneEl.value = currentUser.phone || '';
+  if (bioEl)   bioEl.value   = currentUser.bio   || '';
+  // Avatar
+  const circle = document.getElementById('pa-avatar-circle');
+  const img    = document.getElementById('pa-avatar-img');
+  const initEl = document.getElementById('pa-initials');
+  if (circle && currentUser.avatarColor) circle.style.background = currentUser.avatarColor;
+  if (img && currentUser.photoURL) {
+    img.src = currentUser.photoURL; img.style.display = 'block';
+    if (initEl) initEl.style.display = 'none';
+  } else if (initEl) {
+    initEl.textContent = (currentUser.name || currentUser.email || '?').charAt(0).toUpperCase();
+    if (img) img.style.display = 'none';
+    initEl.style.display = 'block';
+  }
+}
+
+function paLoadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('pa-avatar-img');
+    const initEl = document.getElementById('pa-initials');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    if (initEl) initEl.style.display = 'none';
+    _profPhotoData = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function paSaveProfile() {
+  const name  = document.getElementById('pa-name')?.value.trim();
+  const phone = document.getElementById('pa-phone')?.value.trim();
+  const bio   = document.getElementById('pa-bio')?.value.trim();
+  // reuse existing saveProfile logic by syncing values back to hidden modal fields
+  const profName  = document.getElementById('prof-name');
+  const profPhone = document.getElementById('prof-phone');
+  const profBio   = document.getElementById('prof-bio');
+  if (profName)  profName.value  = name  || '';
+  if (profPhone) profPhone.value = phone || '';
+  if (profBio)   profBio.value   = bio   || '';
+  saveProfile();
+}
 
 function openProfileModal() {
   if (!currentUser) return;
