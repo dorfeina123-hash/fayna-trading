@@ -1390,7 +1390,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
     <!-- Avatar circle -->
     <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()" title="פרופיל אישי" style="display:none;background:#00d26a">?</div>
-    <button id="pwa-install-btn" onclick="installPWA()" style="display:none;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
+    <button id="pwa-install-btn" onclick="installPWA()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.3);color:#00d26a;cursor:pointer;font-family:inherit;white-space:nowrap">📲 התקן</button>
     <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
     <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#545f72;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
     <!-- Hamburger for mobile -->
@@ -10284,22 +10284,78 @@ if ('serviceWorker' in navigator) {
 }
 
 let _pwaInstallEvt = null;
+
+// Hide install button if already running as installed PWA
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.style.display = 'none';
+  });
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _pwaInstallEvt = e;
-  const btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = 'flex';
 });
 
 function installPWA() {
-  if (!_pwaInstallEvt) return;
-  _pwaInstallEvt.prompt();
-  _pwaInstallEvt.userChoice.then(r => {
-    _pwaInstallEvt = null;
-    const btn = document.getElementById('pwa-install-btn');
-    if (btn) btn.style.display = 'none';
-    if (r.outcome === 'accepted') showToast('✅ האפליקציה הותקנה!');
-  });
+  if (_pwaInstallEvt) {
+    _pwaInstallEvt.prompt();
+    _pwaInstallEvt.userChoice.then(r => {
+      _pwaInstallEvt = null;
+      if (r.outcome === 'accepted') {
+        showToast('✅ האפליקציה הותקנה בהצלחה!');
+        const btn = document.getElementById('pwa-install-btn');
+        if (btn) btn.style.display = 'none';
+      }
+    });
+    return;
+  }
+  // No native prompt — show manual instructions
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isMac = /mac/i.test(navigator.userAgent) && !isIOS;
+  let instructions = '';
+  if (isIOS) {
+    instructions = `
+      <div style="text-align:center;margin-bottom:12px;font-size:24px">📱</div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה על iPhone / iPad</div>
+      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
+        <li>לחץ על כפתור השיתוף <strong style="color:#4da6ff">⬆️</strong> בתחתית Safari</li>
+        <li>גלול למטה ובחר <strong style="color:#00d26a">״הוסף למסך הבית״</strong></li>
+        <li>לחץ <strong style="color:#00d26a">״הוסף״</strong> בפינה הימנית העליונה</li>
+      </ol>`;
+  } else if (isMac) {
+    instructions = `
+      <div style="text-align:center;margin-bottom:12px;font-size:24px">💻</div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה על Mac / PC</div>
+      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
+        <li>ב-Chrome/Edge — לחץ על אייקון <strong style="color:#4da6ff">⊕</strong> בשורת הכתובת</li>
+        <li>בחר <strong style="color:#00d26a">״התקן את Fayna Trading״</strong></li>
+        <li>לחץ <strong style="color:#00d26a">״התקן״</strong> בחלון שנפתח</li>
+      </ol>`;
+  } else {
+    instructions = `
+      <div style="text-align:center;margin-bottom:12px;font-size:24px">📲</div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה כאפליקציה</div>
+      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
+        <li>ב-Chrome — לחץ על תפריט <strong style="color:#4da6ff">⋮</strong> בפינה הימנית</li>
+        <li>בחר <strong style="color:#00d26a">״התקן את Fayna Trading״</strong></li>
+        <li>לחץ <strong style="color:#00d26a">״התקן״</strong> בחלון שנפתח</li>
+      </ol>`;
+  }
+  let m = document.getElementById('_pwa-modal'); if (m) m.remove();
+  m = document.createElement('div'); m.id = '_pwa-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px';
+  m.innerHTML = `
+    <div style="background:#161b27;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 24px;max-width:340px;width:100%;position:relative;direction:rtl">
+      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:12px;left:12px;background:none;border:none;color:#545f72;font-size:20px;cursor:pointer;line-height:1">×</button>
+      ${instructions}
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:#545f72;text-align:center">
+        האפליקציה תפתח בנפרד, ללא שורת כתובת, כמו אפליקציה רגילה
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if (e.target === m) m.remove(); });
 }
 
 window.addEventListener('appinstalled', () => {
