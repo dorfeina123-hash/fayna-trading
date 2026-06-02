@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="Fayna Trading">
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/jpeg" href="fayna_logo.jpg">
+<link rel="apple-touch-icon" href="fayna_logo.jpg">
 <title>Fayna Trading</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -8593,9 +8595,10 @@ async function sendRegistrationEmail(user) {
     : '';
   const welcomeHtml = `
 <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#0a0d12;color:#e8ecf4;border-radius:12px;overflow:hidden;border:1px solid #252d40">
-  <div style="background:linear-gradient(135deg,#00d26a,#00a854);padding:24px 28px">
-    <div style="font-size:22px;font-weight:700;color:#000">📈 Fayna Trading</div>
-    <div style="font-size:13px;color:rgba(0,0,0,0.7);margin-top:4px">ברוך הבא לפלטפורמה!</div>
+  <div style="background:linear-gradient(135deg,#0d1f3c,#1a3a6e);padding:24px 28px;text-align:center">
+    <img src="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.2);margin-bottom:10px">
+    <div style="font-size:20px;font-weight:700;color:#fff">Fayna Trading</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">ברוך הבא לפלטפורמה!</div>
   </div>
   <div style="padding:28px">
     <p style="font-size:16px;margin:0 0 16px">היי ${user.name} 👋</p>
@@ -11081,9 +11084,8 @@ function _sessionWarning() {
 <div id="welcome-back-screen">
   <div class="welcome-back-box">
     <!-- Logo -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px">
-      <svg width="32" height="32" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="url(#wbg)"/><polyline points="6,37 14,25 22,30 42,11" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><circle cx="42" cy="11" r="4" fill="#000" opacity=".8"/><defs><linearGradient id="wbg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e676"/><stop offset="100%" stop-color="#00a854"/></linearGradient></defs></svg>
-      <span style="font-size:18px;font-weight:700;color:var(--t1)">Fayna Trading</span>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-bottom:28px">
+      <img src="fayna_logo.jpg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.1)">
     </div>
     <!-- Avatar -->
     <div class="wb-avatar" id="wb-avatar">?</div>
