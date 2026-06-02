@@ -203,47 +203,70 @@ body{background:radial-gradient(ellipse at 50% 0%, #0d1520 0%, #0a0d12 50%);colo
 .mob-bnav-btn:active .mbn-icon{transform:scale(.9)}
 
 @media(max-width:768px){
-  .topnav{gap:8px;padding:0 10px;height:48px}
+  .topnav{gap:6px;padding:0 10px;height:50px}
   .mob-menu-btn{display:flex}
   .nav-tabs{display:none}
   .world-clocks{display:none!important}
-  .nav-user-badge{max-width:130px}
-  .nav-user-name{max-width:70px}
+  .nav-user-badge{max-width:110px}
+  .nav-user-name{max-width:60px}
   #index-banner{height:46px;min-height:46px}
   #idx-controls{display:none}
   #tv-ticker-widget{border-radius:0}
-  .main{padding:10px;padding-bottom:68px}
-  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .tbl{font-size:11px;min-width:500px}
-  .tbl th,.tbl td{padding:5px 5px}
-  .card{padding:11px 12px}
-  .mrow{grid-template-columns:repeat(2,1fr)}
+  .main{padding:8px;padding-bottom:72px}
+  /* Tables — horizontal scroll */
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 11px}
+  .tbl{font-size:11px;min-width:480px}
+  .tbl th,.tbl td{padding:6px 5px}
+  .sth{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* Grids */
+  .mrow{grid-template-columns:repeat(2,1fr);gap:7px}
   .drv-grid{grid-template-columns:1fr}
   .g2,.g3,.ch{grid-template-columns:1fr}
-  .ecal-widget-wrap{height:500px}
-  .chat-fab{bottom:74px;right:16px}
-  .chat-window{bottom:136px;right:8px;left:8px;width:auto}
+  /* Metric cards */
+  .mc{padding:10px 12px}
+  .mc-v{font-size:18px}
+  /* Chat */
+  .chat-fab{bottom:74px;right:14px}
+  .chat-window{bottom:136px;right:6px;left:6px;width:auto}
+  /* Bottom nav */
   .mob-bottom-nav{display:flex}
-  /* Auth screen mobile */
-  .auth-box{padding:24px 18px;margin:12px;max-height:calc(100vh - 24px);overflow-y:auto}
-  #pwa-install-btn{font-size:10px;padding:4px 8px}
+  /* Auth screens */
+  .auth-box{padding:22px 16px;margin:10px;width:calc(100vw - 20px);max-height:calc(100dvh - 20px);overflow-y:auto;border-radius:16px}
+  .welcome-back-box{padding:30px 22px;width:calc(100vw - 20px)}
+  /* Nav buttons */
+  #pwa-install-btn{font-size:10px;padding:4px 8px;gap:3px}
   #nav-instagram-btn{width:26px;height:26px}
-  /* Tables wrap */
-  .sth{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* Ecal widget */
+  .ecal-widget-wrap{height:480px}
+  /* zm cards */
+  .zm-row{grid-template-columns:repeat(3,1fr);gap:7px}
+  .zm-val{font-size:20px}
 }
 @media(max-width:480px){
-  .mrow{grid-template-columns:1fr 1fr}
-  .mc-v{font-size:17px}
+  .topnav{height:46px;padding:0 8px;gap:5px}
+  .logo-icon img{width:26px!important;height:26px!important}
+  .main{padding:6px;padding-bottom:68px}
+  .mrow{grid-template-columns:1fr 1fr;gap:6px}
+  .mc-v{font-size:16px}
+  .mc-l{font-size:9px}
   .btn-p{padding:5px 8px;font-size:11px}
-  .logo span{display:none}
-  /* Auth screen small phones */
-  .auth-box{padding:20px 14px;border-radius:14px}
-  .auth-tabs{gap:4px}
-  .auth-tab{font-size:12px;padding:7px 14px}
-  .auth-submit{padding:11px}
-  /* Bigger touch targets */
-  .nt{padding:6px 10px;min-height:36px}
-  .act{min-width:28px;min-height:28px;display:inline-flex;align-items:center;justify-content:center}
+  /* Auth box small phones */
+  .auth-box{padding:18px 14px;border-radius:14px}
+  .welcome-back-box{padding:24px 16px}
+  .auth-tab{font-size:12px;padding:7px 12px}
+  .auth-submit{padding:12px;font-size:14px}
+  .auth-field input{font-size:16px} /* prevent iOS zoom on input */
+  /* Touch targets */
+  .act{min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+  .fb{padding:5px 10px;min-height:32px}
+  /* zm cards small */
+  .zm-row{grid-template-columns:repeat(2,1fr)}
+  .zm-val{font-size:18px}
+  .zm{padding:10px 12px}
+  /* Hide nav status dot */
+  #nav-status{display:none}
+  /* PWA install btn smaller */
+  #pwa-install-btn{font-size:9px;padding:3px 7px}
 }
 
 /* ── ANIMATIONS ── */
@@ -10327,47 +10350,64 @@ function installPWA() {
     });
     return;
   }
-  // No native prompt — show manual instructions
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isMac = /mac/i.test(navigator.userAgent) && !isIOS;
-  let instructions = '';
+  // Show platform-specific install instructions
+  const isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isEdge    = /edg\//i.test(navigator.userAgent);
+
+  let icon, title, steps, tip;
   if (isIOS) {
-    instructions = `
-      <div style="text-align:center;margin-bottom:12px;font-size:24px">📱</div>
-      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה על iPhone / iPad</div>
-      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
-        <li>לחץ על כפתור השיתוף <strong style="color:#4da6ff">⬆️</strong> בתחתית Safari</li>
-        <li>גלול למטה ובחר <strong style="color:#00d26a">״הוסף למסך הבית״</strong></li>
-        <li>לחץ <strong style="color:#00d26a">״הוסף״</strong> בפינה הימנית העליונה</li>
-      </ol>`;
-  } else if (isMac) {
-    instructions = `
-      <div style="text-align:center;margin-bottom:12px;font-size:24px">💻</div>
-      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה על Mac / PC</div>
-      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
-        <li>ב-Chrome/Edge — לחץ על אייקון <strong style="color:#4da6ff">⊕</strong> בשורת הכתובת</li>
-        <li>בחר <strong style="color:#00d26a">״התקן את Fayna Trading״</strong></li>
-        <li>לחץ <strong style="color:#00d26a">״התקן״</strong> בחלון שנפתח</li>
-      </ol>`;
+    icon  = '📱';
+    title = 'התקנה על iPhone / iPad';
+    steps = [
+      `פתח את האתר ב-<strong style="color:#4da6ff">Safari</strong> (חובה, לא Chrome)`,
+      `לחץ על כפתור השיתוף <strong style="color:#4da6ff">⎙</strong> בתחתית המסך`,
+      `גלול ובחר <strong style="color:#00d26a">״הוסף למסך הבית״</strong>`,
+      `לחץ <strong style="color:#00d26a">״הוסף״</strong> — הסתיים!`
+    ];
+    tip = 'חייב להיות Safari — Chrome ב-iOS לא תומך';
+  } else if (isAndroid) {
+    icon  = '🤖';
+    title = 'התקנה על Android';
+    steps = [
+      `לחץ על תפריט <strong style="color:#4da6ff">⋮</strong> בפינה הימנית העליונה`,
+      `בחר <strong style="color:#00d26a">״הוסף למסך הבית״</strong> או <strong style="color:#00d26a">״התקן אפליקציה״</strong>`,
+      `לחץ <strong style="color:#00d26a">״התקן״</strong> — הסתיים!`
+    ];
+    tip = 'עובד ב-Chrome, Samsung Internet, Edge';
+  } else if (isEdge) {
+    icon  = '💻';
+    title = 'התקנה ב-Microsoft Edge';
+    steps = [
+      `לחץ על תפריט <strong style="color:#4da6ff">⋯</strong> בפינה הימנית העליונה`,
+      `בחר <strong style="color:#00d26a">״Apps״</strong> ← <strong style="color:#00d26a">״Install this site as an app״</strong>`,
+      `לחץ <strong style="color:#00d26a">״Install״</strong> — הסתיים!`
+    ];
+    tip = 'האפליקציה תופיע בתפריט Start';
   } else {
-    instructions = `
-      <div style="text-align:center;margin-bottom:12px;font-size:24px">📲</div>
-      <div style="font-weight:600;margin-bottom:10px;font-size:14px">התקנה כאפליקציה</div>
-      <ol style="text-align:right;line-height:2;font-size:13px;color:#8892a4;padding-right:16px;margin:0">
-        <li>ב-Chrome — לחץ על תפריט <strong style="color:#4da6ff">⋮</strong> בפינה הימנית</li>
-        <li>בחר <strong style="color:#00d26a">״התקן את Fayna Trading״</strong></li>
-        <li>לחץ <strong style="color:#00d26a">״התקן״</strong> בחלון שנפתח</li>
-      </ol>`;
+    icon  = '🖥️';
+    title = 'התקנה ב-Google Chrome';
+    steps = [
+      `חפש את אייקון <strong style="color:#4da6ff">⊕</strong> בצד ימין של שורת הכתובת`,
+      `לחץ עליו ← <strong style="color:#00d26a">״התקן״</strong>`,
+      `<em style="color:#545f72">אם לא מופיע:</em> לחץ <strong style="color:#4da6ff">⋮</strong> ← <strong style="color:#00d26a">״שמור ושתף״</strong> ← <strong style="color:#00d26a">״התקן את הדף הזה כאפליקציה״</strong>`
+    ];
+    tip = 'האפליקציה תיפתח בחלון נפרד ללא שורת כתובת';
   }
+
   let m = document.getElementById('_pwa-modal'); if (m) m.remove();
   m = document.createElement('div'); m.id = '_pwa-modal';
-  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:20000;display:flex;align-items:center;justify-content:center;padding:16px';
   m.innerHTML = `
-    <div style="background:#161b27;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 24px;max-width:340px;width:100%;position:relative;direction:rtl">
-      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:12px;left:12px;background:none;border:none;color:#545f72;font-size:20px;cursor:pointer;line-height:1">×</button>
-      ${instructions}
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:#545f72;text-align:center">
-        האפליקציה תפתח בנפרד, ללא שורת כתובת, כמו אפליקציה רגילה
+    <div style="background:#161b27;border:1px solid rgba(0,210,106,.2);border-radius:18px;padding:28px 24px;max-width:360px;width:100%;position:relative;direction:rtl;box-shadow:0 24px 60px rgba(0,0,0,.7)">
+      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:#545f72;font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
+      <div style="text-align:center;font-size:36px;margin-bottom:10px">${icon}</div>
+      <div style="font-size:16px;font-weight:700;color:#e8ecf4;text-align:center;margin-bottom:18px">${title}</div>
+      <ol style="padding-right:18px;margin:0 0 16px;line-height:1">
+        ${steps.map(s => `<li style="font-size:13px;color:#8892a4;margin-bottom:11px;line-height:1.6">${s}</li>`).join('')}
+      </ol>
+      <div style="background:rgba(0,210,106,.07);border:1px solid rgba(0,210,106,.18);border-radius:8px;padding:9px 12px;font-size:11px;color:#545f72;text-align:center">
+        💡 ${tip}
       </div>
     </div>`;
   document.body.appendChild(m);
