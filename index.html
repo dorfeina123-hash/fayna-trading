@@ -2210,6 +2210,31 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 </div>
 
+<!-- RECURRING EDIT MODAL -->
+<div class="modal-bg" id="recur-edit-modal">
+  <div class="modal" style="width:420px">
+    <h3>ערוך הוצאה חוזרת <button class="cx" onclick="closeRecurEdit()">×</button></h3>
+    <input type="hidden" id="re-id">
+    <div class="fr"><label>שם כלי / שירות</label><input type="text" id="re-tool" placeholder="לדוגמה: TradingView Pro"></div>
+    <div class="fr"><label>חברה</label><input type="text" id="re-company" placeholder="שם החברה"></div>
+    <div class="g2">
+      <div class="fr"><label>סכום חודשי ($)</label><input type="number" id="re-amount" step="0.01" min="0" placeholder="0.00"></div>
+      <div class="fr"><label>יום בחודש</label><input type="number" id="re-day" min="1" max="28" placeholder="1–28"></div>
+    </div>
+    <div class="fr"><label>קטגוריה</label>
+      <select id="re-cat">
+        <option>כלי</option><option>קורס</option><option>מבחן</option><option>לייב</option><option>ריסט</option><option>אחר</option>
+      </select>
+    </div>
+    <div class="fr"><label>תאריך סיום (אופציונלי)</label><input type="date" id="re-end"></div>
+    <div class="fr"><label>הערה</label><textarea id="re-note" placeholder="הערה..."></textarea></div>
+    <div class="fax">
+      <button class="bn" onclick="closeRecurEdit()">ביטול</button>
+      <button class="bs" onclick="saveRecurringEdit()">💾 שמור שינויים</button>
+    </div>
+  </div>
+</div>
+
 <!-- CALENDAR -->
 <div class="tp" id="tp-calendar">
   <div class="cal-nav">
@@ -6562,7 +6587,10 @@ function renderRecurringManager() {
                   </div>
                 </div>
                 ${tmpl.endDate ? `<div style="font-size:9px;color:#f0b429;margin-top:5px">⚠️ מסתיים ${tmpl.endDate}</div>` : ''}
-                <button onclick="delRecurring('${tmpl.id}')" style="position:absolute;top:6px;left:8px;padding:2px 7px;border:1px solid rgba(255,77,77,.3);border-radius:4px;background:transparent;color:#ff6b6b;font-size:10px;cursor:pointer;font-family:inherit">✕</button>
+                <div style="position:absolute;top:6px;left:8px;display:flex;gap:4px">
+                  <button onclick="editRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(74,143,168,.35);border-radius:4px;background:transparent;color:var(--bl);font-size:10px;cursor:pointer;font-family:inherit" title="ערוך">✏️</button>
+                  <button onclick="delRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(255,77,77,.3);border-radius:4px;background:transparent;color:#ff6b6b;font-size:10px;cursor:pointer;font-family:inherit" title="מחק">✕</button>
+                </div>
               </div>`;
             }).join('')}
           </div>
@@ -6578,6 +6606,56 @@ function delRecurring(id) {
   if(keep) records = records.filter(r=>r.recurringId!==id);
   renderAll(); saveData();
 }
+
+function editRecurring(id) {
+  const tmpl = recurringTemplates.find(t=>t.id===id);
+  if(!tmpl) return;
+  document.getElementById('re-id').value      = id;
+  document.getElementById('re-tool').value    = tmpl.toolName || tmpl.company || '';
+  document.getElementById('re-company').value = tmpl.company  || '';
+  document.getElementById('re-amount').value  = tmpl.amount   || '';
+  document.getElementById('re-day').value     = tmpl.recurDay || 1;
+  document.getElementById('re-cat').value     = tmpl.cat      || 'כלי';
+  document.getElementById('re-end').value     = tmpl.endDate  || '';
+  document.getElementById('re-note').value    = tmpl.note     || '';
+  document.getElementById('recur-edit-modal').classList.add('open');
+}
+
+function closeRecurEdit() {
+  document.getElementById('recur-edit-modal').classList.remove('open');
+}
+
+function saveRecurringEdit() {
+  const id     = document.getElementById('re-id').value;
+  const idx    = recurringTemplates.findIndex(t=>t.id===id);
+  if(idx<0) return;
+  const amount = parseFloat(document.getElementById('re-amount').value);
+  const day    = Math.max(1, Math.min(28, parseInt(document.getElementById('re-day').value)||1));
+  if(!amount || amount<=0) { showToast('נא להזין סכום תקין','error'); return; }
+
+  const old = recurringTemplates[idx];
+  recurringTemplates[idx] = {
+    ...old,
+    toolName: document.getElementById('re-tool').value.trim() || document.getElementById('re-company').value.trim(),
+    company:  document.getElementById('re-company').value.trim(),
+    amount,
+    recurDay: day,
+    cat:      document.getElementById('re-cat').value,
+    endDate:  document.getElementById('re-end').value || null,
+    note:     document.getElementById('re-note').value.trim(),
+  };
+
+  // Regenerate future records for this template
+  records = records.filter(r => r.recurringId !== id);
+  applyRecurring();
+  closeRecurEdit();
+  renderAll(); saveData();
+  showToast('✅ הוצאה חוזרת עודכנה', 'success');
+}
+
+document.getElementById('recur-edit-modal').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeRecurEdit();
+});
 
 // ════════════════════════════════════════════════════
 //  UNDO STACK
