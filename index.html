@@ -3921,7 +3921,10 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
     <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.001" value="3.65" oninput="cWd()"></div>
     <div id="reg-f">
-      <div class="fr"><label>חברה</label><select id="f-co"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>Trade Zelle</option><option>אחר</option></select></div>
+      <div class="fr"><label>חברה</label>
+        <input type="text" id="f-co" list="f-co-list" placeholder="בחר או הקלד שם חברה..." autocomplete="off">
+        <datalist id="f-co-list"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>Trade Zelle</option><option>TakeProfit Trader</option><option>Topstep</option><option>Apex Trader Funding</option></datalist>
+      </div>
       <div class="fr"><label>קטגוריה</label>
         <select id="f-cat" onchange="toggleCustomCat()"><option value="מבחן">מבחן</option><option value="לייב">לייב</option><option value="ריסט">ריסט</option><option value="כלי">כלי/תוכנה</option><option value="קורס">קורס</option><option value="מנוי">מנוי</option><option value="ציוד">ציוד</option><option value="שונות">שונות</option><option value="__custom__">✏️ הוסף קטגוריה חדשה...</option></select>
         <input type="text" id="f-cat-custom" placeholder="שם קטגוריה חדשה..." style="display:none;width:100%;margin-top:6px;padding:7px 10px;font-size:12px;border:1px solid var(--ac);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit">
