@@ -4658,6 +4658,7 @@ function renderWD(){
 
 // P&L
 let pnlChart2;
+const _pnlOpen = {};
 function renderPNL(){
   const exp=records.filter(r=>r.type==='הוצאה');
   const wd=records.filter(r=>r.type==='משיכה');
@@ -4698,15 +4699,49 @@ function renderPNL(){
        <div class="mc-v ${isP?'cg':'cr'}" style="font-size:20px">${isP?'+':'−'}${fmtILS(Math.abs(net))}</div>
        <div class="mc-s" style="color:${isP?'var(--gr)':'var(--re)'};font-size:12px;font-weight:600;margin-top:4px">${isP?'+':'−'}$${Math.abs(netUSD).toFixed(2)}</div>
      </div>`;
+  // Build items list per category
+  const catItems = {
+    'מבחנים':         exp.filter(r=>['מבחן','לייב','ריסט'].includes(r.cat)),
+    'תוכנות':         exp.filter(r=>['כלי','תוכנה'].includes(r.cat)),
+    'מנויים':         exp.filter(r=>r.cat==='מנוי'),
+    'ציוד':           exp.filter(r=>r.cat==='ציוד'),
+    'שונות':          exp.filter(r=>['אחר','שונות','קורס'].includes(r.cat)),
+    'הוצאות חופשיות': customExpenses.map(c=>({date:c.date,company:c.desc||c.category,amount:c.amount,rate:c.rate||1,cat:c.category})),
+    'משיכות נטו':     wd.map(r=>({date:r.date,company:r.company||'משיכה',amount:r.wdNet||r.amount,rate:r.rate||1,cat:'משיכה',sign:1})),
+  };
+
   document.getElementById('pnl-rows').innerHTML=
-    pRows.map(r=>`<div class="pnl-row ${pnlOn[r.key]?'':'off'}">
-      <div class="pnl-lbl"><input type="checkbox" class="chk" ${pnlOn[r.key]?'checked':''} onchange="pnlOn['${r.key}']=this.checked;renderPNL()">
-      <span>${r.sign>0?'➕':'➖'} ${r.lbl}</span></div>
-      <div style="text-align:left">
-        <div class="pnl-v" style="color:${r.col}">${r.sign>0?'+':'−'}${fmtILS(r.ils)}</div>
-        <div style="font-size:10px;color:var(--t3);font-family:'IBM Plex Mono',monospace">${r.sign>0?'+':'−'}$${(r.usd||r.ils/3.5).toFixed(2)}</div>
-      </div>
-    </div>`).join('')+
+    pRows.map(r=>{
+      const items = catItems[r.key]||[];
+      const open  = !!_pnlOpen[r.key];
+      const itemsHTML = open && items.length ? `
+        <div style="padding:6px 0 2px 0;border-top:1px solid var(--border);margin-top:2px">
+          ${items.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(it=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px 4px 2px;border-radius:5px;transition:background .12s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;gap:8px;align-items:center;min-width:0">
+                <span style="font-size:10px;color:var(--t3);white-space:nowrap">${fmtD(it.date||'')}</span>
+                <span style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px" title="${it.company||''}">${it.company||'—'}</span>
+              </div>
+              <div style="text-align:left;flex-shrink:0;margin-right:4px">
+                <span style="font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:${it.sign>0?'var(--gr)':'var(--re)'}">${it.sign>0?'+':'−'}$${Math.abs(it.amount||0).toFixed(2)}</span>
+              </div>
+            </div>`).join('')}
+        </div>` : '';
+      return `<div class="pnl-row ${pnlOn[r.key]?'':'off'}" style="flex-direction:column;align-items:stretch;gap:0">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="pnl-lbl"><input type="checkbox" class="chk" ${pnlOn[r.key]?'checked':''} onchange="pnlOn['${r.key}']=this.checked;renderPNL()">
+          <span>${r.sign>0?'➕':'➖'} ${r.lbl}</span></div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="text-align:left">
+              <div class="pnl-v" style="color:${r.col}">${r.sign>0?'+':'−'}${fmtILS(r.ils)}</div>
+              <div style="font-size:10px;color:var(--t3);font-family:'IBM Plex Mono',monospace">${r.sign>0?'+':'−'}$${(r.usd||r.ils/3.5).toFixed(2)}</div>
+            </div>
+            ${items.length?`<button onclick="_pnlOpen['${r.key}']=!_pnlOpen['${r.key}'];renderPNL()" style="padding:2px 7px;border:1px solid var(--border2);border-radius:4px;background:${open?'var(--bg4)':'transparent'};color:${open?'var(--t1)':'var(--t3)'};font-size:11px;cursor:pointer;font-family:inherit;min-width:26px" title="${open?'סגור':'פרט'}">${open?'−':'+'}</button>`:''}
+          </div>
+        </div>
+        ${itemsHTML}
+      </div>`;
+    }).join('')+
     `<div class="pnl-total" style="flex-direction:column;gap:4px">
       <div style="display:flex;justify-content:space-between;width:100%">
         <span style="font-size:14px;font-weight:600">יתרה סופית ₪</span>
@@ -6080,9 +6115,17 @@ function _parseRithmicCSV(text) {
     return f.map(v=>v.replace(/^"|"$/g,'').trim());
   }
 
-  // Find header row of Completed Orders section
-  let hi=-1;
+  // Find the "Completed Orders" section marker first, then the header row after it
+  let sectionIdx=-1;
   for(let i=0;i<lines.length;i++){
+    const l=lines[i].replace(/"/g,'').trim();
+    if(l==='Completed Orders'){sectionIdx=i;break;}
+  }
+  if(sectionIdx<0) return null;
+
+  // Header row is within the next few lines after the section marker
+  let hi=-1;
+  for(let i=sectionIdx+1;i<Math.min(sectionIdx+5,lines.length);i++){
     if(lines[i].includes('Buy/Sell')&&lines[i].includes('Avg Fill Price')&&lines[i].includes('Symbol')){hi=i;break;}
   }
   if(hi<0) return null;
