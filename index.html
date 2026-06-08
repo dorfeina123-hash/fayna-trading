@@ -2156,20 +2156,27 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
   <div class="card" style="margin-top:10px;background:rgba(77,166,255,0.05);border-color:rgba(77,166,255,0.2)">
     <div class="ct"><div class="dot" style="background:var(--bl)"></div>הגדרות עמלות מסחר — Rithmic R Pro</div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px">
       <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);cursor:pointer">
         <input type="checkbox" class="chk" id="comm-enabled" checked onchange="commSettings.enabled=this.checked;renderAll()">
         חשב עמלות אוטומטית
       </label>
       <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)">
-        <span>עמלה לחוזה (round trip):</span>
-        <input type="number" id="comm-rate" value="0.20" step="0.01" min="0" max="50"
-          style="width:80px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
-          onchange="commSettings.ratePerContract=parseFloat(this.value)||0.20;renderAll()">
+        <span style="color:var(--t3)">מיקרו (MNQ/MES):</span>
+        <input type="number" id="comm-rate" value="1.58" step="0.01" min="0" max="50"
+          style="width:72px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
+          onchange="commSettings.ratePerContract=parseFloat(this.value)||1.58;renderAll()">
         <span style="color:var(--t3)">$</span>
       </div>
-      <div id="comm-live-display" style="font-size:11px;color:var(--t3)"></div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)">
+        <span style="color:var(--t3)">מלא (NQ/ES):</span>
+        <input type="number" id="comm-rate-full" value="3.98" step="0.01" min="0" max="100"
+          style="width:72px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
+          onchange="commSettings.ratePerContractFull=parseFloat(this.value)||3.98;renderAll()">
+        <span style="color:var(--t3)">$</span>
+      </div>
     </div>
+    <div id="comm-live-display" style="font-size:11px;color:var(--t3);margin-bottom:10px"></div>
 
     <!-- ── Commission Calibrator ── -->
     <div style="border-top:1px solid var(--border);padding-top:12px">
@@ -3211,12 +3218,28 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
         <button type="button" data-ch="whatsapp" onclick="setNotifChannel('whatsapp')" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(255,255,255,.04);color:#8892a4;border:1px solid rgba(255,255,255,.1);transition:all .2s">📱 WhatsApp</button>
       </div>
 
-      <textarea id="adm-banner-text" dir="rtl" rows="3" placeholder="לדוגמה: מחר תחזוקה 10:00-11:00..." onclick="this.focus();event.stopPropagation();" style="width:100%;padding:8px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:7px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;margin-bottom:6px;resize:vertical;min-height:60px;outline:none;line-height:1.5" onfocus="this.style.borderColor='rgba(0,210,106,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+      <textarea id="adm-banner-text" dir="rtl" rows="3" placeholder="לדוגמה: מחר תחזוקה 10:00-11:00..." onclick="this.focus();event.stopPropagation();" style="width:100%;padding:8px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:7px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;margin-bottom:8px;resize:vertical;min-height:60px;outline:none;line-height:1.5" onfocus="this.style.borderColor='rgba(0,210,106,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+
+      <!-- Banner controls row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div>
+          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">📅 הצג עד תאריך ושעה</label>
+          <input type="datetime-local" id="adm-banner-expiry" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;outline:none" onfocus="this.style.borderColor='rgba(0,210,106,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'" title="ריק = ללא הגבלת זמן">
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:#8892a4">
+            <input type="checkbox" id="adm-banner-active" checked style="width:14px;height:14px;accent-color:#00d26a">
+            בנר פעיל (מוצג)
+          </label>
+          <button onclick="clearAdminBanner()" style="padding:4px 10px;background:rgba(255,77,77,.12);border:1px solid rgba(255,77,77,.3);border-radius:5px;color:#ff6b6b;font-size:11px;cursor:pointer;font-family:inherit;text-align:center">🗑 נקה בנר</button>
+        </div>
+      </div>
 
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <button class="admin-save-btn" onclick="saveAdminBanner()">📣 שלח</button>
+        <button class="admin-save-btn" onclick="saveAdminBanner()">📣 שמור ושלח</button>
         <span id="adm-banner-saved" style="font-size:11px;color:#00d26a;opacity:0;transition:opacity .3s"></span>
         <span id="adm-notif-progress" style="font-size:11px;color:#4da6ff"></span>
+        <span id="adm-banner-status" style="font-size:10px;color:#545f72"></span>
       </div>
     </div>
 
@@ -4176,11 +4199,14 @@ let pnlOn = {'מבחנים':true,'תוכנות':true,'מנויים':true,'ציו
 const TRADES = [];
 let tradesList = [...TRADES];
 
-// Commission settings — Rithmic R Pro: $0.10 routing fee per side = $0.20 round trip
-// Add your broker's per-contract commission on top of the routing fee
+// Commission settings — Rithmic R Pro verified rates (2025-2026):
+// Micro contracts (MNQ, MES, MYM, M2K): $0.79/side = $1.58 round trip
+// Full E-mini (NQ, ES, YM, RTY): $1.99/side = $3.98 round trip
+// Source: Apex Trader Funding / standard Rithmic broker schedule
 let commSettings = {
   enabled: true,
-  ratePerContract: 0.20,  // $ per contract round trip — Rithmic routing fee only ($0.10/side)
+  ratePerContract: 1.58,     // micro contracts (MNQ, MES etc.) round trip
+  ratePerContractFull: 3.98, // full E-mini (NQ, ES, YM, RTY etc.) round trip
   totalOverride: null,    // if set, use this instead of auto-calc
 };
 function _refreshCompanyList() {
@@ -4230,10 +4256,18 @@ function _updateCommDisplay() {
   el.innerHTML = `גרוס: <span style="color:var(--t2)">$${gross.toFixed(2)}</span> &nbsp;|&nbsp; עמלות: <span style="color:var(--re)">$${comm.toFixed(2)}</span> &nbsp;|&nbsp; נטו: <span style="color:${net>=0?'var(--gr)':'var(--re)'};font-weight:700">$${net.toFixed(2)}</span> &nbsp;|&nbsp; <span style="color:var(--t3)">${tc} חוזים</span>`;
 }
 
+function _isMicroContract(sym) {
+  // Micro futures start with M but M2K is also micro; full E-minis: NQ, ES, YM, RTY, CL, GC...
+  const base = (sym||'').replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '').toUpperCase();
+  return ['MNQ','MES','MYM','M2K','MCL','MGC','MSI','MBT','MHG'].some(p => base.startsWith(p));
+}
 function tradeComm(t) {
   if(!commSettings.enabled) return 0;
   if(t.commOverride !== undefined && t.commOverride !== null) return +t.commOverride;
-  return +(t.qty * commSettings.ratePerContract).toFixed(2);
+  const rate = _isMicroContract(t.sym)
+    ? (commSettings.ratePerContract     || 1.58)
+    : (commSettings.ratePerContractFull || 3.98);
+  return +(t.qty * rate).toFixed(2);
 }
 function tradeNet(t) { return +(t.pnl - tradeComm(t)).toFixed(2); }
 function totalNetPnl() { return +tradesList.reduce((s,t)=>s+tradeNet(t),0).toFixed(2); }
@@ -7272,6 +7306,8 @@ function loadData() {
     renderAll();
     const crEl2 = document.getElementById('comm-rate');
     if (crEl2) crEl2.value = commSettings.ratePerContract;
+    const crElF2 = document.getElementById('comm-rate-full');
+    if (crElF2) crElF2.value = commSettings.ratePerContractFull || 3.98;
     const commChk2 = document.getElementById('comm-enabled');
     if (commChk2) commChk2.checked = commSettings.enabled;
     document.getElementById('save-status').textContent = '✅ נטען בהצלחה';
@@ -7903,7 +7939,7 @@ let currentUser = null;
 let ADMIN_PREFS = {
   pricePro:29, priceProYr:199, priceLifetime:399, wdFeePct:20,
   bitProLink:'', bitLifeLink:'', payboxProLink:'', payboxLifeLink:'',
-  stProLink:'', stLifeLink:'', bannerText:'', growLink:'',
+  stProLink:'', stLifeLink:'', bannerText:'', bannerExpiry:'', bannerActive:true, growLink:'',
 };
 let EJS_CONFIG = { serviceId:'', templateId:'', publicKey:'' };
 let planVisibility  = { free:true, pro:true, lifetime:true };
@@ -9560,13 +9596,44 @@ function setNotifChannel(val) {
 // ── dispatcher ───────────────────────────────────────────────
 async function saveAdminBanner() {
   const msg = (document.getElementById('adm-banner-text')?.value||'').trim();
-  if (!msg) { showToast('⚠️ הכנס הודעה תחילה','warn'); return; }
-  if (_notifChannel === 'email')    { await sendNotifEmail(msg);    return; }
-  if (_notifChannel === 'whatsapp') { await sendNotifWhatsApp(msg); return; }
+  if (_notifChannel === 'email')    { if(!msg){showToast('⚠️ הכנס הודעה','warn');return;} await sendNotifEmail(msg);    return; }
+  if (_notifChannel === 'whatsapp') { if(!msg){showToast('⚠️ הכנס הודעה','warn');return;} await sendNotifWhatsApp(msg); return; }
   // default: banner
-  ADMIN_PREFS.bannerText = msg;
+  if (!msg) { showToast('⚠️ הכנס הודעה תחילה','warn'); return; }
+  ADMIN_PREFS.bannerText   = msg;
+  ADMIN_PREFS.bannerExpiry = document.getElementById('adm-banner-expiry')?.value || '';
+  ADMIN_PREFS.bannerActive = document.getElementById('adm-banner-active')?.checked !== false;
   await _saveSettings('adminPrefs', ADMIN_PREFS);
-  showAdminBanner(); flashSaved('adm-banner-saved'); showToast('Banner עודכן לכל המשתמשים 📢','info');
+  _bannerShownThisSession = false; // allow re-show after admin update
+  showAdminBanner(); flashSaved('adm-banner-saved');
+  _updateBannerStatus();
+  showToast('✅ Banner עודכן לכל המשתמשים 📢','info');
+}
+
+async function clearAdminBanner() {
+  ADMIN_PREFS.bannerText = ''; ADMIN_PREFS.bannerExpiry = ''; ADMIN_PREFS.bannerActive = false;
+  await _saveSettings('adminPrefs', ADMIN_PREFS);
+  document.getElementById('adm-banner-text').value = '';
+  const exp = document.getElementById('adm-banner-expiry'); if(exp) exp.value = '';
+  const chk = document.getElementById('adm-banner-active'); if(chk) chk.checked = false;
+  const old = document.getElementById('admin-banner-popup'); if(old) old.remove();
+  if(window._bannerTimer) clearInterval(window._bannerTimer);
+  _updateBannerStatus();
+  showToast('🗑 בנר נוקה','info');
+}
+
+function _updateBannerStatus() {
+  const el = document.getElementById('adm-banner-status');
+  if (!el) return;
+  if (!ADMIN_PREFS.bannerText || !ADMIN_PREFS.bannerActive) { el.textContent = '🔴 בנר כבוי'; return; }
+  if (ADMIN_PREFS.bannerExpiry) {
+    const exp = new Date(ADMIN_PREFS.bannerExpiry);
+    const now = new Date();
+    if (exp < now) { el.textContent = `🕐 פג תוקף: ${exp.toLocaleString('he-IL')}`; return; }
+    el.textContent = `🟢 פעיל עד ${exp.toLocaleDateString('he-IL')} ${exp.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}`;
+  } else {
+    el.textContent = '🟢 פעיל — ללא הגבלת זמן';
+  }
 }
 
 // ── Branded Email HTML builder ────────────────────────────────
@@ -9767,6 +9834,10 @@ function loadAdminSettings() {
   sv('st-pro-link',ADMIN_PREFS.stProLink); sv('st-life-link',ADMIN_PREFS.stLifeLink);
   sv('adm-banner-text',ADMIN_PREFS.bannerText||''); sv('adm-grow-link',ADMIN_PREFS.growLink||'');
   const gl=document.getElementById('grow-link'); if(gl&&ADMIN_PREFS.growLink)gl.href=ADMIN_PREFS.growLink;
+  // Banner expiry + active
+  const bexp=document.getElementById('adm-banner-expiry'); if(bexp) bexp.value=ADMIN_PREFS.bannerExpiry||'';
+  const bact=document.getElementById('adm-banner-active'); if(bact) bact.checked=ADMIN_PREFS.bannerActive!==false;
+  _updateBannerStatus();
 }
 
 function loadAdminEmailJSFields() {
@@ -9835,11 +9906,14 @@ window.addEventListener('resize', _resizeEcal);
 
 let _bannerShownThisSession = false;
 function showAdminBanner() {
-  // Remove old sticky banner if exists
   const old = document.getElementById('admin-global-banner');
   if (old) old.remove();
 
-  if (!ADMIN_PREFS.bannerText) return;
+  if (!ADMIN_PREFS.bannerText)        return;
+  if (!ADMIN_PREFS.bannerActive)      return;
+  if (ADMIN_PREFS.bannerExpiry) {
+    if (new Date(ADMIN_PREFS.bannerExpiry) < new Date()) return; // expired
+  }
   if (_bannerShownThisSession) return;
   _bannerShownThisSession = true;
 
