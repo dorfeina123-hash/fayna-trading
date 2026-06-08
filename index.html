@@ -1654,6 +1654,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <!-- Theme toggle -->
     <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="מצב בהיר/כהה" style="display:none">🌙</button>
     <button id="pwa-install-btn" onclick="installPWA()" title="התקן אפליקציה" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;padding:0;border:1px solid rgba(0,210,106,.3);background:rgba(0,210,106,.12);color:#00d26a;cursor:pointer;font-size:15px">📲</button>
+    <button id="nav-save-btn" onclick="navSave()" title="שמור (Ctrl+S)" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--t3);cursor:pointer;font-size:13px;flex-shrink:0;transition:all .25s">💾</button>
     <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,160,0,.35);background:rgba(255,160,0,.1);color:#f0b429;cursor:pointer;flex-shrink:0;transition:all .2s;padding:0" onmouseover="this.style.background='rgba(255,160,0,.25)'" onmouseout="this.style.background='rgba(255,160,0,.1)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
     <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
     <button onclick="startTour()" title="סיור מודרך" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-size:14px;font-weight:700;flex-shrink:0;transition:all .15s" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--t3)'">?</button>
@@ -2258,7 +2259,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <button onclick="exportCSV()" style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">📤 ייצא CSV</button>
       <button onclick="exportToExcel()" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(34,197,94,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#22c55e;font-family:inherit">📊 ייצא Excel</button>
       <label style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2)">
-        📂 ייבוא CSV <input type="file" accept=".csv" style="display:none" onchange="importCSV(this)">
+        📂 ייבוא CSV / Excel <input type="file" accept=".csv,.xlsx" multiple style="display:none" onchange="importCSV(this)">
       </label>
     </div>
   </div>
@@ -2565,7 +2566,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
             <div class="dm-action-title">ייבוא עסקאות CSV</div>
             <div class="dm-action-sub">מ-Tradovate Performance.csv</div>
           </div>
-          <label class="dm-btn primary" style="cursor:pointer">📂 ייבא <input type="file" accept=".csv" multiple style="display:none" onchange="importCSV(this)"></label>
+          <label class="dm-btn primary" style="cursor:pointer">📂 ייבא CSV / Excel <input type="file" accept=".csv,.xlsx" multiple style="display:none" onchange="importCSV(this)"></label>
         </div>
         <div class="dm-action">
           <div class="dm-action-info">
@@ -6012,6 +6013,60 @@ function _tradeKey(t) {
   return `${t.date}|${t.sym}|${(+t.buy).toFixed(2)}|${(+t.sell).toFixed(2)}|${(t.btime||'').slice(0,5)}|${t.qty}`;
 }
 
+// ── Generic / TradeZvit Excel trades parser ──
+function _parseTradesFromRows(rows) {
+  if (!rows || !rows.length) return null;
+  const keys = Object.keys(rows[0]);
+  const norm = s => String(s||'').trim().toLowerCase().replace(/[\s_\-\/]/g,'');
+  const find = (...names) => {
+    const exact = keys.find(k => names.some(n => norm(k)===norm(n)));
+    if (exact) return exact;
+    return keys.find(k => names.some(n => n.length>2 && norm(k).includes(norm(n)))) || null;
+  };
+
+  // Column detection — supports Hebrew + English + TradeZvit + generic
+  const kDate  = find('תאריך','date','tradedate','entrydate','opendate');
+  const kTime  = find('שעה','time','entrytime','opentime');
+  const kSym   = find('סימול','symbol','instrument','ticker','contract');
+  const kQty   = find('כמות','qty','quantity','size','contracts');
+  const kBuy   = find('מחירקנייה','buyprice','avgbuy','entryprice','avgfillprice','entry');
+  const kSell  = find('מחירמכירה','sellprice','avgsell','exitprice','exit');
+  const kPnl   = find('רווח','pnl','netpnl','grossprofit','profit','pl','net');
+  const kDur   = find('משך','duration','timetrade');
+  const kSide  = find('כיוון','side','buysell','direction');
+
+  if (!kDate && !kSym) return null; // not a trades format
+
+  const pp = s => { if(!s) return 0; s=String(s).replace(/[$,\s]/g,'').trim(); const n=s.startsWith('('); s=s.replace(/[()]/g,''); return n?-parseFloat(s):parseFloat(s); };
+  const toDateStr = raw => {
+    if (!raw) return '';
+    if (typeof raw === 'number') return _excelSerialToDate ? _excelSerialToDate(raw) : '';
+    const s = String(raw).trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+    const p = s.split(/[\/\.\- ]/);
+    if (p.length >= 3) {
+      if (p[2].length === 4) return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+      if (p[0].length === 4) return `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+    }
+    return s;
+  };
+
+  const trades = [];
+  rows.forEach(row => {
+    const date = toDateStr(row[kDate]);
+    const sym  = String(row[kSym]||'').trim();
+    const qty  = parseInt(row[kQty])||1;
+    const buy  = kBuy  ? (parseFloat(String(row[kBuy] ||'').replace(/[,$]/g,''))||0) : 0;
+    const sell = kSell ? (parseFloat(String(row[kSell]||'').replace(/[,$]/g,''))||0) : 0;
+    const pnl  = kPnl  ? pp(row[kPnl]) : +(((sell-buy)*qty)||0).toFixed(2);
+    const btime= kTime ? String(row[kTime]||'').trim() : '00:00:00';
+    const dur  = kDur  ? String(row[kDur] ||'').trim() : '';
+    if (!date || !sym || date==='undefined') return;
+    trades.push({ sym, qty, buy, sell, pnl, date, btime: btime||'00:00:00', stime:'', dur });
+  });
+  return trades.length ? trades : null;
+}
+
 // ── Rithmic R Pro Order History CSV parser ──
 function _parseRithmicCSV(text) {
   if (!text.includes('Completed Orders') || !text.includes('Buy/Sell') || !text.includes('Avg Fill Price')) return null;
@@ -6120,76 +6175,111 @@ function importCSV(inp){
     return fields;
   }
 
+  // Process parsed trades list (shared by all format paths)
+  function _commitTrades(nt, srcLabel) {
+    if(nt.length){
+      const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
+      const tagAcct=selIds.length===1?selIds[0]:null;
+      if(tagAcct)nt.forEach(t=>{t.acct=tagAcct;});
+      tradesList=[...tradesList,...nt];
+      totalImported+=nt.length;
+    }
+    processed++;
+    if(processed===files.length){
+      const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
+      const acctName=selIds.length===1?(accounts.find(a=>a.id===selIds[0])?.name||selIds[0]):null;
+      renderAll(); saveData();
+      const msg=totalImported
+        ?`✅ יובאו ${totalImported} עסקאות מ-${srcLabel||'קובץ'}${acctName?' → '+acctName:''}${totalSkipped?' | ⏭ '+totalSkipped+' כפילויות דולגו':''}`
+        :`⏭ כל ${totalSkipped} העסקאות כבר קיימות — לא נוספו כפילויות`;
+      showToast(msg,totalImported?'success':'info',4000);
+    }
+  }
+
+  function _dedupe(trades) {
+    const nt=[];
+    trades.forEach(trade=>{
+      if(!trade.date) return;
+      const key=_tradeKey(trade);
+      if(existing.has(key)){totalSkipped++;return;}
+      existing.add(key); nt.push(trade);
+    });
+    return nt;
+  }
+
+  function _processCSVText(rawText) {
+    // Try Rithmic format first
+    const rithmic = _parseRithmicCSV(rawText);
+    if(rithmic !== null) return { trades: rithmic, src:'Rithmic R Pro' };
+
+    // Tradovate / generic CSV
+    const lines=rawText.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2) return { trades:[], src:'CSV' };
+    const hdrs=_parseCSVLine(lines[0]).map(h=>h.replace(/^"|"$/g,'').trim());
+    function pp(s){if(!s)return 0;s=String(s).replace(/[$,]/g,'').trim();const n=s.startsWith('(');s=s.replace(/[()]/g,'');return n?-parseFloat(s):parseFloat(s);}
+    const trades=[];
+    for(let i=1;i<lines.length;i++){
+      const c=_parseCSVLine(lines[i]);
+      const o={};hdrs.forEach((h,j)=>{o[h]=(c[j]||'').replace(/^"|"$/g,'').trim();});
+      const bts=o.boughtTimestamp||o['Bought Timestamp']||o['boughttimestamp']||'';
+      if(!bts)continue;
+      const[d,t]=bts.split(' ');
+      const parts=(d||'').split('/');
+      if(parts.length<3)continue;
+      const[mm,dd,yy]=parts;
+      const trade={sym:o.symbol||o.Symbol||'',qty:parseInt(o.qty||o.Qty)||1,
+        buy:parseFloat(o.buyPrice||o['Buy Price']||0)||0,
+        sell:parseFloat(o.sellPrice||o['Sell Price']||0)||0,
+        pnl:pp(o.pnl||o.PnL||o['P&L']||'0'),
+        date:`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`,
+        btime:t||'00:00:00',stime:'',dur:o.duration||o.Duration||''};
+      if(!trade.date||trade.date==='undefined-undefined-undefined')continue;
+      trades.push(trade);
+    }
+    return { trades, src:'Tradovate CSV' };
+  }
+
   files.forEach(f=>{
-    const fr2=new FileReader();
-    fr2.onload=e=>{
-      const rawText=e.target.result;
-      const nt=[];
+    const isXlsx = f.name.toLowerCase().endsWith('.xlsx');
 
-      // ── Rithmic R Pro Order History format ──
-      const rithmicTrades = _parseRithmicCSV(rawText);
-      if(rithmicTrades !== null){
-        for(const trade of rithmicTrades){
-          if(!trade.date) continue;
-          const key=_tradeKey(trade);
-          if(existing.has(key)){totalSkipped++;continue;}
-          existing.add(key);
-          nt.push(trade);
-        }
-      } else {
-        // ── Tradovate / generic CSV format ──
-        const lines=rawText.split(/\r?\n/).filter(l=>l.trim());
-        if(lines.length<2){processed++;return;}
-        const hdrs=_parseCSVLine(lines[0]).map(h=>h.replace(/^"|"$/g,'').trim());
-        function pp(s){if(!s)return 0;s=String(s).replace(/[$,]/g,'').trim();const n=s.startsWith('(');s=s.replace(/[()]/g,'');return n?-parseFloat(s):parseFloat(s);}
-        for(let i=1;i<lines.length;i++){
-          const c=_parseCSVLine(lines[i]);
-          const o={};hdrs.forEach((h,j)=>{o[h]=(c[j]||'').replace(/^"|"$/g,'').trim();});
-          const bts = o.boughtTimestamp || o['Bought Timestamp'] || o['boughttimestamp'] || '';
-          if(!bts)continue;
-          const[d,t]=bts.split(' ');
-          const parts=(d||'').split('/');
-          if(parts.length<3)continue;
-          const[mm,dd,yy]=parts;
-          const trade={
-            sym:  o.symbol||o.Symbol||'',
-            qty:  parseInt(o.qty||o.Qty)||1,
-            buy:  parseFloat(o.buyPrice||o['Buy Price']||0)||0,
-            sell: parseFloat(o.sellPrice||o['Sell Price']||0)||0,
-            pnl:  pp(o.pnl||o.PnL||o['P&L']||'0'),
-            date: `${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`,
-            btime: t||'00:00:00',
-            stime: '',
-            dur:  o.duration||o.Duration||''
-          };
-          if(!trade.date||trade.date==='undefined-undefined-undefined')continue;
-          const key=_tradeKey(trade);
-          if(existing.has(key)){totalSkipped++;continue;}
-          existing.add(key);
-          nt.push(trade);
-        }
-      }
-
-      if(nt.length){
-        const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
-        const tagAcct=selIds.length===1?selIds[0]:null;
-        if(tagAcct)nt.forEach(t=>{t.acct=tagAcct;});
-        tradesList=[...tradesList,...nt];
-        totalImported+=nt.length;
-      }
-      processed++;
-      if(processed===files.length){
-        const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
-        const acctName=selIds.length===1?(accounts.find(a=>a.id===selIds[0])?.name||selIds[0]):null;
-        renderAll();saveData();
-        const src=rithmicTrades!==null?'Rithmic R Pro':'CSV';
-        const msg=totalImported
-          ?`✅ יובאו ${totalImported} עסקאות מ-${src}${acctName?' → '+acctName:''}${totalSkipped?' | ⏭ '+totalSkipped+' כפילויות דולגו':''}`
-          :`⏭ כל ${totalSkipped} העסקאות כבר קיימות — לא נוספו כפילויות`;
-        showToast(msg,totalImported?'success':'info',4000);
-      }
-    };
-    fr2.readAsText(f,'utf-8');
+    if(isXlsx){
+      // ── XLSX path ──
+      if(typeof XLSX==='undefined'){showToast('ספריית XLSX לא נטענה, נסה CSV','error');processed++;return;}
+      const fr=new FileReader();
+      fr.onload=e=>{
+        try{
+          const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:false});
+          const wsName=wb.SheetNames[0];
+          const ws=wb.Sheets[wsName];
+          // Try Rithmic via CSV conversion (preserves section headers)
+          const csvText=XLSX.utils.sheet_to_csv(ws);
+          const rithmic=_parseRithmicCSV(csvText);
+          if(rithmic!==null){
+            _commitTrades(_dedupe(rithmic),'Rithmic R Pro (Excel)');
+            return;
+          }
+          // Try generic / TradeZvit via JSON rows
+          const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+          const generic=_parseTradesFromRows(rows);
+          if(generic){
+            _commitTrades(_dedupe(generic),'Excel');
+            return;
+          }
+          showToast('לא זוהה פורמט עסקאות בקובץ Excel','error');
+          processed++;
+          if(processed===files.length && !totalImported) showToast('לא יובאו עסקאות','info');
+        }catch(err){showToast('שגיאה בקריאת Excel: '+err.message,'error');processed++;}
+      };
+      fr.readAsArrayBuffer(f);
+    } else {
+      // ── CSV path ──
+      const fr2=new FileReader();
+      fr2.onload=e=>{
+        const {trades,src}=_processCSVText(e.target.result);
+        _commitTrades(_dedupe(trades),src);
+      };
+      fr2.readAsText(f,'utf-8');
+    }
   });
 }
 
@@ -6607,6 +6697,7 @@ function cxDel(){if(_cxEditI>=0){cxClose();cxAskDel(_cxEditI);}}
 function applyRecurring() {
   const today = new Date();
   recurringTemplates.forEach(tmpl => {
+    if (tmpl.paused) return; // skip paused templates
     const start = new Date(tmpl.startDate);
     const end = tmpl.endDate ? new Date(tmpl.endDate) : today;
     // iterate month by month from start to min(end, today)
@@ -6691,9 +6782,11 @@ function renderRecurringManager() {
                 </div>
                 ${tmpl.endDate ? `<div style="font-size:9px;color:#f0b429;margin-top:5px">⚠️ מסתיים ${tmpl.endDate}</div>` : ''}
                 <div style="position:absolute;top:6px;left:8px;display:flex;gap:4px">
+                  <button onclick="togglePauseRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid ${tmpl.paused?'rgba(0,210,106,.4)':'rgba(240,180,41,.35)'};border-radius:4px;background:${tmpl.paused?'rgba(0,210,106,.1)':'transparent'};color:${tmpl.paused?'#00d26a':'#f0b429'};font-size:10px;cursor:pointer;font-family:inherit" title="${tmpl.paused?'המשך':'השהה'}">${tmpl.paused?'▶':'⏸'}</button>
                   <button onclick="editRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(74,143,168,.35);border-radius:4px;background:transparent;color:var(--bl);font-size:10px;cursor:pointer;font-family:inherit" title="ערוך">✏️</button>
                   <button onclick="delRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(255,77,77,.3);border-radius:4px;background:transparent;color:#ff6b6b;font-size:10px;cursor:pointer;font-family:inherit" title="מחק">✕</button>
                 </div>
+                ${tmpl.paused?'<div style="position:absolute;top:6px;right:10px;font-size:9px;color:#f0b429;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:10px;padding:1px 7px">מושהה</div>':''}
               </div>`;
             }).join('')}
           </div>
@@ -6707,6 +6800,21 @@ function delRecurring(id) {
   const keep = confirm(`למחוק את ההוצאה החוזרת "${tmpl.company} $${tmpl.amount}/חודש"?\n\nלחץ אישור — ימחק תבנית + כל הרשומות שנוצרו ממנה\nלחץ ביטול — ישאיר את הרשומות הקיימות`);
   recurringTemplates = recurringTemplates.filter(t=>t.id!==id);
   if(keep) records = records.filter(r=>r.recurringId!==id);
+  renderAll(); saveData();
+}
+
+function togglePauseRecurring(id) {
+  const tmpl = recurringTemplates.find(t=>t.id===id);
+  if(!tmpl) return;
+  tmpl.paused = !tmpl.paused;
+  if(!tmpl.paused) {
+    // Resuming — regenerate missing records
+    records = records.filter(r=>r.recurringId!==id);
+    applyRecurring();
+    showToast('▶ הוצאה חוזרת הופעלה מחדש','success');
+  } else {
+    showToast('⏸ הוצאה חוזרת הושהתה','info');
+  }
   renderAll(); saveData();
 }
 
@@ -6828,7 +6936,7 @@ document.addEventListener('keydown', e => {
 
 function saveData() {
   try {
-    _pushUndo(); // snapshot before overwriting
+    _pushUndo();
     localStorage.setItem('dor_records', JSON.stringify(records));
     localStorage.setItem('dor_recurring', JSON.stringify(recurringTemplates));
     localStorage.setItem('dor_trades', JSON.stringify(tradesList));
@@ -6836,9 +6944,37 @@ function saveData() {
     localStorage.setItem('dor_pnlOn', JSON.stringify(pnlOn));
     localStorage.setItem('dor_comm', JSON.stringify(commSettings));
     localStorage.setItem('dor_saved', new Date().toLocaleString('he-IL'));
-    _cloudSave(); // also sync to cloud
+    _cloudSave();
+    _flashSaveBtn();
   } catch(e) { showToast('שגיאה בשמירה: ' + e.message, 'error'); }
 }
+
+function _flashSaveBtn(manual) {
+  const btn = document.getElementById('nav-save-btn');
+  if (!btn) return;
+  btn.style.color = '#00d26a';
+  btn.style.borderColor = 'rgba(0,210,106,.5)';
+  btn.style.background = 'rgba(0,210,106,.12)';
+  clearTimeout(btn._t);
+  btn._t = setTimeout(() => {
+    btn.style.color = 'var(--t3)';
+    btn.style.borderColor = 'rgba(255,255,255,.12)';
+    btn.style.background = 'transparent';
+  }, manual ? 2000 : 600);
+}
+
+function navSave() {
+  saveData();
+  _flashSaveBtn(true);
+  showToast('✅ נשמר בהצלחה', 'success');
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    navSave();
+  }
+});
 
 // ════════════════════════════════════════════════════
 //  CLOUD SYNC — Firebase Firestore
