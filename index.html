@@ -2156,20 +2156,33 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
   <div class="card" style="margin-top:10px;background:rgba(77,166,255,0.05);border-color:rgba(77,166,255,0.2)">
     <div class="ct"><div class="dot" style="background:var(--bl)"></div>הגדרות עמלות מסחר — Rithmic R Pro</div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px">
       <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);cursor:pointer">
         <input type="checkbox" class="chk" id="comm-enabled" checked onchange="commSettings.enabled=this.checked;renderAll()">
         חשב עמלות אוטומטית
       </label>
       <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)">
-        <span>עמלה לחוזה מיקרו (round trip):</span>
-        <input type="number" id="comm-rate" value="0.20" step="0.01" min="0" max="5"
-          style="width:70px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
+        <span>עמלה לחוזה (round trip):</span>
+        <input type="number" id="comm-rate" value="0.20" step="0.01" min="0" max="50"
+          style="width:80px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
           onchange="commSettings.ratePerContract=parseFloat(this.value)||0.20;renderAll()">
         <span style="color:var(--t3)">$</span>
       </div>
-      <div style="font-size:11px;color:var(--t3)">
-        📌 Rithmic R Pro: $0.10 routing fee per side = $0.20 round trip — הוסף עמלת ברוקר לפי הסכם שלך
+      <div id="comm-live-display" style="font-size:11px;color:var(--t3)"></div>
+    </div>
+
+    <!-- ── Commission Calibrator ── -->
+    <div style="border-top:1px solid var(--border);padding-top:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px">🎯 כייל עמלות לפי הנטו מהפלטפורמה</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--t3)">נטו לפי הפלטפורמה ($):</span>
+        <input type="number" id="comm-calibrate-net" step="0.01" placeholder="1249.50"
+          style="width:110px;padding:5px 8px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)">
+        <button onclick="calibrateCommission()" style="padding:5px 14px;background:var(--ac);color:#000;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">כייל אוטומטי</button>
+        <span id="comm-calib-result" style="font-size:11px;color:var(--gr)"></span>
+      </div>
+      <div style="font-size:10px;color:var(--t3);margin-top:5px">
+        הזן את הנטו שמוצג באתר החברה → המערכת תחשב ותעדכן אוטומטית את העמלה המדויקת לחוזה
       </div>
     </div>
   </div>
@@ -3922,8 +3935,12 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.001" value="3.65" oninput="cWd()"></div>
     <div id="reg-f">
       <div class="fr"><label>חברה</label>
-        <input type="text" id="f-co" list="f-co-list" placeholder="בחר או הקלד שם חברה..." autocomplete="off">
-        <datalist id="f-co-list"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>Trade Zelle</option><option>TakeProfit Trader</option><option>Topstep</option><option>Apex Trader Funding</option></datalist>
+        <input type="text" id="f-co" list="f-co-list" placeholder="בחר או הקלד שם חברה..." autocomplete="off" onfocus="_refreshCompanyList()">
+        <datalist id="f-co-list">
+          <option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option>
+          <option>Trade Zelle</option><option>TakeProfit Trader</option><option>Topstep</option>
+          <option>Apex Trader Funding</option><option>Bulenox</option><option>Earn2Trade</option>
+        </datalist>
       </div>
       <div class="fr"><label>קטגוריה</label>
         <select id="f-cat" onchange="toggleCustomCat()"><option value="מבחן">מבחן</option><option value="לייב">לייב</option><option value="ריסט">ריסט</option><option value="כלי">כלי/תוכנה</option><option value="קורס">קורס</option><option value="מנוי">מנוי</option><option value="ציוד">ציוד</option><option value="שונות">שונות</option><option value="__custom__">✏️ הוסף קטגוריה חדשה...</option></select>
@@ -4166,6 +4183,53 @@ let commSettings = {
   ratePerContract: 0.20,  // $ per contract round trip — Rithmic routing fee only ($0.10/side)
   totalOverride: null,    // if set, use this instead of auto-calc
 };
+function _refreshCompanyList() {
+  const dl = document.getElementById('f-co-list');
+  if (!dl) return;
+  const fixed = ['BULENOX','APEX','TAKE P','MFFU','Trade Zelle','TakeProfit Trader','Topstep','Apex Trader Funding','Bulenox','Earn2Trade'];
+  const fromRecords = records.map(r=>r.company).filter(Boolean);
+  const all = [...new Set([...fixed, ...fromRecords])].sort();
+  dl.innerHTML = all.map(c=>`<option>${c}</option>`).join('');
+}
+
+function calibrateCommission() {
+  const platformNet = parseFloat(document.getElementById('comm-calibrate-net').value);
+  if (isNaN(platformNet)) { showToast('הכנס נטו מהפלטפורמה','error'); return; }
+  if (!tradesList.length) { showToast('אין עסקאות — ייבא קודם','error'); return; }
+
+  const gross         = +tradesList.reduce((s,t)=>s+t.pnl,0).toFixed(2);
+  const totalContracts= tradesList.reduce((s,t)=>s+t.qty,0);
+  if (!totalContracts) { showToast('אין חוזים לחישוב','error'); return; }
+
+  const totalComm     = +(gross - platformNet).toFixed(2);
+  const rate          = +(totalComm / totalContracts).toFixed(4);
+
+  if (rate <= 0 || rate > 100) {
+    showToast(`תוצאה לא הגיונית (${rate}) — בדוק שהנטו נכון`,'error');
+    return;
+  }
+
+  commSettings.ratePerContract = rate;
+  const el = document.getElementById('comm-rate');
+  if (el) el.value = rate;
+
+  const resEl = document.getElementById('comm-calib-result');
+  if (resEl) resEl.textContent = `✅ $${rate}/חוזה | ${totalContracts} חוזים | עמלות סה"כ $${totalComm}`;
+
+  renderAll(); saveData();
+  showToast(`✅ עמלה כוילה: $${rate} לחוזה — נטו: $${totalNetPnl().toFixed(2)}`,'success',5000);
+}
+
+function _updateCommDisplay() {
+  const el = document.getElementById('comm-live-display');
+  if (!el || !tradesList.length) return;
+  const gross = +tradesList.reduce((s,t)=>s+t.pnl,0).toFixed(2);
+  const comm  = +tradesList.reduce((s,t)=>s+tradeComm(t),0).toFixed(2);
+  const net   = +(gross-comm).toFixed(2);
+  const tc    = tradesList.reduce((s,t)=>s+t.qty,0);
+  el.innerHTML = `גרוס: <span style="color:var(--t2)">$${gross.toFixed(2)}</span> &nbsp;|&nbsp; עמלות: <span style="color:var(--re)">$${comm.toFixed(2)}</span> &nbsp;|&nbsp; נטו: <span style="color:${net>=0?'var(--gr)':'var(--re)'};font-weight:700">$${net.toFixed(2)}</span> &nbsp;|&nbsp; <span style="color:var(--t3)">${tc} חוזים</span>`;
+}
+
 function tradeComm(t) {
   if(!commSettings.enabled) return 0;
   if(t.commOverride !== undefined && t.commOverride !== null) return +t.commOverride;
@@ -7296,7 +7360,7 @@ window.addEventListener('load', () => {
   } catch(e) { console.warn('Auto-load failed:', e); }
 });
 
-function renderAll(){renderOV();renderExp();renderWD();renderPNL();renderTJ();renderCal();renderCX();renderRecurringManager();}
+function renderAll(){renderOV();renderExp();renderWD();renderPNL();renderTJ();renderCal();renderCX();renderRecurringManager();_updateCommDisplay();}
 
 // Observe cards for entrance animation
 const cardObserver = new IntersectionObserver(entries=>{
