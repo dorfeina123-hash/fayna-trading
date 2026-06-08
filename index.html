@@ -6012,6 +6012,95 @@ function _tradeKey(t) {
   return `${t.date}|${t.sym}|${(+t.buy).toFixed(2)}|${(+t.sell).toFixed(2)}|${(t.btime||'').slice(0,5)}|${t.qty}`;
 }
 
+// ── Rithmic R Pro Order History CSV parser ──
+function _parseRithmicCSV(text) {
+  if (!text.includes('Completed Orders') || !text.includes('Buy/Sell') || !text.includes('Avg Fill Price')) return null;
+  const lines = text.split(/\r?\n/);
+
+  // Quote-aware CSV line parser
+  function _pl(line) {
+    const f=[]; let c='', q=false;
+    for(const ch of line){if(ch==='"'){q=!q;continue;}if(ch===','&&!q){f.push(c.trim());c='';continue;}c+=ch;}
+    f.push(c.trim());
+    return f.map(v=>v.replace(/^"|"$/g,'').trim());
+  }
+
+  // Find header row of Completed Orders section
+  let hi=-1;
+  for(let i=0;i<lines.length;i++){
+    if(lines[i].includes('Buy/Sell')&&lines[i].includes('Avg Fill Price')&&lines[i].includes('Symbol')){hi=i;break;}
+  }
+  if(hi<0) return null;
+
+  const hdrs = _pl(lines[hi]);
+  const col = n => hdrs.indexOf(n);
+  const iSt=col('Status'), iBS=col('Buy/Sell'), iQty=col('Qty To Fill'),
+        iSym=col('Symbol'), iFx=col('Avg Fill Price'),
+        iUT=col('Update Time (IDT)'), iCT=col('Create Time (IDT)');
+
+  // Point multiplier per futures symbol (longest-prefix wins)
+  function getMult(sym) {
+    const b = sym.replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '').toUpperCase();
+    const map = [['MNQ',2],['NQ',20],['MES',5],['ES',50],['MYM',0.5],['YM',5],
+                 ['M2K',5],['RTY',50],['MCL',100],['CL',1000],['MGC',10],['GC',100],
+                 ['MSI',50],['SI',5000],['MBT',5],['BTC',5]];
+    for(const[p,m] of map) if(b.startsWith(p)) return m;
+    return 1;
+  }
+
+  // Collect Filled orders
+  const fills=[];
+  for(let i=hi+1;i<lines.length;i++){
+    const row=_pl(lines[i]);
+    if(row.length<5) continue;
+    if(row[iSt]!=='Filled') continue;
+    const fillTime = row[iUT]||row[iCT]||'';
+    const price = parseFloat(row[iFx]);
+    const qty   = parseInt(row[iQty])||1;
+    const side  = row[iBS]; // 'B' or 'S'
+    const sym   = row[iSym];
+    if(!sym||!fillTime||isNaN(price)) continue;
+    fills.push({sym,side,qty,price,time:fillTime});
+  }
+
+  // Sort by fill time ascending
+  fills.sort((a,b)=>a.time.localeCompare(b.time));
+
+  // FIFO trade matching
+  const pos={}; // sym → [{side,price,qty,time}]
+  const trades=[];
+  for(const fill of fills){
+    const{sym,side,price,qty,time}=fill;
+    if(!pos[sym]) pos[sym]=[];
+    const q=pos[sym];
+    let rem=qty;
+    // Close against opposite-side legs
+    while(rem>0&&q.length>0&&q[0].side!==side){
+      const leg=q[0];
+      const mq=Math.min(rem,leg.qty);
+      const buyPx  = side==='B'?price:leg.price;
+      const sellPx = side==='S'?price:leg.price;
+      const entryT = leg.time<time?leg.time:time;
+      const exitT  = leg.time<time?time:leg.time;
+      const pnl = +((sellPx-buyPx)*mq*getMult(sym)).toFixed(2);
+      const t1=new Date(entryT.replace(' ','T')), t2=new Date(exitT.replace(' ','T'));
+      const secs=Math.round(Math.abs(t2-t1)/1000);
+      const dur=secs<60?secs+'s':secs<3600?Math.floor(secs/60)+'m'+(secs%60?':'+String(secs%60).padStart(2,'0'):''):'';
+      trades.push({sym,qty:mq,buy:buyPx,sell:sellPx,pnl,
+        date:entryT.slice(0,10),btime:entryT.slice(11,19)||'00:00:00',
+        stime:exitT.slice(11,19)||'',dur});
+      leg.qty-=mq; rem-=mq;
+      if(leg.qty===0) q.shift();
+    }
+    // Remainder opens/adds to position
+    if(rem>0){
+      if(q.length>0&&q[q.length-1].side===side) q[q.length-1].qty+=rem;
+      else q.push({side,price,qty:rem,time});
+    }
+  }
+  return trades;
+}
+
 function importCSV(inp){
   if (!canUse('import_csv')) { showUpgradeModal('import_csv'); inp.value=''; return; }
   const files=Array.from(inp.files);if(!files.length)return;
@@ -6034,40 +6123,53 @@ function importCSV(inp){
   files.forEach(f=>{
     const fr2=new FileReader();
     fr2.onload=e=>{
-      const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());
-      if(lines.length<2){processed++;return;}
-      // Parse headers — strip surrounding quotes
-      const hdrs=_parseCSVLine(lines[0]).map(h=>h.replace(/^"|"$/g,'').trim());
+      const rawText=e.target.result;
       const nt=[];
-      function pp(s){if(!s)return 0;s=String(s).replace(/[$,]/g,'').trim();const n=s.startsWith('(');s=s.replace(/[()]/g,'');return n?-parseFloat(s):parseFloat(s);}
-      for(let i=1;i<lines.length;i++){
-        const c=_parseCSVLine(lines[i]);
-        // Build object by header name
-        const o={};hdrs.forEach((h,j)=>{o[h]=(c[j]||'').replace(/^"|"$/g,'').trim();});
-        // boughtTimestamp is required; also accept 'Bought Timestamp' variants
-        const bts = o.boughtTimestamp || o['Bought Timestamp'] || o['boughttimestamp'] || '';
-        if(!bts)continue;
-        const[d,t]=bts.split(' ');
-        const parts=(d||'').split('/');
-        if(parts.length<3)continue;
-        const[mm,dd,yy]=parts;
-        const trade={
-          sym:  o.symbol||o.Symbol||'',
-          qty:  parseInt(o.qty||o.Qty)||1,
-          buy:  parseFloat(o.buyPrice||o['Buy Price']||0)||0,
-          sell: parseFloat(o.sellPrice||o['Sell Price']||0)||0,
-          pnl:  pp(o.pnl||o.PnL||o['P&L']||'0'),
-          date: `${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`,
-          btime: t||'00:00:00',
-          stime: '',
-          dur:  o.duration||o.Duration||''
-        };
-        if(!trade.date||trade.date==='undefined-undefined-undefined')continue;
-        const key=_tradeKey(trade);
-        if(existing.has(key)){totalSkipped++;continue;}
-        existing.add(key);
-        nt.push(trade);
+
+      // ── Rithmic R Pro Order History format ──
+      const rithmicTrades = _parseRithmicCSV(rawText);
+      if(rithmicTrades !== null){
+        for(const trade of rithmicTrades){
+          if(!trade.date) continue;
+          const key=_tradeKey(trade);
+          if(existing.has(key)){totalSkipped++;continue;}
+          existing.add(key);
+          nt.push(trade);
+        }
+      } else {
+        // ── Tradovate / generic CSV format ──
+        const lines=rawText.split(/\r?\n/).filter(l=>l.trim());
+        if(lines.length<2){processed++;return;}
+        const hdrs=_parseCSVLine(lines[0]).map(h=>h.replace(/^"|"$/g,'').trim());
+        function pp(s){if(!s)return 0;s=String(s).replace(/[$,]/g,'').trim();const n=s.startsWith('(');s=s.replace(/[()]/g,'');return n?-parseFloat(s):parseFloat(s);}
+        for(let i=1;i<lines.length;i++){
+          const c=_parseCSVLine(lines[i]);
+          const o={};hdrs.forEach((h,j)=>{o[h]=(c[j]||'').replace(/^"|"$/g,'').trim();});
+          const bts = o.boughtTimestamp || o['Bought Timestamp'] || o['boughttimestamp'] || '';
+          if(!bts)continue;
+          const[d,t]=bts.split(' ');
+          const parts=(d||'').split('/');
+          if(parts.length<3)continue;
+          const[mm,dd,yy]=parts;
+          const trade={
+            sym:  o.symbol||o.Symbol||'',
+            qty:  parseInt(o.qty||o.Qty)||1,
+            buy:  parseFloat(o.buyPrice||o['Buy Price']||0)||0,
+            sell: parseFloat(o.sellPrice||o['Sell Price']||0)||0,
+            pnl:  pp(o.pnl||o.PnL||o['P&L']||'0'),
+            date: `${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`,
+            btime: t||'00:00:00',
+            stime: '',
+            dur:  o.duration||o.Duration||''
+          };
+          if(!trade.date||trade.date==='undefined-undefined-undefined')continue;
+          const key=_tradeKey(trade);
+          if(existing.has(key)){totalSkipped++;continue;}
+          existing.add(key);
+          nt.push(trade);
+        }
       }
+
       if(nt.length){
         const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
         const tagAcct=selIds.length===1?selIds[0]:null;
@@ -6080,8 +6182,9 @@ function importCSV(inp){
         const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
         const acctName=selIds.length===1?(accounts.find(a=>a.id===selIds[0])?.name||selIds[0]):null;
         renderAll();saveData();
+        const src=rithmicTrades!==null?'Rithmic R Pro':'CSV';
         const msg=totalImported
-          ?`✅ יובאו ${totalImported} עסקאות${acctName?' → '+acctName:''}${totalSkipped?' | ⏭ '+totalSkipped+' כפילויות דולגו':''}`
+          ?`✅ יובאו ${totalImported} עסקאות מ-${src}${acctName?' → '+acctName:''}${totalSkipped?' | ⏭ '+totalSkipped+' כפילויות דולגו':''}`
           :`⏭ כל ${totalSkipped} העסקאות כבר קיימות — לא נוספו כפילויות`;
         showToast(msg,totalImported?'success':'info',4000);
       }
