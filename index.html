@@ -4763,7 +4763,7 @@ function renderPNL(){
 }
 
 // CALENDAR
-let calYear=2026, calMonth=4;
+const _calNow=new Date(); let calYear=_calNow.getFullYear(), calMonth=_calNow.getMonth();
 function calToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderCal();}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();}
@@ -6232,10 +6232,21 @@ function importCSV(inp){
       const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
       const acctName=selIds.length===1?(accounts.find(a=>a.id===selIds[0])?.name||selIds[0]):null;
       renderAll(); saveData();
-      const msg=totalImported
-        ?`✅ יובאו ${totalImported} עסקאות מ-${srcLabel||'קובץ'}${acctName?' → '+acctName:''}${totalSkipped?' | ⏭ '+totalSkipped+' כפילויות דולגו':''}`
-        :`⏭ כל ${totalSkipped} העסקאות כבר קיימות — לא נוספו כפילויות`;
-      showToast(msg,totalImported?'success':'info',4000);
+      if(totalImported){
+        const gross=nt.reduce((s,t)=>s+t.pnl,0);
+        const comm =nt.reduce((s,t)=>s+tradeComm(t),0);
+        const net  =+(gross-comm).toFixed(2);
+        const sign =net>=0?'+':'';
+        const src  =srcLabel||'קובץ';
+        const acct =acctName?' → '+acctName:'';
+        const dup  =totalSkipped?' | ⏭ '+totalSkipped+' כפילויות':'';
+        showToast(
+          `✅ יובאו ${totalImported} עסקאות מ-${src}${acct} | גרוס: $${gross.toFixed(2)} | עמלות: $${comm.toFixed(2)} | נטו: ${sign}$${Math.abs(net)}${dup}`,
+          'success', 6000
+        );
+      } else {
+        showToast(`⏭ כל ${totalSkipped} העסקאות כבר קיימות — לא נוספו כפילויות`,'info',4000);
+      }
     }
   }
 
