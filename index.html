@@ -2154,7 +2154,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </table>
   </div>
   <div class="card" style="margin-top:10px;background:rgba(77,166,255,0.05);border-color:rgba(77,166,255,0.2)">
-    <div class="ct"><div class="dot" style="background:var(--bl)"></div>הגדרות עמלות מסחר — TakeProfit Trader</div>
+    <div class="ct"><div class="dot" style="background:var(--bl)"></div>הגדרות עמלות מסחר — Rithmic R Pro</div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);cursor:pointer">
         <input type="checkbox" class="chk" id="comm-enabled" checked onchange="commSettings.enabled=this.checked;renderAll()">
@@ -2162,13 +2162,13 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       </label>
       <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)">
         <span>עמלה לחוזה מיקרו (round trip):</span>
-        <input type="number" id="comm-rate" value="0.25" step="0.01" min="0" max="5"
+        <input type="number" id="comm-rate" value="0.20" step="0.01" min="0" max="5"
           style="width:70px;padding:4px 7px;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg3);color:var(--t1)"
-          onchange="commSettings.ratePerContract=parseFloat(this.value)||0.25;renderAll()">
+          onchange="commSettings.ratePerContract=parseFloat(this.value)||0.20;renderAll()">
         <span style="color:var(--t3)">$</span>
       </div>
       <div style="font-size:11px;color:var(--t3)">
-        📌 מאומת מ-Tradovate: $0.25 per round trip למיקרו ($484.50 ÷ 1,938 חוזים)
+        📌 Rithmic R Pro: $0.10 routing fee per side = $0.20 round trip — הוסף עמלת ברוקר לפי הסכם שלך
       </div>
     </div>
   </div>
@@ -2227,7 +2227,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- TRADES JOURNAL -->
 <div class="tp" id="tp-trades">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div><div style="font-size:15px;font-weight:600">יומן עסקאות — Tradovate</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא Performance Report מ-Tradovate ← לחץ "ייבא CSV"</div></div>
+    <div><div style="font-size:15px;font-weight:600">יומן עסקאות — Rithmic R Pro</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מ-Rithmic R Pro ← לחץ "ייבא CSV"</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="showReportMenu('trades',this)" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(167,139,250,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#a78bfa;font-family:inherit">📊 דוח P&amp;L</button>
       <button onclick="exportCSV()" style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">📤 ייצא CSV</button>
@@ -2353,7 +2353,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
     <div style="padding:0 14px 14px">
       <div id="inv_news_main"></div>
-      <script type="text/javascript" src="https://ssltools.investing.com/news_feed/js/newsFeedInstaller.js?forceLang=56&period=28800&highlights=true&name=inv_news_main&hl=15&type=0&theme=dark&cols=1&width=100%" charset="UTF-8"></script>
+      <script>if(location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){const _s=document.createElement('script');_s.src='https://ssltools.investing.com/news_feed/js/newsFeedInstaller.js?forceLang=56&period=28800&highlights=true&name=inv_news_main&hl=15&type=0&theme=dark&cols=1&width=100%';_s.charset='UTF-8';document.currentScript.parentNode.appendChild(_s);}</script>
     </div>
   </div>
 
@@ -2431,7 +2431,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
     <div style="padding:0 14px 14px">
       <div id="inv_news_ecal"></div>
-      <script type="text/javascript" src="https://ssltools.investing.com/news_feed/js/newsFeedInstaller.js?forceLang=56&period=28800&highlights=true&name=inv_news_ecal&hl=12&type=0&theme=dark&cols=1&width=100%" charset="UTF-8"></script>
+      <script>if(location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){const _s2=document.createElement('script');_s2.src='https://ssltools.investing.com/news_feed/js/newsFeedInstaller.js?forceLang=56&period=28800&highlights=true&name=inv_news_ecal&hl=12&type=0&theme=dark&cols=1&width=100%';_s2.charset='UTF-8';document.currentScript.parentNode.appendChild(_s2);}</script>
     </div>
   </div>
 
@@ -3382,9 +3382,9 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 
             <!-- CSV method -->
             <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(74,143,168,.08),rgba(74,143,168,.04));border:1px solid rgba(74,143,168,.25);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#4a8fa8;margin-bottom:8px">📂 שיטה 1 — ייבוא CSV מ-Tradovate</div>
+              <div style="font-size:12px;font-weight:700;color:#4a8fa8;margin-bottom:8px">📂 שיטה 1 — ייבוא CSV מ-Rithmic R Pro</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
-                <strong style="color:var(--t1)">צעד 1:</strong> ב-Tradovate → Reports → Performance → Export CSV<br>
+                <strong style="color:var(--t1)">צעד 1:</strong> ב-Rithmic R Pro → דוחות → ייצא CSV של עסקאות<br>
                 <strong style="color:var(--t1)">צעד 2:</strong> בלשונית "יומן עסקאות" לחץ <span style="background:rgba(74,143,168,.2);padding:1px 7px;border-radius:4px;color:#4a8fa8;font-weight:600">📂 ייבא CSV</span><br>
                 <strong style="color:var(--t1)">צעד 3:</strong> בחר את הקובץ (ניתן לבחור מרובים בבת אחת)<br>
                 <strong style="color:var(--t1)">צעד 4:</strong> המערכת מייבאת, מחשבת עמלות ושומרת הכל אוטומטית ✅
@@ -3404,7 +3404,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 
             <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
               <span style="font-size:16px;flex-shrink:0">💱</span>
-              <div><strong style="color:var(--t1)">חישוב עמלות אוטומטי</strong><br>המערכת מחשבת $0.25 לחוזה מיקרו round-trip (MES/MNQ) — מאומת מ-Tradovate. לשינוי: לשונית הוצאות ← הוצאות חופשיות.</div>
+              <div><strong style="color:var(--t1)">חישוב עמלות אוטומטי</strong><br>המערכת מחשבת $0.20 לחוזה מיקרו round-trip (Rithmic routing $0.10/side). הוסף עמלת ברוקר לפי הסכמך. לשינוי: לשונית הוצאות ← הוצאות חופשיות.</div>
             </div>
             <div style="padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.7;display:flex;gap:10px;align-items:flex-start">
               <span style="font-size:16px;flex-shrink:0">🔍</span>
@@ -4114,7 +4114,12 @@ const HIST_RATES = {
   '2026-01':3.186,'2026-02':3.064,'2026-03':3.098,'2026-04':3.115,
   '2026-05':2.933,'2026-06':2.910,
 };
-function histRate(d){return HIST_RATES[d.slice(0,7)]||3.5;}
+function histRate(d){
+  const k=d.slice(0,7);
+  if(HIST_RATES[k])return HIST_RATES[k];
+  const keys=Object.keys(HIST_RATES).sort();
+  return HIST_RATES[keys[keys.length-1]]||3.0;
+}
 let records = [];
 let recurringTemplates = [];
 let nextId = 200;
@@ -4122,11 +4127,11 @@ let pnlOn = {'מבחנים':true,'תוכנות':true,'מנויים':true,'ציו
 const TRADES = [];
 let tradesList = [...TRADES];
 
-// Commission settings — Verified from Tradovate: $0.25 per micro contract round trip
-// Confirmed: $484.50 / 1938 contracts = $0.25 per contract
+// Commission settings — Rithmic R Pro: $0.10 routing fee per side = $0.20 round trip
+// Add your broker's per-contract commission on top of the routing fee
 let commSettings = {
   enabled: true,
-  ratePerContract: 0.25,  // $ per contract round trip (micro) — verified from Tradovate report
+  ratePerContract: 0.20,  // $ per contract round trip — Rithmic routing fee only ($0.10/side)
   totalOverride: null,    // if set, use this instead of auto-calc
 };
 function tradeComm(t) {
@@ -4247,7 +4252,7 @@ function renderOV() {
     const pnlEl = document.getElementById('zm-pnl');
     if(pnlEl) animCounter(pnlEl, netPnl, '$');
     const ilsEl = document.getElementById('zm-pnl-ils');
-    if(ilsEl) { const v = netPnl*2.933; ilsEl.textContent = (v>=0?'+':'')+Math.abs(v).toFixed(0); }
+    if(ilsEl) { const v = netPnl*(histRate(new Date().toISOString().slice(0,10))); ilsEl.textContent = (v>=0?'+':'')+Math.abs(v).toFixed(0); }
     const wrEl = document.getElementById('zm-wr');
     if(wrEl) animCounter(wrEl, wr, '', '%');
     const pfEl = document.getElementById('zm-pf');
@@ -4716,7 +4721,7 @@ function renderCal(){
   const tradeDays=Object.keys(daily).length;
   document.getElementById('cal-stats').innerHTML=
     `<span style="color:var(--t2)">Monthly stats:</span>`+
-    `<span class="mono ${totalPnl>=0?'tw':'tl'}" style="font-weight:600;background:${totalPnl>=0?'rgba(0,100,50,.4)':'rgba(120,20,20,.4)'};padding:2px 8px;border-radius:12px">${totalPnl>=0?'+':'-'}$${Math.abs(totalPnl).toFixed(2)}</span>`+`<span style="color:var(--t3);font-size:10px"> = ₪${Math.abs(totalPnl*2.933).toFixed(0)}</span>`+
+    `<span class="mono ${totalPnl>=0?'tw':'tl'}" style="font-weight:600;background:${totalPnl>=0?'rgba(0,100,50,.4)':'rgba(120,20,20,.4)'};padding:2px 8px;border-radius:12px">${totalPnl>=0?'+':'-'}$${Math.abs(totalPnl).toFixed(2)}</span>`+`<span style="color:var(--t3);font-size:10px"> = ₪${Math.abs(totalPnl*(histRate(new Date().toISOString().slice(0,10)))).toFixed(0)}</span>`+
     `<span style="color:var(--t3)">${tradeDays} days</span>`;
   const today=new Date();const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   const firstDay=new Date(calYear,calMonth,1).getDay();
@@ -4756,7 +4761,33 @@ function showDayTrades(date){
   const day=tradesList.filter(t=>t.date===date).sort((a,b)=>a.btime.localeCompare(b.btime));
   if(!day.length)return;
   const total=day.reduce((s,t)=>s+tradeNet(t),0);
-  alert(fmtD(date)+' — '+day.length+' עסקאות — NET P&L: '+fmt(total)+'\n\n'+day.map(t=>t.btime.slice(0,5)+' | '+t.sym+' | qty:'+t.qty+' | NET:'+fmt(tradeNet(t))).join('\n'));
+  const wins=day.filter(t=>tradeNet(t)>0).length;
+  const rows=day.map(t=>{
+    const net=tradeNet(t);
+    return `<tr>
+      <td style="color:var(--t3);font-size:11px">${t.btime.slice(0,5)}</td>
+      <td style="font-weight:600;color:var(--t1)">${t.sym}</td>
+      <td style="color:var(--t3)">${t.qty}</td>
+      <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:900;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  d.innerHTML=`<div dir="rtl" style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;min-width:300px;max-width:420px;width:90vw">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--t1)">${fmtD(date)}</div>
+        <div style="font-size:11px;color:var(--t3)">${day.length} עסקאות · ${wins}W/${day.length-wins}L</div>
+      </div>
+      <div style="font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;class:${total>=0?'cg':'cr'};color:${total>=0?'var(--gr)':'var(--re)'}">${total>=0?'+':'−'}$${Math.abs(total).toFixed(2)}</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse">${rows}</table>
+    <div style="text-align:left;margin-top:14px">
+      <button onclick="this.closest('[style*=fixed]').remove()" style="padding:6px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t2);cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
+    </div>
+  </div>`;
+  d.addEventListener('click',e=>{if(e.target===d)d.remove();});
+  document.body.appendChild(d);
 }
 
 // TRADES JOURNAL
@@ -4771,7 +4802,7 @@ function renderTJ(){
   list.sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime));
   const tot=list.reduce((s,t)=>s+t.pnl,0);
   const w=list.filter(t=>t.pnl>0);
-  const rate=HIST_RATES[new Date().toISOString().slice(0,7)]||3.0;
+  const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('tj-m').innerHTML=
     `<div class="mc" style="border-color:${tot>=0?'rgba(0,210,106,.3)':'rgba(255,77,77,.3)'}"><div class="mc-l">P&L סה״כ $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*rate).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">ימי מסחר</div></div>`+
@@ -6054,7 +6085,7 @@ window.addEventListener('message', e => {
   if (!nt.length) return;
   tradesList = [...tradesList, ...nt];
   renderAll();
-  alert('✅ ' + nt.length + ' עסקאות יובאו מהתוסף!');
+  showToast('✅ ' + nt.length + ' עסקאות יובאו מהתוסף!', 'success');
 });
 
 // STATS
@@ -6071,7 +6102,7 @@ function renderStats(){
   const best=tl.length?Math.max(...tl.map(t=>tradeNet(t))):0;
   const worst=tl.length?Math.min(...tl.map(t=>tradeNet(t))):0;
   document.getElementById('ts-m').innerHTML=
-    `<div class="mc" style="border-color:${tot>=0?'rgba(0,210,106,.3)':'rgba(255,77,77,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*2.933).toFixed(0)}</div></div>`+
+    `<div class="mc" style="border-color:${tot>=0?'rgba(0,210,106,.3)':'rgba(255,77,77,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*(histRate(new Date().toISOString().slice(0,10)))).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">ברוטו / עמלות</div><div class="mc-v" style="font-size:14px">$${grossTot.toFixed(0)} / <span class="cr">$${commTot.toFixed(0)}</span></div><div class="mc-s">${tl.length} עסקאות</div></div>`+
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${tl.length?(w.length/tl.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W/${l.length}L</div></div>`+
     `<div class="mc"><div class="mc-l">Profit Factor</div><div class="mc-v cy">${pf.toFixed(2)}</div></div>`+
@@ -6104,7 +6135,7 @@ function renderStats(){
   const dowVals=dowKeys.map(d=>+dowData[d].pnl.toFixed(2));
   if(dowCh)dowCh.destroy();
   dowCh=new Chart(document.getElementById('dowChart'),{type:'bar',data:{labels:dowKeys.map(d=>days[d]),datasets:[{data:dowVals,backgroundColor:dowVals.map(v=>v>=0?'rgba(0,210,106,.6)':'rgba(255,77,77,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#545f72',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
-  const rate=HIST_RATES['2026-05']||3.0;
+  const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('dow-tbody').innerHTML=dowKeys.map(d=>{
     const dd=dowData[d];const avg=dd.trades?dd.pnl/dd.trades:0;const wr=dd.trades?(dd.wins/dd.trades*100).toFixed(0):0;
     return `<tr><td style="font-weight:500">${days[d]}</td><td>${dd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td style="color:#545f72">₪${fmtILS(dd.pnl*rate)}</td><td class="mono" style="color:#545f72">$${avg.toFixed(2)}</td></tr>`;
@@ -6138,7 +6169,7 @@ async function tvConnect(env){
   const pass=document.getElementById('tv-pass').value;
   const cid=parseInt(document.getElementById('tv-cid').value)||0;
   const sec=document.getElementById('tv-secret').value.trim();
-  if(!user||!pass||!cid){alert('נא למלא שם משתמש, סיסמה ו-CID');return;}
+  if(!user||!pass||!cid){showToast('נא למלא שם משתמש, סיסמה ו-CID','error');return;}
   setSync('connecting');logSync('מתחבר ל-'+env+'...');
   const base=env==='live'?'https://live.tradovateapi.com/v1':'https://demo.tradovateapi.com/v1';
   try{
@@ -6262,7 +6293,7 @@ function saveRec(){
   const dt=document.getElementById('f-dt').value;
   const rawAm=parseFloat(document.getElementById('f-am').value);
   const rt=parseFloat(document.getElementById('f-rt').value)||histRate(dt||new Date().toISOString().slice(0,10));
-  if(!dt||isNaN(rawAm)||rawAm<=0){alert('נא למלא תאריך וסכום');return;}
+  if(!dt||isNaN(rawAm)||rawAm<=0){showToast('נא למלא תאריך וסכום','error');return;}
   const amUSD = mCurrency==='ILS' ? +(rawAm/rt).toFixed(2) : rawAm;
 
   const isRecur = mType==='הוצאה' && document.getElementById('f-recur').checked;
@@ -6422,7 +6453,7 @@ function cxSave() {
   const rawAm = parseFloat(document.getElementById('cx-am').value);
   const rt   = parseFloat(document.getElementById('cx-rt').value)||3.65;
   const desc = document.getElementById('cx-desc').value.trim();
-  if(!dt||isNaN(rawAm)||rawAm<=0||!desc){alert('נא למלא תאריך, תיאור וסכום');return;}
+  if(!dt||isNaN(rawAm)||rawAm<=0||!desc){showToast('נא למלא תאריך, תיאור וסכום','error');return;}
   const amUSD = _cxCurrency==='ILS' ? +(rawAm/rt).toFixed(2) : rawAm;
   const c = {id:_cxEditI>=0?customExpenses[_cxEditI].id:'cx'+cxNextId++,
     category:document.getElementById('cx-cat').value, desc,
@@ -6625,7 +6656,7 @@ function saveData() {
     localStorage.setItem('dor_comm', JSON.stringify(commSettings));
     localStorage.setItem('dor_saved', new Date().toLocaleString('he-IL'));
     _cloudSave(); // also sync to cloud
-  } catch(e) { alert('שגיאה בשמירה: ' + e.message); }
+  } catch(e) { showToast('שגיאה בשמירה: ' + e.message, 'error'); }
 }
 
 // ════════════════════════════════════════════════════
@@ -6736,7 +6767,7 @@ function loadData() {
     const cm = localStorage.getItem('dor_comm');
     const rc = localStorage.getItem('dor_recurring');
     const saved = localStorage.getItem('dor_saved');
-    if(!r && !t) { alert('אין נתונים שמורים'); return; }
+    if(!r && !t) { showToast('אין נתונים שמורים','info'); return; }
     if(!confirm('לטעון נתונים שנשמרו ב: ' + (saved||'לא ידוע') + '?')) return;
     if(r) records = JSON.parse(r);
     if(t) tradesList = JSON.parse(t);
@@ -6753,7 +6784,7 @@ function loadData() {
     const commChk2 = document.getElementById('comm-enabled');
     if (commChk2) commChk2.checked = commSettings.enabled;
     document.getElementById('save-status').textContent = '✅ נטען בהצלחה';
-  } catch(e) { alert('שגיאה בטעינה: ' + e.message); }
+  } catch(e) { showToast('שגיאה בטעינה: ' + e.message, 'error'); }
 }
 function exportAll() {
   if (!canUse('backup')) { showUpgradeModal('backup'); return; }
@@ -6777,8 +6808,8 @@ function importAll(inp) {
       if(data.commSettings) Object.assign(commSettings, data.commSettings);
       if(data.recurringTemplates) recurringTemplates = data.recurringTemplates;
       applyRecurring();
-      renderAll(); alert('ייבוא הושלם בהצלחה!');
-    } catch(err) { alert('שגיאה בייבוא: ' + err.message); }
+      renderAll(); showToast('✅ ייבוא הושלם בהצלחה!', 'success');
+    } catch(err) { showToast('שגיאה בייבוא: ' + err.message, 'error'); }
   };
   fr.readAsText(f, 'utf-8'); inp.value = '';
 }
@@ -6872,7 +6903,7 @@ function saveAdminSettings() {
     airtableBase:   document.getElementById('at-base')?.value.trim()||'',
   };
   localStorage.setItem('dor_admin_settings', JSON.stringify(s));
-  alert('✅ הגדרות נשמרו!');
+  showToast('✅ הגדרות נשמרו!', 'success');
 }
 function loadAdminSettingsUI() {
   const s = getAdminSettings();
@@ -6902,8 +6933,8 @@ async function submitReg() {
   const name  = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const phone = document.getElementById('reg-phone').value.trim();
-  if(!name||!email||!phone){alert('נא למלא שם, אימייל וטלפון');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('כתובת אימייל לא תקינה');return;}
+  if(!name||!email||!phone){showToast('נא למלא שם, אימייל וטלפון','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('כתובת אימייל לא תקינה','error');return;}
 
   const user = {name,email,phone,plan:currentPlan,date:new Date().toISOString(),status:'pending',id:'u'+Date.now()};
 
@@ -6932,7 +6963,7 @@ async function submitReg() {
       window.open(stripeUrl, '_blank');
     }
   } else {
-    alert('⚠️ קישור תשלום לא הוגדר עדיין.\nאנא פנה למנהל המערכת:\n'+email);
+    showToast('⚠️ קישור תשלום לא הוגדר עדיין — פנה למנהל המערכת', 'error');
   }
 }
 
@@ -6942,10 +6973,10 @@ function enterLicenseKey() {
   const validKeys = JSON.parse(localStorage.getItem('dor_valid_keys')||'[]');
   if(validKeys.includes(key.trim())) {
     localStorage.setItem('dor_licensed',JSON.stringify({key,date:new Date().toISOString()}));
-    alert('✅ רישיון אושר! ברוך הבא!');
-    location.reload();
+    showToast('✅ רישיון אושר! ברוך הבא!','success');
+    setTimeout(()=>location.reload(),1200);
   } else {
-    alert('❌ מפתח לא תקין. אנא בדוק את האימייל שקיבלת.');
+    showToast('❌ מפתח לא תקין. אנא בדוק את האימייל שקיבלת.','error');
   }
 }
 
@@ -6961,35 +6992,35 @@ showAdd['help'] = false;
 // DATA MANAGER FUNCTIONS
 // ════════════════════════════════════════════════════════════════
 function dmClearTrades() {
-  if(!tradesList.length){alert('אין עסקאות למחוק');return;}
+  if(!tradesList.length){showToast('אין עסקאות למחוק','info');return;}
   if(!confirm('למחוק את כל '+tradesList.length+' העסקאות? פעולה זו בלתי הפיכה!'))return;
-  tradesList=[];renderAll();renderDM();
+  tradesList=[];renderAll();renderDM();showToast('עסקאות נמחקו','success');
 }
 function dmClearRecords() {
   const exp=records.filter(r=>r.type!=='משיכה');
-  if(!exp.length){alert('אין הוצאות למחוק');return;}
+  if(!exp.length){showToast('אין הוצאות למחוק','info');return;}
   if(!confirm('למחוק את כל '+exp.length+' הוצאות הנוסטרו? פעולה זו בלתי הפיכה!'))return;
-  records=records.filter(r=>r.type==='משיכה');renderAll();renderDM();
+  records=records.filter(r=>r.type==='משיכה');renderAll();renderDM();showToast('הוצאות נמחקו','success');
 }
 function dmClearWD() {
   const wds=records.filter(r=>r.type==='משיכה');
-  if(!wds.length){alert('אין משיכות למחוק');return;}
+  if(!wds.length){showToast('אין משיכות למחוק','info');return;}
   if(!confirm('למחוק את כל '+wds.length+' המשיכות?'))return;
-  records=records.filter(r=>r.type!=='משיכה');renderAll();renderDM();
+  records=records.filter(r=>r.type!=='משיכה');renderAll();renderDM();showToast('משיכות נמחקו','success');
 }
 function dmClearCX() {
-  if(!customExpenses.length){alert('אין הוצאות חופשיות למחוק');return;}
+  if(!customExpenses.length){showToast('אין הוצאות חופשיות למחוק','info');return;}
   if(!confirm('למחוק את כל '+customExpenses.length+' ההוצאות החופשיות?'))return;
-  customExpenses=[];renderAll();renderDM();
+  customExpenses=[];renderAll();renderDM();showToast('הוצאות חופשיות נמחקו','success');
 }
 function dmFullReset() {
   const conf1=confirm('⚠️ איפוס מלא!\n\nפעולה זו תמחק:\n• כל עסקאות המסחר ('+tradesList.length+')\n• כל רשומות ההוצאות ('+records.length+')\n• כל ההוצאות החופשיות ('+customExpenses.length+')\n\nהאם אתה בטוח לחלוטין?');
   if(!conf1)return;
   const conf2=prompt('כדי לאשר, הקלד: אני מאשר');
-  if(conf2!=='אני מאשר'){alert('בוטל');return;}
+  if(conf2!=='אני מאשר'){showToast('בוטל','info');return;}
   records=[];tradesList=[];customExpenses=[];
   renderAll();renderDM();
-  alert('✅ המערכת אופסה');
+  showToast('✅ המערכת אופסה','success');
 }
 function dmClearStorage() {
   if(!confirm('למחוק את כל הנתונים השמורים בדפדפן?'))return;
@@ -7034,7 +7065,7 @@ function payBit(plan) {
   const s = getAdminSettings();
   const link = plan==='pro' ? (s.bitProLink||'') : (s.bitLifeLink||'');
   if (!link) {
-    alert('קישור ביט לא הוגדר עדיין.\n\nהגדר בפאנל הניהול: Ctrl+Shift+A → הגדרות תשלום');
+    showToast('קישור ביט לא הוגדר — הגדר בפאנל הניהול: Ctrl+Shift+A', 'error');
     return;
   }
   // Collect user info first
@@ -7051,7 +7082,7 @@ function payPaybox(plan) {
   const s = getAdminSettings();
   const link = plan==='pro' ? (s.payboxProLink||'') : (s.payboxLifeLink||'');
   if (!link) {
-    alert('קישור פייבוקס לא הוגדר עדיין.\n\nהגדר בפאנל הניהול: Ctrl+Shift+A → הגדרות תשלום');
+    showToast('קישור פייבוקס לא הוגדר — הגדר בפאנל הניהול: Ctrl+Shift+A', 'error');
     return;
   }
   currentPlan = plan;
@@ -7069,7 +7100,7 @@ window.submitReg = async function() {
     const name  = document.getElementById('reg-name').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const phone = document.getElementById('reg-phone').value.trim();
-    if(!name||!email||!phone){alert('נא למלא שם, אימייל וטלפון');return;}
+    if(!name||!email||!phone){showToast('נא למלא שם, אימייל וטלפון','error');return;}
     // Save user
     const user = {name,email,phone,plan:currentPlan,method:window._pendingPayMethod,date:new Date().toISOString(),status:'pending',id:'u'+Date.now()};
     const users = JSON.parse(localStorage.getItem('dor_registrations')||'[]');
@@ -7392,7 +7423,7 @@ let planVisibility  = { free:true, pro:true, lifetime:true };
 const FEATURE_DEFS = [
   { key:'calendar',       label:'לוח שנה',             desc:'לוח שנה מסחר ואירועים' },
   { key:'stats_advanced', label:'סטטיסטיקות מתקדמות',  desc:'ניתוח מלא, גרפים, Win Rate עמוק' },
-  { key:'import_csv',     label:'ייבוא CSV',            desc:'ייבוא עסקאות מ-Tradovate' },
+  { key:'import_csv',     label:'ייבוא CSV',            desc:'ייבוא עסקאות מ-CSV' },
   { key:'export_csv',     label:'ייצוא CSV',            desc:'ייצוא עסקאות והוצאות לקובץ' },
   { key:'export_pdf',     label:'ייצוא PDF',            desc:'דוחות מפורטים ומסכמים PDF' },
   { key:'reports',        label:'דוחות P&L',           desc:'דוחות שבועי/חודשי/שנתי' },
@@ -8954,7 +8985,7 @@ function adminResetPassword(email) {
   if (!confirm(`שלח מייל איפוס סיסמה אל:\n${email}?`)) return;
   auth.sendPasswordResetEmail(email)
     .then(()=>showToast('מייל איפוס נשלח ✅','success'))
-    .catch(e=>alert('❌ שגיאה: '+e.message));
+    .catch(e=>showToast('❌ שגיאה: '+e.message,'error'));
 }
 
 async function adminInviteUser() {
@@ -8977,7 +9008,7 @@ async function adminInviteUser() {
 
 async function exportUsersCSV() {
   const users=await _getUsers();
-  if (!users.length) { alert('אין משתמשים לייצוא'); return; }
+  if (!users.length) { showToast('אין משתמשים לייצוא','info'); return; }
   const rows=[['#','שם','אימייל','טלפון','נרשם','כניסה אחרונה','כניסות','חבילה','סטטוס']];
   users.forEach((u,i)=>{
     const reg=u.registeredAt?.toDate?u.registeredAt.toDate():new Date(u.registeredAt||0);
@@ -9959,7 +9990,7 @@ function renderStrategyStats() {
     return;
   }
   const maxAbs = Math.max(...keys.map(k=>Math.abs(stratMap[k].pnl)), 1);
-  const rate   = HIST_RATES['2026-05'] || 3.0;
+  const rate   = HIST_RATES[new Date().toISOString().slice(0,7)] || 3.0;
   body.innerHTML = `
     <table class="tbl" style="width:100%">
       <thead><tr>
@@ -10053,7 +10084,7 @@ window.renderTJ = function renderTJ() {
 
   const tot = list.reduce((s,t)=>s+tradeNet(t), 0);
   const w   = list.filter(t=>tradeNet(t)>0);
-  const curRate = HIST_RATES[new Date().toISOString().slice(0,7)]||3.0;
+  const curRate = histRate(new Date().toISOString().slice(0,10));
   document.getElementById('tj-m').innerHTML =
     `<div class="mc" style="border-color:${tot>=0?'rgba(0,210,106,.3)':'rgba(255,77,77,.3)'}"><div class="mc-l">P&L סה״כ $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*curRate).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">סה״כ עסקאות</div></div>`+
@@ -10673,8 +10704,8 @@ const CHAT_KB = [
     c:['ייבוא מ-Tradovate','הוספת הוצאה','חשבון ותיק'] },
 
   // ── CSV Import ──
-  { m:['ייבוא csv','ייבא csv','tradovate','ייבוא tradovate','ייבוא מ-tradovate','איך מייבאים csv','ייבוא עסקאות'],
-    r:'לייבוא מ-Tradovate CSV:\n1️⃣ לך ל-Tradovate → Reports → Export\n2️⃣ הורד קובץ CSV של עסקאות\n3️⃣ במערכת: לשונית **עסקאות** → 📥 **ייבא CSV**\n4️⃣ בחר את הקובץ — העסקאות יתווספו אוטומטית\n\n⚠️ הייבוא מסנן כפילויות אוטומטית',
+  { m:['ייבוא csv','ייבא csv','tradovate','rithmic','ייבוא rithmic','איך מייבאים csv','ייבוא עסקאות'],
+    r:'לייבוא עסקאות מ-Rithmic R Pro:\n1️⃣ ב-Rithmic R Pro → פתח דוח עסקאות → ייצא CSV\n2️⃣ הורד את קובץ ה-CSV\n3️⃣ במערכת: לשונית **עסקאות** → 📥 **ייבא CSV**\n4️⃣ בחר את הקובץ — העסקאות יתווספו אוטומטית\n\n⚠️ הייבוא מסנן כפילויות אוטומטית',
     c:['הוספת עסקה ידנית','ייצוא CSV','גיבוי'] },
 
   // ── Expenses ──
@@ -10698,8 +10729,8 @@ const CHAT_KB = [
     c:['P&L הסבר','עמלות אוטומטיות','דוחות PDF'] },
 
   // ── Commission ──
-  { m:['עמלות','עמלה','commission','עמלה אוטומטית','הגדרת עמלה','takeprofittrader','0.25'],
-    r:'⚙️ **הגדרת עמלות אוטומטיות:**\n\nלשונית **הוצאות חופשיות** → גלול למטה ← **הגדרות עמלות TakeProfit Trader**\n\n• ✅ הפעל חישוב עמלות אוטומטי\n• הגדר עמלה לחוזה מיקרו (ברירת מחדל: $0.25 — מאומת מ-Tradovate)\n\nהמערכת מחשבת עמלות לכל עסקה × כמות אוטומטית',
+  { m:['עמלות','עמלה','commission','עמלה אוטומטית','הגדרת עמלה','rithmic','0.20'],
+    r:'⚙️ **הגדרת עמלות אוטומטיות:**\n\nלשונית **הוצאות חופשיות** → גלול למטה ← **הגדרות עמלות Rithmic R Pro**\n\n• ✅ הפעל חישוב עמלות אוטומטי\n• הגדר עמלה לחוזה מיקרו (ברירת מחדל: $0.20 — Rithmic routing $0.10/side)\n• הוסף עמלת ברוקר לפי ההסכם שלך\n\nהמערכת מחשבת עמלות לכל עסקה × כמות אוטומטית',
     c:['P&L הסבר','הוצאות חופשיות','עסקאות'] },
 
   // ── Statistics ──
