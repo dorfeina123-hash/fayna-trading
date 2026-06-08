@@ -3922,7 +3922,10 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.001" value="3.65" oninput="cWd()"></div>
     <div id="reg-f">
       <div class="fr"><label>חברה</label><select id="f-co"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>Trade Zelle</option><option>אחר</option></select></div>
-      <div class="fr"><label>קטגוריה</label><select id="f-cat"><option value="מבחן">מבחן</option><option value="לייב">לייב</option><option value="ריסט">ריסט</option><option value="כלי">כלי/תוכנה</option><option value="קורס">קורס</option><option value="מנוי">מנוי</option><option value="ציוד">ציוד</option><option value="שונות">שונות</option><option value="אחר">אחר</option></select></div>
+      <div class="fr"><label>קטגוריה</label>
+        <select id="f-cat" onchange="toggleCustomCat()"><option value="מבחן">מבחן</option><option value="לייב">לייב</option><option value="ריסט">ריסט</option><option value="כלי">כלי/תוכנה</option><option value="קורס">קורס</option><option value="מנוי">מנוי</option><option value="ציוד">ציוד</option><option value="שונות">שונות</option><option value="__custom__">✏️ הוסף קטגוריה חדשה...</option></select>
+        <input type="text" id="f-cat-custom" placeholder="שם קטגוריה חדשה..." style="display:none;width:100%;margin-top:6px;padding:7px 10px;font-size:12px;border:1px solid var(--ac);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit">
+      </div>
       <div class="fr"><label>שווי תיק ($)</label><select id="f-pv"><option>0</option><option>25</option><option>50</option><option>100</option><option>200</option></select></div>
       <div class="fr"><label>הערה</label><textarea id="f-note" placeholder="אופציונלי..."></textarea></div>
       <div class="fr" id="recur-row">
@@ -4670,15 +4673,31 @@ function renderPNL(){
   const cxTotalILS = customExpenses.reduce((s,c)=>s+(c.amount*c.rate),0);
   const cxTotalUSD = customExpenses.reduce((s,c)=>s+c.amount,0);
 
+  // Standard category sets
+  const STANDARD_CATS = ['מבחן','לייב','ריסט','כלי','תוכנה','מנוי','ציוד','אחר','שונות','קורס','משיכה'];
+  // Find custom categories on expense records
+  const customCatNames = [...new Set(exp.map(r=>r.cat).filter(c=>c && !STANDARD_CATS.includes(c)))].sort();
+  const customCatColors = ['#f97316','#06b6d4','#ec4899','#84cc16','#f59e0b','#8b5cf6','#10b981'];
+
   const pRows=[
     {key:'מבחנים',lbl:'מבחנים ולייבים',ils:Math.round(byCatILS(['מבחן','לייב','ריסט'])),usd:+byCatUSD(['מבחן','לייב','ריסט']).toFixed(2),sign:-1,col:'var(--bl)'},
     {key:'תוכנות',lbl:'תוכנות',ils:Math.round(byCatILS(['כלי','תוכנה'])),usd:+byCatUSD(['כלי','תוכנה']).toFixed(2),sign:-1,col:'var(--gr)'},
     {key:'מנויים',lbl:'מנויים',ils:Math.round(byCatILS(['מנוי'])),usd:+byCatUSD(['מנוי']).toFixed(2),sign:-1,col:'var(--go)'},
     {key:'ציוד',lbl:'ציוד',ils:Math.round(byCatILS(['ציוד'])),usd:+byCatUSD(['ציוד']).toFixed(2),sign:-1,col:'var(--pu)'},
     {key:'שונות',lbl:'שונות',ils:Math.round(byCatILS(['אחר','שונות','קורס'])),usd:+byCatUSD(['אחר','שונות','קורס']).toFixed(2),sign:-1,col:'#ff6b6b'},
+    // Dynamic custom categories
+    ...customCatNames.map((cat,i)=>({
+      key:'__custom__'+cat, lbl:cat,
+      ils:Math.round(byCatILS([cat])), usd:+byCatUSD([cat]).toFixed(2),
+      sign:-1, col:customCatColors[i % customCatColors.length],
+      customCat:cat
+    })),
     {key:'הוצאות חופשיות',lbl:'הוצאות חופשיות ('+customExpenses.length+' פריטים)',ils:Math.round(cxTotalILS),usd:+cxTotalUSD.toFixed(2),sign:-1,col:'#ff4d4d'},
     {key:'משיכות נטו',lbl:'משיכות נטו (נוסטרו)',ils:Math.round(wdNils),usd:+wd.reduce((s,r)=>s+(r.wdNet||r.amount),0).toFixed(2),sign:+1,col:'var(--gr)'},
   ];
+  // Ensure custom category keys default to ON in pnlOn
+  pRows.forEach(r=>{ if(!(r.key in pnlOn)) pnlOn[r.key]=true; });
+
   let net=0,netUSD=0,tC=0,tCusd=0,tI=0,tIusd=0;
   pRows.forEach(r=>{
     if(pnlOn[r.key]){
@@ -4709,6 +4728,8 @@ function renderPNL(){
     'הוצאות חופשיות': customExpenses.map(c=>({date:c.date,company:c.desc||c.category,amount:c.amount,rate:c.rate||1,cat:c.category})),
     'משיכות נטו':     wd.map(r=>({date:r.date,company:r.company||'משיכה',amount:r.wdNet||r.amount,rate:r.rate||1,cat:'משיכה',sign:1})),
   };
+  // Add custom category items
+  customCatNames.forEach(cat => { catItems['__custom__'+cat] = exp.filter(r=>r.cat===cat); });
 
   document.getElementById('pnl-rows').innerHTML=
     pRows.map(r=>{
@@ -6519,7 +6540,7 @@ function openEdit(ri){
   }
   setMT(r.type);
   if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;}
-  else{document.getElementById('f-co').value=r.company||'BULENOX';document.getElementById('f-cat').value=r.cat||'מבחן';document.getElementById('f-pv').value=String(r.portVal||0);}
+  else{document.getElementById('f-co').value=r.company||'BULENOX';_setFormCat(r.cat||'מבחן');document.getElementById('f-pv').value=String(r.portVal||0);}
   cWd();document.getElementById('modal').classList.add('open');
 }
 function cModal(){document.getElementById('modal').classList.remove('open');editI=-1;}
@@ -6537,6 +6558,38 @@ function setMT(t){
 function toggleRecurUI(){
   const on=document.getElementById('f-recur').checked;
   document.getElementById('recur-sub').style.display=on?'':'none';
+}
+
+function toggleCustomCat(){
+  const sel=document.getElementById('f-cat');
+  const inp=document.getElementById('f-cat-custom');
+  if(!inp) return;
+  const show=sel.value==='__custom__';
+  inp.style.display=show?'block':'none';
+  if(show) setTimeout(()=>inp.focus(),50);
+}
+
+function _getFormCat(){
+  const sel=document.getElementById('f-cat');
+  if(sel.value==='__custom__'){
+    const v=(document.getElementById('f-cat-custom').value||'').trim();
+    return v||'שונות';
+  }
+  return sel.value;
+}
+
+function _setFormCat(cat){
+  const STANDARD=['מבחן','לייב','ריסט','כלי','קורס','מנוי','ציוד','שונות'];
+  const sel=document.getElementById('f-cat');
+  const inp=document.getElementById('f-cat-custom');
+  if(!cat||STANDARD.includes(cat)){
+    sel.value=cat||'מבחן';
+    if(inp){inp.style.display='none';inp.value='';}
+  } else {
+    // Custom category — set select to __custom__ and fill input
+    sel.value='__custom__';
+    if(inp){inp.style.display='block';inp.value=cat;}
+  }
 }
 function updateRateHint(){
   const dt=document.getElementById('f-dt').value;
@@ -6577,7 +6630,7 @@ function saveRec(){
       id: 'rec_'+uid(),
       amount: amUSD, rate: rt, startDate: dt, endDate: rend,
       recurDay: rday, company: document.getElementById('f-co').value,
-      cat: document.getElementById('f-cat').value,
+      cat: _getFormCat(),
       portVal: parseInt(document.getElementById('f-pv').value)||0,
       note: document.getElementById('f-note').value,
       toolName: (document.getElementById('f-rtool').value||'').trim() || document.getElementById('f-co').value,
@@ -6594,7 +6647,7 @@ function saveRec(){
   let r={id:editI>=0?records[editI].id:uid(),date:dt,type:mType,amount:amUSD,rate:rt,done:true};
   if(mCurrency==='ILS'){ r.currency='ILS'; r.amountILS=rawAm; }
   if(mType==='משיכה'){const p=parseFloat(document.getElementById('f-wp').value)||0;const f=+(amUSD*p/100).toFixed(2);r={...r,company:document.getElementById('f-wdco').value,portVal:0,cat:'משיכה',wdGross:amUSD,wdPct:p,wdFeeAmt:f,wdNet:+(amUSD-f).toFixed(2)};}
-  else{r.company=document.getElementById('f-co').value;r.cat=document.getElementById('f-cat').value;r.portVal=parseInt(document.getElementById('f-pv').value)||0;r.note=document.getElementById('f-note').value;}
+  else{r.company=document.getElementById('f-co').value;r.cat=_getFormCat();r.portVal=parseInt(document.getElementById('f-pv').value)||0;r.note=document.getElementById('f-note').value;}
   if(editI>=0)records[editI]=r;else records.push(r);
   cModal();renderAll();
 }
