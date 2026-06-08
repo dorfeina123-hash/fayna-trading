@@ -9833,14 +9833,112 @@ function _resizeEcal() {
 }
 window.addEventListener('resize', _resizeEcal);
 
+let _bannerShownThisSession = false;
 function showAdminBanner() {
-  let b=document.getElementById('admin-global-banner');
-  if (ADMIN_PREFS.bannerText) {
-    if (!b) { b=document.createElement('div'); b.id='admin-global-banner'; b.style.cssText='background:linear-gradient(90deg,rgba(240,180,41,.15),rgba(240,180,41,.08));border-bottom:1px solid rgba(240,180,41,.3);padding:8px 16px;font-size:12px;color:#f0b429;text-align:center;position:sticky;top:52px;z-index:199;display:flex;align-items:center;justify-content:center;gap:8px'; const sb=document.getElementById('save-bar'); if(sb)sb.after(b); else document.querySelector('.main').before(b); }
-    b.innerHTML=`📢 ${ADMIN_PREFS.bannerText} <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;cursor:pointer;color:#f0b429;font-size:14px;margin-right:4px">×</button>`;
-    b.style.display='flex';
-  } else if (b) { b.style.display='none'; }
+  // Remove old sticky banner if exists
+  const old = document.getElementById('admin-global-banner');
+  if (old) old.remove();
+
+  if (!ADMIN_PREFS.bannerText) return;
+  if (_bannerShownThisSession) return;
+  _bannerShownThisSession = true;
+
+  const SECS = 30;
+  let remaining = SECS;
+  let timer = null;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'admin-banner-popup';
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:8500;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(3px);
+    animation:fadeIn .3s ease;
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background:var(--bg2);border:1px solid rgba(240,180,41,.4);
+      border-radius:14px;padding:24px 26px;width:min(480px,92vw);
+      box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(240,180,41,.15);
+      position:relative;direction:rtl;
+      animation:slideUp .35s cubic-bezier(.4,0,.2,1);">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px">📢</span>
+          <span style="font-size:13px;font-weight:700;color:#f0b429">הודעה מהמנהל</span>
+        </div>
+        <button id="banner-close-btn" style="
+          background:var(--bg3);border:1px solid var(--border2);
+          color:var(--t3);cursor:pointer;border-radius:6px;
+          width:28px;height:28px;font-size:16px;line-height:1;
+          display:flex;align-items:center;justify-content:center;
+          transition:all .15s;font-family:inherit"
+          onmouseover="this.style.color='var(--re)';this.style.borderColor='rgba(255,77,77,.4)'"
+          onmouseout="this.style.color='var(--t3)';this.style.borderColor='var(--border2)'"
+        >×</button>
+      </div>
+      <!-- Message -->
+      <div style="font-size:14px;line-height:1.7;color:var(--t1);background:rgba(240,180,41,.06);border:1px solid rgba(240,180,41,.18);border-radius:9px;padding:14px 16px">
+        ${ADMIN_PREFS.bannerText}
+      </div>
+      <!-- Footer -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:28px;height:28px;position:relative">
+            <svg width="28" height="28" viewBox="0 0 28 28">
+              <circle cx="14" cy="14" r="12" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="2.5"/>
+              <circle id="banner-progress-ring" cx="14" cy="14" r="12" fill="none"
+                stroke="#f0b429" stroke-width="2.5" stroke-linecap="round"
+                stroke-dasharray="${2*Math.PI*12}" stroke-dashoffset="0"
+                transform="rotate(-90 14 14)" style="transition:stroke-dashoffset .9s linear"/>
+            </svg>
+          </div>
+          <span id="banner-countdown" style="font-size:11px;color:var(--t3)">יסגר בעוד ${SECS} שניות</span>
+        </div>
+        <button onclick="document.getElementById('admin-banner-popup').remove();clearInterval(window._bannerTimer)" style="padding:6px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;font-size:12px;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t2)'">הבנתי</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  // Close on X
+  document.getElementById('banner-close-btn').onclick = () => {
+    overlay.remove(); clearInterval(window._bannerTimer);
+  };
+  // Close on backdrop click
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) { overlay.remove(); clearInterval(window._bannerTimer); }
+  });
+
+  // Countdown
+  const ring   = document.getElementById('banner-progress-ring');
+  const cdEl   = document.getElementById('banner-countdown');
+  const circ   = 2 * Math.PI * 12;
+  window._bannerTimer = setInterval(() => {
+    remaining--;
+    if (cdEl) cdEl.textContent = `יסגר בעוד ${remaining} שניות`;
+    if (ring)  ring.style.strokeDashoffset = circ * (1 - remaining / SECS);
+    if (remaining <= 0) {
+      clearInterval(window._bannerTimer);
+      overlay.style.animation = 'fadeOut .4s ease forwards';
+      setTimeout(() => overlay.remove(), 400);
+    }
+  }, 1000);
 }
+
+// CSS animations for banner popup (add once)
+(function(){
+  if (document.getElementById('banner-anim-style')) return;
+  const s = document.createElement('style');
+  s.id = 'banner-anim-style';
+  s.textContent = `
+    @keyframes slideUp { from { opacity:0; transform:translateY(24px) scale(.97) } to { opacity:1; transform:none } }
+    @keyframes fadeOut { to { opacity:0; transform:scale(.96) } }
+  `;
+  document.head.appendChild(s);
+})();
 
 // ──────────────────────────────────────────────────────────────
 //  PLAN VISIBILITY & CONTACT SETTINGS
