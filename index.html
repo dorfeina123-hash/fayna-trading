@@ -1876,6 +1876,12 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   <div class="sn-item" onclick="swSide('firms')"    title="חברות מימון"><span class="sn-icon">🏆</span><span class="sn-lbl">חברות מימון</span></div>
   <div class="sn-item" onclick="swSide('ecal')"     title="יומן כלכלי"><span class="sn-icon">📅</span><span class="sn-lbl">יומן כלכלי</span></div>
   <div class="sn-item" onclick="swSide('help')"     title="עזרה"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></div>
+  <!-- Admin — hidden until admin login -->
+  <div class="sn-sep" id="sn-admin-sep" style="display:none"></div>
+  <div class="sn-item admin-only" id="admin-nav-btn" onclick="swSide('admin')" title="פאנל ניהול"
+       style="display:none;color:#a78bfa;border-right-color:transparent">
+    <span class="sn-icon">🛡️</span><span class="sn-lbl">פאנל ניהול</span>
+  </div>
 </aside>
 
 <main class="main">
@@ -7570,6 +7576,11 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     navSave();
   }
+  // Ctrl+Shift+A → Admin panel
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
+    e.preventDefault();
+    if (currentUser?.isAdmin) { swSide('admin'); }
+  }
 });
 
 // ════════════════════════════════════════════════════
@@ -8953,7 +8964,13 @@ function showApp() {
     navInfo.style.display = 'flex';
   }
   if (navLogout) navLogout.style.display='';
-  if (currentUser.isAdmin) { const ab=document.getElementById('admin-nav-btn'); if(ab)ab.style.display=''; const sb=document.getElementById('sp-btn-admin'); if(sb)sb.style.display=''; const eb=document.getElementById('edit-mode-btn'); if(eb)eb.style.display=''; setTimeout(renderAdminPanel,400); }
+  if (currentUser.isAdmin) {
+    const ab=document.getElementById('admin-nav-btn'); if(ab)ab.style.display='';
+    const as=document.getElementById('sn-admin-sep');  if(as)as.style.display='';
+    const sb=document.getElementById('sp-btn-admin');   if(sb)sb.style.display='';
+    const eb=document.getElementById('edit-mode-btn');  if(eb)eb.style.display='';
+    setTimeout(renderAdminPanel,400);
+  }
   applyAdminPrices(); showAdminBanner(); loadPlanVisibility(); loadContactSettings(); _initSidenav();
   setTimeout(updateNavBadge, 800); // refresh badge after plan loads from Firestore
   setTimeout(applyNavGating, 300);
