@@ -44,6 +44,50 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
 .nav-menu-item:hover{background:var(--bg3);color:var(--t1);border-color:var(--border2)}
 .nav-menu-item.active{background:var(--bg3);color:var(--t1);border-color:var(--ac)}
 
+/* ══ MENTAL COACH ══ */
+.coach-hero{text-align:center;padding:32px 20px 24px}
+.coach-hero-icon{font-size:56px;line-height:1;margin-bottom:12px}
+.coach-hero-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:6px}
+.coach-hero-sub{font-size:13px;color:var(--t3);line-height:1.6;max-width:360px;margin:0 auto}
+.coach-start-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.coach-btn{padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.coach-btn.primary{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff}
+.coach-btn.primary:hover{opacity:.88}
+.coach-btn.secondary{background:var(--bg3);color:var(--t1);border:1px solid var(--border2)}
+.coach-btn.secondary:hover{border-color:var(--ac)}
+/* Q&A session */
+.coach-session{max-width:560px;margin:0 auto;padding:20px}
+.coach-progress{display:flex;gap:4px;margin-bottom:24px}
+.coach-prog-dot{flex:1;height:4px;border-radius:2px;background:var(--bg4);transition:background .3s}
+.coach-prog-dot.done{background:var(--pu)}
+.coach-prog-dot.active{background:var(--ac)}
+.coach-qcard{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;margin-bottom:16px;animation:fadeIn .3s ease}
+.coach-qcat{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.coach-qtext{font-size:16px;font-weight:600;color:var(--t1);line-height:1.55;margin-bottom:20px}
+/* Scale answer */
+.coach-scale{display:flex;gap:8px;justify-content:space-between}
+.coach-scale-btn{flex:1;padding:10px 4px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;transition:all .13s;text-align:center}
+.coach-scale-btn:hover{border-color:var(--pu);color:var(--pu)}
+.coach-scale-btn.sel{border-color:var(--pu);background:rgba(157,133,232,.18);color:var(--pu)}
+.coach-scale-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:5px;padding:0 4px}
+/* Yes/No */
+.coach-yesno{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.coach-yn-btn{padding:14px;border-radius:10px;border:2px solid var(--border2);background:var(--bg3);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .13s}
+.coach-yn-btn.yes{color:var(--gr)}.coach-yn-btn.yes.sel{border-color:var(--gr);background:var(--gd)}
+.coach-yn-btn.no{color:var(--re)}.coach-yn-btn.no.sel{border-color:var(--re);background:var(--rd)}
+/* Text answer */
+.coach-textarea{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--t1);font-family:inherit;font-size:13px;resize:vertical;min-height:80px;outline:none;line-height:1.55}
+.coach-textarea:focus{border-color:var(--ac)}
+/* Results */
+.coach-result{max-width:560px;margin:0 auto;padding:20px;text-align:center}
+.coach-score-ring{position:relative;width:120px;height:120px;margin:0 auto 16px}
+.coach-score-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.coach-insight{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;text-align:right;margin-bottom:8px;font-size:13px;color:var(--t2);line-height:1.6;border-right:3px solid var(--pu)}
+/* History */
+.coach-hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.coach-hist-row:hover{background:var(--bg3);margin:0 -8px;padding:10px 8px;border-radius:6px}
+/* Streak */
+.coach-streak{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);color:#f0b429;font-size:12px;font-weight:600}
 /* ══ PERSISTENT SIDEBAR ══ */
 .app-layout{display:flex;flex:1;min-height:0;overflow:hidden}
 .sidenav{width:210px;flex-shrink:0;background:var(--bg1);border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;overflow-x:hidden;transition:width .22s cubic-bezier(.4,0,.2,1);z-index:10;display:flex;flex-direction:column;scrollbar-width:thin}
@@ -1720,6 +1764,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="nav-menu-item" id="nm-calendar"    onclick="swNav('calendar')">📅 לוח שנה</div>
     <div class="nav-menu-item" id="nm-trades"      onclick="swNav('trades')">📓 יומן עסקאות</div>
     <div class="nav-menu-item" id="nm-stats"       onclick="swNav('stats')">📊 סטטיסטיקות</div>
+    <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
 
     <div class="nav-menu-section">ניהול</div>
     <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
@@ -1864,6 +1909,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   <div class="sn-item" id="sni-calendar"    onclick="swNav('calendar')"    title="לוח שנה"><span class="sn-icon">📅</span><span class="sn-lbl">לוח שנה</span></div>
   <div class="sn-item" id="sni-trades"      onclick="swNav('trades')"      title="יומן עסקאות"><span class="sn-icon">📓</span><span class="sn-lbl">יומן עסקאות</span></div>
   <div class="sn-item" id="sni-stats"       onclick="swNav('stats')"       title="סטטיסטיקות"><span class="sn-icon">📊</span><span class="sn-lbl">סטטיסטיקות</span></div>
+
+  <div class="sn-item" id="sni-coach"       onclick="swNav('coach')"       title="מאמן מנטאלי"><span class="sn-icon">🧠</span><span class="sn-lbl">מאמן מנטאלי</span></div>
 
   <div class="sn-sep"></div>
   <div class="sn-grp">ניהול</div>
@@ -2457,6 +2504,76 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <button class="bn" onclick="closeAddTrade()">ביטול</button>
       <button class="bs" id="at-save-btn" onclick="saveAddTrade()">💾 שמור עסקה</button>
     </div>
+  </div>
+</div>
+
+<!-- MENTAL COACH -->
+<div class="tp" id="tp-coach">
+  <div id="coach-view-home">
+    <div class="coach-hero">
+      <div class="coach-hero-icon">🧠</div>
+      <div class="coach-hero-title">מאמן מנטאלי</div>
+      <div class="coach-hero-sub">צ'ק-אין יומי לשיפור המסחר שלך — פסיכולוגיה, אסטרטגיה, ניהול סיכונים ולקחים</div>
+      <div id="coach-streak-display" style="margin-top:12px"></div>
+      <div class="coach-start-btns">
+        <button class="coach-btn primary" onclick="coachStartSession('daily')">🚀 צ'ק-אין יומי</button>
+        <button class="coach-btn secondary" onclick="coachStartSession('weekly')">📅 סקירה שבועית</button>
+        <button class="coach-btn secondary" onclick="coachShowHistory()">📋 היסטוריה</button>
+      </div>
+    </div>
+    <!-- Today's summary if done -->
+    <div id="coach-today-done" style="display:none;max-width:420px;margin:0 auto;padding:0 20px 20px"></div>
+    <!-- Recent sessions -->
+    <div style="max-width:560px;margin:0 auto;padding:0 20px 20px" id="coach-recent"></div>
+  </div>
+
+  <!-- Session Q&A view -->
+  <div id="coach-view-session" style="display:none">
+    <div class="coach-session">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <button onclick="coachBackHome()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:22px;padding:0;line-height:1">←</button>
+        <div id="coach-session-title" style="font-size:13px;font-weight:600;color:var(--t2)"></div>
+        <div id="coach-q-counter" style="font-size:11px;color:var(--t3)"></div>
+      </div>
+      <div class="coach-progress" id="coach-progress"></div>
+      <div id="coach-q-area"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="coach-btn secondary" id="coach-prev-btn" onclick="coachPrev()" style="display:none">← קודם</button>
+        <button class="coach-btn primary" id="coach-next-btn" onclick="coachNext()">הבא →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results view -->
+  <div id="coach-view-result" style="display:none">
+    <div class="coach-result">
+      <div style="font-size:13px;color:var(--t3);margin-bottom:16px">הסשן הסתיים ✅</div>
+      <div class="coach-score-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--bg4)" stroke-width="10"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--pu)" stroke-width="10"
+                  stroke-dasharray="326.7" id="coach-ring-fill" stroke-dashoffset="326.7"
+                  transform="rotate(-90 60 60)" stroke-linecap="round"
+                  style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="coach-score-val" id="coach-score-display" style="color:var(--pu)">—</div>
+      </div>
+      <div id="coach-score-label" style="font-size:14px;font-weight:600;margin-bottom:20px;color:var(--t1)"></div>
+      <div id="coach-insights-area" style="text-align:right;margin-bottom:20px"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="coach-btn primary" onclick="coachBackHome()">🏠 חזור לבית</button>
+        <button class="coach-btn secondary" onclick="coachShowHistory()">📋 כל ההיסטוריה</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History view -->
+  <div id="coach-view-history" style="display:none;max-width:560px;margin:0 auto;padding:20px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <button onclick="coachBackHome()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:22px;padding:0">←</button>
+      <div style="font-size:15px;font-weight:600">היסטוריית סשנים</div>
+    </div>
+    <div id="coach-history-list"></div>
   </div>
 </div>
 
@@ -5214,6 +5331,245 @@ function renderPNL(){
 }
 
 // CALENDAR
+// ════════════════════════════════════════════════════════
+//  MENTAL COACH
+// ════════════════════════════════════════════════════════
+let coachSessions = JSON.parse(localStorage.getItem('coach_sessions')||'[]');
+let _coachSession = null; // active session state
+let _coachQIdx    = 0;
+
+const COACH_QUESTIONS = {
+  daily: [
+    // Psychology
+    {id:'p1',cat:'🧠 פסיכולוגיה',text:'איך המצב הנפשי שלך לפני המסחר היום?',type:'scale5',labels:['נמוך מאוד','נמוך','בינוני','טוב','מצוין'],key:'mood',weight:1.5},
+    {id:'p2',cat:'😤 פסיכולוגיה',text:'האם חווית FOMO (פחד להחמיץ) בזמן המסחר?',type:'yesno',goodIs:'no',key:'fomo',weight:1.2},
+    {id:'p3',cat:'🔄 פסיכולוגיה',text:'האם ביצעת Revenge Trading לאחר הפסד?',type:'yesno',goodIs:'no',key:'revenge',weight:1.5},
+    // Strategy
+    {id:'s1',cat:'📋 אסטרטגיה',text:'האם פעלת לפי הפלן המסחרי שלך?',type:'scale5',labels:['לא בכלל','מעט','חלקית','ברובו','לחלוטין'],key:'plan',weight:1.5},
+    {id:'s2',cat:'⏱ אסטרטגיה',text:'האם ביצעת Overtrading (יותר עסקאות ממה שתכננת)?',type:'yesno',goodIs:'no',key:'overtrade',weight:1.2},
+    {id:'s3',cat:'🎯 אסטרטגיה',text:'האם זיהית את הסטאפים הנכונים לפני כל כניסה?',type:'yesno',goodIs:'yes',key:'setup',weight:1},
+    // Risk
+    {id:'r1',cat:'🛡 ניהול סיכונים',text:'האם שמרת על רמת הסיכון שהגדרת לעצמך?',type:'yesno',goodIs:'yes',key:'risk_ok',weight:1.5},
+    {id:'r2',cat:'🚫 ניהול סיכונים',text:'האם הזזת סטופ לוס בגלל לחץ רגשי?',type:'yesno',goodIs:'no',key:'moved_sl',weight:1.5},
+    // Reflection
+    {id:'l1',cat:'💡 לקחים',text:'מה הלקח המרכזי מהיום?',type:'text',key:'lesson',weight:0},
+    {id:'l2',cat:'🎯 לקחים',text:'מה תשפר מחר?',type:'text',key:'improve',weight:0},
+  ],
+  weekly: [
+    {id:'w1',cat:'📊 סקירה שבועית',text:'איך דרגת את ביצועיך המסחריים השבוע?',type:'scale5',labels:['גרוע','חלש','בינוני','טוב','מצוין'],key:'week_perf',weight:2},
+    {id:'w2',cat:'🧠 פסיכולוגיה',text:'האם שמרת על משמעת מסחרית לאורך כל השבוע?',type:'scale5',labels:['לא בכלל','לעיתים','חלקית','ברובו','תמיד'],key:'week_disc',weight:1.5},
+    {id:'w3',cat:'📋 אסטרטגיה',text:'האם הסטאפים שבחרת השבוע היו מתאימים לתנאי השוק?',type:'yesno',goodIs:'yes',key:'week_setup',weight:1.2},
+    {id:'w4',cat:'🛡 ניהול סיכונים',text:'האם הסיכון הכולל השבוע היה בשליטה?',type:'yesno',goodIs:'yes',key:'week_risk',weight:1.5},
+    {id:'w5',cat:'📈 תוצאות',text:'האם תוצאות השבוע תואמות את המאמץ שהשקעת?',type:'yesno',goodIs:'yes',key:'week_result',weight:1},
+    {id:'w6',cat:'💡 לקחים',text:'מה הדבר החשוב ביותר שלמדת השבוע?',type:'text',key:'week_lesson',weight:0},
+    {id:'w7',cat:'🎯 תכנון',text:'מה המטרה המרכזית שלך לשבוע הבא?',type:'text',key:'week_goal',weight:0},
+  ]
+};
+
+function coachSave() { localStorage.setItem('coach_sessions', JSON.stringify(coachSessions)); }
+
+function coachStartSession(type) {
+  const today = new Date().toISOString().slice(0,10);
+  _coachSession = { id:'cs_'+Date.now(), date:today, type, answers:{}, startedAt:Date.now() };
+  _coachQIdx = 0;
+  document.getElementById('coach-view-home').style.display    = 'none';
+  document.getElementById('coach-view-session').style.display = 'block';
+  document.getElementById('coach-view-result').style.display  = 'none';
+  document.getElementById('coach-view-history').style.display = 'none';
+  const qs = COACH_QUESTIONS[type]||COACH_QUESTIONS.daily;
+  document.getElementById('coach-session-title').textContent = type==='weekly'?'📅 סקירה שבועית':'🚀 צ\'ק-אין יומי';
+  _coachRenderProgress(qs.length);
+  _coachRenderQuestion();
+}
+
+function _coachRenderProgress(total) {
+  const qs = COACH_QUESTIONS[_coachSession.type];
+  document.getElementById('coach-progress').innerHTML = qs.map((_,i)=>
+    `<div class="coach-prog-dot ${i<_coachQIdx?'done':i===_coachQIdx?'active':''}"></div>`
+  ).join('');
+  document.getElementById('coach-q-counter').textContent = `${_coachQIdx+1} / ${qs.length}`;
+  document.getElementById('coach-prev-btn').style.display = _coachQIdx>0?'':'none';
+  document.getElementById('coach-next-btn').textContent = _coachQIdx===qs.length-1?'סיים ✓':'הבא →';
+}
+
+function _coachRenderQuestion() {
+  const qs = COACH_QUESTIONS[_coachSession.type];
+  const q  = qs[_coachQIdx];
+  const ans = _coachSession.answers[q.id];
+  _coachRenderProgress(qs.length);
+
+  let inputHtml = '';
+  if (q.type === 'scale5') {
+    const labels = ['1','2','3','4','5'];
+    inputHtml = `<div class="coach-scale">
+      ${labels.map((l,i)=>`<button class="coach-scale-btn${ans===i+1?' sel':''}" onclick="coachAnswer('${q.id}',${i+1})">${i+1}</button>`).join('')}
+    </div>
+    <div class="coach-scale-labels"><span>${q.labels[0]}</span><span>${q.labels[4]}</span></div>`;
+  } else if (q.type === 'yesno') {
+    inputHtml = `<div class="coach-yesno">
+      <button class="coach-yn-btn yes${ans==='yes'?' sel':''}" onclick="coachAnswer('${q.id}','yes')">✅ כן</button>
+      <button class="coach-yn-btn no${ans==='no'?' sel':''}"  onclick="coachAnswer('${q.id}','no')">❌ לא</button>
+    </div>`;
+  } else {
+    inputHtml = `<textarea class="coach-textarea" id="coach-text-inp" placeholder="כתוב כאן..." onblur="coachAnswer('${q.id}',this.value)">${ans||''}</textarea>`;
+  }
+
+  document.getElementById('coach-q-area').innerHTML = `
+    <div class="coach-qcard">
+      <div class="coach-qcat">${q.cat}</div>
+      <div class="coach-qtext">${q.text}</div>
+      ${inputHtml}
+    </div>`;
+}
+
+function coachAnswer(qid, val) {
+  _coachSession.answers[qid] = val;
+  // Re-render scale/yesno to show selection
+  const q = COACH_QUESTIONS[_coachSession.type].find(x=>x.id===qid);
+  if(q && q.type!=='text') _coachRenderQuestion();
+}
+
+function coachNext() {
+  // Save text answer if any
+  const ta = document.getElementById('coach-text-inp');
+  if(ta){ const qs=COACH_QUESTIONS[_coachSession.type]; coachAnswer(qs[_coachQIdx].id, ta.value); }
+  const qs = COACH_QUESTIONS[_coachSession.type];
+  if(_coachQIdx < qs.length-1){ _coachQIdx++; _coachRenderQuestion(); }
+  else { coachFinish(); }
+}
+function coachPrev() {
+  if(_coachQIdx>0){ _coachQIdx--; _coachRenderQuestion(); }
+}
+
+function coachFinish() {
+  const qs = COACH_QUESTIONS[_coachSession.type];
+  // Calculate score
+  let total=0, max=0;
+  qs.forEach(q=>{
+    if(q.weight===0) return;
+    const a = _coachSession.answers[q.id];
+    if(q.type==='scale5'&&a){ total+=((a-1)/4)*q.weight; max+=q.weight; }
+    else if(q.type==='yesno'&&a){
+      const good = (a==='yes'&&q.goodIs==='yes')||(a==='no'&&q.goodIs==='no');
+      total+=(good?1:0)*q.weight; max+=q.weight;
+    }
+  });
+  const score = max>0 ? Math.round((total/max)*100) : 50;
+  _coachSession.score = score;
+  _coachSession.completedAt = Date.now();
+  coachSessions.unshift(_coachSession);
+  if(coachSessions.length>90) coachSessions = coachSessions.slice(0,90);
+  coachSave();
+
+  // Show results
+  document.getElementById('coach-view-session').style.display = 'none';
+  document.getElementById('coach-view-result').style.display  = 'block';
+  setTimeout(()=>{
+    const ring = document.getElementById('coach-ring-fill');
+    const circ = 326.7;
+    ring.style.strokeDashoffset = circ - (score/100)*circ;
+    ring.style.stroke = score>=70?'var(--gr)':score>=40?'var(--go)':'var(--re)';
+    document.getElementById('coach-score-display').textContent = score;
+    document.getElementById('coach-score-display').style.color = score>=70?'var(--gr)':score>=40?'var(--go)':'var(--re)';
+    document.getElementById('coach-score-label').textContent = score>=80?'🌟 מצוין! יום מסחר מודע':score>=60?'👍 טוב, המשך לשפר':score>=40?'⚠️ יש מה לשפר':'🔴 זכור — המשמעת היא הכל';
+  },100);
+
+  // Generate insights
+  const ins = _coachGenerateInsights();
+  document.getElementById('coach-insights-area').innerHTML = ins.map(i=>`<div class="coach-insight">${i}</div>`).join('');
+}
+
+function _coachGenerateInsights() {
+  const ans  = _coachSession.answers;
+  const prev = coachSessions.slice(1,6); // last 5
+  const ins  = [];
+
+  if(ans.fomo==='yes')   ins.push('💡 <strong>FOMO זוהה:</strong> לפעמים הזדמנויות הכי טובות הן אלה שלא נכנסת אליהן. סמוך על הפלן.');
+  if(ans.revenge==='yes') ins.push('⚠️ <strong>Revenge Trading:</strong> לאחר הפסד — עצור, נשום, ולא תיכנס לעסקה חדשה ב-15 דקות הקרובות.');
+  if(ans.moved_sl==='yes') ins.push('🚫 <strong>הזזת סטופ:</strong> הזזת סטופ רגשית היא גורם #1 להפסדים גדולים. הגדר כלל ברזל — לא מזיזים סטופ.');
+  if(ans.overtrade==='yes') ins.push('📊 <strong>Overtrading:</strong> יותר עסקאות ≠ יותר כסף. קבע מגבלת עסקאות יומית ועמוד בה.');
+  if(ans.plan&&ans.plan<=2) ins.push('📋 <strong>פלן מסחרי:</strong> ביצוע נמוך לפי הפלן — שקול לכתוב את הפלן לפני תחילת יום המסחר.');
+  if(ans.mood&&ans.mood<=2) ins.push('🧠 <strong>מצב נפשי:</strong> כשהמצב הנפשי נמוך — שקול להקטין גודל פוזיציות ב-50% או לא לסחור כלל.');
+  if(prev.length>=3) {
+    const avgPrev = Math.round(prev.reduce((s,x)=>s+(x.score||0),0)/prev.length);
+    if(_coachSession.score > avgPrev+15) ins.push(`📈 <strong>שיפור:</strong> הניקוד שלך (${_coachSession.score}) גבוה מהממוצע האחרון (${avgPrev}). כך ממשיכים!`);
+    if(_coachSession.score < avgPrev-15) ins.push(`📉 <strong>ירידה:</strong> ניקוד נמוך מהממוצע (${avgPrev}). מה השתנה? כדאי לבדוק מה גרם לזה.`);
+    const revengeCnt = prev.filter(x=>x.answers?.revenge==='yes').length;
+    if(revengeCnt>=2) ins.push(`⚠️ <strong>דפוס חוזר:</strong> Revenge Trading זוהה ב-${revengeCnt} מתוך ${prev.length} הסשנים האחרונים.`);
+  }
+  if(ins.length===0) ins.push('✅ <strong>סשן נקי!</strong> שמור על העקביות — זה הסוד לסוחר מוצלח.');
+  return ins.slice(0,4);
+}
+
+function coachBackHome() {
+  document.getElementById('coach-view-home').style.display    = 'block';
+  document.getElementById('coach-view-session').style.display = 'none';
+  document.getElementById('coach-view-result').style.display  = 'none';
+  document.getElementById('coach-view-history').style.display = 'none';
+  _coachRenderHome();
+}
+
+function coachShowHistory() {
+  document.getElementById('coach-view-home').style.display    = 'none';
+  document.getElementById('coach-view-session').style.display = 'none';
+  document.getElementById('coach-view-result').style.display  = 'none';
+  document.getElementById('coach-view-history').style.display = 'block';
+  const list = document.getElementById('coach-history-list');
+  if(!coachSessions.length){ list.innerHTML='<div style="text-align:center;padding:40px;color:var(--t3)">אין סשנים עדיין</div>'; return; }
+  list.innerHTML = coachSessions.map(s=>{
+    const col = s.score>=70?'var(--gr)':s.score>=40?'var(--go)':'var(--re)';
+    const lbl = s.type==='weekly'?'📅 שבועי':'🚀 יומי';
+    return `<div class="coach-hist-row">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:18px">${s.score>=70?'🟢':s.score>=40?'🟡':'🔴'}</div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--t1)">${fmtD(s.date)} ${lbl}</div>
+          <div style="font-size:10px;color:var(--t3)">${s.answers?.lesson||s.answers?.week_lesson||''}</div></div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${col}">${s.score}</div>
+    </div>`;
+  }).join('');
+}
+
+function _coachRenderHome() {
+  const today = new Date().toISOString().slice(0,10);
+  const todaySession = coachSessions.find(s=>s.date===today&&s.type==='daily');
+  const streak = _coachCalcStreak();
+
+  // Streak
+  document.getElementById('coach-streak-display').innerHTML = streak>0
+    ? `<div class="coach-streak">🔥 ${streak} ימים ברצף</div>` : '';
+
+  // Today done
+  const td = document.getElementById('coach-today-done');
+  if(todaySession){ td.style.display='block'; const col=todaySession.score>=70?'var(--gr)':todaySession.score>=40?'var(--go)':'var(--re)';
+    td.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:14px;text-align:center;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:4px">הצ'ק-אין של היום</div>
+      <div style="font-size:28px;font-weight:700;color:${col};font-family:'IBM Plex Mono',monospace">${todaySession.score}</div>
+      <div style="font-size:11px;color:var(--t3)">ניקוד</div></div>`;
+  } else { td.style.display='none'; }
+
+  // Recent 3
+  const recent = document.getElementById('coach-recent');
+  if(coachSessions.length){ recent.innerHTML=`<div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">סשנים אחרונים</div>`+
+    coachSessions.slice(0,3).map(s=>{const col=s.score>=70?'var(--gr)':s.score>=40?'var(--go)':'var(--re)';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg2);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--t2)">${fmtD(s.date)} · ${s.type==='weekly'?'📅 שבועי':'🚀 יומי'}</div>
+        <div style="font-weight:700;color:${col};font-family:'IBM Plex Mono',monospace">${s.score}</div></div>`;
+    }).join('');}
+}
+
+function _coachCalcStreak() {
+  let streak=0, d=new Date();
+  const daily = coachSessions.filter(s=>s.type==='daily');
+  for(let i=0;i<30;i++){
+    const ds=d.toISOString().slice(0,10);
+    if(daily.find(s=>s.date===ds)) streak++;
+    else if(i>0) break;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+
 const _calNow=new Date(); let calYear=_calNow.getFullYear(), calMonth=_calNow.getMonth();
 function calToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderCal();}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();}
@@ -7124,7 +7480,7 @@ function _updateSidenavActive(name) {
 const _NAV_LABELS = {
   overview:'🏠 סקירה', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
   pnl:'📈 P&L', custom:'💳 הוצאות חופשיות', calendar:'📅 לוח שנה',
-  trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות',
+  trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות', coach:'🧠 מאמן מנטאלי',
   datamgr:'⚙️ ניהול נתונים', personal:'👤 אזור אישי',
   software:'📥 תוכנות מסחר', firms:'🏆 מימון', news:'📰 חדשות',
   ecal:'📅 יומן כלכלי', help:'❓ עזרה', billing:'💳 תשלום', admin:'🛡️ ניהול',
@@ -7188,6 +7544,7 @@ function sw(name,btn){
   if(name==='stats')renderStats();
   if(name==='calendar')renderCal();
   if(name==='trades')renderTJ();
+  if(name==='coach')_coachRenderHome();
   if(name==='pnl')renderPNL();
   if(name==='custom')renderCX();
   if(name==='admin')setTimeout(renderAdminPanel,100);
