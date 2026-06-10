@@ -43,6 +43,32 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
 .nav-menu-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--t2);border:1px solid transparent;transition:all .13s;background:transparent}
 .nav-menu-item:hover{background:var(--bg3);color:var(--t1);border-color:var(--border2)}
 .nav-menu-item.active{background:var(--bg3);color:var(--t1);border-color:var(--ac)}
+
+/* ══ PERSISTENT SIDEBAR ══ */
+.app-layout{display:flex;flex:1;min-height:0;overflow:hidden}
+.sidenav{width:210px;flex-shrink:0;background:var(--bg1);border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;overflow-x:hidden;transition:width .22s cubic-bezier(.4,0,.2,1);z-index:10;display:flex;flex-direction:column;scrollbar-width:thin}
+.sidenav.sn-closed{width:52px}
+.sn-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sn-toggle-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--t2);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex-shrink:0;transition:all .15s}
+.sn-toggle-btn:hover{color:var(--t1);border-color:var(--ac)}
+.sn-toggle-logo{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.4px;white-space:nowrap;overflow:hidden;transition:opacity .15s}
+.sidenav.sn-closed .sn-toggle-logo{opacity:0;width:0;padding:0}
+.sidenav.sn-closed .sn-toggle-row{justify-content:center}
+.sn-grp{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;padding:12px 14px 4px;white-space:nowrap;overflow:hidden;transition:opacity .15s}
+.sidenav.sn-closed .sn-grp{opacity:0;height:0;padding:0;overflow:hidden}
+.sn-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;color:var(--t2);font-size:12px;font-weight:500;border-right:3px solid transparent;transition:background .12s,color .12s;white-space:nowrap;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.sn-item:hover{background:var(--bg3);color:var(--t1)}
+.sn-item.active{background:var(--bg3);color:var(--t1);border-right-color:var(--ac)}
+.sn-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;line-height:1}
+.sn-lbl{overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
+.sidenav.sn-closed .sn-lbl{opacity:0;width:0}
+.sidenav.sn-closed .sn-item{padding:9px;justify-content:center;border-right-width:2px}
+.sidenav.sn-closed .sn-item .sn-icon{width:auto}
+.sn-sep{height:1px;background:var(--border);margin:6px 10px}
+.sidenav.sn-closed .sn-sep{margin:6px 8px}
+/* Main adjusts to sidebar */
+.app-layout>.main{flex:1;min-width:0;max-width:none;margin:0;overflow-y:auto}
+@media(max-width:900px){.sidenav{display:none!important}.app-layout>.main{padding-bottom:100px}}
 .btn-p{display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--ac);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap}
 .btn-p:hover{opacity:.85}
 .main{flex:1;padding:18px;max-width:1440px;margin:0 auto;width:100%}
@@ -1816,6 +1842,41 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </script>
   </div>
 </div>
+
+<div class="app-layout">
+<!-- ═══ PERSISTENT SIDEBAR (right) ═══ -->
+<aside class="sidenav" id="sidenav">
+  <div class="sn-toggle-row">
+    <span class="sn-toggle-logo">FAYNA</span>
+    <button class="sn-toggle-btn" onclick="toggleSidenav()" id="sn-toggle-btn" title="הסתר/הצג תפריט">◀</button>
+  </div>
+
+  <div class="sn-grp">ראשי</div>
+  <div class="sn-item active" id="sni-overview"    onclick="swNav('overview')"    title="סקירה"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></div>
+
+  <div class="sn-grp">הוצאות</div>
+  <div class="sn-item" id="sni-expenses"    onclick="swNav('expenses')"    title="יומן הוצאות"><span class="sn-icon">📋</span><span class="sn-lbl">יומן הוצאות</span></div>
+  <div class="sn-item" id="sni-withdrawals" onclick="swNav('withdrawals')" title="משיכות"><span class="sn-icon">💸</span><span class="sn-lbl">משיכות</span></div>
+  <div class="sn-item" id="sni-pnl"         onclick="swNav('pnl')"         title="P&L"><span class="sn-icon">📈</span><span class="sn-lbl">P&amp;L</span></div>
+  <div class="sn-item" id="sni-custom"      onclick="swNav('custom')"      title="הוצאות חופשיות"><span class="sn-icon">💳</span><span class="sn-lbl">הוצאות חופשיות</span></div>
+
+  <div class="sn-grp">מסחר</div>
+  <div class="sn-item" id="sni-calendar"    onclick="swNav('calendar')"    title="לוח שנה"><span class="sn-icon">📅</span><span class="sn-lbl">לוח שנה</span></div>
+  <div class="sn-item" id="sni-trades"      onclick="swNav('trades')"      title="יומן עסקאות"><span class="sn-icon">📓</span><span class="sn-lbl">יומן עסקאות</span></div>
+  <div class="sn-item" id="sni-stats"       onclick="swNav('stats')"       title="סטטיסטיקות"><span class="sn-icon">📊</span><span class="sn-lbl">סטטיסטיקות</span></div>
+
+  <div class="sn-sep"></div>
+  <div class="sn-grp">ניהול</div>
+  <div class="sn-item" id="sni-datamgr"     onclick="swNav('datamgr')"     title="ניהול נתונים"><span class="sn-icon">⚙️</span><span class="sn-lbl">ניהול נתונים</span></div>
+  <div class="sn-item" id="sni-personal"    onclick="swNav('personal')"    title="אזור אישי"><span class="sn-icon">👤</span><span class="sn-lbl">אזור אישי</span></div>
+
+  <div class="sn-sep"></div>
+  <div class="sn-grp">כלים</div>
+  <div class="sn-item" onclick="swSide('software')" title="תוכנות מסחר"><span class="sn-icon">📥</span><span class="sn-lbl">תוכנות מסחר</span></div>
+  <div class="sn-item" onclick="swSide('firms')"    title="חברות מימון"><span class="sn-icon">🏆</span><span class="sn-lbl">חברות מימון</span></div>
+  <div class="sn-item" onclick="swSide('ecal')"     title="יומן כלכלי"><span class="sn-icon">📅</span><span class="sn-lbl">יומן כלכלי</span></div>
+  <div class="sn-item" onclick="swSide('help')"     title="עזרה"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></div>
+</aside>
 
 <main class="main">
 
@@ -4057,6 +4118,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 </div>
 
 </main>
+</div><!-- end app-layout -->
 
 <!-- CAT PICKER -->
 <div id="cpick" class="cpick">
@@ -7027,6 +7089,31 @@ document.addEventListener('click',()=>{document.getElementById('cpick').classLis
 
 // TABS
 const showAdd={overview:true,expenses:true,withdrawals:true,pnl:false,custom:true,calendar:false,trades:false,stats:false,drivers:false,software:false,firms:false,news:false,ecal:false,billing:false,help:false,admin:false,datamgr:false};
+// ── PERSISTENT SIDEBAR ──
+function toggleSidenav() {
+  const sn  = document.getElementById('sidenav');
+  const btn = document.getElementById('sn-toggle-btn');
+  if(!sn) return;
+  const closed = sn.classList.toggle('sn-closed');
+  if(btn) btn.textContent = closed ? '▶' : '◀';
+  localStorage.setItem('sn_closed', closed ? '1' : '0');
+}
+function _initSidenav() {
+  const sn = document.getElementById('sidenav');
+  if(!sn) return;
+  const closed = localStorage.getItem('sn_closed') === '1';
+  if(closed) {
+    sn.classList.add('sn-closed');
+    const btn = document.getElementById('sn-toggle-btn');
+    if(btn) btn.textContent = '▶';
+  }
+}
+function _updateSidenavActive(name) {
+  document.querySelectorAll('.sn-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('sni-'+name);
+  if(el) el.classList.add('active');
+}
+
 // ── NAV DROPDOWN ──
 const _NAV_LABELS = {
   overview:'🏠 סקירה', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
@@ -7083,6 +7170,7 @@ function sw(name,btn){
   document.querySelectorAll('.nt').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   _updateNavLabel(name);
+  _updateSidenavActive(name);
   // Reset side panel button active states when switching to a main-nav tab
   if (typeof _sidePanelTabs !== 'undefined') {
     _sidePanelTabs.forEach(t => { const b=document.getElementById('sp-btn-'+t); if(b) b.classList.remove('active'); });
@@ -8866,7 +8954,7 @@ function showApp() {
   }
   if (navLogout) navLogout.style.display='';
   if (currentUser.isAdmin) { const ab=document.getElementById('admin-nav-btn'); if(ab)ab.style.display=''; const sb=document.getElementById('sp-btn-admin'); if(sb)sb.style.display=''; const eb=document.getElementById('edit-mode-btn'); if(eb)eb.style.display=''; setTimeout(renderAdminPanel,400); }
-  applyAdminPrices(); showAdminBanner(); loadPlanVisibility(); loadContactSettings();
+  applyAdminPrices(); showAdminBanner(); loadPlanVisibility(); loadContactSettings(); _initSidenav();
   setTimeout(updateNavBadge, 800); // refresh badge after plan loads from Firestore
   setTimeout(applyNavGating, 300);
   if (currentUser.uid) {
