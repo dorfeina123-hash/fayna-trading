@@ -3265,7 +3265,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
     <div class="admin-section">
       <div class="admin-section-title" style="display:flex;align-items:center;gap:8px">
-        <div class="dot" style="background:#a78bfa"></div>לוג פעילות
+        <div class="dot" style="background:#a78bfa"></div>פעולות אדמין
         <button onclick="renderAdminLogs()" style="margin-right:auto;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--t2);cursor:pointer;font-family:inherit">🔄</button>
       </div>
       <div id="adm-logs-list" style="max-height:160px;overflow-y:auto;font-size:11px">
@@ -13637,46 +13637,23 @@ async function renderAdminLogs() {
   el.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:8px">טוען...</div>';
   try {
     // Try adminLogs first, fall back to loginLogs
-    const [adminSnap, loginSnap] = await Promise.all([
-      db.collection('adminLogs').orderBy('timestamp','desc').limit(15).get().catch(()=>null),
-      db.collection('loginLogs').orderBy('timestamp','desc').limit(25).get().catch(()=>null)
-    ]);
+    // Show only admin actions here — login logs appear in the full section below
+    const adminSnap = await db.collection('adminLogs').orderBy('timestamp','desc').limit(20).get().catch(()=>null);
+    const adminIcons = { 'שינוי חבילה':'🔑','חסימת משתמש':'🚫','ביטול חסימה':'✅','מחיקת משתמש':'🗑','אישור משתמש':'✅','הזמנת משתמש':'📨' };
 
-    const adminIcons = { plan_change:'🔑', block:'🚫', unblock:'✅', delete:'🗑', approve:'✅', invite:'📨' };
-    const loginIcons = { login:'🟢', register:'✨', logout:'🔴' };
-
-    let html = '';
-
-    // Admin actions
-    if (adminSnap && !adminSnap.empty) {
-      html += `<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:4px 0 3px;border-bottom:1px solid var(--border)">פעולות אדמין</div>`;
-      html += adminSnap.docs.map(d => {
+    if (!adminSnap || adminSnap.empty) {
+      el.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:12px;text-align:center">אין פעולות אדמין עדיין</div>';
+    } else {
+      el.innerHTML = adminSnap.docs.map(d => {
         const x = d.data(), ts = x.timestamp?.toDate?.()?.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})||'—';
         return `<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px">
           <span>${adminIcons[x.action]||'⚙️'}</span>
           <span style="color:var(--t1);flex:1">${x.action||''}</span>
-          <span style="color:var(--t3);font-size:10px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.details||''}</span>
-          <span style="color:var(--t3);font-size:10px;white-space:nowrap;margin-right:4px">${ts}</span>
+          <span style="color:var(--t3);font-size:10px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.details||''}">${x.details||''}</span>
+          <span style="color:var(--t3);font-size:10px;white-space:nowrap;padding-right:4px">${ts}</span>
         </div>`;
       }).join('');
     }
-
-    // Login activity
-    if (loginSnap && !loginSnap.empty) {
-      html += `<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:6px 0 3px;border-bottom:1px solid var(--border);margin-top:4px">פעילות כניסות</div>`;
-      html += loginSnap.docs.map(d => {
-        const l = d.data(), ts = l.timestamp?.toDate?.()?.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})||'—';
-        const labels = { login:'כניסה', register:'הרשמה', logout:'יציאה' };
-        return `<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px">
-          <span>${loginIcons[l.action]||'•'}</span>
-          <span style="color:var(--t1);min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name||'—'}</span>
-          <span style="color:var(--ac);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${l.email||''}</span>
-          <span style="color:var(--t3);font-size:10px;white-space:nowrap">${labels[l.action]||l.action} · ${ts}</span>
-        </div>`;
-      }).join('');
-    }
-
-    el.innerHTML = html || '<div style="font-size:11px;color:var(--t3);padding:8px;text-align:center">אין רשומות עדיין</div>';
   } catch(e) {
     el.innerHTML = `<div style="font-size:11px;color:var(--re);padding:8px">שגיאה: ${e.message}</div>`;
   }
