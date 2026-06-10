@@ -10513,40 +10513,92 @@ async function sendRegistrationEmail(user) {
   } catch(e) { console.warn('Email notification failed:', e); }
 
   // Welcome email to the new user
-  const guideUrl = window._guideUrl || '';
-  const guideBtn = guideUrl
-    ? `<div style="text-align:center;margin:24px 0">
-        <a href="${guideUrl}" target="_blank"
-           style="display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#00d26a,#00a854);color:#000;font-weight:700;font-size:14px;border-radius:9px;text-decoration:none">
-          📄 הורד מדריך למשתמש PDF
-        </a>
-        <div style="font-size:11px;color:#545f72;margin-top:8px">המדריך מסביר איך לייבא עסקאות, לנהל הוצאות ולהשתמש במערכת</div>
-      </div>`
-    : '';
-  const welcomeHtml = `
-<div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#0a0d12;color:#e8ecf4;border-radius:12px;overflow:hidden;border:1px solid #252d40">
-  <div style="background:linear-gradient(135deg,#0d1f3c,#1a3a6e);padding:24px 28px;text-align:center">
-    <img src="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.2);margin-bottom:10px">
-    <div style="font-size:20px;font-weight:700;color:#fff">Fayna Trading</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">ברוך הבא לפלטפורמה!</div>
-  </div>
-  <div style="padding:28px">
-    <p style="font-size:16px;margin:0 0 16px">היי ${user.name} 👋</p>
-    <p style="margin:0 0 16px;line-height:1.7">ברוך הבא ל-<strong>Fayna Trading Journal</strong> — המקום שלך לתעד, לנתח ולשפר את המסחר שלך.</p>
-    <p style="margin:0 0 4px;line-height:1.7">אתה מוזמן להתחיל להוסיף עסקאות, לעקוב אחרי הביצועים שלך ולגדול כסוחר 📊</p>
-    ${guideBtn}
-    ${window._instagramUrl ? `<div style="text-align:center;margin:20px 0">
-      <a href="${window._instagramUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:20px;border:1px solid rgba(193,53,132,.4);background:rgba(193,53,132,.1);color:#e1306c;text-decoration:none;font-size:13px;font-weight:600">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        עקבו אחרינו באינסטגרם
-      </a>
-    </div>` : ''}
-    <div style="background:#161b27;border-radius:8px;padding:16px;font-size:13px;color:#8892a4;text-align:center">
-      לשאלות ועזרה — תמיד אפשר לפנות דרך הצ'אט באפליקציה.<br>
-      <span style="color:#00d26a;font-weight:600">Fayna Trading</span>
-    </div>
-  </div>
-</div>`;
+  const siteUrl    = 'https://dorfeina123-hash.github.io/fayna-trading/';
+  const logoUrl    = siteUrl + 'fayna_logo.jpg';
+  const guideUrl   = window._guideUrl || '';
+  const igUrl      = window._instagramUrl || '';
+  const unsubLine  = `<br><a href="mailto:${ADMIN_EMAIL}?subject=הסר%20אותי%20מרשימת%20התפוצה" style="color:#545f72;font-size:10px">הסר אותי מרשימת תפוצה</a>`;
+
+  const welcomeHtml = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
+</head>
+<body style="margin:0;padding:0;background-color:#1a1a2e;font-family:Arial,Helvetica,sans-serif">
+<!--[if mso]><table width="100%" bgcolor="#1a1a2e" cellpadding="0" cellspacing="0"><tr><td align="center"><![endif]-->
+<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#1a1a2e" style="background-color:#1a1a2e">
+<tr><td align="center" style="padding:24px 16px">
+
+  <!-- Card -->
+  <table width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;border-radius:12px;overflow:hidden;border:1px solid #2a3550">
+
+    <!-- HEADER -->
+    <tr>
+      <td align="center" bgcolor="#0d1f3c" style="background-color:#0d1f3c;padding:28px 24px">
+        <img src="${logoUrl}" alt="Fayna Trading" width="72" height="72"
+             style="width:72px;height:72px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);display:block;margin:0 auto 12px">
+        <div style="font-size:22px;font-weight:700;color:#ffffff;margin-bottom:4px">📈 Fayna Trading</div>
+        <div style="font-size:13px;color:#7fa8e0">ברוכים הבאים לפלטפורמה!</div>
+      </td>
+    </tr>
+
+    <!-- BODY -->
+    <tr>
+      <td bgcolor="#0f1623" style="background-color:#0f1623;padding:28px 28px 20px;color:#dde4f0">
+
+        <p style="font-size:17px;font-weight:600;margin:0 0 14px;color:#ffffff">היי ${user.name} 👋</p>
+        <p style="font-size:14px;line-height:1.75;margin:0 0 14px;color:#c4cfe0">
+          ברוך הבא ל-<strong style="color:#00d26a">Fayna Trading Journal</strong> — המקום שלך לתעד,
+          לנתח ולשפר את המסחר שלך.
+        </p>
+        <p style="font-size:14px;line-height:1.75;margin:0 0 24px;color:#c4cfe0">
+          כעת תוכל להוסיף עסקאות, לייבא נתונים מ-Rithmic, לעקוב אחרי הביצועים שלך ולגדול כסוחר 📊
+        </p>
+
+        <!-- CTA: כניסה לאתר -->
+        <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:20px">
+          <a href="${siteUrl}" target="_blank"
+             style="display:inline-block;padding:14px 36px;background-color:#00d26a;color:#000000;font-weight:700;font-size:15px;border-radius:9px;text-decoration:none;letter-spacing:.3px">
+            🚀 כניסה לאפליקציה
+          </a>
+        </td></tr></table>
+
+        ${guideUrl ? `<!-- CTA: PDF Guide -->
+        <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:20px">
+          <a href="${guideUrl}" target="_blank"
+             style="display:inline-block;padding:11px 28px;background-color:#1a3a6e;color:#7fa8e0;font-weight:600;font-size:13px;border-radius:9px;text-decoration:none;border:1px solid #2a5098">
+            📄 הורד מדריך למשתמש PDF
+          </a>
+          <div style="font-size:11px;color:#4a5568;margin-top:7px">המדריך מסביר איך לייבא עסקאות ולהשתמש במערכת</div>
+        </td></tr></table>` : ''}
+
+        ${igUrl ? `<!-- Instagram — emoji במקום SVG -->
+        <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:20px">
+          <a href="${igUrl}" target="_blank"
+             style="display:inline-block;padding:10px 22px;border-radius:20px;border:1px solid #8b2252;background-color:#2d0f1e;color:#e1306c;text-decoration:none;font-size:13px;font-weight:600">
+            📸 עקבו אחרינו באינסטגרם
+          </a>
+        </td></tr></table>` : ''}
+
+        <!-- Footer -->
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td bgcolor="#0a0e18" style="background-color:#0a0e18;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:13px;color:#6b7280">לשאלות ועזרה — פנה דרך הצ'אט באפליקציה</div>
+            <div style="font-size:12px;color:#00d26a;font-weight:600;margin-top:4px">Fayna Trading</div>
+            <div style="font-size:10px;color:#374151;margin-top:8px">
+              © ${new Date().getFullYear()} Fayna Trading · כל הזכויות שמורות
+              ${unsubLine}
+            </div>
+          </td></tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</td></tr></table>
+<!--[if mso]></td></tr></table><![endif]-->
+</body></html>`;
   try {
     await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
