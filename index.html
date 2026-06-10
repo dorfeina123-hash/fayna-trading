@@ -30,6 +30,19 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',sans-serif;font-size
 .nt:hover{color:var(--t1);background:var(--bg3)}.nt.active{background:var(--bg3);color:var(--t1)}
 .nav-sep{width:1px;background:var(--border);height:24px;flex-shrink:0;margin:0 4px;align-self:center}
 .nav-grp{font-size:9px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;align-self:center;padding:0 2px}
+/* ── COMPACT NAV ── */
+.nav-active-lbl{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;background:var(--bg3);border:1px solid var(--border2);color:var(--t1);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
+.nav-active-lbl:hover{border-color:var(--ac)}
+.nav-active-lbl .nav-active-arrow{font-size:9px;color:var(--t3);transition:transform .2s}
+.nav-active-lbl.open .nav-active-arrow{transform:rotate(180deg)}
+.nav-menu-dd{position:fixed;top:52px;right:0;left:0;background:var(--bg1);border-bottom:2px solid var(--border2);z-index:198;padding:14px 20px 16px;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.nav-menu-dd.open{display:block}
+.nav-menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:5px;max-width:1440px;margin:0 auto}
+.nav-menu-section{font-size:9px;color:var(--t3);letter-spacing:.6px;text-transform:uppercase;padding:10px 0 5px;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
+.nav-menu-section:first-child{border-top:none;margin-top:0;padding-top:0}
+.nav-menu-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--t2);border:1px solid transparent;transition:all .13s;background:transparent}
+.nav-menu-item:hover{background:var(--bg3);color:var(--t1);border-color:var(--border2)}
+.nav-menu-item.active{background:var(--bg3);color:var(--t1);border-color:var(--ac)}
 .btn-p{display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--ac);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap}
 .btn-p:hover{opacity:.85}
 .main{flex:1;padding:18px;max-width:1440px;margin:0 auto;width:100%}
@@ -1605,23 +1618,24 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <span class="nav-user-name" id="nav-user-name-text">—</span>
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t3);flex-shrink:0"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
   </div>
-  <div class="nav-tabs">
-    <button class="nt active" onclick="sw('overview',this)">סקירה</button>
-    <div class="nav-sep"></div>
-    <span class="nav-grp">הוצאות</span>
-    <button class="nt" onclick="sw('expenses',this)">יומן הוצאות</button>
-    <button class="nt" onclick="sw('withdrawals',this)">משיכות</button>
-    <button class="nt" onclick="sw('pnl',this)">P&L</button>
-    <button class="nt" onclick="sw('custom',this)">הוצאות חופשיות</button>
-    <div class="nav-sep"></div>
-    <span class="nav-grp">מסחר</span>
-    <button class="nt" onclick="sw('calendar',this)">לוח שנה</button>
-    <button class="nt" onclick="sw('trades',this)">יומן עסקאות</button>
-    <button class="nt" onclick="sw('stats',this)">סטטיסטיקות</button>
-    <button class="nt" onclick="sw('datamgr',this)" style="color:var(--bl)">⚙️ ניהול נתונים</button>
-    <div class="nav-sep"></div>
-    <button class="nt" onclick="sw('personal',this)">👤 אזור אישי</button>
-    <button class="nav-more-btn" id="nav-more-btn" onclick="toggleSidePanel()">☰ עוד</button>
+  <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0">
+    <button class="nav-active-lbl" id="nav-active-lbl" onclick="toggleNavMenu()" title="תפריט ניווט">
+      <span id="nav-active-name">🏠 סקירה</span>
+      <span class="nav-active-arrow">▼</span>
+    </button>
+    <!-- hidden .nt buttons for backward compat with sw() -->
+    <div style="display:none">
+      <button class="nt active" id="nt-overview"    onclick="sw('overview',this)"></button>
+      <button class="nt"        id="nt-expenses"    onclick="sw('expenses',this)"></button>
+      <button class="nt"        id="nt-withdrawals" onclick="sw('withdrawals',this)"></button>
+      <button class="nt"        id="nt-pnl"         onclick="sw('pnl',this)"></button>
+      <button class="nt"        id="nt-custom"      onclick="sw('custom',this)"></button>
+      <button class="nt"        id="nt-calendar"    onclick="sw('calendar',this)"></button>
+      <button class="nt"        id="nt-trades"      onclick="sw('trades',this)"></button>
+      <button class="nt"        id="nt-stats"       onclick="sw('stats',this)"></button>
+      <button class="nt"        id="nt-datamgr"     onclick="sw('datamgr',this)"></button>
+      <button class="nt"        id="nt-personal"    onclick="sw('personal',this)"></button>
+    </div>
   </div>
   <!-- WORLD CLOCKS -->
   <div class="world-clocks" id="world-clocks">
@@ -1663,6 +1677,34 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <button class="mob-menu-btn" id="mob-menu-btn" onclick="mobNavOpen()" title="תפריט">☰</button>
   </div>
 </nav>
+
+<!-- NAV DROPDOWN MENU -->
+<div id="nav-menu-dd" class="nav-menu-dd" onclick="if(event.target===this)closeNavMenu()">
+  <div class="nav-menu-grid" id="nav-menu-grid">
+    <div class="nav-menu-section">כללי</div>
+    <div class="nav-menu-item" id="nm-overview"    onclick="swNav('overview')">🏠 סקירה</div>
+
+    <div class="nav-menu-section">הוצאות</div>
+    <div class="nav-menu-item" id="nm-expenses"    onclick="swNav('expenses')">📋 יומן הוצאות</div>
+    <div class="nav-menu-item" id="nm-withdrawals" onclick="swNav('withdrawals')">💸 משיכות</div>
+    <div class="nav-menu-item" id="nm-pnl"         onclick="swNav('pnl')">📈 P&amp;L</div>
+    <div class="nav-menu-item" id="nm-custom"      onclick="swNav('custom')">💳 הוצאות חופשיות</div>
+
+    <div class="nav-menu-section">מסחר</div>
+    <div class="nav-menu-item" id="nm-calendar"    onclick="swNav('calendar')">📅 לוח שנה</div>
+    <div class="nav-menu-item" id="nm-trades"      onclick="swNav('trades')">📓 יומן עסקאות</div>
+    <div class="nav-menu-item" id="nm-stats"       onclick="swNav('stats')">📊 סטטיסטיקות</div>
+
+    <div class="nav-menu-section">ניהול</div>
+    <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
+    <div class="nav-menu-item" id="nm-personal"    onclick="swNav('personal')">👤 אזור אישי</div>
+    <div class="nav-menu-item"                     onclick="swSide('software');closeNavMenu()">📥 תוכנות מסחר</div>
+    <div class="nav-menu-item"                     onclick="swSide('firms');closeNavMenu()">🏆 חברות מימון</div>
+    <div class="nav-menu-item"                     onclick="swSide('ecal');closeNavMenu()">📅 יומן כלכלי</div>
+    <div class="nav-menu-item"                     onclick="swSide('help');closeNavMenu()">❓ עזרה</div>
+  </div>
+</div>
+<div id="nav-dd-overlay" onclick="closeNavMenu()" style="display:none;position:fixed;inset:0;z-index:197;background:rgba(0,0,0,.25)"></div>
 
 <!-- SIDE PANEL -->
 <div class="side-panel-overlay" id="side-panel-overlay" onclick="closeSidePanel()"></div>
@@ -2257,67 +2299,96 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 </div>
 
 <!-- ADD TRADE MODAL -->
-<div class="modal-bg" id="add-trade-modal">
-  <div class="modal" style="width:480px">
+<div class="modal-bg" id="add-trade-modal" onclick="if(event.target===this)closeAddTrade()">
+  <div class="modal" style="width:520px;max-height:90vh;overflow-y:auto">
     <h3>➕ הוספת עסקה ידנית <button class="cx" onclick="closeAddTrade()">×</button></h3>
 
+    <!-- Row 1: date + time + account -->
     <div class="g2">
-      <div class="fr"><label>תאריך</label><input type="date" id="at-date"></div>
-      <div class="fr"><label>שעת כניסה</label><input type="time" id="at-time" value="09:30" step="1"></div>
+      <div class="fr"><label>תאריך *</label><input type="date" id="at-date"></div>
+      <div class="fr"><label>שעת כניסה</label><input type="time" id="at-time" step="1"></div>
     </div>
 
+    <!-- Row 2: symbol + qty + direction -->
+    <div style="display:grid;grid-template-columns:1fr 80px;gap:8px">
+      <div class="fr">
+        <label>סימול *</label>
+        <input type="text" id="at-sym" list="at-sym-list" placeholder="NQM6, MNQM6, ESM6..." autocomplete="off" oninput="atCalcPnl()">
+        <datalist id="at-sym-list">
+          <option value="MNQM6">MNQM6 — Micro NQ</option>
+          <option value="NQM6">NQM6 — E-mini NQ</option>
+          <option value="MESM6">MESM6 — Micro ES</option>
+          <option value="ESM6">ESM6 — E-mini S&P</option>
+          <option value="MYMM6">MYMM6 — Micro DOW</option>
+          <option value="YMM6">YMM6 — E-mini DOW</option>
+          <option value="M2KM6">M2KM6 — Micro RTY</option>
+          <option value="RTYM6">RTYM6 — E-mini Russell</option>
+        </datalist>
+      </div>
+      <div class="fr"><label>כמות</label><input type="number" id="at-qty" value="1" min="1" step="1" oninput="atCalcPnl()"></div>
+    </div>
+
+    <!-- Direction toggle -->
+    <div class="fr" style="margin-bottom:10px">
+      <label style="margin-bottom:4px">כיוון</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button type="button" id="at-btn-long"  onclick="atSetDir('long')"
+          style="padding:10px;border-radius:7px;border:2px solid rgba(39,160,101,.5);background:rgba(39,160,101,.15);color:var(--gr);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">
+          ▲ LONG (קנייה)
+        </button>
+        <button type="button" id="at-btn-short" onclick="atSetDir('short')"
+          style="padding:10px;border-radius:7px;border:2px solid var(--border2);background:transparent;color:var(--t3);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">
+          ▼ SHORT (שורט)
+        </button>
+      </div>
+    </div>
+
+    <!-- Prices -->
     <div class="g2">
       <div class="fr">
-        <label>סימול</label>
-        <input type="text" id="at-sym" list="at-sym-list" placeholder="NQM6, MNQM6, ESM6..." oninput="atCalcPnl()" autocomplete="off" style="text-transform:uppercase">
-        <datalist id="at-sym-list"><option>NQM6</option><option>MNQM6</option><option>ESM6</option><option>MESM6</option><option>YMM6</option><option>MYMM6</option><option>RTYМ6</option><option>M2KM6</option><option>CLN6</option><option>GCQ6</option></datalist>
-      </div>
-      <div class="fr"><label>כמות חוזים</label><input type="number" id="at-qty" value="1" min="1" oninput="atCalcPnl()"></div>
-    </div>
-
-    <!-- Long / Short toggle -->
-    <div class="fr">
-      <label>כיוון</label>
-      <div class="trow" style="margin-bottom:0">
-        <button type="button" id="at-btn-long"  class="tb2 si" onclick="atSetDir('long')" >▲ Long (קנייה)</button>
-        <button type="button" id="at-btn-short" class="tb2"    onclick="atSetDir('short')">▼ Short (שורט)</button>
-      </div>
-    </div>
-
-    <div class="g2">
-      <div class="fr">
-        <label id="at-entry-lbl">מחיר כניסה (Buy)</label>
+        <label id="at-entry-lbl">מחיר כניסה *</label>
         <input type="number" id="at-entry" step="0.25" placeholder="0.00" oninput="atCalcPnl()">
       </div>
       <div class="fr">
-        <label id="at-exit-lbl">מחיר יציאה (Sell)</label>
-        <input type="number" id="at-exit"  step="0.25" placeholder="0.00" oninput="atCalcPnl()">
+        <label id="at-exit-lbl">מחיר יציאה *</label>
+        <input type="number" id="at-exit" step="0.25" placeholder="0.00" oninput="atCalcPnl()">
       </div>
     </div>
 
     <!-- Live P&L preview -->
-    <div id="at-pnl-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:10px;display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--t3)">גרוס P&L:</span>
-        <span id="at-gross-val" class="mono" style="font-weight:700">—</span>
+    <div id="at-pnl-preview" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--t3)">גרוס P&L</span>
+        <span id="at-gross-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px">—</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">
-        <span style="color:var(--t3)">עמלה (×<span id="at-comm-rate">—</span>):</span>
-        <span id="at-comm-val"  class="mono cr">—</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--t3)">עמלה (<span id="at-comm-rate">—</span>)</span>
+        <span id="at-comm-val" style="font-family:'IBM Plex Mono',monospace;color:var(--re);font-size:12px">—</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);margin-top:6px;padding-top:6px">
-        <span style="color:var(--t1);font-weight:600">נטו P&L:</span>
-        <span id="at-net-val"   class="mono" style="font-size:15px;font-weight:700">—</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        <span style="font-size:12px;font-weight:600;color:var(--t1)">נטו P&L</span>
+        <span id="at-net-val" style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700">—</span>
       </div>
-      <div style="font-size:10px;color:var(--t3);margin-top:4px" id="at-mult-info"></div>
+      <div id="at-mult-info" style="font-size:10px;color:var(--t3);margin-top:6px;text-align:center"></div>
     </div>
 
-    <div class="fr"><label>משך (אופציונלי)</label><input type="text" id="at-dur" placeholder="לדוגמה: 3m:25 או 45s"></div>
-    <div class="fr"><label>הערה (אופציונלי)</label><textarea id="at-notes" placeholder="תיאור העסקה..."></textarea></div>
+    <!-- Extra details -->
+    <div class="g2">
+      <div class="fr">
+        <label>אסטרטגיה</label>
+        <input type="text" id="at-strategy" list="at-strat-list" placeholder="Breakout, Scalp...">
+        <datalist id="at-strat-list"></datalist>
+      </div>
+      <div class="fr">
+        <label>משך (אופציונלי)</label>
+        <input type="text" id="at-dur" placeholder="3m:25 / 45s / 1h">
+      </div>
+    </div>
+    <div class="fr"><label>הערה (אופציונלי)</label><textarea id="at-notes" placeholder="תיאור העסקה, תנאי שוק..."></textarea></div>
 
     <div class="fax">
       <button class="bn" onclick="closeAddTrade()">ביטול</button>
-      <button class="bs" onclick="saveAddTrade()">💾 שמור עסקה</button>
+      <button class="bs" id="at-save-btn" onclick="saveAddTrade()">💾 שמור עסקה</button>
     </div>
   </div>
 </div>
@@ -4333,91 +4404,118 @@ function _getFuturesMultiplier(sym) {
 }
 
 // ── Manual Add Trade ──
-let _atDir = 'long';
+window._atDir = 'long';
+
 function openAddTrade() {
-  _atDir = 'long';
-  const today = new Date().toISOString().slice(0,10);
-  document.getElementById('at-date').value = today;
-  document.getElementById('at-time').value = '09:30';
-  document.getElementById('at-sym').value  = '';
-  document.getElementById('at-qty').value  = '1';
-  document.getElementById('at-entry').value= '';
-  document.getElementById('at-exit').value = '';
-  document.getElementById('at-dur').value  = '';
-  document.getElementById('at-notes').value= '';
-  document.getElementById('at-pnl-preview').style.display='none';
-  atSetDir('long');
-  document.getElementById('add-trade-modal').classList.add('open');
+  try {
+    window._atDir = 'long';
+    const today = new Date().toISOString().slice(0,10);
+    const now   = new Date().toTimeString().slice(0,5);
+    const g = id => document.getElementById(id);
+    g('at-date').value     = today;
+    g('at-time').value     = now || '09:30';
+    g('at-sym').value      = '';
+    g('at-qty').value      = '1';
+    g('at-entry').value    = '';
+    g('at-exit').value     = '';
+    g('at-dur').value      = '';
+    g('at-notes').value    = '';
+    g('at-strategy').value = '';
+    g('at-pnl-preview').style.display = 'none';
+    // Populate strategy datalist from existing trades
+    const strats = [...new Set(tradesList.map(t=>t.strategy).filter(Boolean))];
+    g('at-strat-list').innerHTML = strats.map(s=>`<option value="${s}">`).join('');
+    atSetDir('long');
+    g('add-trade-modal').classList.add('open');
+  } catch(err) {
+    showToast('שגיאה בפתיחת טופס: '+err.message,'error');
+    console.error('openAddTrade error:', err);
+  }
 }
+
 function closeAddTrade() {
-  document.getElementById('add-trade-modal').classList.remove('open');
+  const m = document.getElementById('add-trade-modal');
+  if(m) m.classList.remove('open');
 }
+
 function atSetDir(dir) {
-  _atDir = dir;
-  const isL = dir==='long';
-  document.getElementById('at-btn-long').className  = 'tb2 '+(isL?'si':'');
-  document.getElementById('at-btn-short').className = 'tb2 '+(isL?'':'sx');
-  document.getElementById('at-entry-lbl').textContent = isL ? 'מחיר כניסה (Buy)'  : 'מחיר כניסה (Sell)';
-  document.getElementById('at-exit-lbl').textContent  = isL ? 'מחיר יציאה (Sell)' : 'מחיר יציאה (Buy)';
+  window._atDir = dir;
+  const isL = dir === 'long';
+  const long  = document.getElementById('at-btn-long');
+  const short = document.getElementById('at-btn-short');
+  if(long)  { long.style.borderColor  = isL ? 'rgba(39,160,101,.7)' : 'var(--border2)'; long.style.background  = isL ? 'rgba(39,160,101,.18)' : 'transparent'; long.style.color  = isL ? 'var(--gr)' : 'var(--t3)'; }
+  if(short) { short.style.borderColor = isL ? 'var(--border2)' : 'rgba(224,69,69,.7)'; short.style.background = isL ? 'transparent' : 'rgba(224,69,69,.15)'; short.style.color = isL ? 'var(--t3)' : 'var(--re)'; }
+  const el = document.getElementById('at-entry-lbl');
+  const xl = document.getElementById('at-exit-lbl');
+  if(el) el.textContent = isL ? 'מחיר כניסה — Buy *'  : 'מחיר כניסה — Sell *';
+  if(xl) xl.textContent = isL ? 'מחיר יציאה — Sell *' : 'מחיר יציאה — Buy (Cover) *';
   atCalcPnl();
 }
+
 function atCalcPnl() {
-  const sym    = (document.getElementById('at-sym').value||'').toUpperCase().trim();
-  const qty    = parseInt(document.getElementById('at-qty').value)||1;
-  const entry  = parseFloat(document.getElementById('at-entry').value);
-  const exit   = parseFloat(document.getElementById('at-exit').value);
-  const prev   = document.getElementById('at-pnl-preview');
-  if(!sym || isNaN(entry) || isNaN(exit)) { prev.style.display='none'; return; }
-  const mult   = _getFuturesMultiplier(sym);
-  const micro  = _isMicroContract(sym);
-  const buyPx  = _atDir==='long' ? entry : exit;
-  const sellPx = _atDir==='long' ? exit  : entry;
-  const gross  = +((sellPx - buyPx) * qty * mult).toFixed(2);
-  const commRate = micro ? (commSettings.ratePerContract||1.58) : (commSettings.ratePerContractFull||3.98);
-  const comm   = +(qty * commRate).toFixed(2);
-  const net    = +(gross - comm).toFixed(2);
-  const isPos  = net >= 0;
-  document.getElementById('at-gross-val').textContent  = (gross>=0?'+':'')+'$'+gross.toFixed(2);
-  document.getElementById('at-gross-val').style.color  = gross>=0?'var(--gr)':'var(--re)';
-  document.getElementById('at-comm-rate').textContent  = '$'+commRate+'/חוזה';
-  document.getElementById('at-comm-val').textContent   = '-$'+comm.toFixed(2);
-  document.getElementById('at-net-val').textContent    = (net>=0?'+':'−')+'$'+Math.abs(net).toFixed(2);
-  document.getElementById('at-net-val').style.color    = isPos?'var(--gr)':'var(--re)';
-  document.getElementById('at-mult-info').textContent  = sym+': $'+mult+'/נקודה × '+qty+' חוזים'+(micro?' (מיקרו)':' (מלא)');
-  prev.style.display = 'block';
+  try {
+    const sym   = (document.getElementById('at-sym').value||'').toUpperCase().trim();
+    const qty   = Math.max(1, parseInt(document.getElementById('at-qty').value)||1);
+    const entry = parseFloat(document.getElementById('at-entry').value);
+    const exit  = parseFloat(document.getElementById('at-exit').value);
+    const prev  = document.getElementById('at-pnl-preview');
+    if(!sym || isNaN(entry) || isNaN(exit) || entry<=0 || exit<=0) { if(prev) prev.style.display='none'; return; }
+    const mult      = _getFuturesMultiplier(sym);
+    const micro     = _isMicroContract(sym);
+    const buyPx     = window._atDir==='long' ? entry : exit;
+    const sellPx    = window._atDir==='long' ? exit  : entry;
+    const gross     = +((sellPx-buyPx)*qty*mult).toFixed(2);
+    const commRate  = micro ? (commSettings.ratePerContract||1.58) : (commSettings.ratePerContractFull||3.98);
+    const comm      = +(qty*commRate).toFixed(2);
+    const net       = +(gross-comm).toFixed(2);
+    const setEl = (id,txt,col) => { const e=document.getElementById(id); if(e){e.textContent=txt; if(col)e.style.color=col;} };
+    setEl('at-gross-val', (gross>=0?'+':'')+'$'+gross.toFixed(2),   gross>=0?'var(--gr)':'var(--re)');
+    setEl('at-comm-rate', '$'+commRate+'/חוזה × '+qty);
+    setEl('at-comm-val',  '−$'+comm.toFixed(2));
+    setEl('at-net-val',   (net>=0?'+':'−')+'$'+Math.abs(net).toFixed(2), net>=0?'var(--gr)':'var(--re)');
+    setEl('at-mult-info', sym+' · $'+mult+'/נקודה'+(micro?' · מיקרו':' · E-mini'));
+    if(prev) prev.style.display='block';
+  } catch(err) { console.warn('atCalcPnl:', err); }
 }
+
 function saveAddTrade() {
-  const date   = document.getElementById('at-date').value;
-  const btime  = document.getElementById('at-time').value||'00:00:00';
-  const sym    = (document.getElementById('at-sym').value||'').toUpperCase().trim();
-  const qty    = parseInt(document.getElementById('at-qty').value)||1;
-  const entry  = parseFloat(document.getElementById('at-entry').value);
-  const exit   = parseFloat(document.getElementById('at-exit').value);
-  if(!date)         { showToast('נא לבחור תאריך','error'); return; }
-  if(!sym)          { showToast('נא להזין סימול','error'); return; }
-  if(isNaN(entry)||isNaN(exit)) { showToast('נא להזין מחיר כניסה ויציאה','error'); return; }
-  const mult   = _getFuturesMultiplier(sym);
-  const buyPx  = _atDir==='long' ? entry : exit;
-  const sellPx = _atDir==='long' ? exit  : entry;
-  const pnl    = +((sellPx - buyPx) * qty * mult).toFixed(2);
-  const trade  = {
-    sym, qty, buy:buyPx, sell:sellPx, pnl,
-    date, btime: btime.length===5 ? btime+':00' : btime,
-    stime:'', dur: document.getElementById('at-dur').value.trim(),
-    notes: document.getElementById('at-notes').value.trim(),
-    stars:0
-  };
-  // Tag to selected account
-  const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
-  if(selIds.length===1) trade.acct = selIds[0];
-  tradesList.push(trade);
-  renderAll(); saveData();
-  closeAddTrade();
-  showToast(`✅ עסקה נוספה — ${sym} ${_atDir==='long'?'Long':'Short'} × ${qty} | נטו: ${pnl>=0?'+':''}$${(pnl-(qty*(_isMicroContract(sym)?commSettings.ratePerContract:commSettings.ratePerContractFull))).toFixed(2)}`, 'success', 4000);
+  try {
+    const g    = id => document.getElementById(id);
+    const date = g('at-date').value;
+    const sym  = (g('at-sym').value||'').toUpperCase().trim();
+    const qty  = Math.max(1, parseInt(g('at-qty').value)||1);
+    const entry= parseFloat(g('at-entry').value);
+    const exit = parseFloat(g('at-exit').value);
+    if(!date)                     { showToast('נא לבחור תאריך','error');    return; }
+    if(!sym)                      { showToast('נא להזין סימול','error');     return; }
+    if(isNaN(entry)||entry<=0)    { showToast('נא להזין מחיר כניסה תקין','error'); return; }
+    if(isNaN(exit)||exit<=0)      { showToast('נא להזין מחיר יציאה תקין','error'); return; }
+    const mult  = _getFuturesMultiplier(sym);
+    const isL   = window._atDir==='long';
+    const buyPx = isL ? entry : exit;
+    const sellPx= isL ? exit  : entry;
+    const pnl   = +((sellPx-buyPx)*qty*mult).toFixed(2);
+    const btime = (g('at-time').value||'09:30:00').length===5 ? g('at-time').value+':00' : (g('at-time').value||'09:30:00');
+    const trade = {
+      sym, qty, buy:buyPx, sell:sellPx, pnl,
+      date, btime, stime:'',
+      dur:      (g('at-dur').value||'').trim(),
+      strategy: (g('at-strategy').value||'').trim(),
+      notes:    (g('at-notes').value||'').trim(),
+      stars: 0,
+    };
+    const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
+    if(selIds.length===1) trade.acct = selIds[0];
+    tradesList.push(trade);
+    renderAll(); saveData(); closeAddTrade();
+    const commRate = _isMicroContract(sym) ? (commSettings.ratePerContract||1.58) : (commSettings.ratePerContractFull||3.98);
+    const net = +(pnl - qty*commRate).toFixed(2);
+    showToast(`✅ עסקה נוספה · ${sym} ${isL?'Long 🟢':'Short 🔴'} × ${qty} · נטו: ${net>=0?'+':''}$${net.toFixed(2)}`, 'success', 4000);
+  } catch(err) {
+    showToast('שגיאה בשמירה: '+err.message,'error');
+    console.error('saveAddTrade:', err);
+  }
 }
-document.getElementById('add-trade-modal').addEventListener('click', e => {
-  if(e.target===e.currentTarget) closeAddTrade();
-});
 
 function _isMicroContract(sym) {
   // Micro futures start with M but M2K is also micro; full E-minis: NQ, ES, YM, RTY, CL, GC...
@@ -6929,6 +7027,44 @@ document.addEventListener('click',()=>{document.getElementById('cpick').classLis
 
 // TABS
 const showAdd={overview:true,expenses:true,withdrawals:true,pnl:false,custom:true,calendar:false,trades:false,stats:false,drivers:false,software:false,firms:false,news:false,ecal:false,billing:false,help:false,admin:false,datamgr:false};
+// ── NAV DROPDOWN ──
+const _NAV_LABELS = {
+  overview:'🏠 סקירה', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
+  pnl:'📈 P&L', custom:'💳 הוצאות חופשיות', calendar:'📅 לוח שנה',
+  trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות',
+  datamgr:'⚙️ ניהול נתונים', personal:'👤 אזור אישי',
+  software:'📥 תוכנות מסחר', firms:'🏆 מימון', news:'📰 חדשות',
+  ecal:'📅 יומן כלכלי', help:'❓ עזרה', billing:'💳 תשלום', admin:'🛡️ ניהול',
+  drivers:'🧭 דרייברים',
+};
+function toggleNavMenu() {
+  const dd = document.getElementById('nav-menu-dd');
+  const ov = document.getElementById('nav-dd-overlay');
+  const lb = document.getElementById('nav-active-lbl');
+  const open = dd.classList.toggle('open');
+  lb.classList.toggle('open', open);
+  ov.style.display = open ? 'block' : 'none';
+}
+function closeNavMenu() {
+  document.getElementById('nav-menu-dd')?.classList.remove('open');
+  document.getElementById('nav-dd-overlay').style.display = 'none';
+  document.getElementById('nav-active-lbl')?.classList.remove('open');
+}
+function swNav(name) {
+  closeNavMenu();
+  const btn = document.getElementById('nt-'+name);
+  sw(name, btn);
+}
+function _updateNavLabel(name) {
+  const el = document.getElementById('nav-active-name');
+  if (el) el.textContent = _NAV_LABELS[name] || name;
+  // Update active state in dropdown
+  document.querySelectorAll('.nav-menu-item').forEach(i=>i.classList.remove('active'));
+  const nm = document.getElementById('nm-'+name);
+  if (nm) nm.classList.add('active');
+}
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeNavMenu(); });
+
 function sw(name,btn){
   // Feature gate for plan-restricted tabs
   const _navGates = { calendar:'calendar', stats:'stats_advanced' };
@@ -6946,6 +7082,7 @@ function sw(name,btn){
   });
   document.querySelectorAll('.nt').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
+  _updateNavLabel(name);
   // Reset side panel button active states when switching to a main-nav tab
   if (typeof _sidePanelTabs !== 'undefined') {
     _sidePanelTabs.forEach(t => { const b=document.getElementById('sp-btn-'+t); if(b) b.classList.remove('active'); });
