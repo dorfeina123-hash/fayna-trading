@@ -5332,125 +5332,269 @@ function renderPNL(){
 
 // CALENDAR
 // ════════════════════════════════════════════════════════
-//  MENTAL COACH
+//  MENTAL COACH — Enhanced v2
 // ════════════════════════════════════════════════════════
 let coachSessions = JSON.parse(localStorage.getItem('coach_sessions')||'[]');
-let _coachSession = null; // active session state
+let _coachSession = null;
 let _coachQIdx    = 0;
+// Per-question alt index (cycles through alts on "שאלה אחרת")
+let _coachAltIdx  = {};
 
+// ── Question bank — with hints, alts, improved phrasing ──
 const COACH_QUESTIONS = {
   daily: [
-    // Psychology
-    {id:'p1',cat:'🧠 פסיכולוגיה',text:'איך המצב הנפשי שלך לפני המסחר היום?',type:'scale5',labels:['נמוך מאוד','נמוך','בינוני','טוב','מצוין'],key:'mood',weight:1.5},
-    {id:'p2',cat:'😤 פסיכולוגיה',text:'האם חווית FOMO (פחד להחמיץ) בזמן המסחר?',type:'yesno',goodIs:'no',key:'fomo',weight:1.2},
-    {id:'p3',cat:'🔄 פסיכולוגיה',text:'האם ביצעת Revenge Trading לאחר הפסד?',type:'yesno',goodIs:'no',key:'revenge',weight:1.5},
-    // Strategy
-    {id:'s1',cat:'📋 אסטרטגיה',text:'האם פעלת לפי הפלן המסחרי שלך?',type:'scale5',labels:['לא בכלל','מעט','חלקית','ברובו','לחלוטין'],key:'plan',weight:1.5},
-    {id:'s2',cat:'⏱ אסטרטגיה',text:'האם ביצעת Overtrading (יותר עסקאות ממה שתכננת)?',type:'yesno',goodIs:'no',key:'overtrade',weight:1.2},
-    {id:'s3',cat:'🎯 אסטרטגיה',text:'האם זיהית את הסטאפים הנכונים לפני כל כניסה?',type:'yesno',goodIs:'yes',key:'setup',weight:1},
-    // Risk
-    {id:'r1',cat:'🛡 ניהול סיכונים',text:'האם שמרת על רמת הסיכון שהגדרת לעצמך?',type:'yesno',goodIs:'yes',key:'risk_ok',weight:1.5},
-    {id:'r2',cat:'🚫 ניהול סיכונים',text:'האם הזזת סטופ לוס בגלל לחץ רגשי?',type:'yesno',goodIs:'no',key:'moved_sl',weight:1.5},
-    // Reflection
-    {id:'l1',cat:'💡 לקחים',text:'מה הלקח המרכזי מהיום?',type:'text',key:'lesson',weight:0},
-    {id:'l2',cat:'🎯 לקחים',text:'מה תשפר מחר?',type:'text',key:'improve',weight:0},
+    { id:'p1', cat:'🧠 פסיכולוגיה', key:'mood', weight:1.5, type:'scale5',
+      text:'איך היה המצב הנפשי שלך היום לפני הכניסה למסחר?',
+      hint:'חשב על רמת הריכוז, השקט הפנימי והבטחון שלך — לא על הציפיות לתוצאות.',
+      alts:['באיזו מידה הרגשת רגוע וממוקד לפני שהתחלת לסחור?',
+             'האם הייתה לך מנטליות "צייד" (ממוקד) או "נצוד" (לחוץ) היום?'],
+      labels:['לחוץ מאוד','לחוץ','בסדר','ממוקד','זרימה מלאה'] },
+
+    { id:'p2', cat:'😤 פסיכולוגיה', key:'fomo', weight:1.2, type:'yesno', goodIs:'no',
+      text:'האם חווית FOMO — נכנסת לעסקה כי "פחדת להחמיץ"?',
+      hint:'FOMO = Fear Of Missing Out. כניסה לעסקה כי ראית שוק זז מהר, לא כי הייתה לך תוכנית ברורה.',
+      alts:['האם נכנסת לפוזיציה שלא הייתה בפלן שלך כי "השוק נראה מגניב"?',
+             'האם לחצת על כפתור ה-Buy/Sell בגלל ריגוש ולא בגלל ניתוח?'] },
+
+    { id:'p3', cat:'🔄 פסיכולוגיה', key:'revenge', weight:1.5, type:'yesno', goodIs:'no',
+      text:'האם ניסית "להחזיר" הפסד — נכנסת לעסקה נוספת כדי לכסות?',
+      hint:'Revenge Trading = לאחר הפסד, להגדיל פוזיציה או לפתוח עסקה חדשה מתוך כעס/תסכול. אחד הרצחים הכי נפוצים של חשבונות.',
+      alts:['לאחר עסקה מפסידה, האם הגדלת את הסיכון בעסקה הבאה?',
+             'האם קיבלת החלטת מסחר כשהיית עצבני/מתוסכל מהפסד?'] },
+
+    { id:'s1', cat:'📋 אסטרטגיה', key:'plan', weight:1.5, type:'scale5',
+      text:'באיזו מידה פעלת לפי הפלן המסחרי שתכננת מראש?',
+      hint:'הפלן = הסטאפים שהגדרת, זמני מסחר, הגבלות סיכון. "1" = אלתרתי הכל, "5" = ביצעתי בדיוק כמו שכתבתי.',
+      alts:['אם מחר תצטרך להסביר את כל העסקאות שלך — האם תוכל להצדיק כל אחת לפי הפלן?',
+             'כמה אחוזים מהעסקאות שלך היום היו חלק מהפלן המוגדר שלך מראש?'],
+      labels:['לא בכלל','מעט','חלקית','ברובו','לחלוטין'] },
+
+    { id:'s2', cat:'⏱ אסטרטגיה', key:'overtrade', weight:1.2, type:'yesno', goodIs:'no',
+      text:'האם ביצעת Overtrading — יותר עסקאות ממה שתכננת?',
+      hint:'Overtrading = סחור יותר מהרגיל, לעיתים מתוך שעמום, חיפוש "להחזיר" כסף, או אמונה ש"עוד עסקה אחת" תעזור.',
+      alts:['האם הרגשת "צמא" לסחור גם כשלא היה סטאפ ברור?',
+             'האם פתחת עסקה ואמרת לעצמך "הפעם האחרונה" יותר מפעם אחת?'] },
+
+    { id:'s3', cat:'🎯 אסטרטגיה', key:'setup', weight:1, type:'yesno', goodIs:'yes',
+      text:'האם חיכית לסטאפ ברור לפני כל כניסה לעסקה?',
+      hint:'סטאפ = תנאים ספציפיים שסיכמת עם עצמך: רמת מחיר, אישור מכיוון, נר/מבנה מסוים. לא "נראה לי טוב".',
+      alts:['האם יכולת להסביר לאחר את הסיבה לכניסה בכל עסקה לפני שנכנסת?',
+             'האם הגדרת Target ו-Stop לפני כל כניסה?'] },
+
+    { id:'r1', cat:'🛡 ניהול סיכונים', key:'risk_ok', weight:1.5, type:'yesno', goodIs:'yes',
+      text:'האם שמרת על מגבלת הסיכון היומית שהגדרת לעצמך?',
+      hint:'מגבלת סיכון = אחוז מקסימלי מהחשבון שאתה מוכן להפסיד ביום, לדוגמה 1-2%. חציתה = סכנה.',
+      alts:['האם נסגרת (ביצעת Stop Trading) כשהגעת להפסד המקסימלי שהגדרת?',
+             'האם גודל הפוזיציות שלך היה עקבי עם כללי הסיכון שלך?'] },
+
+    { id:'r2', cat:'🚫 ניהול סיכונים', key:'moved_sl', weight:1.5, type:'yesno', goodIs:'no',
+      text:'האם הזזת סטופ לוס לאחר הכניסה — רחוק יותר כדי "לתת לו עוד מקום"?',
+      hint:'הזזת SL לטובת העסקה (רחוק יותר) = הגדלת הסיכון ב-post-fact. זה הופך עסקה שניהלת ל"גם כך אאבד".',
+      alts:['האם נסגרת בהפסד גדול יותר ממה שתכננת כי הזזת/ביטלת SL?',
+             'האם הייתה לך עסקה שהסטופ שלה "עמד" בדיוק וסגר אותך — ואז המחיר הלך לכיוון שלך?'] },
+
+    { id:'l1', cat:'💡 לקחים', key:'lesson', weight:0, type:'text',
+      text:'מה הלקח המרכזי שתיקח מהיום?',
+      hint:'לא חייב לקשר לעסקה ספציפית. זה יכול להיות על פסיכולוגיה, ניהול, כניסה, יציאה — כל תובנה שתעזור לך מחר.',
+      alts:['אם היית יכול לשנות דבר אחד ביום המסחר שלך היום — מה זה היה?',
+             'מה הייתה ה"שגיאה" שלמדת ממנה הכי הרבה היום?'] },
+
+    { id:'l2', cat:'🎯 מחר', key:'improve', weight:0, type:'text',
+      text:'מה תעשה אחרת מחר?',
+      hint:'כתוב פעולה ספציפית ומדידה — לא "אהיה יותר ממוקד" אלא "לא אפתח עסקה לפני 15:30" או "אגביל ל-2 עסקאות".',
+      alts:['כתוב כלל אחד שתוסיף לפלן שלך לפני שתפתח את הפלטפורמה מחר.',
+             'מה ה-"אני מתחייב ל..." שלך לסשן הבא?'] },
   ],
+
   weekly: [
-    {id:'w1',cat:'📊 סקירה שבועית',text:'איך דרגת את ביצועיך המסחריים השבוע?',type:'scale5',labels:['גרוע','חלש','בינוני','טוב','מצוין'],key:'week_perf',weight:2},
-    {id:'w2',cat:'🧠 פסיכולוגיה',text:'האם שמרת על משמעת מסחרית לאורך כל השבוע?',type:'scale5',labels:['לא בכלל','לעיתים','חלקית','ברובו','תמיד'],key:'week_disc',weight:1.5},
-    {id:'w3',cat:'📋 אסטרטגיה',text:'האם הסטאפים שבחרת השבוע היו מתאימים לתנאי השוק?',type:'yesno',goodIs:'yes',key:'week_setup',weight:1.2},
-    {id:'w4',cat:'🛡 ניהול סיכונים',text:'האם הסיכון הכולל השבוע היה בשליטה?',type:'yesno',goodIs:'yes',key:'week_risk',weight:1.5},
-    {id:'w5',cat:'📈 תוצאות',text:'האם תוצאות השבוע תואמות את המאמץ שהשקעת?',type:'yesno',goodIs:'yes',key:'week_result',weight:1},
-    {id:'w6',cat:'💡 לקחים',text:'מה הדבר החשוב ביותר שלמדת השבוע?',type:'text',key:'week_lesson',weight:0},
-    {id:'w7',cat:'🎯 תכנון',text:'מה המטרה המרכזית שלך לשבוע הבא?',type:'text',key:'week_goal',weight:0},
+    { id:'w1', cat:'📊 תוצאות', key:'week_perf', weight:2, type:'scale5',
+      text:'איך דרגת את ביצועיך המסחריים השבוע — לא רק כסף, גם איכות?',
+      hint:'תחשב גם על: האם ביצעת לפי הפלן? האם ניהלת סיכון טוב? לא רק האם הרווחת.',
+      labels:['חלש מאוד','חלש','בינוני','טוב','מצוין'] },
+    { id:'w2', cat:'🧠 משמעת', key:'week_disc', weight:1.5, type:'scale5',
+      text:'עד כמה שמרת על משמעת מסחרית לאורך כל ימי השבוע?',
+      hint:'משמעת = עמדת בכללים שהצבת לעצמך — גם כשהיה קשה, גם אחרי הפסד, גם אחרי רווח.',
+      labels:['לא בכלל','לפעמים','חלקית','ברוב הימים','תמיד'] },
+    { id:'w3', cat:'📋 אסטרטגיה', key:'week_setup', weight:1.2, type:'yesno', goodIs:'yes',
+      text:'האם הסטאפים שסחרת השבוע היו תואמים את תנאי השוק?',
+      hint:'לפעמים הסטאפ שלנו עובד בשוק trending ולא בשוק ranging. האם בדקת את ההקשר?' },
+    { id:'w4', cat:'🛡 סיכונים', key:'week_risk', weight:1.5, type:'yesno', goodIs:'yes',
+      text:'האם ניהול הסיכון שלך השבוע היה עקבי עם כללי הסיכון שלך?',
+      hint:'עקביות = אותו גודל פוזיציה, אותה מגבלת הפסד יומית, לא חריגות "כי היה נראה בטוח".' },
+    { id:'w5', cat:'📈 תוצאות', key:'week_result', weight:1, type:'yesno', goodIs:'yes',
+      text:'האם תוצאות השבוע שיקפו את איכות המסחר שלך?',
+      hint:'לפעמים סוחרים טוב ומפסידים (מזל רע), ולפעמים סוחרים גרוע ומרוויחים (מזל טוב). מה קרה השבוע?' },
+    { id:'w6', cat:'💡 לקח השבוע', key:'week_lesson', weight:0, type:'text',
+      text:'מה הדבר החשוב ביותר שלמדת על עצמך כסוחר השבוע?',
+      hint:'תובנה עמוקה על דפוסי ההתנהגות שלך — מה חוזר? מה עוד לא פתרת?' },
+    { id:'w7', cat:'🎯 שבוע הבא', key:'week_goal', weight:0, type:'text',
+      text:'מה המטרה הספציפית והמדידה שלך לשבוע הבא?',
+      hint:'לא "להיות טוב יותר" — אלא "לסחור לכל היותר 3 עסקאות ביום" או "לא לסחור ביום ראשון".' },
   ]
 };
 
 function coachSave() { localStorage.setItem('coach_sessions', JSON.stringify(coachSessions)); }
 
+// ── Profile builder — learns from all past sessions ──
+function _buildCoachProfile() {
+  if (coachSessions.length < 2) return null;
+  const daily = coachSessions.filter(s=>s.type==='daily');
+  if (!daily.length) return null;
+  const n = daily.length;
+  const avg = key => {
+    const vals = daily.map(s=>s.answers?.[key]).filter(v=>v&&v!=='__skip__');
+    if (!vals.length) return null;
+    const nums = vals.filter(v=>typeof v==='number');
+    if (nums.length) return +(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(1);
+    const yeses = vals.filter(v=>v==='yes').length;
+    return +(yeses/vals.length*100).toFixed(0)+'%';
+  };
+  return {
+    sessions: n,
+    avgScore: +(daily.reduce((s,x)=>s+(x.score||0),0)/n).toFixed(0),
+    avgMood:  avg('mood'),
+    fomoRate: daily.filter(s=>s.answers?.fomo==='yes').length,
+    revengeRate: daily.filter(s=>s.answers?.revenge==='yes').length,
+    overtrade: daily.filter(s=>s.answers?.overtrade==='yes').length,
+    movedSL: daily.filter(s=>s.answers?.moved_sl==='yes').length,
+    planAvg: avg('plan'),
+    trend: n>=4 ? (
+      daily.slice(0,3).reduce((s,x)=>s+(x.score||0),0)/3 >
+      daily.slice(-3).reduce((s,x)=>s+(x.score||0),0)/3 ? 'improving' : 'declining'
+    ) : 'new',
+  };
+}
+
+// ── First-name helper ──
+function _coachFirstName() {
+  const name = currentUser?.name || '';
+  return name.split(' ')[0] || name || 'חבר';
+}
+
 function coachStartSession(type) {
   const today = new Date().toISOString().slice(0,10);
   _coachSession = { id:'cs_'+Date.now(), date:today, type, answers:{}, startedAt:Date.now() };
   _coachQIdx = 0;
-  document.getElementById('coach-view-home').style.display    = 'none';
+  _coachAltIdx = {};
+  ['coach-view-home','coach-view-result','coach-view-history'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('coach-view-session').style.display = 'block';
-  document.getElementById('coach-view-result').style.display  = 'none';
-  document.getElementById('coach-view-history').style.display = 'none';
-  const qs = COACH_QUESTIONS[type]||COACH_QUESTIONS.daily;
-  document.getElementById('coach-session-title').textContent = type==='weekly'?'📅 סקירה שבועית':'🚀 צ\'ק-אין יומי';
-  _coachRenderProgress(qs.length);
+
+  const fn = _coachFirstName();
+  const profile = _buildCoachProfile();
+  let subtitle = type==='weekly'?'📅 סקירה שבועית':'🚀 צ\'ק-אין יומי';
+  // Personalized greeting
+  let greeting = `שלום ${fn}! `;
+  if (profile && profile.sessions >= 3) {
+    if (profile.trend==='improving') greeting += `השיפור שלך ניכר (ממוצע ${profile.avgScore}) 📈`;
+    else if (profile.fomoRate >= 3)   greeting += `נשים היום דגש על FOMO 🎯`;
+    else if (profile.revengeRate >= 2) greeting += `נשים היום דגש על Revenge Trading 🛡`;
+    else greeting += `בוא נעשה צ'ק-אין מהיר 💡`;
+  } else {
+    greeting += 'בוא נעשה צ\'ק-אין יומי 💡';
+  }
+  document.getElementById('coach-session-title').innerHTML =
+    `<span style="font-size:12px;color:var(--t2)">${subtitle}</span>` +
+    `<div style="font-size:13px;font-weight:600;color:var(--t1);margin-top:2px">${greeting}</div>`;
+
+  _coachRenderProgress();
   _coachRenderQuestion();
 }
 
-function _coachRenderProgress(total) {
+function _coachRenderProgress() {
   const qs = COACH_QUESTIONS[_coachSession.type];
-  document.getElementById('coach-progress').innerHTML = qs.map((_,i)=>
-    `<div class="coach-prog-dot ${i<_coachQIdx?'done':i===_coachQIdx?'active':''}"></div>`
-  ).join('');
+  document.getElementById('coach-progress').innerHTML = qs.map((_,i)=>{
+    const ans = _coachSession.answers[qs[i].id];
+    const skipped = ans==='__skip__';
+    return `<div class="coach-prog-dot ${i<_coachQIdx?'done':i===_coachQIdx?'active':''}${skipped?' skipped':''}"></div>`;
+  }).join('');
   document.getElementById('coach-q-counter').textContent = `${_coachQIdx+1} / ${qs.length}`;
   document.getElementById('coach-prev-btn').style.display = _coachQIdx>0?'':'none';
   document.getElementById('coach-next-btn').textContent = _coachQIdx===qs.length-1?'סיים ✓':'הבא →';
 }
 
 function _coachRenderQuestion() {
-  const qs = COACH_QUESTIONS[_coachSession.type];
-  const q  = qs[_coachQIdx];
+  const qs  = COACH_QUESTIONS[_coachSession.type];
+  const q   = qs[_coachQIdx];
   const ans = _coachSession.answers[q.id];
-  _coachRenderProgress(qs.length);
+  _coachRenderProgress();
+
+  // Determine displayed text (original or alt)
+  const altI = _coachAltIdx[q.id] || 0;
+  const displayText = altI === 0 ? q.text : (q.alts?.[altI-1] || q.text);
+  const hasAlts = q.alts && q.alts.length > 0;
 
   let inputHtml = '';
-  if (q.type === 'scale5') {
-    const labels = ['1','2','3','4','5'];
+  if (q.type==='scale5') {
     inputHtml = `<div class="coach-scale">
-      ${labels.map((l,i)=>`<button class="coach-scale-btn${ans===i+1?' sel':''}" onclick="coachAnswer('${q.id}',${i+1})">${i+1}</button>`).join('')}
-    </div>
-    <div class="coach-scale-labels"><span>${q.labels[0]}</span><span>${q.labels[4]}</span></div>`;
-  } else if (q.type === 'yesno') {
+      ${[1,2,3,4,5].map(i=>`<button class="coach-scale-btn${ans===i?' sel':''}" onclick="coachAnswer('${q.id}',${i})">${i}</button>`).join('')}
+    </div><div class="coach-scale-labels"><span>${q.labels[0]}</span><span>${q.labels[4]}</span></div>`;
+  } else if (q.type==='yesno') {
     inputHtml = `<div class="coach-yesno">
       <button class="coach-yn-btn yes${ans==='yes'?' sel':''}" onclick="coachAnswer('${q.id}','yes')">✅ כן</button>
-      <button class="coach-yn-btn no${ans==='no'?' sel':''}"  onclick="coachAnswer('${q.id}','no')">❌ לא</button>
+      <button class="coach-yn-btn no${ans==='no'?' sel':''}"   onclick="coachAnswer('${q.id}','no')">❌ לא</button>
     </div>`;
   } else {
-    inputHtml = `<textarea class="coach-textarea" id="coach-text-inp" placeholder="כתוב כאן..." onblur="coachAnswer('${q.id}',this.value)">${ans||''}</textarea>`;
+    const val = (ans && ans!=='__skip__') ? ans : '';
+    inputHtml = `<textarea class="coach-textarea" id="coach-text-inp" placeholder="כתוב כאן..." onblur="coachAnswer('${q.id}',this.value)">${val}</textarea>`;
   }
 
   document.getElementById('coach-q-area').innerHTML = `
     <div class="coach-qcard">
-      <div class="coach-qcat">${q.cat}</div>
-      <div class="coach-qtext">${q.text}</div>
+      <div class="coach-qcat" style="display:flex;justify-content:space-between;align-items:center">
+        <span>${q.cat}</span>
+        <div style="display:flex;gap:6px">
+          ${hasAlts?`<button onclick="coachSwapQ('${q.id}')" style="background:none;border:1px solid var(--border2);color:var(--t3);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:inherit" title="שאלה אחרת">🔀 שאלה אחרת</button>`:''}
+          <button onclick="coachSkip('${q.id}')" style="background:none;border:1px solid var(--border2);color:var(--t3);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:inherit" title="דלג">⏭ דלג</button>
+        </div>
+      </div>
+      <div class="coach-qtext">${displayText}</div>
+      ${q.hint?`<details style="margin-bottom:12px"><summary style="font-size:11px;color:var(--t3);cursor:pointer;list-style:none;display:flex;align-items:center;gap:4px"><span style="font-size:13px">💡</span> הסבר על השאלה</summary><div style="font-size:12px;color:var(--t2);line-height:1.65;margin-top:7px;padding:10px 12px;background:var(--bg4);border-radius:7px;border-right:3px solid var(--pu)">${q.hint}</div></details>`:''}
       ${inputHtml}
     </div>`;
 }
 
+function coachSwapQ(qid) {
+  const qs = COACH_QUESTIONS[_coachSession.type];
+  const q  = qs.find(x=>x.id===qid);
+  if (!q?.alts?.length) return;
+  _coachAltIdx[qid] = ((_coachAltIdx[qid]||0) + 1) % (q.alts.length + 1);
+  _coachSession.answers[qid] = undefined; // clear answer when changing question
+  _coachRenderQuestion();
+}
+
+function coachSkip(qid) {
+  _coachSession.answers[qid] = '__skip__';
+  coachNext();
+}
+
 function coachAnswer(qid, val) {
+  if (!val && val!==0) return;
   _coachSession.answers[qid] = val;
-  // Re-render scale/yesno to show selection
   const q = COACH_QUESTIONS[_coachSession.type].find(x=>x.id===qid);
-  if(q && q.type!=='text') _coachRenderQuestion();
+  if (q && q.type!=='text') _coachRenderQuestion();
 }
 
 function coachNext() {
-  // Save text answer if any
   const ta = document.getElementById('coach-text-inp');
-  if(ta){ const qs=COACH_QUESTIONS[_coachSession.type]; coachAnswer(qs[_coachQIdx].id, ta.value); }
+  if (ta) { const qs=COACH_QUESTIONS[_coachSession.type]; coachAnswer(qs[_coachQIdx].id, ta.value||'__skip__'); }
   const qs = COACH_QUESTIONS[_coachSession.type];
-  if(_coachQIdx < qs.length-1){ _coachQIdx++; _coachRenderQuestion(); }
+  if (_coachQIdx < qs.length-1) { _coachQIdx++; _coachRenderQuestion(); }
   else { coachFinish(); }
 }
 function coachPrev() {
-  if(_coachQIdx>0){ _coachQIdx--; _coachRenderQuestion(); }
+  if (_coachQIdx>0) { _coachQIdx--; _coachRenderQuestion(); }
 }
 
 function coachFinish() {
   const qs = COACH_QUESTIONS[_coachSession.type];
-  // Calculate score
   let total=0, max=0;
   qs.forEach(q=>{
     if(q.weight===0) return;
     const a = _coachSession.answers[q.id];
-    if(q.type==='scale5'&&a){ total+=((a-1)/4)*q.weight; max+=q.weight; }
-    else if(q.type==='yesno'&&a){
-      const good = (a==='yes'&&q.goodIs==='yes')||(a==='no'&&q.goodIs==='no');
+    if(!a || a==='__skip__') return; // skip unanswered
+    if(q.type==='scale5'&&typeof a==='number'){ total+=((a-1)/4)*q.weight; max+=q.weight; }
+    else if(q.type==='yesno'){
+      const good=(a==='yes'&&q.goodIs==='yes')||(a==='no'&&q.goodIs==='no');
       total+=(good?1:0)*q.weight; max+=q.weight;
     }
   });
@@ -5458,46 +5602,64 @@ function coachFinish() {
   _coachSession.score = score;
   _coachSession.completedAt = Date.now();
   coachSessions.unshift(_coachSession);
-  if(coachSessions.length>90) coachSessions = coachSessions.slice(0,90);
+  if(coachSessions.length>120) coachSessions=coachSessions.slice(0,120);
   coachSave();
 
-  // Show results
-  document.getElementById('coach-view-session').style.display = 'none';
-  document.getElementById('coach-view-result').style.display  = 'block';
+  document.getElementById('coach-view-session').style.display='none';
+  document.getElementById('coach-view-result').style.display='block';
+  const fn = _coachFirstName();
   setTimeout(()=>{
-    const ring = document.getElementById('coach-ring-fill');
-    const circ = 326.7;
-    ring.style.strokeDashoffset = circ - (score/100)*circ;
-    ring.style.stroke = score>=70?'var(--gr)':score>=40?'var(--go)':'var(--re)';
-    document.getElementById('coach-score-display').textContent = score;
-    document.getElementById('coach-score-display').style.color = score>=70?'var(--gr)':score>=40?'var(--go)':'var(--re)';
-    document.getElementById('coach-score-label').textContent = score>=80?'🌟 מצוין! יום מסחר מודע':score>=60?'👍 טוב, המשך לשפר':score>=40?'⚠️ יש מה לשפר':'🔴 זכור — המשמעת היא הכל';
+    const ring=document.getElementById('coach-ring-fill');
+    const col=score>=70?'var(--gr)':score>=40?'var(--go)':'var(--re)';
+    ring.style.strokeDashoffset = 326.7-(score/100)*326.7;
+    ring.style.stroke = col;
+    document.getElementById('coach-score-display').textContent=score;
+    document.getElementById('coach-score-display').style.color=col;
+    document.getElementById('coach-score-label').textContent =
+      score>=80?`🌟 ${fn}, סשן מודע מאוד!`:
+      score>=60?`👍 עבודה טובה ${fn}, המשך לשפר`:
+      score>=40?`⚠️ ${fn}, יש מה לעבוד עליו`:
+               `🔴 ${fn}, המשמעת היא הכל`;
   },100);
-
-  // Generate insights
-  const ins = _coachGenerateInsights();
-  document.getElementById('coach-insights-area').innerHTML = ins.map(i=>`<div class="coach-insight">${i}</div>`).join('');
+  document.getElementById('coach-insights-area').innerHTML =
+    _coachGenerateInsights().map(i=>`<div class="coach-insight">${i}</div>`).join('');
 }
 
 function _coachGenerateInsights() {
-  const ans  = _coachSession.answers;
-  const prev = coachSessions.slice(1,6); // last 5
-  const ins  = [];
+  const ans   = _coachSession.answers;
+  const prev  = coachSessions.slice(1,7);
+  const prof  = _buildCoachProfile();
+  const fn    = _coachFirstName();
+  const ins   = [];
 
-  if(ans.fomo==='yes')   ins.push('💡 <strong>FOMO זוהה:</strong> לפעמים הזדמנויות הכי טובות הן אלה שלא נכנסת אליהן. סמוך על הפלן.');
-  if(ans.revenge==='yes') ins.push('⚠️ <strong>Revenge Trading:</strong> לאחר הפסד — עצור, נשום, ולא תיכנס לעסקה חדשה ב-15 דקות הקרובות.');
-  if(ans.moved_sl==='yes') ins.push('🚫 <strong>הזזת סטופ:</strong> הזזת סטופ רגשית היא גורם #1 להפסדים גדולים. הגדר כלל ברזל — לא מזיזים סטופ.');
-  if(ans.overtrade==='yes') ins.push('📊 <strong>Overtrading:</strong> יותר עסקאות ≠ יותר כסף. קבע מגבלת עסקאות יומית ועמוד בה.');
-  if(ans.plan&&ans.plan<=2) ins.push('📋 <strong>פלן מסחרי:</strong> ביצוע נמוך לפי הפלן — שקול לכתוב את הפלן לפני תחילת יום המסחר.');
-  if(ans.mood&&ans.mood<=2) ins.push('🧠 <strong>מצב נפשי:</strong> כשהמצב הנפשי נמוך — שקול להקטין גודל פוזיציות ב-50% או לא לסחור כלל.');
-  if(prev.length>=3) {
-    const avgPrev = Math.round(prev.reduce((s,x)=>s+(x.score||0),0)/prev.length);
-    if(_coachSession.score > avgPrev+15) ins.push(`📈 <strong>שיפור:</strong> הניקוד שלך (${_coachSession.score}) גבוה מהממוצע האחרון (${avgPrev}). כך ממשיכים!`);
-    if(_coachSession.score < avgPrev-15) ins.push(`📉 <strong>ירידה:</strong> ניקוד נמוך מהממוצע (${avgPrev}). מה השתנה? כדאי לבדוק מה גרם לזה.`);
-    const revengeCnt = prev.filter(x=>x.answers?.revenge==='yes').length;
-    if(revengeCnt>=2) ins.push(`⚠️ <strong>דפוס חוזר:</strong> Revenge Trading זוהה ב-${revengeCnt} מתוך ${prev.length} הסשנים האחרונים.`);
+  // Immediate feedback from today
+  if(ans.fomo==='yes')
+    ins.push(`💡 <strong>${fn}, FOMO זוהה היום:</strong> הזדמנויות הכי טובות הן לפעמים אלה שלא נכנסת אליהן. כשמרגיש "חייב להיכנס" — זה בדיוק הרגע לעצור.`);
+  if(ans.revenge==='yes')
+    ins.push(`⚠️ <strong>Revenge Trading היום:</strong> לאחר הפסד — כלל ברזל: 15 דקות הפסקה מחוץ לפלטפורמה לפני כל כניסה חדשה.`);
+  if(ans.moved_sl==='yes')
+    ins.push(`🚫 <strong>הזזת סטופ:</strong> זה הגורם #1 להפסדים גדולים. הגדר לעצמך: "ה-SL נגזר מהניתוח, לא מהרגש".`);
+  if(ans.overtrade==='yes')
+    ins.push(`📊 <strong>Overtrading:</strong> כמות עסקאות > תכנון = נזק. קבע מגבלת יומית ועמוד בה גם כשזה קשה.`);
+  if(ans.plan && ans.plan<=2)
+    ins.push(`📋 <strong>פלן נמוך היום:</strong> רשום את הפלן בכתב לפני שפותחים את הפלטפורמה מחר — זה משפר ביצוע פלן ב-40%.`);
+  if(ans.mood && ans.mood<=2)
+    ins.push(`🧠 <strong>מצב נפשי נמוך:</strong> כשהמד נמוך — הקטן פוזיציות ב-50% או שקול לא לסחור. ההפסד מ"לא לסחור" אפסי לעומת מסחר במצב נמוך.`);
+
+  // Pattern-based (from profile)
+  if(prof && prof.sessions >= 4) {
+    if(prof.fomoRate >= 3)
+      ins.push(`📌 <strong>דפוס: FOMO</strong> — זוהה ב-${prof.fomoRate} סשנים. ${fn}, שקול להוסיף לפלן: "לא נכנסים לעסקה שלא הייתה בתוכנית לפני פתיחת השוק".`);
+    if(prof.revengeRate >= 2)
+      ins.push(`📌 <strong>דפוס: Revenge Trading</strong> — חזר ${prof.revengeRate} פעמים. המפתח: אוטומציה של הגבלת הפסד יומי שסוגרת את הפלטפורמה.`);
+    if(prof.trend==='improving')
+      ins.push(`📈 <strong>שיפור מתמשך!</strong> הממוצע שלך עלה — ${fn}, העקביות שלך מתגמלת. ממשיכים!`);
+    const avgPrev = prev.length ? Math.round(prev.reduce((s,x)=>s+(x.score||0),0)/prev.length) : 0;
+    if(avgPrev && _coachSession.score < avgPrev-15)
+      ins.push(`📉 <strong>ירידה מהממוצע (${avgPrev}):</strong> מה היה שונה היום? כדאי לרשום בהערות.`);
   }
-  if(ins.length===0) ins.push('✅ <strong>סשן נקי!</strong> שמור על העקביות — זה הסוד לסוחר מוצלח.');
+
+  if(!ins.length) ins.push(`✅ <strong>${fn}, סשן נקי!</strong> עקביות יום אחרי יום — זה בדיוק מה שבונה סוחר מקצועי.`);
   return ins.slice(0,4);
 }
 
