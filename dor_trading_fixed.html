@@ -2804,7 +2804,13 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
   </div>
   <div class="mrow" id="pnl-m" style="grid-template-columns:repeat(4,1fr)"></div>
   <div class="g2" style="margin-top:12px">
-    <div class="card"><div class="ct"><div class="dot" style="background:var(--re)"></div>פירוט שורות</div><div id="pnl-rows"></div></div>
+    <div class="card">
+      <div class="ct" style="justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px"><div class="dot" style="background:var(--re)"></div>פירוט שורות</div>
+        <button onclick="mergeCatsNow()" style="font-size:10px;padding:3px 10px;border-radius:5px;border:1px solid rgba(59,130,246,.3);background:rgba(59,130,246,.08);color:#6ba8ff;cursor:pointer;font-family:inherit;white-space:nowrap" title="מאחד קטגוריות מותאמות לקטגוריות הסטנדרטיות">✦ צמצם קטגוריות</button>
+      </div>
+      <div id="pnl-rows"></div>
+    </div>
     <div class="card"><div class="ct"><div class="dot"></div>התפלגות הוצאות</div><div class="chart-h2"><canvas id="pnlchart"></canvas></div><div id="pnlleg" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px"></div></div>
   </div>
 </div>
@@ -5814,6 +5820,42 @@ function renderWD(){
       <td><button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
   }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:#545f72">אין משיכות</td></tr>`;
+}
+
+// ── מיזוג קטגוריות: מאחד קטגוריות מותאמות לקטגוריות סטנדרטיות ──
+function mergeCatsNow() {
+  // מפת מיזוג: מילת מפתח → קטגוריה סטנדרטית
+  const MERGE_MAP = [
+    { kws: ['מבחן','תיקי מבחן','איפוס','ריסט','reset','challenge','eval','funded','prop'], to: 'מבחן' },
+    { kws: ['לייב','הפעלת תיק','live'], to: 'לייב' },
+    { kws: ['תוכנה','תוכנות','software','platform'], to: 'תוכנה' },
+    { kws: ['כלי','tool'], to: 'כלי' },
+    { kws: ['מנוי','subscription'], to: 'מנוי' },
+    { kws: ['ציוד','equipment'], to: 'ציוד' },
+    { kws: ['קורס','course','education'], to: 'קורס' },
+  ];
+  const STD = ['מבחן','לייב','ריסט','כלי','תוכנה','מנוי','ציוד','אחר','שונות','קורס','משיכה'];
+
+  let changed = 0;
+  records.forEach(r => {
+    if (!r.cat || STD.includes(r.cat)) return; // already standard
+    const cat = r.cat.toLowerCase();
+    for (const rule of MERGE_MAP) {
+      if (rule.kws.some(kw => cat.includes(kw.toLowerCase()))) {
+        r.cat = rule.to;
+        changed++;
+        return;
+      }
+    }
+    // שאר → שונות
+    r.cat = 'שונות';
+    changed++;
+  });
+
+  if (changed === 0) { showToast('אין קטגוריות לצמצם — הכל כבר תקין', 'info'); return; }
+  saveData();
+  renderPNL();
+  showToast(`✅ צומצמו ${changed} רשומות`, 'success');
 }
 
 // P&L
