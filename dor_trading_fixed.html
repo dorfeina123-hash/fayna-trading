@@ -5832,31 +5832,28 @@ function renderPNL(){
 
   // Standard category sets
   const STANDARD_CATS = ['מבחן','לייב','ריסט','כלי','תוכנה','מנוי','ציוד','אחר','שונות','קורס','משיכה'];
-  // מילות מפתח שמשויכות לקטגוריית "מבחנים"
-  const EXAM_KEYWORDS = ['מבחן','לייב','ריסט','תיק','reset','exam','eval','funded','challenge'];
-  const isExamCat = c => EXAM_KEYWORDS.some(kw => c.includes(kw));
-  // Find custom categories on expense records — exam-related ones merged into מבחנים row
+  // מילות מפתח שמשויכות לקטגוריית "מבחנים" — כולל קטגוריות מותאמות
+  const EXAM_KEYWORDS = ['מבחן','לייב','ריסט','תיק','איפוס','הפעלת','reset','exam','eval','funded','challenge','prop'];
+  const isExamCat = c => EXAM_KEYWORDS.some(kw => (c||'').includes(kw));
+  // כל קטגוריות מותאמות
   const allCustomCats = [...new Set(exp.map(r=>r.cat).filter(c=>c && !STANDARD_CATS.includes(c)))];
-  const examCustomCats  = allCustomCats.filter(c => isExamCat(c));
-  const otherCustomCats = allCustomCats.filter(c => !isExamCat(c)).sort();
-  const customCatNames  = otherCustomCats; // only non-exam customs get their own row
-  const customCatColors = ['#f97316','#06b6d4','#ec4899','#84cc16','#f59e0b','#8b5cf6','#10b981'];
+  // חלוקה: קשורות למבחנים → נכנסות למבחנים ולייבים. שאר → נכנסות לשונות.
+  const examCustomCats = allCustomCats.filter(c => isExamCat(c));
+  const miscCustomCats = allCustomCats.filter(c => !isExamCat(c));
+  // אין שורות דינמיות — הכל נבלע בקטגוריות קיימות
+  const customCatNames = [];
 
-  // All exam-related cats (standard + custom merged together)
+  // כל קטגוריות מבחנים (סטנדרטי + מותאמות)
   const examAllCats = ['מבחן','לייב','ריסט', ...examCustomCats];
+  // כל קטגוריות שונות (סטנדרטי + מותאמות שאינן מבחנים)
+  const miscAllCats  = ['אחר','שונות','קורס', ...miscCustomCats];
+
   const pRows=[
     {key:'מבחנים',lbl:'מבחנים ולייבים',ils:Math.round(byCatILS(examAllCats)),usd:+byCatUSD(examAllCats).toFixed(2),sign:-1,col:'var(--bl)'},
     {key:'תוכנות',lbl:'תוכנות',ils:Math.round(byCatILS(['כלי','תוכנה'])),usd:+byCatUSD(['כלי','תוכנה']).toFixed(2),sign:-1,col:'var(--gr)'},
     {key:'מנויים',lbl:'מנויים',ils:Math.round(byCatILS(['מנוי'])),usd:+byCatUSD(['מנוי']).toFixed(2),sign:-1,col:'var(--go)'},
     {key:'ציוד',lbl:'ציוד',ils:Math.round(byCatILS(['ציוד'])),usd:+byCatUSD(['ציוד']).toFixed(2),sign:-1,col:'var(--pu)'},
-    {key:'שונות',lbl:'שונות',ils:Math.round(byCatILS(['אחר','שונות','קורס'])),usd:+byCatUSD(['אחר','שונות','קורס']).toFixed(2),sign:-1,col:'#ff6b6b'},
-    // Dynamic custom categories
-    ...customCatNames.map((cat,i)=>({
-      key:'__custom__'+cat, lbl:cat,
-      ils:Math.round(byCatILS([cat])), usd:+byCatUSD([cat]).toFixed(2),
-      sign:-1, col:customCatColors[i % customCatColors.length],
-      customCat:cat
-    })),
+    {key:'שונות',lbl:'שונות',ils:Math.round(byCatILS(miscAllCats)),usd:+byCatUSD(miscAllCats).toFixed(2),sign:-1,col:'#ff6b6b'},
     {key:'הוצאות חופשיות',lbl:'הוצאות חופשיות ('+customExpenses.length+' פריטים)',ils:Math.round(cxTotalILS),usd:+cxTotalUSD.toFixed(2),sign:-1,col:'#ff4d4d'},
     {key:'משיכות נטו',lbl:'משיכות נטו (נוסטרו)',ils:Math.round(wdNils),usd:+wd.reduce((s,r)=>s+(r.wdNet||r.amount),0).toFixed(2),sign:+1,col:'var(--gr)'},
   ];
@@ -5889,7 +5886,7 @@ function renderPNL(){
     'תוכנות':         exp.filter(r=>['כלי','תוכנה'].includes(r.cat)),
     'מנויים':         exp.filter(r=>r.cat==='מנוי'),
     'ציוד':           exp.filter(r=>r.cat==='ציוד'),
-    'שונות':          exp.filter(r=>['אחר','שונות','קורס'].includes(r.cat)),
+    'שונות':          exp.filter(r=>miscAllCats.includes(r.cat)),
     'הוצאות חופשיות': customExpenses.map(c=>({date:c.date,company:c.desc||c.category,amount:c.amount,rate:c.rate||1,cat:c.category})),
     'משיכות נטו':     wd.map(r=>({date:r.date,company:r.company||'משיכה',amount:r.wdNet||r.amount,rate:r.rate||1,cat:'משיכה',sign:1})),
   };
