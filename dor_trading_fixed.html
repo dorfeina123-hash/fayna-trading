@@ -724,6 +724,32 @@ button{-webkit-appearance:none;appearance:none}
 /* ── TOPNAV LOGO ── */
 .logo-icon { transition: opacity .2s ease; }
 .logo:hover .logo-icon { opacity: .85; }
+.logo-img {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid rgba(255,255,255,.1);
+  background: #1a1f2e;
+}
+.logo-fallback {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: #fff;
+  letter-spacing: -.5px; font-family: inherit;
+  border: 1px solid rgba(59,130,246,.4);
+  flex-shrink: 0;
+}
+.logo-text-name {
+  font-size: 14px; font-weight: 700; color: var(--t1);
+  letter-spacing: -.3px; line-height: 1;
+}
+.logo-text-sub {
+  font-size: 9px; font-weight: 500; color: var(--t3);
+  letter-spacing: .4px; text-transform: uppercase;
+}
 
 /* ── TABLE ROWS ── */
 .tbl tbody tr { transition: background .12s ease; }
@@ -1833,8 +1859,19 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
 ════════════════════════════════════════════ -->
 <div id="auth-screen">
   <div class="auth-box">
-    <div class="auth-logo" style="flex-direction:column;gap:6px">
-      <img src="fayna_logo.jpg" style="width:100px;height:100px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,255,255,0.1)">
+    <div class="auth-logo" style="flex-direction:column;gap:6px;align-items:center">
+      <div style="position:relative;width:90px;height:90px">
+        <img src="fayna_logo.jpg"
+             id="auth-logo-img"
+             style="width:90px;height:90px;border-radius:18px;object-fit:cover;display:block;border:1px solid rgba(255,255,255,.12);background:#1a1f2e"
+             onerror="this.style.display='none';document.getElementById('auth-logo-fb').style.display='flex'"
+             onload="document.getElementById('auth-logo-fb').style.display='none'">
+        <div id="auth-logo-fb" style="display:none;width:90px;height:90px;border-radius:18px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);align-items:center;justify-content:center;font-size:38px;font-weight:800;color:#fff;letter-spacing:-1px;border:1px solid rgba(59,130,246,.4)">F</div>
+      </div>
+      <div style="text-align:center;margin-top:4px">
+        <div style="font-size:22px;font-weight:800;color:#e8ecf4;letter-spacing:-.5px">Fayna</div>
+        <div style="font-size:11px;color:#545f72;letter-spacing:.6px;text-transform:uppercase;margin-top:2px">Trading Journal</div>
+      </div>
     </div>
     <div id="auth-debug-bar" style="background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;padding:8px 12px;margin-bottom:16px;display:none;font-size:11px;color:#ff6b6b;text-align:center">
       ⚠️ בעיית כניסה? 
@@ -1929,7 +1966,18 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
 <!-- ═══════ ADMIN PANEL TAB (hidden until admin login) ═══════ -->
 
 <nav class="topnav">
-  <div class="logo" onclick="sw('overview',document.querySelector('.nt'))" style="cursor:pointer" title="חזור לסקירה"><div class="logo-icon"><img src="fayna_logo.jpg" style="width:38px;height:38px;border-radius:50%;object-fit:cover;display:block"></div></div>
+  <div class="logo" onclick="sw('overview',document.querySelector('.nt'))" style="cursor:pointer;gap:9px" title="חזור לסקירה">
+    <div class="logo-icon" id="logo-icon-wrap">
+      <img class="logo-img" src="fayna_logo.jpg"
+           onerror="this.style.display='none';document.getElementById('logo-fallback-el').style.display='flex'"
+           onload="document.getElementById('logo-fallback-el').style.display='none'">
+      <div class="logo-fallback" id="logo-fallback-el" style="display:none">F</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <span class="logo-text-name">Fayna</span>
+      <span class="logo-text-sub">Trading Journal</span>
+    </div>
+  </div>
   <div class="nav-user-badge" id="nav-user-info" onclick="paOpenPersonal()" title="לחץ לאזור האישי" style="cursor:pointer">
     <div class="nav-user-dot"></div>
     <span class="nav-user-plan free" id="nav-plan-badge">FREE</span>
