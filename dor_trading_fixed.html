@@ -2065,6 +2065,7 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
     <div class="nav-menu-section">ניהול</div>
     <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
     <div class="nav-menu-item" id="nm-personal"    onclick="swNav('personal')">👤 אזור אישי</div>
+    <div class="nav-menu-item" id="nm-connections" onclick="swNav('personal');setTimeout(()=>paTab('connections',document.getElementById('pasnav-connections')),80)">🔗 חיבורים</div>
     <div class="nav-menu-item"                     onclick="swSide('software');closeNavMenu()">📥 תוכנות מסחר</div>
     <div class="nav-menu-item"                     onclick="swSide('firms');closeNavMenu()">🏆 חברות מימון</div>
     <div class="nav-menu-item"                     onclick="swSide('ecal');closeNavMenu()">📅 יומן כלכלי</div>
@@ -2212,6 +2213,7 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
   <div class="sn-grp">ניהול</div>
   <div class="sn-item" id="sni-datamgr"     onclick="swNav('datamgr')"     title="ניהול נתונים"><span class="sn-icon">⚙️</span><span class="sn-lbl">ניהול נתונים</span></div>
   <div class="sn-item" id="sni-personal"    onclick="swNav('personal')"    title="אזור אישי"><span class="sn-icon">👤</span><span class="sn-lbl">אזור אישי</span></div>
+  <div class="sn-item" id="sni-connections" onclick="swNav('personal');setTimeout(()=>paTab('connections',document.getElementById('pasnav-connections')),80)" title="חיבורים"><span class="sn-icon">🔗</span><span class="sn-lbl">חיבורים</span></div>
 
   <div class="sn-sep"></div>
   <div class="sn-grp">כלים</div>
@@ -2501,8 +2503,8 @@ body { font-size: 13px; -webkit-font-smoothing: antialiased; }
 
         </div><!-- /plat-grid -->
 
-        <!-- ── LOCAL SYNC SERVER ── -->
-        <div class="plat-card" id="plat-local" style="border-color:rgba(234,179,8,.15)">
+        <!-- ── LOCAL SYNC SERVER (מוצג רק על localhost) ── -->
+        <div class="plat-card" id="plat-local" style="border-color:rgba(234,179,8,.15);display:none">
           <div class="plat-card-head">
             <div class="plat-logo" style="background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)">⚡</div>
             <div style="flex:1">
@@ -5830,12 +5832,20 @@ function renderPNL(){
 
   // Standard category sets
   const STANDARD_CATS = ['מבחן','לייב','ריסט','כלי','תוכנה','מנוי','ציוד','אחר','שונות','קורס','משיכה'];
-  // Find custom categories on expense records
-  const customCatNames = [...new Set(exp.map(r=>r.cat).filter(c=>c && !STANDARD_CATS.includes(c)))].sort();
+  // מילות מפתח שמשויכות לקטגוריית "מבחנים"
+  const EXAM_KEYWORDS = ['מבחן','לייב','ריסט','תיק','reset','exam','eval','funded','challenge'];
+  const isExamCat = c => EXAM_KEYWORDS.some(kw => c.includes(kw));
+  // Find custom categories on expense records — exam-related ones merged into מבחנים row
+  const allCustomCats = [...new Set(exp.map(r=>r.cat).filter(c=>c && !STANDARD_CATS.includes(c)))];
+  const examCustomCats  = allCustomCats.filter(c => isExamCat(c));
+  const otherCustomCats = allCustomCats.filter(c => !isExamCat(c)).sort();
+  const customCatNames  = otherCustomCats; // only non-exam customs get their own row
   const customCatColors = ['#f97316','#06b6d4','#ec4899','#84cc16','#f59e0b','#8b5cf6','#10b981'];
 
+  // All exam-related cats (standard + custom merged together)
+  const examAllCats = ['מבחן','לייב','ריסט', ...examCustomCats];
   const pRows=[
-    {key:'מבחנים',lbl:'מבחנים ולייבים',ils:Math.round(byCatILS(['מבחן','לייב','ריסט'])),usd:+byCatUSD(['מבחן','לייב','ריסט']).toFixed(2),sign:-1,col:'var(--bl)'},
+    {key:'מבחנים',lbl:'מבחנים ולייבים',ils:Math.round(byCatILS(examAllCats)),usd:+byCatUSD(examAllCats).toFixed(2),sign:-1,col:'var(--bl)'},
     {key:'תוכנות',lbl:'תוכנות',ils:Math.round(byCatILS(['כלי','תוכנה'])),usd:+byCatUSD(['כלי','תוכנה']).toFixed(2),sign:-1,col:'var(--gr)'},
     {key:'מנויים',lbl:'מנויים',ils:Math.round(byCatILS(['מנוי'])),usd:+byCatUSD(['מנוי']).toFixed(2),sign:-1,col:'var(--go)'},
     {key:'ציוד',lbl:'ציוד',ils:Math.round(byCatILS(['ציוד'])),usd:+byCatUSD(['ציוד']).toFixed(2),sign:-1,col:'var(--pu)'},
@@ -5875,7 +5885,7 @@ function renderPNL(){
      </div>`;
   // Build items list per category
   const catItems = {
-    'מבחנים':         exp.filter(r=>['מבחן','לייב','ריסט'].includes(r.cat)),
+    'מבחנים':         exp.filter(r=>examAllCats.includes(r.cat)),
     'תוכנות':         exp.filter(r=>['כלי','תוכנה'].includes(r.cat)),
     'מנויים':         exp.filter(r=>r.cat==='מנוי'),
     'ציוד':           exp.filter(r=>r.cat==='ציוד'),
@@ -8676,7 +8686,16 @@ function _restoreSyncConnections() {
     }
   } catch(e) {}
 }
-document.addEventListener('DOMContentLoaded', () => { setTimeout(_restoreSyncConnections, 2000); });
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(_restoreSyncConnections, 2000);
+  // הצג שרת מקומי רק על localhost
+  const isLocal = ['localhost','127.0.0.1'].includes(location.hostname);
+  const localCard = document.getElementById('plat-local');
+  if (localCard) localCard.style.display = isLocal ? '' : 'none';
+  // הצג sni-connections בסיידנב
+  const sniConn = document.getElementById('sni-connections');
+  if (sniConn) sniConn.style.display = '';
+});
 // ═══════════════════════════════════════════════════
 //  LOCAL SYNC SERVER  (localhost:3001)
 // ═══════════════════════════════════════════════════
