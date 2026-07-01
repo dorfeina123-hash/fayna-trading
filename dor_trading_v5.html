@@ -1494,12 +1494,31 @@ body.light-mode .side-panel,body.light-mode .mob-nav-drawer{background:#fff!impo
 body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!important}
 
 
+/* ── BULK SELECT BAR ── */
+#tj-bulk-bar{display:none;position:sticky;bottom:0;z-index:100;background:linear-gradient(135deg,var(--bg3),var(--bg4));border-top:2px solid var(--ac);padding:10px 16px;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.4);animation:slideUp .25s ease}
+#tj-bulk-bar.show{display:flex}
+.tj-bulk-count{font-size:13px;font-weight:700;color:var(--t1)}
+.tj-bulk-count span{color:var(--ac)}
+.tj-bulk-del{padding:7px 16px;border-radius:8px;background:rgba(224,69,69,.15);border:1px solid rgba(224,69,69,.4);color:var(--re);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.tj-bulk-del:hover{background:rgba(224,69,69,.3)}
+.tj-bulk-cancel{padding:7px 12px;border-radius:8px;background:transparent;border:1px solid var(--border2);color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.tj-bulk-cancel:hover{background:var(--bg3);color:var(--t1)}
+.tj-row.selected{background:rgba(74,143,168,.08)!important}
+.tj-row.selected td{border-right:2px solid var(--ac)}
+.tj-row.selected td:first-child{border-right:none}
+
+/* ── SPARKLINE ── */
+.trade-spark{cursor:pointer;opacity:.8;transition:opacity .15s;vertical-align:middle;display:inline-block}
+.trade-spark:hover{opacity:1}
+.act-chart{background:rgba(74,143,168,.15);border:1px solid rgba(74,143,168,.3);color:var(--ac);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;transition:all .15s;font-family:inherit}
+.act-chart:hover{background:rgba(74,143,168,.3)}
+
 /* ── TRADE CHART MODAL ── */
 #trade-chart-modal .modal{width:min(960px,98vw);height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:14px}
-.tcm-header{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tcm-header{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
 .tcm-sym{font-size:20px;font-weight:800;color:var(--t1);letter-spacing:-.5px}
 .tcm-dir{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
-.tcm-stat{display:flex;flex-direction:column;gap:1px;padding:6px 12px;background:var(--bg3);border-radius:8px;min-width:80px}
+.tcm-stat{display:flex;flex-direction:column;gap:1px;padding:6px 12px;background:var(--bg3);border-radius:8px;min-width:75px}
 .tcm-stat-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
 .tcm-stat-val{font-size:13px;font-weight:700;color:var(--t1);font-family:'IBM Plex Mono',monospace}
 #tcm-chart-area{flex:1;position:relative;background:#0b0f16}
@@ -1513,23 +1532,14 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .tcm-sym-input{padding:5px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--t1);font-size:12px;font-family:inherit;width:120px}
 .tcm-sym-input:focus{outline:none;border-color:var(--ac)}
 
-/* ── SPARKLINE in trade row ── */
-.trade-spark{cursor:pointer;opacity:.8;transition:opacity .15s;vertical-align:middle}
-.trade-spark:hover{opacity:1}
-.act-chart{background:rgba(74,143,168,.15);border:1px solid rgba(74,143,168,.3);color:var(--ac);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;transition:all .15s;font-family:inherit}
-.act-chart:hover{background:rgba(74,143,168,.3)}
-
-/* ── MOBILE INSTALL BANNER ── */
+/* ── MOBILE INSTALL ── */
 #mobile-install-banner{position:fixed;bottom:0;right:0;left:0;z-index:999;background:linear-gradient(135deg,var(--bg2),var(--bg3));border-top:1px solid var(--border2);padding:14px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 24px rgba(0,0,0,.4)}
 #mobile-install-banner.show{display:flex}
-.mib-icon{font-size:24px;flex-shrink:0}
-.mib-text{flex:1}
+.mib-icon{font-size:24px;flex-shrink:0}.mib-text{flex:1}
 .mib-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
 .mib-sub{font-size:11px;color:var(--t2)}
 .mib-btn{padding:7px 14px;border-radius:8px;background:var(--ac);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
 .mib-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-size:14px;flex-shrink:0}
-
-/* ── MOBILE INSTALL MODAL ── */
 #mob-install-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1002;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #mob-install-modal.open{display:flex}
 .mob-install-sheet{background:var(--bg2);border-radius:18px 18px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;direction:rtl}
@@ -1545,9 +1555,15 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 #return-toast{position:fixed;top:68px;right:50%;transform:translateX(50%);z-index:600;background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid var(--border2);border-radius:14px;padding:14px 20px;min-width:240px;max-width:88vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none}
 #return-toast.show{display:block;animation:fadeSlide .4s ease}
 @keyframes fadeSlide{from{opacity:0;transform:translateX(50%) translateY(-14px)}to{opacity:1;transform:translateX(50%) translateY(0)}}
-.rt-emoji{font-size:26px;margin-bottom:4px}
-.rt-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px}
-.rt-sub{font-size:12px;color:var(--t2)}
+.rt-emoji{font-size:26px;margin-bottom:4px}.rt-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px}.rt-sub{font-size:12px;color:var(--t2)}
+
+
+/* ── TRADE SELECTION ── */
+.tj-row{transition:background .12s}
+.tj-row:hover{background:rgba(255,255,255,.03)!important}
+.tj-row.tj-selected{background:rgba(74,143,168,.12)!important}
+.tj-row.tj-selected td:first-child{border-right:3px solid var(--ac)}
+#tj-sel-toolbar{border-bottom:2px solid var(--ac)}
 
 /* ── NAV AVATAR ── */
 .nav-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#000;cursor:pointer;flex-shrink:0;transition:transform .15s,box-shadow .15s;border:2px solid rgba(255,255,255,.2);letter-spacing:-.5px}
@@ -2695,6 +2711,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div><div style="font-size:15px;font-weight:600">יומן עסקאות — Rithmic R Pro</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מ-Rithmic R Pro ← לחץ "ייבא CSV"</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="openAddTrade()" class="btn-p" style="font-size:11px;padding:6px 13px">+ עסקה</button>
+      <button id="tj-del-sel" onclick="tjDeleteSelected()" style="display:none;padding:6px 14px;background:rgba(224,69,69,.15);border:1px solid rgba(224,69,69,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--re);font-family:inherit;font-weight:700">🗑 מחק נבחרות (<span id="tj-del-n">0</span>)</button>
+      <button id="tj-sel-mode-btn" onclick="tjToggleSelMode()" style="padding:6px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit;font-weight:600;transition:all .2s">☑ בחר עסקאות</button>
       <button onclick="showReportMenu('trades',this)" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(167,139,250,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#a78bfa;font-family:inherit">📊 דוח P&amp;L</button>
       <button onclick="exportCSV()" style="padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">📤 ייצא CSV</button>
       <button onclick="exportToExcel()" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(34,197,94,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#22c55e;font-family:inherit">📊 ייצא Excel</button>
@@ -2725,9 +2743,14 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <span id="acct-filter-btns"></span>
   </div>
   <div class="card" style="padding:0 17px">
-    <div class="sth"><table class="tbl"><thead><tr><th>תאריך</th><th>שעה</th><th>תיק</th><th>סימול</th><th>כמות</th><th>קנייה</th><th>מכירה</th><th>משך</th><th>נטו $</th><th>אסטרטגיה</th><th>⭐</th><th style="width:28px">📷</th><th style="width:56px"></th></tr></thead><tbody id="tj-body"></tbody></table></div>
+    <div class="sth"><table class="tbl" id="tj-table">
+      <thead><tr>
+        <th style="width:22px" id="tj-chk-head" title="בחר הכל"><input type="checkbox" class="chk" onchange="tjSelAll(this.checked)" style="display:none"></th>
+        <th>תאריך</th><th>שעה</th><th>תיק</th><th>סימול</th><th>כמות</th><th>קנייה</th><th>מכירה</th><th>משך</th><th>נטו $</th><th>אסטרטגיה</th><th>⭐</th><th style="width:28px">📷</th><th style="width:70px"></th>
+      </tr></thead>
+      <tbody id="tj-body"></tbody>
+    </table></div>
   </div>
-</div>
 
 <!-- STATS -->
 <div class="tp" id="tp-stats">
@@ -5737,6 +5760,8 @@ function _checkCoachReminders() {
   }
 }
 
+
+
 function coachSave() { localStorage.setItem('coach_sessions', JSON.stringify(coachSessions)); }
 
 // ── Profile builder — learns from all past sessions ──
@@ -6252,23 +6277,33 @@ function renderTJ(){
     `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${tot>=0?'cg':'cr'}">${list.length?'$'+(tot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: $'+(w.reduce((s,t)=>s+t.pnl,0)/w.length).toFixed(1):''}</div></div>`;
   document.getElementById('tj-body').innerHTML=list.length?list.map(t=>{
     const ti=tradesList.indexOf(t);
+    const sel = !!t._sel;
     const acctObj = t.acct ? accounts.find(a=>a.id===t.acct) : null;
     const acctCell = acctObj
-      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap;cursor:pointer" onclick="pickTradeAcct(${ti})" title="שנה תיק"><span style="width:6px;height:6px;border-radius:50%;background:${acctObj.color};display:inline-block;flex-shrink:0"></span>${acctObj.name}</span>`
-      : `<span style="font-size:10px;color:#374151;cursor:pointer" onclick="pickTradeAcct(${ti})" title="שייך לתיק">—</span>`;
-    return `<tr><td class="mono" style="font-size:11px;color:#545f72">${fmtD(t.date)}</td>
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap">${acctObj.name}</span>`
+      : `<span style="font-size:10px;color:#374151">—</span>`;
+    const spark = typeof _tradeSpark==='function' ? _tradeSpark(t,ti) : '';
+    return `<tr class="tj-row" id="tj-row-${ti}" style="${sel?'background:rgba(74,143,168,.12)':''}">
+      <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" ${sel?'checked':''} onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
+      <td class="mono" style="font-size:11px;color:#545f72;white-space:nowrap">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
       <td style="color:#8892a4">${t.sym}</td><td style="color:#545f72">${t.qty}</td>
       <td class="mono" style="font-size:11px;color:#545f72">${t.buy.toFixed(2)}</td>
       <td class="mono" style="font-size:11px;color:#545f72">${t.sell.toFixed(2)}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
-      <td style="padding:4px 6px">${_tradeSpark(t, ti)}</td>
+      <td style="padding:3px 5px">${spark}</td>
       <td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${tradeNet(t)>=0?'+':'−'}$${Math.abs(tradeNet(t)).toFixed(2)}</td>
-      <td style="white-space:nowrap"><button class="act-chart" onclick="openTradeChart(${ti})" title="פתח גרף">📈</button> <button class="act" onclick="delTrade(${ti})">🗑</button></td>
+      <td style="white-space:nowrap;display:flex;align-items:center;gap:6px;padding:4px 7px">
+        <input type="checkbox" class="chk" id="tjchk-${ti}" ${sel?'checked':''} onchange="tradesList[${ti}]._sel=this.checked;_tjSync()" style="flex-shrink:0">
+        <button class="act-chart" onclick="openTradeChart(${ti})" title="פתח גרף">📈</button>
+        <button class="act" onclick="delTrade(${ti})">🗑</button>
+      </td>
     </tr>`;
   }).join(''):`<tr><td colspan="11" style="text-align:center;padding:2rem;color:#545f72">אין עסקאות</td></tr>`;
 }
+
+
 function fTJ(f,b){tjF=f;b.parentElement.querySelectorAll('.fb:not([data-sym])').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTJ();}
 function fSym(s,b){tjS=s;document.querySelectorAll('[data-sym]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTJ();}
 function delTrade(i){if(confirm('למחוק עסקה?')){tradesList.splice(i,1);renderAll();}}
@@ -8114,13 +8149,13 @@ function sw(name,btn){
   }
   const ab=document.getElementById('add-btn');
   if(ab) ab.style.display=(showAdd[name]??false)?'flex':'none';
-  if(name==='overview')renderOV();
-  if(name==='stats')renderStats();
-  if(name==='calendar')renderCal();
-  if(name==='trades')renderTJ();
-  if(name==='coach')_coachRenderHome();
-  if(name==='pnl')renderPNL();
-  if(name==='custom')renderCX();
+  if(name==='overview')setTimeout(renderOV,50);
+  if(name==='stats')setTimeout(renderStats,50);
+  if(name==='calendar')setTimeout(renderCal,50);
+  if(name==='trades')setTimeout(renderTJ,50);
+  if(name==='coach')setTimeout(_coachRenderHome,50);
+  if(name==='pnl')setTimeout(renderPNL,50);
+  if(name==='custom')setTimeout(renderCX,50);
   if(name==='admin')setTimeout(renderAdminPanel,100);
   if(name==='ecal') setTimeout(_resizeEcal,80);
   // Driver sub-tabs
@@ -8748,20 +8783,7 @@ renderAll();
 function getAdminSettings() {
   return JSON.parse(localStorage.getItem('dor_admin_settings')||'{}');
 }
-function saveAdminSettings() {
-  const s = {
-    stripeProLink:  document.getElementById('st-pro-link')?.value.trim()||'',
-    stripeLifeLink: document.getElementById('st-life-link')?.value.trim()||'',
-    bitProLink:     document.getElementById('bit-pro-link')?.value.trim()||'',
-    bitLifeLink:    document.getElementById('bit-life-link')?.value.trim()||'',
-    payboxProLink:  document.getElementById('paybox-pro-link')?.value.trim()||'',
-    payboxLifeLink: document.getElementById('paybox-life-link')?.value.trim()||'',
-    airtableKey:    document.getElementById('at-key')?.value.trim()||'',
-    airtableBase:   document.getElementById('at-base')?.value.trim()||'',
-  };
-  localStorage.setItem('dor_admin_settings', JSON.stringify(s));
-  showToast('✅ הגדרות נשמרו!', 'success');
-}
+// saveAdminSettings: see async version below
 function loadAdminSettingsUI() {
   const s = getAdminSettings();
   if(document.getElementById('st-pro-link'))     document.getElementById('st-pro-link').value     = s.stripeProLink||'';
@@ -12169,7 +12191,8 @@ window.renderTJ = function renderTJ() {
       ? `<img class="trade-thumb" src="${t.image}" onclick="openImgLightbox(tradesList[${ti}].image)" title="לחץ להגדלה">`
       : `<button class="act" onclick="openTradeAnnotate(${ti})" title="הוסף תמונה" style="font-size:11px;opacity:.4">📷</button>`;
     const noteTitle = t.notes ? `title="${t.notes.replace(/"/g,'&quot;')}"` : '';
-    return `<tr ${noteTitle}>
+    return `<tr id="tj-row-${ti}" ${noteTitle}>
+      <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
       <td class="mono" style="font-size:11px;color:#545f72">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
@@ -12187,7 +12210,7 @@ window.renderTJ = function renderTJ() {
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
     </tr>`;
-  }).join('') : `<tr><td colspan="13" style="text-align:center;padding:2rem;color:#545f72">אין עסקאות</td></tr>`;
+  }).join('') : `<tr><td colspan="14" style="text-align:center;padding:2rem;color:#545f72">אין עסקאות</td></tr>`;
 }
 
 function fStrat(s, b) {
@@ -13642,8 +13665,7 @@ function paLoadPhoto(input) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(imgEl, 0, 0, w, h);
       _profPhotoData = canvas.toDataURL('image/jpeg', 0.8);
-      _paRefreshAvatar();
-      _updateNavAvatar();
+      _paRefreshAvatar(); _updateNavAvatar();
     };
     imgEl.src = e.target.result;
   };
@@ -13668,45 +13690,39 @@ function paSaveProfile() {
 
 
 // ════════════════════════════════════════════════════
-//  TRADE SPARKLINE
+//  BULK TRADE SELECTION
 // ════════════════════════════════════════════════════
+
 function _tradeSpark(t, ti) {
-  const W = 76, H = 28;
+  const W = 70, H = 26;
   const isWin = tradeNet(t) >= 0;
   const lo = Math.min(t.buy, t.sell) * 0.9985;
   const hi = Math.max(t.buy, t.sell) * 1.0015;
   const range = hi - lo || (t.buy * 0.002) || 0.01;
-  const pts = 18;
+  const pts = 16;
   const seed = t.buy * 1000 + t.sell * 100;
-  const rng  = (i) => ((Math.sin(seed + i * 2.37) + Math.cos(seed * 0.7 + i * 1.61)) * 0.5);
+  const rng = i => (Math.sin(seed + i*2.37) + Math.cos(seed*.7 + i*1.61)) * .5;
   const points = [];
   for (let i = 0; i <= pts; i++) {
     const progress = i / pts;
-    const base  = t.buy + (t.sell - t.buy) * progress;
-    const noise = rng(i) * range * 0.28;
-    const price = base + noise;
-    const x = (i / pts) * W;
-    const y = H - ((Math.max(lo, Math.min(hi, price)) - lo) / range) * (H - 2) - 1;
+    const price = t.buy + (t.sell - t.buy)*progress + rng(i)*range*.25;
+    const x = (i/pts)*W;
+    const y = H - ((Math.max(lo, Math.min(hi, price)) - lo) / range)*(H-2) - 1;
     points.push([x, y]);
   }
-  points[0][1]  = H - ((t.buy  - lo) / range) * (H - 2) - 1;
-  points[pts][1] = H - ((t.sell - lo) / range) * (H - 2) - 1;
-  const pathD = points.map((p, i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-  const fillD = `${pathD} L${W},${H} L0,${H} Z`;
-  const clr   = isWin ? '#27a065' : '#e04545';
-  const fill  = isWin ? 'rgba(39,160,101,.18)' : 'rgba(224,69,69,.18)';
-  const ex = points[pts][0].toFixed(1), ey = points[pts][1].toFixed(1);
-  const sx = points[0][0].toFixed(1),  sy = points[0][1].toFixed(1);
-  return `<div class="trade-spark" onclick="openTradeChart(${ti})" title="לחץ לפתיחת גרף מלא">
+  points[0][1]  = H - ((t.buy  - lo)/range)*(H-2) - 1;
+  points[pts][1] = H - ((t.sell - lo)/range)*(H-2) - 1;
+  const path = points.map((p,i)=>`${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const fill = path + ` L${W},${H} L0,${H} Z`;
+  const clr  = isWin ? '#27a065' : '#e04545';
+  const bg   = isWin ? 'rgba(39,160,101,.18)' : 'rgba(224,69,69,.18)';
+  const ex   = points[pts][0].toFixed(1), ey = points[pts][1].toFixed(1);
+  return `<div class="trade-spark" onclick="openTradeChart(${ti})" title="פתח גרף">
     <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-      <defs><linearGradient id="sg${ti}" x1="0" y1="0" x2="${W}" y2="0">
-        <stop offset="0%" stop-color="${clr}" stop-opacity=".3"/>
-        <stop offset="100%" stop-color="${clr}" stop-opacity=".8"/>
-      </linearGradient></defs>
-      <path d="${fillD}" fill="${fill}"/>
-      <path d="${pathD}" fill="none" stroke="url(#sg${ti})" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-      <circle cx="${sx}" cy="${sy}" r="2.5" fill="#4a8fa8"/>
-      <circle cx="${ex}" cy="${ey}" r="2.5" fill="${clr}"/>
+      <path d="${fill}" fill="${bg}"/>
+      <path d="${path}" fill="none" stroke="${clr}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${points[0][0].toFixed(1)}" cy="${points[0][1].toFixed(1)}" r="2.2" fill="#4a8fa8"/>
+      <circle cx="${ex}" cy="${ey}" r="2.2" fill="${clr}"/>
     </svg>
   </div>`;
 }
@@ -13715,240 +13731,215 @@ function _tradeSpark(t, ti) {
 //  TRADE CHART MODAL
 // ════════════════════════════════════════════════════
 let _tcmTradeIdx = -1;
-let _tcmWidget   = null;
 
 function openTradeChart(ti) {
   const t = tradesList[ti];
   if (!t) return;
   _tcmTradeIdx = ti;
-
-  // Header fields
   document.getElementById('tcm-sym').textContent  = t.sym || '—';
-  document.getElementById('tcm-date').textContent = (t.date || '');
+  document.getElementById('tcm-date').textContent = t.date || '';
   document.getElementById('tcm-buy').textContent  = '$' + (t.buy||0).toFixed(2);
   document.getElementById('tcm-sell').textContent = '$' + (t.sell||0).toFixed(2);
   document.getElementById('tcm-qty').textContent  = t.qty || '—';
   document.getElementById('tcm-dur').textContent  = t.dur || '—';
-
-  const net  = tradeNet(t);
+  const net = tradeNet(t);
   const pnlEl = document.getElementById('tcm-pnl');
-  pnlEl.textContent = (net >= 0 ? '+' : '') + '$' + net.toFixed(2);
-  pnlEl.style.color = net >= 0 ? 'var(--gr)' : 'var(--re)';
-
-  const isLong = t.buy <= t.sell ? net >= 0 : net < 0;
-  const dirEl  = document.getElementById('tcm-dir');
-  dirEl.textContent    = isLong ? 'LONG' : 'SHORT';
-  dirEl.style.background = isLong ? 'rgba(39,160,101,.15)' : 'rgba(224,69,69,.15)';
-  dirEl.style.color      = isLong ? 'var(--gr)' : 'var(--re)';
-
-  // Footer metrics
-  const move = ((Math.abs(t.sell - t.buy) / t.buy) * 100).toFixed(2);
-  document.getElementById('tcm-move').textContent = (t.sell > t.buy ? '+' : '-') + move + '%';
-  document.getElementById('tcm-move').style.color = t.sell > t.buy ? 'var(--gr)' : 'var(--re)';
-
-  const gross = Math.abs(t.sell - t.buy) * (t.qty || 1);
-  document.getElementById('tcm-gross').textContent = '$' + gross.toFixed(2);
-
-  const comm = tradeComm ? tradeComm(t).toFixed(2) : '—';
-  document.getElementById('tcm-comm').textContent  = '$' + comm;
-  document.getElementById('tcm-strat').textContent = t.strategy || '—';
-
-  // R:R (rough estimate assuming SL = 50% of target)
-  const rr = net > 0 ? (Math.abs(net) / Math.max(0.01, Math.abs(tradeComm ? tradeComm(t) : net * 0.5))).toFixed(1) : '—';
-  document.getElementById('tcm-rr').textContent = rr !== '—' ? rr + ':1' : '—';
-
-  // Symbol input
-  const symInp = document.getElementById('tcm-sym-inp');
-  if (symInp) symInp.value = t.sym || '';
-
-  // Open modal
+  pnlEl.textContent = (net>=0?'+':'')+'$'+net.toFixed(2);
+  pnlEl.style.color = net>=0?'var(--gr)':'var(--re)';
+  const isLong = (t.buy <= t.sell) ? net >= 0 : net < 0;
+  const dirEl = document.getElementById('tcm-dir');
+  dirEl.textContent = isLong?'LONG':'SHORT';
+  dirEl.style.background = isLong?'rgba(39,160,101,.15)':'rgba(224,69,69,.15)';
+  dirEl.style.color      = isLong?'var(--gr)':'var(--re)';
+  const move = ((Math.abs(t.sell-t.buy)/t.buy)*100).toFixed(2);
+  const moveEl = document.getElementById('tcm-move');
+  if (moveEl) { moveEl.textContent = (t.sell>t.buy?'+':'-')+move+'%'; moveEl.style.color=t.sell>t.buy?'var(--gr)':'var(--re)'; }
+  const gross = Math.abs(t.sell-t.buy)*(t.qty||1);
+  const grossEl = document.getElementById('tcm-gross'); if(grossEl) grossEl.textContent='$'+gross.toFixed(2);
+  const commEl = document.getElementById('tcm-comm'); if(commEl) commEl.textContent='$'+(tradeComm?tradeComm(t).toFixed(2):'—');
+  const stratEl = document.getElementById('tcm-strat'); if(stratEl) stratEl.textContent=t.strategy||'—';
+  const inp = document.getElementById('tcm-sym-inp'); if(inp) inp.value=t.sym||'';
   document.getElementById('trade-chart-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  // Load chart
+  document.body.style.overflow='hidden';
   _loadTradingViewChart(t.sym, t.date);
 }
-
 function closeTradeChart() {
   document.getElementById('trade-chart-modal').classList.remove('open');
-  document.body.style.overflow = '';
-  // Clear chart iframe to stop network activity
-  const tv = document.getElementById('tcm-chart-tv');
-  if (tv) tv.innerHTML = '';
-  _tcmWidget = null;
+  document.body.style.overflow='';
+  const tv=document.getElementById('tcm-chart-tv'); if(tv) tv.innerHTML='';
 }
-
 function _tcmReloadChart() {
-  const inp = document.getElementById('tcm-sym-inp');
-  const sym = inp ? inp.value.trim().toUpperCase() : '';
-  if (!sym) return;
-  const t = tradesList[_tcmTradeIdx];
-  _loadTradingViewChart(sym, t?.date);
+  const inp=document.getElementById('tcm-sym-inp');
+  const sym=(inp?inp.value.trim().toUpperCase():'');
+  if(!sym) return;
+  _loadTradingViewChart(sym, tradesList[_tcmTradeIdx]?.date);
 }
-
 function _loadTradingViewChart(sym, date) {
-  const tv = document.getElementById('tcm-chart-tv');
-  const loading = document.getElementById('tcm-loading');
-  if (!tv) return;
-  tv.innerHTML = '';
-  if (loading) loading.style.display = 'flex';
-
-  // Determine interval based on trade data
-  const interval = '5'; // 5-min default for intraday trades
-
-  // Build TradingView widget using iframe embed (no tv.js needed)
-  const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
-  const bgColor = theme === 'dark' ? '%230b0f16' : '%23ffffff';
-  const symEncoded = encodeURIComponent(sym);
-
-  // Use TradingView's Advanced Chart widget (requires internet)
-  const containerId = 'tcm-tv-' + Date.now();
-  const innerDiv = document.createElement('div');
-  innerDiv.id = containerId;
-  innerDiv.style.cssText = 'width:100%;height:100%';
-  tv.appendChild(innerDiv);
-
-  const script = document.createElement('script');
-  script.src = 'https://s3.tradingview.com/tv.js';
-  script.onload = () => {
-    if (loading) loading.style.display = 'none';
+  const tv=document.getElementById('tcm-chart-tv'); const loading=document.getElementById('tcm-loading');
+  if(!tv) return;
+  tv.innerHTML=''; if(loading) loading.style.display='flex';
+  const theme=document.body.classList.contains('light-mode')?'light':'dark';
+  const cId='tcm-tv-'+Date.now();
+  const inner=document.createElement('div'); inner.id=cId; inner.style.cssText='width:100%;height:100%';
+  tv.appendChild(inner);
+  const doLoad=()=>{
+    if(loading) loading.style.display='none';
     try {
-      _tcmWidget = new TradingView.widget({
-        autosize:          true,
-        symbol:            sym,
-        interval:          interval,
-        timezone:          'America/New_York',
-        theme:             theme,
-        style:             '1',
-        locale:            'he_IL',
-        toolbar_bg:        theme === 'dark' ? '#0b0f16' : '#ffffff',
-        enable_publishing: false,
-        withdateranges:    true,
-        hide_side_toolbar: false,
-        allow_symbol_change: true,
-        save_image:        false,
-        container_id:      containerId,
-        range:             '1M',
-        studies:           ['Volume@tv-basicstudies','VWAP@tv-basicstudies'],
-        overrides: {
-          'mainSeriesProperties.candleStyle.upColor':   '#27a065',
-          'mainSeriesProperties.candleStyle.downColor': '#e04545',
-          'mainSeriesProperties.candleStyle.borderUpColor':   '#27a065',
-          'mainSeriesProperties.candleStyle.borderDownColor': '#e04545',
-          'mainSeriesProperties.candleStyle.wickUpColor':   '#27a065',
-          'mainSeriesProperties.candleStyle.wickDownColor': '#e04545',
-        },
-      });
+      new TradingView.widget({autosize:true,symbol:sym,interval:'5',timezone:'America/New_York',theme,style:'1',
+        locale:'he_IL',toolbar_bg:theme==='dark'?'#0b0f16':'#ffffff',enable_publishing:false,
+        withdateranges:true,hide_side_toolbar:false,allow_symbol_change:true,save_image:false,
+        container_id:cId,range:'1M',studies:['Volume@tv-basicstudies','VWAP@tv-basicstudies'],
+        overrides:{'mainSeriesProperties.candleStyle.upColor':'#27a065','mainSeriesProperties.candleStyle.downColor':'#e04545',
+          'mainSeriesProperties.candleStyle.borderUpColor':'#27a065','mainSeriesProperties.candleStyle.borderDownColor':'#e04545',
+          'mainSeriesProperties.candleStyle.wickUpColor':'#27a065','mainSeriesProperties.candleStyle.wickDownColor':'#e04545'}});
     } catch(e) {
-      if (loading) { loading.innerHTML = '<div style="color:var(--re);text-align:center">שגיאה בטעינת הגרף<br><small>ודא חיבור לאינטרנט</small></div>'; loading.style.display = 'flex'; }
+      if(loading){loading.innerHTML='<div style="color:var(--re);text-align:center">שגיאה בטעינת הגרף<br><small>בדוק חיבור לאינטרנט</small></div>';loading.style.display='flex';}
     }
   };
-  script.onerror = () => {
-    if (loading) { loading.innerHTML = '<div style="color:var(--re);text-align:center">⚠️ לא ניתן לטעון גרף<br><small>בדוק חיבור לאינטרנט</small></div>'; loading.style.display = 'flex'; }
-  };
-
-  // Avoid re-adding tv.js if already loaded
-  if (window.TradingView) {
-    script.onload();
-  } else if (!document.querySelector('script[src*="tv.js"]')) {
-    document.head.appendChild(script);
-  } else {
-    // Already loading — wait
-    const wait = setInterval(() => {
-      if (window.TradingView) { clearInterval(wait); script.onload(); }
-    }, 300);
-  }
+  if(window.TradingView) { doLoad(); }
+  else if(!document.querySelector('script[src*="tv.js"]')) {
+    const s=document.createElement('script'); s.src='https://s3.tradingview.com/tv.js';
+    s.onload=doLoad; s.onerror=()=>{if(loading){loading.innerHTML='<div style="color:var(--re);text-align:center">⚠️ לא ניתן לטעון גרף</div>';loading.style.display='flex';}};
+    document.head.appendChild(s);
+  } else { const w=setInterval(()=>{if(window.TradingView){clearInterval(w);doLoad();}},300); }
 }
-
-// Close chart modal on backdrop click
-document.addEventListener('click', e => {
-  const m = document.getElementById('trade-chart-modal');
-  if (m && e.target === m) closeTradeChart();
-});
+document.addEventListener('click', e=>{const m=document.getElementById('trade-chart-modal');if(m&&e.target===m)closeTradeChart();});
 
 // ════════════════════════════════════════════════════
-//  MOBILE INSTALL SYSTEM
+//  MOBILE INSTALL + STREAK
 // ════════════════════════════════════════════════════
-function openMobInstall()    { document.getElementById('mob-install-modal')?.classList.add('open'); }
-function closeMobInstall()   { document.getElementById('mob-install-modal')?.classList.remove('open'); }
-function dismissInstallBanner() {
-  document.getElementById('mobile-install-banner')?.classList.remove('show');
-  localStorage.setItem('fayna_install_dismissed', '1');
-}
+function openMobInstall()  { document.getElementById('mob-install-modal')?.classList.add('open'); }
+function closeMobInstall() { document.getElementById('mob-install-modal')?.classList.remove('open'); }
+function dismissInstallBanner() { document.getElementById('mobile-install-banner')?.classList.remove('show'); localStorage.setItem('fayna_install_dismissed','1'); }
 function mipSwitch(p) {
-  document.getElementById('mip-ios-steps').style.display = p === 'ios' ? '' : 'none';
-  document.getElementById('mip-and-steps').style.display = p === 'android' ? '' : 'none';
-  document.getElementById('mip-ios').classList.toggle('active', p === 'ios');
-  document.getElementById('mip-and').classList.toggle('active', p === 'android');
+  document.getElementById('mip-ios-steps').style.display=p==='ios'?'':'none';
+  document.getElementById('mip-and-steps').style.display=p==='android'?'':'none';
+  document.getElementById('mip-ios').classList.toggle('active',p==='ios');
+  document.getElementById('mip-and').classList.toggle('active',p==='android');
 }
 function _checkMobileInstall() {
-  if (localStorage.getItem('fayna_install_dismissed')) return;
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (standalone) return;
-  if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
-  setTimeout(() => document.getElementById('mobile-install-banner')?.classList.add('show'), 4000);
+  if(localStorage.getItem('fayna_install_dismissed')) return;
+  if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone) return;
+  if(!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
+  setTimeout(()=>document.getElementById('mobile-install-banner')?.classList.add('show'),4000);
 }
-
-// ════════════════════════════════════════════════════
-//  STREAK + RETENTION SYSTEM
-// ════════════════════════════════════════════════════
 function _updateStreak() {
   try {
-    const uid   = currentUser?.uid || 'guest';
-    const key   = 'fayna_streak_' + uid;
-    const today = new Date().toISOString().slice(0,10);
-    let d = JSON.parse(localStorage.getItem(key) || '{}');
-    if (d.lastDate === today) return d;
-    const yest = new Date(Date.now() - 86400000).toISOString().slice(0,10);
-    d.count  = d.lastDate === yest ? (d.count || 0) + 1 : 1;
-    d.best   = Math.max(d.count, d.best || 0);
-    d.lastDate = today;
-    localStorage.setItem(key, JSON.stringify(d));
-    return d;
-  } catch(e) { return {count:1}; }
+    const uid=currentUser?.uid||'guest', key='fayna_streak_'+uid, today=new Date().toISOString().slice(0,10);
+    let d=JSON.parse(localStorage.getItem(key)||'{}');
+    if(d.lastDate===today) return d;
+    const yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    d.count=d.lastDate===yest?(d.count||0)+1:1; d.best=Math.max(d.count,d.best||0); d.lastDate=today;
+    localStorage.setItem(key,JSON.stringify(d)); return d;
+  } catch(e){return{count:1};}
 }
 function _showReturnToast() {
   try {
-    const uid  = currentUser?.uid || 'guest';
-    const data = JSON.parse(localStorage.getItem('fayna_streak_' + uid) || '{}');
-    const key  = 'fayna_rt_' + uid;
-    const today = new Date().toISOString().slice(0,10);
-    if (localStorage.getItem(key) === today) return;
-    localStorage.setItem(key, today);
-    const n = data.count || 1;
-    const msgs = [
-      {e:'👋', t:'ברוך הבא!',        s:'בוא נתחיל את יום המסחר'},
-      {e:'🔥', t:`${n} ימים ברצף!`,  s:'מומנטום מעולה — המשך כך'},
-      {e:'⚡', t:`${n} ימים ברצף!`,  s:'עקביות = רווחיות לאורך זמן'},
-      {e:'🏆', t:`${n} ימים ברצף!`,  s:'סוחר אמיתי לא מפסיד יום'},
-      {e:'🚀', t:`${n} ימים ברצף!`,  s:'האם תשבור שיא אישי?'}
-    ];
-    const idx = n >= 14 ? 4 : n >= 7 ? 3 : n >= 3 ? 2 : n >= 2 ? 1 : 0;
-    const m = msgs[idx];
-    document.getElementById('rt-emoji').textContent = m.e;
-    document.getElementById('rt-title').textContent = m.t;
-    document.getElementById('rt-sub').textContent   = m.s;
-    const toast = document.getElementById('return-toast');
-    if (toast) { toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 5000); }
-  } catch(e) {}
+    const uid=currentUser?.uid||'guest', data=JSON.parse(localStorage.getItem('fayna_streak_'+uid)||'{}');
+    const today=new Date().toISOString().slice(0,10), key='fayna_rt_'+uid;
+    if(localStorage.getItem(key)===today) return;
+    localStorage.setItem(key,today);
+    const n=data.count||1;
+    const msgs=[{e:'👋',t:'ברוך הבא!',s:'בוא נתחיל את יום המסחר'},{e:'🔥',t:`${n} ימים ברצף!`,s:'מומנטום מעולה'},{e:'⚡',t:`${n} ימים ברצף!`,s:'עקביות = רווחיות'},{e:'🏆',t:`${n} ימים ברצף!`,s:'סוחר אמיתי לא מפסיד יום'},{e:'🚀',t:`${n} ימים ברצף!`,s:'האם תשבור שיא אישי?'}];
+    const m=msgs[n>=14?4:n>=7?3:n>=3?2:n>=2?1:0];
+    document.getElementById('rt-emoji').textContent=m.e; document.getElementById('rt-title').textContent=m.t; document.getElementById('rt-sub').textContent=m.s;
+    const toast=document.getElementById('return-toast');
+    if(toast){toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),5000);}
+  } catch(e){}
 }
 function _initStreakAndRetention() {
-  const d = _updateStreak();
-  setTimeout(() => { _showReturnToast(); _checkMobileInstall(); }, 1800);
-  // Streak badge in nav (if >= 2 days)
-  if ((d.count || 0) >= 2) {
-    const badge = document.createElement('span');
-    badge.title = `רצף כניסות: ${d.count} ימים${d.best > d.count ? ' (שיא: '+d.best+')' : ''}`;
-    badge.style.cssText = 'display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;background:rgba(255,160,0,.12);border:1px solid rgba(255,160,0,.25);color:#f0b429;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px';
-    badge.innerHTML = `${d.count}🔥`;
-    badge.onclick = () => showToast(`🔥 ${d.count} ימי מסחר ברצף! השיא שלך: ${d.best||d.count}`, 'success');
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn?.parentNode) themeBtn.parentNode.insertBefore(badge, themeBtn);
+  const d=_updateStreak();
+  setTimeout(()=>{_showReturnToast();_checkMobileInstall();},1800);
+  if((d.count||0)>=2){
+    const badge=document.createElement('span');
+    badge.title=`רצף: ${d.count} ימים`;
+    badge.style.cssText='display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;background:rgba(255,160,0,.12);border:1px solid rgba(255,160,0,.25);color:#f0b429;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px';
+    badge.innerHTML=`${d.count}🔥`;
+    badge.onclick=()=>showToast(`🔥 ${d.count} ימי מסחר ברצף! שיא: ${d.best||d.count}`,'success');
+    const btn=document.getElementById('theme-toggle-btn');
+    if(btn?.parentNode) btn.parentNode.insertBefore(badge,btn);
   }
 }
 
 
-// ── GUIDED TOUR ──
+
+// ── TRADE BULK SELECT ──
+let _tjInSelMode = false;
+
+function tjToggleSelMode() {
+  _tjInSelMode = !_tjInSelMode;
+  // Show/hide checkboxes
+  document.querySelectorAll('[id^="tjcell-"]').forEach(td => {
+    td.style.display = _tjInSelMode ? 'table-cell' : 'none';
+  });
+  const hd = document.getElementById('tj-chk-head');
+  if (hd) hd.querySelector('input') && (hd.querySelector('input').style.display = _tjInSelMode ? '' : 'none');
+  // Toggle button style
+  const btn = document.getElementById('tj-sel-mode-btn');
+  if (btn) {
+    btn.textContent = _tjInSelMode ? '✕ בטל בחירה' : '☑ בחר עסקאות';
+    btn.style.background = _tjInSelMode ? 'rgba(74,143,168,.2)' : 'var(--bg3)';
+    btn.style.borderColor = _tjInSelMode ? 'var(--ac)' : 'var(--border2)';
+    btn.style.color = _tjInSelMode ? 'var(--ac)' : 'var(--t2)';
+  }
+  if (!_tjInSelMode) {
+    tradesList.forEach(t => { t._sel = false; });
+    document.querySelectorAll('#tj-body .chk').forEach(cb => { cb.checked = false; });
+    _tjRefreshDelBtn();
+  }
+}
+
+function tjRowMark(ti, checked) {
+  const row = document.getElementById('tj-row-' + ti);
+  if (row) row.style.background = checked ? 'rgba(74,143,168,.12)' : '';
+  _tjRefreshDelBtn();
+}
+
+function tjSelAll(checked) {
+  document.querySelectorAll('#tj-body .chk').forEach(cb => {
+    cb.checked = checked;
+    const ti = parseInt(cb.id.replace('tjchk-', ''));
+    if (!isNaN(ti) && tradesList[ti]) {
+      tradesList[ti]._sel = checked;
+      const row = document.getElementById('tj-row-' + ti);
+      if (row) row.style.background = checked ? 'rgba(74,143,168,.12)' : '';
+    }
+  });
+  _tjRefreshDelBtn();
+}
+
+function _tjRefreshDelBtn() {
+  const n = document.querySelectorAll('#tj-body .chk:checked').length;
+  const btn = document.getElementById('tj-del-sel');
+  const lbl = document.getElementById('tj-del-n');
+  if (btn) btn.style.display = n > 0 ? '' : 'none';
+  if (lbl) lbl.textContent = n;
+  const all = document.getElementById('tj-chk-head') && document.getElementById('tj-chk-head').querySelector('input');
+  const total = document.querySelectorAll('#tj-body .chk').length;
+  if (all) { all.checked = total > 0 && n === total; all.indeterminate = n > 0 && n < total; }
+}
+
+function tjDeleteSelected() {
+  const cbs = [...document.querySelectorAll('#tj-body .chk:checked')];
+  if (!cbs.length) return;
+  const n = cbs.length;
+  if (!confirm('למחוק ' + n + ' עסקאות נבחרות?')) return;
+  cbs.forEach(cb => {
+    const ti = parseInt(cb.id.replace('tjchk-', ''));
+    if (!isNaN(ti) && tradesList[ti]) tradesList[ti]._sel = true;
+  });
+  for (let i = tradesList.length - 1; i >= 0; i--) {
+    if (tradesList[i] && tradesList[i]._sel) tradesList.splice(i, 1);
+  }
+  _tjInSelMode = false;
+  const btn = document.getElementById('tj-sel-mode-btn');
+  if (btn) { btn.textContent='☑ בחר עסקאות'; btn.style.background='var(--bg3)'; btn.style.borderColor='var(--border2)'; btn.style.color='var(--t2)'; }
+  const delBtn = document.getElementById('tj-del-sel');
+  if (delBtn) delBtn.style.display = 'none';
+  renderAll();
+  showToast('🗑 נמחקו ' + n + ' עסקאות', 'success');
+}
+
 const _tourSteps = [
   { sel:'.logo',                        title:'לוגו Fayna Trading', text:'לחיצה על הלוגו תחזיר אותך תמיד לדף הסקירה הראשי.' },
   { sel:'#tp-overview .mrow',           title:'כרטיסי סקירה',      text:'כאן תראה סיכום חי של הביצועים שלך — P&L יומי, Win Rate, מספר עסקאות וסטריק ימים רצופים.' },
@@ -14423,16 +14414,7 @@ async function renderAdminActivityChart() {
 // ════════════════════════════════════════════════════
 //  ADMIN ACTION LOG
 // ════════════════════════════════════════════════════
-async function _logAdminAction(action, details) {
-  if (!currentUser?.uid) return;
-  try {
-    await db.collection('adminLogs').add({
-      uid: currentUser.uid, email: currentUser.email||'',
-      action, details: details||'',
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } catch(e) {}
-}
+// _logAdminAction: see version below
 
 async function _logAdminAction(action, details) {
   try {
@@ -14727,95 +14709,34 @@ function _sessionWarning() {
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:center">
-        <div class="tcm-stat">
-          <span class="tcm-stat-lbl">כניסה</span>
-          <span class="tcm-stat-val" id="tcm-buy">—</span>
-        </div>
-        <div class="tcm-stat">
-          <span class="tcm-stat-lbl">יציאה</span>
-          <span class="tcm-stat-val" id="tcm-sell">—</span>
-        </div>
-        <div class="tcm-stat">
-          <span class="tcm-stat-lbl">P&L נטו</span>
-          <span class="tcm-stat-val" id="tcm-pnl">—</span>
-        </div>
-        <div class="tcm-stat">
-          <span class="tcm-stat-lbl">משך עסקה</span>
-          <span class="tcm-stat-val" id="tcm-dur">—</span>
-        </div>
-        <div class="tcm-stat">
-          <span class="tcm-stat-lbl">כמות</span>
-          <span class="tcm-stat-val" id="tcm-qty">—</span>
-        </div>
+        <div class="tcm-stat"><span class="tcm-stat-lbl">כניסה</span><span class="tcm-stat-val" id="tcm-buy">—</span></div>
+        <div class="tcm-stat"><span class="tcm-stat-lbl">יציאה</span><span class="tcm-stat-val" id="tcm-sell">—</span></div>
+        <div class="tcm-stat"><span class="tcm-stat-lbl">P&L נטו</span><span class="tcm-stat-val" id="tcm-pnl">—</span></div>
+        <div class="tcm-stat"><span class="tcm-stat-lbl">משך</span><span class="tcm-stat-val" id="tcm-dur">—</span></div>
+        <div class="tcm-stat"><span class="tcm-stat-lbl">כמות</span><span class="tcm-stat-val" id="tcm-qty">—</span></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
-        <input type="text" class="tcm-sym-input" id="tcm-sym-inp" placeholder="שנה סמל..." onkeydown="if(event.key==='Enter')_tcmReloadChart()" title="הקלד סמל TradingView ולחץ Enter">
+        <input type="text" class="tcm-sym-input" id="tcm-sym-inp" placeholder="שנה סמל..." onkeydown="if(event.key==='Enter')_tcmReloadChart()" title="הקלד סמל TradingView">
         <button onclick="_tcmReloadChart()" style="padding:5px 10px;border-radius:7px;background:var(--ac);color:#fff;border:none;font-size:11px;cursor:pointer;font-family:inherit;font-weight:700">טען</button>
         <button class="cx" onclick="closeTradeChart()" style="font-size:22px;width:32px;height:32px">×</button>
       </div>
     </div>
-    <div id="tcm-chart-area">
-      <div class="tcm-loading" id="tcm-loading">
-        <div class="tcm-spinner"></div>
-        <span>טוען גרף TradingView...</span>
-      </div>
-      <div id="tcm-chart-tv"></div>
-    </div>
-    <div class="tcm-footer" id="tcm-footer">
+    <div id="tcm-chart-area"><div class="tcm-loading" id="tcm-loading"><div class="tcm-spinner"></div><span>טוען גרף TradingView...</span></div><div id="tcm-chart-tv"></div></div>
+    <div class="tcm-footer">
       <div class="tcm-metric"><span class="tcm-metric-lbl">תנועה %:</span><span class="tcm-metric-val" id="tcm-move">—</span></div>
-      <div class="tcm-metric"><span class="tcm-metric-lbl">R:R משוער:</span><span class="tcm-metric-val" id="tcm-rr">—</span></div>
-      <div class="tcm-metric"><span class="tcm-metric-lbl">פוטנציאל $:</span><span class="tcm-metric-val" id="tcm-gross">—</span></div>
+      <div class="tcm-metric"><span class="tcm-metric-lbl">גולמי $:</span><span class="tcm-metric-val" id="tcm-gross">—</span></div>
       <div class="tcm-metric"><span class="tcm-metric-lbl">עמלה:</span><span class="tcm-metric-val" id="tcm-comm">—</span></div>
       <div class="tcm-metric"><span class="tcm-metric-lbl">אסטרטגיה:</span><span class="tcm-metric-val" id="tcm-strat">—</span></div>
       <div style="flex:1"></div>
-      <span style="font-size:10px;color:var(--t3)">💡 השתמש בגרף לנווט, לזום ולנתח את ה-Price Action סביב העסקה</span>
+      <span style="font-size:10px;color:var(--t3)">💡 נווט, זום ונתח את ה-Price Action</span>
     </div>
   </div>
 </div>
 
 <!-- ══════════ MOBILE INSTALL ══════════ -->
-<div id="mobile-install-banner">
-  <div class="mib-icon">📲</div>
-  <div class="mib-text">
-    <div class="mib-title">הוסף לדף הבית</div>
-    <div class="mib-sub">גישה מהירה לאפליקציה מהנייד</div>
-  </div>
-  <button class="mib-btn" onclick="openMobInstall()">הוראות</button>
-  <button class="mib-close" onclick="dismissInstallBanner()">×</button>
-</div>
-
-<div id="mob-install-modal">
-  <div class="mob-install-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 style="font-size:17px;font-weight:700;color:var(--t1)">📲 הוסף לדף הבית</h3>
-      <button onclick="closeMobInstall()" style="background:none;border:none;color:var(--t2);font-size:22px;cursor:pointer">×</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="mip-tab active" id="mip-ios" onclick="mipSwitch('ios')">🍎 iPhone / iPad</button>
-      <button class="mip-tab" id="mip-and" onclick="mipSwitch('android')">🤖 Android</button>
-    </div>
-    <div id="mip-ios-steps">
-      <div class="mob-install-step"><div class="mob-install-num">1</div><div class="mob-install-txt">פתח את האתר ב-<b>Safari</b> (חובה)</div></div>
-      <div class="mob-install-step"><div class="mob-install-num">2</div><div class="mob-install-txt">לחץ על כפתור <b>השיתוף</b> 🔗 בתחתית המסך</div></div>
-      <div class="mob-install-step"><div class="mob-install-num">3</div><div class="mob-install-txt">גלול ובחר <b>"הוסף למסך הבית"</b></div></div>
-      <div class="mob-install-step"><div class="mob-install-num">4</div><div class="mob-install-txt">לחץ <b>"הוסף"</b> — האפליקציה מותקנת! 🎉</div></div>
-    </div>
-    <div id="mip-and-steps" style="display:none">
-      <div class="mob-install-step"><div class="mob-install-num">1</div><div class="mob-install-txt">פתח ב-<b>Chrome</b></div></div>
-      <div class="mob-install-step"><div class="mob-install-num">2</div><div class="mob-install-txt">לחץ <b>שלוש נקודות</b> ⋮ בפינה העליונה</div></div>
-      <div class="mob-install-step"><div class="mob-install-num">3</div><div class="mob-install-txt">בחר <b>"הוסף למסך הבית"</b></div></div>
-      <div class="mob-install-step"><div class="mob-install-num">4</div><div class="mob-install-txt">לחץ <b>"הוסף"</b> — מוכן! 🎉</div></div>
-    </div>
-    <button onclick="closeMobInstall()" style="width:100%;margin-top:18px;padding:12px;border-radius:10px;background:var(--ac);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">הבנתי!</button>
-  </div>
-</div>
-
-<!-- ══════════ RETURN TOAST ══════════ -->
-<div id="return-toast">
-  <div class="rt-emoji" id="rt-emoji">🔥</div>
-  <div class="rt-title" id="rt-title">ברוך השב!</div>
-  <div class="rt-sub"   id="rt-sub">כל יום מסחר = צעד קדימה</div>
-</div>
+<div id="mobile-install-banner"><div class="mib-icon">📲</div><div class="mib-text"><div class="mib-title">הוסף לדף הבית</div><div class="mib-sub">גישה מהירה לאפליקציה מהנייד</div></div><button class="mib-btn" onclick="openMobInstall()">הוראות</button><button class="mib-close" onclick="dismissInstallBanner()">×</button></div>
+<div id="mob-install-modal"><div class="mob-install-sheet"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="font-size:17px;font-weight:700;color:var(--t1)">📲 הוסף לדף הבית</h3><button onclick="closeMobInstall()" style="background:none;border:none;color:var(--t2);font-size:22px;cursor:pointer">×</button></div><div style="display:flex;gap:8px;margin-bottom:16px"><button class="mip-tab active" id="mip-ios" onclick="mipSwitch('ios')">🍎 iPhone</button><button class="mip-tab" id="mip-and" onclick="mipSwitch('android')">🤖 Android</button></div><div id="mip-ios-steps"><div class="mob-install-step"><div class="mob-install-num">1</div><div class="mob-install-txt">פתח ב-<b>Safari</b> (חובה)</div></div><div class="mob-install-step"><div class="mob-install-num">2</div><div class="mob-install-txt">לחץ <b>שיתוף</b> 🔗 בתחתית</div></div><div class="mob-install-step"><div class="mob-install-num">3</div><div class="mob-install-txt">בחר <b>"הוסף למסך הבית"</b></div></div><div class="mob-install-step"><div class="mob-install-num">4</div><div class="mob-install-txt">לחץ <b>"הוסף"</b> 🎉</div></div></div><div id="mip-and-steps" style="display:none"><div class="mob-install-step"><div class="mob-install-num">1</div><div class="mob-install-txt">פתח ב-<b>Chrome</b></div></div><div class="mob-install-step"><div class="mob-install-num">2</div><div class="mob-install-txt">לחץ ⋮ → <b>"הוסף למסך הבית"</b></div></div><div class="mob-install-step"><div class="mob-install-num">3</div><div class="mob-install-txt">לחץ <b>"הוסף"</b> 🎉</div></div></div><button onclick="closeMobInstall()" style="width:100%;margin-top:18px;padding:12px;border-radius:10px;background:var(--ac);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">הבנתי!</button></div></div>
+<div id="return-toast"><div class="rt-emoji" id="rt-emoji">🔥</div><div class="rt-title" id="rt-title">ברוך השב!</div><div class="rt-sub" id="rt-sub">כל יום מסחר = צעד קדימה</div></div>
 
 </body>
 </html>
