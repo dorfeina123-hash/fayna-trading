@@ -1,0 +1,47 @@
+name: Auto-update index.html
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[auto]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find newly changed HTML files
+        id: find
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-list --max-parents=0 HEAD)
+          fi
+          FILES=$(git diff --name-only --diff-filter=ACMR "$BEFORE" "${{ github.sha }}" -- '*.html' | grep -v -E '^(index\.html|index_previous_backup\.html)$' || true)
+          COUNT=$(echo "$FILES" | grep -c . || true)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          FILE_FIRST=$(echo "$FILES" | head -n1)
+          echo "file=$FILE_FIRST" >> "$GITHUB_OUTPUT"
+
+      - name: Update index.html
+        if: steps.find.outputs.count == '1'
+        run: |
+          NEWFILE="${{ steps.find.outputs.file }}"
+          echo "Updating index.html from $NEWFILE"
+          if [ -f index.html ]; then
+            cp index.html index_previous_backup.html
+          fi
+          cp "$NEWFILE" index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html index_previous_backup.html
+          git commit -m "[auto] Update index.html from $NEWFILE"
+          git push
