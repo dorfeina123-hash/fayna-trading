@@ -18,12 +18,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 :root{--bg0:#111318;--bg1:#181c24;--bg2:#1e2330;--bg3:#252b3a;--bg4:#2d3444;
 --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
---t1:#e2e5ea;--t2:#8a96a8;--t3:#56606f;
+--t1:#e2e5ea;--t2:#8a96a8;--t3:#767f8e;
 --gr:#27a065;--gd:rgba(39,160,101,.11);--re:#c25858;--rd:rgba(194,88,88,.11);
 --go:#b8902a;--yd:rgba(184,144,42,.11);--bl:#4a8fa8;--bd:rgba(74,143,168,.10);
 --pu:#8f86c2;--pd:rgba(143,134,194,.10);--ac:#4a8fa8}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#111318;color:var(--t1);font-family:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+body{background:#111318;color:var(--t1);font-family:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+/* Emoji icon holders: center the glyph and give it enough room so it never crowds the adjacent label */
+.sn-icon,.mbn-icon{display:inline-flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
 .topnav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:16px;height:52px;position:sticky;top:0;z-index:200}
 .logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;white-space:nowrap;color:var(--t1)}
 .logo-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -105,7 +107,7 @@ body{background:#111318;color:var(--t1);font-family:'Heebo',-apple-system,BlinkM
 .sn-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;color:var(--t2);font-size:12px;font-weight:500;border-right:3px solid transparent;transition:background .12s,color .12s;white-space:nowrap;overflow:hidden;-webkit-tap-highlight-color:transparent}
 .sn-item:hover{background:var(--bg3);color:var(--t1)}
 .sn-item.active{background:var(--bg3);color:var(--t1);border-right-color:var(--ac)}
-.sn-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;line-height:1}
+.sn-icon{font-size:16px;width:24px;text-align:center;flex-shrink:0;line-height:1}
 .sn-lbl{overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
 .sidenav.sn-closed .sn-lbl{opacity:0;width:0}
 .sidenav.sn-closed .sn-item{padding:9px;justify-content:center;border-right-width:2px}
@@ -998,7 +1000,7 @@ body::before {
 .auth-tab.active { background: rgba(61,153,112,.15); color: #3d9970; }
 .auth-field { margin-bottom: 14px; }
 .auth-field label {
-  display: block; font-size: 10px; color: #545f72;
+  display: block; font-size: 10px; color: #767f8e;
   text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px;
 }
 .auth-field input {
@@ -1023,7 +1025,7 @@ body::before {
 .auth-msg { font-size: 11px; margin-top: 10px; text-align: center; min-height: 18px; }
 .auth-msg.ok { color: #3d9970; }
 .auth-msg.err { color: #c75f5f; }
-.auth-sep { text-align: center; font-size: 11px; color: #545f72; margin: 14px 0; }
+.auth-sep { text-align: center; font-size: 11px; color: #767f8e; margin: 14px 0; }
 .auth-switch { text-align: center; font-size: 12px; color: #8892a4; margin-top: 16px; }
 .auth-switch span { color: #3d9970; cursor: pointer; }
 .auth-switch span:hover { text-decoration: underline; }
@@ -1050,7 +1052,7 @@ body::before {
 .admin-row:last-child { border-bottom: none; }
 .admin-row-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .admin-row-title { font-size: 13px; color: #e8ecf4; }
-.admin-row-sub { font-size: 10px; color: #545f72; }
+.admin-row-sub { font-size: 10px; color: #767f8e; }
 .admin-input {
   width: 120px; padding: 7px 10px; font-size: 12px;
   border: 1px solid rgba(255,255,255,.12); border-radius: 6px;
@@ -1068,7 +1070,7 @@ body::before {
 .admin-save-btn:hover { background: rgba(144,137,189,.35); }
 .users-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .users-table th {
-  font-size: 9px; color: #545f72; text-transform: uppercase;
+  font-size: 9px; color: #767f8e; text-transform: uppercase;
   letter-spacing: .5px; text-align: right; padding: 0 8px 8px;
   border-bottom: 1px solid rgba(255,255,255,.07); cursor: pointer; user-select: none;
   white-space: nowrap;
@@ -1101,11 +1103,11 @@ body::before {
 .udp-header { padding: 18px 20px 14px; border-bottom: 1px solid rgba(255,255,255,.07); display:flex; align-items:center; gap:12px; }
 .udp-avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:#fff; flex-shrink:0; }
 .udp-tabs { display:flex; gap:0; border-bottom:1px solid rgba(255,255,255,.07); }
-.udp-tab { padding:10px 16px; font-size:11px; font-weight:600; color:#545f72; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; background:none; border-top:none; border-right:none; border-left:none; font-family:inherit; }
+.udp-tab { padding:10px 16px; font-size:11px; font-weight:600; color:#767f8e; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; background:none; border-top:none; border-right:none; border-left:none; font-family:inherit; }
 .udp-tab.active { color:#9089bd; border-bottom-color:#9089bd; }
 .udp-body { padding:16px 20px; }
 .udp-field { margin-bottom:12px; }
-.udp-field label { font-size:9px; color:#545f72; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:4px; }
+.udp-field label { font-size:9px; color:#767f8e; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:4px; }
 .udp-field span, .udp-field a { font-size:12px; color:#e8ecf4; }
 .udp-log-row { display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:11px; }
 .udp-log-row:last-child { border-bottom:none; }
@@ -1134,7 +1136,7 @@ body::before {
 
 .admin-logout {
   display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: #545f72; cursor: pointer;
+  font-size: 12px; color: #767f8e; cursor: pointer;
   padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.07);
   background: transparent; font-family: inherit;
   transition: all .15s; margin-right: auto;
@@ -1200,7 +1202,7 @@ body::before {
   background: rgba(255,255,255,.04);
   border: none;
   border-right: 1px solid rgba(255,255,255,.07);
-  color: #545f72;
+  color: #767f8e;
   cursor: pointer;
   font-size: 13px;
   transition: color .15s, background .15s;
@@ -1414,7 +1416,7 @@ body.edit-mode #edit-mode-bar { display:block; }
 .udp-perm-row:last-child{border-bottom:none}
 .udp-perm-info{flex:1;min-width:0}
 .udp-perm-label{font-size:12px;color:#c8d0de;font-weight:500}
-.udp-perm-sub{font-size:10px;color:#545f72;margin-top:1px}
+.udp-perm-sub{font-size:10px;color:#767f8e;margin-top:1px}
 .udp-perm-sel{padding:5px 8px;border-radius:6px;font-size:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#e8ecf4;font-family:inherit;cursor:pointer}
 /* nav lock badge */
 .nav-lock-badge{font-size:9px;vertical-align:middle;opacity:.7;margin-right:3px}
@@ -1921,7 +1923,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(190,150,80,.35);background:rgba(190,150,80,.1);color:#bfa15e;cursor:pointer;flex-shrink:0;transition:all .2s;padding:0" onmouseover="this.style.background='rgba(190,150,80,.25)'" onmouseout="this.style.background='rgba(190,150,80,.1)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
     <a id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(193,53,132,.35);background:rgba(193,53,132,.1);color:#e1306c;flex-shrink:0;transition:all .2s" onmouseover="this.style.background='rgba(193,53,132,.25)'" onmouseout="this.style.background='rgba(193,53,132,.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
     <button onclick="startTour()" title="סיור מודרך" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-size:14px;font-weight:700;flex-shrink:0;transition:all .15s" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--t3)'">?</button>
-    <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#545f72;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
+    <button id="nav-logout-btn" style="display:none;padding:5px 11px;border-radius:6px;font-size:11px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#767f8e;cursor:pointer;font-family:inherit" onclick="doLogout()">יציאה</button>
     <!-- Hamburger for mobile -->
     <button class="mob-menu-btn" id="mob-menu-btn" onclick="mobNavOpen()" title="תפריט">☰</button>
   </div>
@@ -3764,7 +3766,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div style="font-size:10px;color:var(--t3)">חדשות שווקים באנגלית</div>
         <div style="font-size:9px;color:var(--bl);margin-top:4px">cnbc.com ↗</div>
       </a>
-      <a href="https://www.bloomberg.com/markets" target="_blank" rel="noopener" style="text-decoration:none;background:var(--bg3);border-radius:8px;padding:10px 12px;display:block;transition:background .15s;border-right:3px solid #545f72" onmouseover="this.style.background='rgba(84,95,114,.15)'" onmouseout="this.style.background='var(--bg3)'">
+      <a href="https://www.bloomberg.com/markets" target="_blank" rel="noopener" style="text-decoration:none;background:var(--bg3);border-radius:8px;padding:10px 12px;display:block;transition:background .15s;border-right:3px solid #767f8e" onmouseover="this.style.background='rgba(84,95,114,.15)'" onmouseout="this.style.background='var(--bg3)'">
         <div style="font-size:11px;font-weight:700;color:var(--t1);margin-bottom:2px">🌐 Bloomberg</div>
         <div style="font-size:10px;color:var(--t3)">חדשות שווקים עולמיים</div>
         <div style="font-size:9px;color:var(--bl);margin-top:4px">bloomberg.com ↗</div>
@@ -4151,7 +4153,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
 <!-- REPORT MENU POPUP -->
 <div id="report-menu" style="position:fixed;z-index:800;background:#161b27;border:1px solid rgba(144,137,189,.25);border-radius:10px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.6);display:none;min-width:190px">
-  <div style="font-size:9px;color:#545f72;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px 8px">בחר תקופה</div>
+  <div style="font-size:9px;color:#767f8e;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px 8px">בחר תקופה</div>
   <div id="report-menu-type" style="display:none"></div>
   <div onclick="_doReport('week')"  style="padding:9px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:10px">📅 <span>דוח שבועי</span></div>
   <div onclick="_doReport('month')" style="padding:9px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:10px">📆 <span>דוח חודשי</span></div>
@@ -4168,7 +4170,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div id="udp-email" style="font-size:11px;color:#7295b8;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
     </div>
     <div id="udp-status-badge"></div>
-    <button onclick="closeUserDetail()" style="background:none;border:none;color:#545f72;cursor:pointer;font-size:18px;padding:4px;margin-right:4px">✕</button>
+    <button onclick="closeUserDetail()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:18px;padding:4px;margin-right:4px">✕</button>
   </div>
   <div class="udp-tabs">
     <button class="udp-tab active" id="udp-tab-info"     onclick="udpShowTab('info')">פרטים</button>
@@ -4204,11 +4206,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <!-- ACTIVITY TAB -->
     <div id="udp-body-activity" style="display:none">
-      <div style="font-size:10px;color:#545f72;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:10px;color:#767f8e;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
         <span>20 הפעולות האחרונות</span>
         <button onclick="udpLoadActivity()" style="background:none;border:none;color:#7295b8;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
       </div>
-      <div id="udp-activity-list"><div style="color:#545f72;text-align:center;padding:20px">טוען...</div></div>
+      <div id="udp-activity-list"><div style="color:#767f8e;text-align:center;padding:20px">טוען...</div></div>
     </div>
     <!-- ACTIONS TAB -->
     <div id="udp-body-actions" style="display:none">
@@ -4223,7 +4225,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <!-- NOTES TAB -->
     <div id="udp-body-notes" style="display:none">
-      <label style="font-size:9px;color:#545f72;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">הערות מנהל (פרטי, רק לך)</label>
+      <label style="font-size:9px;color:#767f8e;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">הערות מנהל (פרטי, רק לך)</label>
       <textarea class="udp-notes" id="udp-notes-ta" placeholder="הוסף הערות..."></textarea>
       <button onclick="udpSaveNote()" class="udp-btn primary" style="margin-top:8px;width:100%">💾 שמור הערה</button>
       <div id="udp-note-msg" style="font-size:11px;margin-top:6px;text-align:center;min-height:16px"></div>
@@ -4232,7 +4234,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div id="udp-body-perms" style="display:none">
       <div style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#8892a4;line-height:1.6">
         <b style="color:#9089bd">הרשאות אישיות</b> — עוקפות את הגדרות החבילה.<br>
-        <span style="color:#545f72">לפי חבילה = ברירת מחדל | ✅ מאופשר = מאפשר בכפייה | ❌ חסום = חוסם בכפייה</span>
+        <span style="color:#767f8e">לפי חבילה = ברירת מחדל | ✅ מאופשר = מאפשר בכפייה | ❌ חסום = חוסם בכפייה</span>
       </div>
       <div id="udp-perms-list"></div>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -4289,19 +4291,19 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div style="font-size:12px;font-weight:600;color:var(--gr);margin-bottom:10px">✉️ הוסף / הזמן משתמש</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">שם מלא <span class="req-star">*</span></label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">שם מלא <span class="req-star">*</span></label>
           <input type="text" id="inv-name" placeholder="ישראל ישראלי" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">אימייל <span class="req-star">*</span></label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימייל <span class="req-star">*</span></label>
           <input type="email" id="inv-email" placeholder="user@email.com" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">טלפון <span class="req-star">*</span></label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">טלפון <span class="req-star">*</span></label>
           <input type="tel" id="inv-phone" placeholder="050-0000000" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">חבילה</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">חבילה</label>
           <select id="inv-plan" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(30,37,53,1);color:#e8ecf4;font-family:inherit">
             <option value="free">Free</option><option value="pro">Pro</option><option value="lifetime">Lifetime</option>
           </select>
@@ -4312,7 +4314,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- USERS COUNT + FILTER STATUS -->
-    <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#545f72;margin-bottom:8px">
+    <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#767f8e;margin-bottom:8px">
       <span>סה"כ: <strong id="adm-user-count" style="color:#e8ecf4">0</strong> משתמשים</span>
       <span id="adm-filter-status" style="color:#9089bd"></span>
       <div style="margin-right:auto;display:flex;gap:6px">
@@ -4345,7 +4347,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <tbody id="admin-users-tbody"></tbody>
       </table>
     </div>
-    <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:#545f72;display:none">אין משתמשים רשומים עדיין</div>
+    <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:#767f8e;display:none">אין משתמשים רשומים עדיין</div>
   </div>
 
   <!-- LOGIN LOGS -->
@@ -4353,11 +4355,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div class="admin-section-title" style="margin-bottom:10px">
       <div class="dot" style="background:#7295b8"></div>לוג כניסות ופעילות (50 אחרונים)
       <button class="fb" id="logs-refresh-btn" onclick="refreshLoginLogs()" style="padding:3px 10px;font-size:10px;margin-right:auto">🔄 רענן</button>
-      <span id="logs-refresh-time" style="font-size:10px;color:#545f72"></span>
+      <span id="logs-refresh-time" style="font-size:10px;color:#767f8e"></span>
     </div>
     <div id="admin-online-users" style="margin-bottom:8px"></div>
     <div id="admin-login-logs" style="max-height:300px;overflow-y:auto;font-size:11px">
-      <div style="color:#545f72;text-align:center;padding:20px">לחץ "רענן" לטעינת הלוגים</div>
+      <div style="color:#767f8e;text-align:center;padding:20px">לחץ "רענן" לטעינת הלוגים</div>
     </div>
   </div>
 
@@ -4390,9 +4392,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         </div>
       </label>
       <input type="number" class="admin-input" id="adm-price-pro" value="29" min="0" step="1" style="width:80px">
-      <span style="font-size:11px;color:#545f72">$/חודש</span>
+      <span style="font-size:11px;color:#767f8e">$/חודש</span>
       <input type="number" class="admin-input" id="adm-price-pro-yr" value="199" min="0" step="1" style="width:80px;margin-right:6px">
-      <span style="font-size:11px;color:#545f72">$/שנה</span>
+      <span style="font-size:11px;color:#767f8e">$/שנה</span>
     </div>
     <!-- Lifetime toggle + price -->
     <div class="admin-row">
@@ -4407,7 +4409,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         </div>
       </label>
       <input type="number" class="admin-input" id="adm-price-life" value="399" min="0" step="1" style="width:80px">
-      <span style="font-size:11px;color:#545f72">$</span>
+      <span style="font-size:11px;color:#767f8e">$</span>
     </div>
     <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
       <button class="admin-save-btn" onclick="saveAdminPrices()">💾 שמור ועדכן לכולם</button>
@@ -4418,10 +4420,10 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <!-- PLAN FEATURE PERMISSIONS MATRIX -->
   <div class="admin-section" style="border-color:rgba(144,137,189,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#9089bd"></div>הרשאות לפי מנוי
-      <span style="font-size:10px;color:#545f72;font-weight:400;margin-right:8px">— מה כל חבילה יכולה לעשות</span>
+      <span style="font-size:10px;color:#767f8e;font-weight:400;margin-right:8px">— מה כל חבילה יכולה לעשות</span>
       <button class="fb" onclick="renderFeatureMatrix()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
     </div>
-    <div style="font-size:11px;color:#545f72;margin-bottom:14px">
+    <div style="font-size:11px;color:#767f8e;margin-bottom:14px">
       שנה הרשאות ולחץ שמור. השינויים ישפיעו על כל המשתמשים מיד. ניתן לעקוף לכל משתמש בנפרד דרך פרטי המשתמש ← 🔑 הרשאות.
     </div>
     <div style="overflow-x:auto">
@@ -4435,7 +4437,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           </tr>
         </thead>
         <tbody id="feat-matrix-body">
-          <tr><td colspan="4" style="text-align:center;color:#545f72;padding:16px">טוען...</td></tr>
+          <tr><td colspan="4" style="text-align:center;color:#767f8e;padding:16px">טוען...</td></tr>
         </tbody>
       </table>
     </div>
@@ -4450,12 +4452,12 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="admin-section">
     <div class="admin-section-title"><div class="dot" style="background:#7295b8"></div>קישורי תשלום + GROW</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="fr"><label style="font-size:10px;color:#545f72">💙 ביט — Pro</label><input type="text" id="bit-pro-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
-      <div class="fr"><label style="font-size:10px;color:#545f72">💙 ביט — Lifetime</label><input type="text" id="bit-life-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
-      <div class="fr"><label style="font-size:10px;color:#545f72">📱 פייבוקס — Pro</label><input type="text" id="paybox-pro-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
-      <div class="fr"><label style="font-size:10px;color:#545f72">📱 פייבוקס — Lifetime</label><input type="text" id="paybox-life-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
-      <div class="fr"><label style="font-size:10px;color:#545f72">💳 Stripe — Pro</label><input type="text" id="st-pro-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
-      <div class="fr"><label style="font-size:10px;color:#545f72">💳 Stripe — Lifetime</label><input type="text" id="st-life-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">💙 ביט — Pro</label><input type="text" id="bit-pro-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">💙 ביט — Lifetime</label><input type="text" id="bit-life-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">📱 פייבוקס — Pro</label><input type="text" id="paybox-pro-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">📱 פייבוקס — Lifetime</label><input type="text" id="paybox-life-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">💳 Stripe — Pro</label><input type="text" id="st-pro-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
+      <div class="fr"><label style="font-size:10px;color:#767f8e">💳 Stripe — Lifetime</label><input type="text" id="st-life-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
       <div class="fr" style="grid-column:1/-1"><label style="font-size:10px;color:#9089bd">🌱 קישור GROW (מוצג בעמוד תשלום)</label><input type="text" id="adm-grow-link" placeholder="https://..." style="font-size:11px;border-color:rgba(144,137,189,.3)"></div>
     </div>
     <button class="admin-save-btn" style="margin-top:10px" onclick="saveAdminSettings()">💾 שמור קישורים</button>
@@ -4477,7 +4479,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <span id="guide-upload-status" style="font-size:11px;color:#8892a4"></span>
       </div>
       <div id="guide-url-display" style="margin-top:10px;display:none">
-        <div style="font-size:10px;color:#545f72;margin-bottom:4px">קישור נוכחי:</div>
+        <div style="font-size:10px;color:#767f8e;margin-bottom:4px">קישור נוכחי:</div>
         <a id="guide-url-link" href="#" target="_blank" style="font-size:10px;color:#7295b8;word-break:break-all;direction:ltr;display:block"></a>
       </div>
     </div>
@@ -4493,7 +4495,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <input type="url" id="instagram-url-input" placeholder="https://instagram.com/yourprofile" dir="ltr"
           style="flex:1;min-width:200px;padding:8px 10px;font-size:12px;border:1px solid rgba(193,53,132,.3);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
         <button onclick="saveInstagramUrl()" style="padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(193,53,132,.4);color:#e1306c;background:rgba(193,53,132,.15);font-family:inherit;white-space:nowrap">💾 שמור</button>
-        <button onclick="clearInstagramUrl()" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:#545f72;background:transparent;font-family:inherit" title="הסר קישור">✕</button>
+        <button onclick="clearInstagramUrl()" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:#767f8e;background:transparent;font-family:inherit" title="הסר קישור">✕</button>
       </div>
       <div id="instagram-save-status" style="font-size:11px;margin-top:7px;min-height:14px"></div>
     </div>
@@ -4503,22 +4505,22 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div style="font-size:12px;font-weight:600;color:#9089bd;margin-bottom:12px;display:flex;align-items:center;gap:7px">🔐 פרטי כניסת אדמין</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">אימייל אדמין</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימייל אדמין</label>
           <input type="email" id="adm-new-email" placeholder="admin@email.com"
             style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">סיסמה חדשה</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">סיסמה חדשה</label>
           <input type="password" id="adm-new-pass" placeholder="סיסמה חדשה (6+ תווים)"
             style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">אימות סיסמה</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימות סיסמה</label>
           <input type="password" id="adm-new-pass2" placeholder="הזן שוב לאישור"
             style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">סיסמה נוכחית (לאישור)</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">סיסמה נוכחית (לאישור)</label>
           <input type="password" id="adm-cur-pass" placeholder="הזן סיסמה נוכחית"
             style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
         </div>
@@ -4531,7 +4533,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
     <!-- Banner / Broadcast -->
     <div style="margin-bottom:12px">
-      <label style="font-size:10px;color:#545f72;display:block;margin-bottom:8px">📣 שליחת הודעה למשתמשים</label>
+      <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:8px">📣 שליחת הודעה למשתמשים</label>
 
       <!-- Channel selector -->
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="notif-channel-btns">
@@ -4545,7 +4547,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <!-- Banner controls row -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">📅 הצג עד תאריך ושעה</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📅 הצג עד תאריך ושעה</label>
           <input type="datetime-local" id="adm-banner-expiry" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;outline:none" onfocus="this.style.borderColor='rgba(61,153,112,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'" title="ריק = ללא הגבלת זמן">
         </div>
         <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
@@ -4561,7 +4563,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <button class="admin-save-btn" onclick="saveAdminBanner()">📣 שמור ושלח</button>
         <span id="adm-banner-saved" style="font-size:11px;color:#3d9970;opacity:0;transition:opacity .3s"></span>
         <span id="adm-notif-progress" style="font-size:11px;color:#7295b8"></span>
-        <span id="adm-banner-status" style="font-size:10px;color:#545f72"></span>
+        <span id="adm-banner-status" style="font-size:10px;color:#767f8e"></span>
       </div>
     </div>
 
@@ -4570,11 +4572,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div style="font-size:11px;color:#7295b8;margin-bottom:12px;font-weight:500">📬 הגדרות יצירת קשר — כפתורים בלשונית עזרה</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">📧 כתובת מייל ליצירת קשר</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📧 כתובת מייל ליצירת קשר</label>
           <input type="email" class="admin-input" id="adm-contact-email" placeholder="your@email.com" style="width:100%;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">📱 מספר WhatsApp (עם קידומת מדינה)</label>
+          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📱 מספר WhatsApp (עם קידומת מדינה)</label>
           <input type="text" class="admin-input" id="adm-wa-number" placeholder="972501234567" style="width:100%;direction:ltr">
         </div>
       </div>
@@ -4607,9 +4609,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:14px">
       <div style="font-size:11px;color:#9089bd;margin-bottom:10px;font-weight:500">📧 EmailJS — מיילים אוטומטיים</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div><label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">Service ID</label><input type="text" class="admin-input" id="adm-ejs-service" placeholder="service_..." style="width:100%"></div>
-        <div><label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">Template ID</label><input type="text" class="admin-input" id="adm-ejs-template" placeholder="template_..." style="width:100%"></div>
-        <div><label style="font-size:10px;color:#545f72;display:block;margin-bottom:3px">Public Key</label><input type="text" class="admin-input" id="adm-ejs-pubkey" placeholder="xxxxxxxx" style="width:100%"></div>
+        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Service ID</label><input type="text" class="admin-input" id="adm-ejs-service" placeholder="service_..." style="width:100%"></div>
+        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Template ID</label><input type="text" class="admin-input" id="adm-ejs-template" placeholder="template_..." style="width:100%"></div>
+        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Public Key</label><input type="text" class="admin-input" id="adm-ejs-pubkey" placeholder="xxxxxxxx" style="width:100%"></div>
       </div>
       <button class="admin-save-btn" style="margin-top:10px" onclick="saveAdminEmailJS()">💾 שמור EmailJS</button>
     </div>
@@ -5165,7 +5167,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                 style="flex:1;padding:9px 12px;font-size:12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:rtl">
               <button onclick="sendChatMessage()" style="padding:9px 20px;background:var(--pu);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">שלח ✈️</button>
             </div>
-            <div id="chat-status" style="font-size:10px;color:#545f72;margin-top:6px;min-height:14px"></div>
+            <div id="chat-status" style="font-size:10px;color:#767f8e;margin-top:6px;min-height:14px"></div>
           </div>
 
           <!-- EMAIL + WHATSAPP CONTACT CARDS -->
@@ -5177,7 +5179,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                 <div style="width:42px;height:42px;border-radius:10px;background:rgba(114,149,184,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📧</div>
                 <div>
                   <div style="font-size:12px;font-weight:700;color:var(--t1)">שלח מייל</div>
-                  <div id="contact-email-display" style="font-size:10px;color:#545f72;margin-top:1px">dorfeina123@gmail.com</div>
+                  <div id="contact-email-display" style="font-size:10px;color:#767f8e;margin-top:1px">dorfeina123@gmail.com</div>
                   <div style="font-size:10px;color:var(--t3)">תגובה תוך 3 שעות</div>
                 </div>
               </div>
@@ -5190,7 +5192,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                 <div style="width:42px;height:42px;border-radius:10px;background:rgba(61,153,112,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📱</div>
                 <div>
                   <div style="font-size:12px;font-weight:700;color:var(--t1)">WhatsApp</div>
-                  <div id="contact-wa-display" style="font-size:10px;color:#545f72;margin-top:1px">זמינות: א-ה 9:00-18:00</div>
+                  <div id="contact-wa-display" style="font-size:10px;color:#767f8e;margin-top:1px">זמינות: א-ה 9:00-18:00</div>
                   <div style="font-size:10px;color:var(--t3)">הכי מהיר לתגובה</div>
                 </div>
               </a>
@@ -5428,6 +5430,13 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="modal" style="width:520px;max-height:92vh;overflow-y:auto">
     <h3>✏️ עריכת עסקה <button class="cx" onclick="taClose()">×</button></h3>
     <div id="ta-trade-info" style="background:var(--bg3);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"></div>
+
+    <div class="fr">
+      <label>💹 סימול לעסקה</label>
+      <input type="text" id="ta-sym" list="at-sym-list" autocomplete="off" placeholder="MNQM6, ESM6, MGCZ5..." oninput="_taSymHint()"
+        style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);text-transform:uppercase" dir="ltr">
+      <div id="ta-sym-hint" style="font-size:10px;color:var(--t3);margin-top:4px"></div>
+    </div>
 
     <div class="fr">
       <label>💰 עמלה לעסקה זו</label>
@@ -6059,7 +6068,7 @@ function renderOV() {
     data:{labels:['Win %','Profit Factor','Max DD','Avg W/L','Day Win'],
       datasets:[{data:radarData,backgroundColor:'rgba(144,137,189,.15)',borderColor:'#9089bd',borderWidth:2,pointBackgroundColor:'#9089bd',pointRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{r:{angleLines:{color:'rgba(255,255,255,.07)'},grid:{color:'rgba(255,255,255,.07)'},pointLabels:{color:'#545f72',font:{size:9}},ticks:{display:false},min:0,max:100}}}
+      scales:{r:{angleLines:{color:'rgba(255,255,255,.07)'},grid:{color:'rgba(255,255,255,.07)'},pointLabels:{color:'#767f8e',font:{size:9}},ticks:{display:false},min:0,max:100}}}
   });
 
   // ── HEATMAP ──
@@ -6109,7 +6118,7 @@ function renderOV() {
   let cum=0; const eq=chrono.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
   if(equityOvCh) equityOvCh.destroy();
   const eCtx = document.getElementById('equityOvChart');
-  if(eCtx) equityOvCh = new Chart(eCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(61,153,112,.35)');g.addColorStop(1,'rgba(61,153,112,.01)');return g;}),borderWidth:2,fill:true,pointRadius:0,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{display:false},y:{ticks:{color:'#545f72',font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:1000,easing:'easeInOutQuart'}}});
+  if(eCtx) equityOvCh = new Chart(eCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(61,153,112,.35)');g.addColorStop(1,'rgba(61,153,112,.01)');return g;}),borderWidth:2,fill:true,pointRadius:0,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{display:false},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:1000,easing:'easeInOutQuart'}}});
 
   // ── DAILY BARS ──
   const dailyMap={};
@@ -6117,7 +6126,7 @@ function renderOV() {
   const dk=Object.keys(dailyMap).sort();const dv=dk.map(k=>+dailyMap[k].toFixed(2));
   if(dailyOvCh) dailyOvCh.destroy();
   const dCtx = document.getElementById('dailyOvChart');
-  if(dCtx) dailyOvCh = new Chart(dCtx,{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dv,backgroundColor:dv.map(v=>v>=0?'rgba(61,153,112,.65)':'rgba(199,95,95,.65)'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{ticks:{color:'#545f72',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:8},callback:v=>(v<0?'−$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:900,easing:'easeOutBounce'}}});
+  if(dCtx) dailyOvCh = new Chart(dCtx,{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dv,backgroundColor:dv.map(v=>v>=0?'rgba(61,153,112,.65)':'rgba(199,95,95,.65)'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'−$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:900,easing:'easeOutBounce'}}});
 
   // ── RECENT TRADES ──
   const recent = [...tl].sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime)).slice(0,8);
@@ -6195,13 +6204,13 @@ function renderOV() {
   if(ddStatsEl)ddStatsEl.innerHTML=`Max DD: <span class="cr">$${Math.abs(maxDD2).toFixed(2)}</span>`;
   if(ddCh)ddCh.destroy();
   const ddCtx=document.getElementById('ddChart');
-  if(ddCtx)ddCh=new Chart(ddCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:ddArr,borderColor:'rgba(199,95,95,.8)',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,160);g.addColorStop(0,'rgba(199,95,95,.3)');g.addColorStop(1,'rgba(199,95,95,.01)');return g;}),borderWidth:1.5,fill:true,pointRadius:0,tension:0.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#545f72',font:{size:8},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:800}}});
+  if(ddCtx)ddCh=new Chart(ddCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:ddArr,borderColor:'rgba(199,95,95,.8)',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,160);g.addColorStop(0,'rgba(199,95,95,.3)');g.addColorStop(1,'rgba(199,95,95,.01)');return g;}),borderWidth:1.5,fill:true,pointRadius:0,tension:0.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:800}}});
 
   // ── SCATTER (trade time performance) ──
   const scatterData=tl.map(t=>({x:parseInt(t.btime.split(':')[0]),y:+tradeNet(t).toFixed(2),r:Math.max(2,Math.min(8,Math.abs(tradeNet(t))/20+2))}));
   if(scatterCh)scatterCh.destroy();
   const scCtx=document.getElementById('scatterChart');
-  if(scCtx)scatterCh=new Chart(scCtx,{type:'scatter',data:{datasets:[{data:scatterData,backgroundColor:scatterData.map(d=>d.y>=0?'rgba(61,153,112,.5)':'rgba(199,95,95,.45)'),pointRadius:scatterData.map(d=>d.r)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.x}:00 — $${c.raw.y.toFixed(2)}`}}},scales:{x:{ticks:{color:'#545f72',font:{size:8},callback:v=>v+':00'},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#545f72',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:600}}});
+  if(scCtx)scatterCh=new Chart(scCtx,{type:'scatter',data:{datasets:[{data:scatterData,backgroundColor:scatterData.map(d=>d.y>=0?'rgba(61,153,112,.5)':'rgba(199,95,95,.45)'),pointRadius:scatterData.map(d=>d.r)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.x}:00 — $${c.raw.y.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},callback:v=>v+':00'},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:600}}});
 
   // ── COMPANY BARS ──
   const co={};exp.forEach(r=>{co[r.company]=(co[r.company]||0)+r.amount;});
@@ -6347,14 +6356,14 @@ function renderExp(){
     return `<tr draggable="true" ondragstart="dStart(event,${ri})" ondragover="dOver(event)" ondrop="dDrop(event,${ri})" ondragleave="dLeave(event)" style="${r.done?'':'opacity:.6'}">
       <td><span class="dh">⠿</span></td>
       <td><input type="checkbox" class="chk" ${r.done?'checked':''} onchange="records[${ri}].done=this.checked;renderExp()"></td>
-      <td class="mono" style="font-size:11px;color:#545f72;white-space:nowrap">${fmtD(r.date)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(r.date)}</td>
       <td style="color:#8892a4;white-space:nowrap">${r.company||'—'}</td>
       <td><span class="cat ${catCls(r.cat)}" onclick="openCatP(${ri},event)">${r.cat||'—'} ▾</span></td>
       <td class="mono" style="color:var(--re);font-weight:600">$${r.amount.toFixed(2)}</td>
-      <td style="color:#545f72;font-size:11px">${fmtILS(r.amount*r.rate)}</td>
+      <td style="color:#767f8e;font-size:11px">${fmtILS(r.amount*r.rate)}</td>
       <td style="white-space:nowrap">${r.recurringId?'<span title="הוצאה חוזרת חודשית" style="font-size:11px;margin-left:4px">🔄</span>':''}<button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
-  }).join(''):`<tr><td colspan="10" style="text-align:center;padding:2rem;color:#545f72">אין רשומות</td></tr>`;
+  }).join(''):`<tr><td colspan="10" style="text-align:center;padding:2rem;color:#767f8e">אין רשומות</td></tr>`;
 }
 function fExp(f,b){expF=f;document.querySelectorAll('#efbar .fb:not([data-c])').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderExp();}
 function fCat(c,b){expC=c;document.querySelectorAll('#efbar .fb[data-c]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderExp();}
@@ -6378,15 +6387,15 @@ function renderWD(){
   document.getElementById('wd-tbody').innerHTML=wds.length?wds.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{
     const ri=records.indexOf(r);
     return `<tr>
-      <td class="mono" style="font-size:11px;color:#545f72">${fmtD(r.date)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(r.date)}</td>
       <td style="color:#8892a4">${r.company||'—'}</td>
       <td class="mono cy">$${(r.wdGross||r.amount).toFixed(2)}</td>
       <td style="color:#8892a4">${r.wdPct||0}%</td>
       <td class="mono cp" style="font-weight:700">$${(r.wdNet||r.amount).toFixed(2)}</td>
-      <td style="color:#545f72">${fmtILS((r.wdNet||r.amount)*r.rate)}</td>
+      <td style="color:#767f8e">${fmtILS((r.wdNet||r.amount)*r.rate)}</td>
       <td><button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
-  }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:#545f72">אין משיכות</td></tr>`;
+  }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:#767f8e">אין משיכות</td></tr>`;
 }
 
 // P&L
@@ -7257,12 +7266,12 @@ function renderTJ(){
     const spark = typeof _tradeSpark==='function' ? _tradeSpark(t,ti) : '';
     return `<tr class="tj-row" id="tj-row-${ti}" style="${sel?'background:rgba(74,143,168,.12)':''}">
       <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" ${sel?'checked':''} onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
-      <td class="mono" style="font-size:11px;color:#545f72;white-space:nowrap">${fmtD(t.date)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${t.sym}</td><td style="color:#545f72">${t.qty}</td>
-      <td class="mono" style="font-size:11px;color:#545f72">${t.buy.toFixed(2)}</td>
-      <td class="mono" style="font-size:11px;color:#545f72">${t.sell.toFixed(2)}</td>
+      <td style="color:#8892a4">${t.sym}</td><td style="color:#767f8e">${t.qty}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td style="padding:3px 5px">${spark}</td>
       <td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${tradeNet(t)>=0?'+':'−'}$${Math.abs(tradeNet(t)).toFixed(2)}</td>
@@ -7272,7 +7281,7 @@ function renderTJ(){
         <button class="act" onclick="delTrade(${ti})">🗑</button>
       </td>
     </tr>`;
-  }).join(''):`<tr><td colspan="11" style="text-align:center;padding:2rem;color:#545f72">אין עסקאות</td></tr>`;
+  }).join(''):`<tr><td colspan="11" style="text-align:center;padding:2rem;color:#767f8e">אין עסקאות</td></tr>`;
 }
 
 
@@ -8775,13 +8784,13 @@ function renderStats(){
   const ch=[...tl].sort((a,b)=>(a.date+a.btime).localeCompare(b.date+b.btime));
   let cum=0;const eq=ch.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
   if(eqCh)eqCh.destroy();
-  eqCh=new Chart(document.getElementById('eqchart'),{type:'line',data:{labels:ch.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:'rgba(61,153,112,0.07)',borderWidth:1.5,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#545f72',font:{size:8},maxTicksLimit:10},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  eqCh=new Chart(document.getElementById('eqchart'),{type:'line',data:{labels:ch.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:'rgba(61,153,112,0.07)',borderWidth:1.5,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxTicksLimit:10},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const dmap={};tl.forEach(t=>{dmap[t.date]=(dmap[t.date]||0)+tradeNet(t);});
   const dk=Object.keys(dmap).sort();const dd2=dk.map(k=>+dmap[k].toFixed(2));
   if(dCh)dCh.destroy();
-  dCh=new Chart(document.getElementById('dchart'),{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dd2,backgroundColor:dd2.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#545f72',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  dCh=new Chart(document.getElementById('dchart'),{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dd2,backgroundColor:dd2.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const srt=[...tl].sort((a,b)=>tradeNet(b)-tradeNet(a));
-  const rf=t=>`<tr><td class="mono" style="font-size:10px;color:#545f72">${fmtD(t.date)}</td><td style="color:#545f72;font-size:10px">${t.btime.slice(0,5)}</td><td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
+  const rf=t=>`<tr><td class="mono" style="font-size:10px;color:#767f8e">${fmtD(t.date)}</td><td style="color:#767f8e;font-size:10px">${t.btime.slice(0,5)}</td><td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
   document.getElementById('top10').innerHTML=srt.slice(0,10).map(rf).join('');
   document.getElementById('bot10').innerHTML=srt.slice(-10).reverse().map(rf).join('');
 
@@ -8797,11 +8806,11 @@ function renderStats(){
   const dowKeys=[0,1,2,3,4,5,6].filter(d=>dowData[d]);
   const dowVals=dowKeys.map(d=>+dowData[d].pnl.toFixed(2));
   if(dowCh)dowCh.destroy();
-  dowCh=new Chart(document.getElementById('dowChart'),{type:'bar',data:{labels:dowKeys.map(d=>days[d]),datasets:[{data:dowVals,backgroundColor:dowVals.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#545f72',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  dowCh=new Chart(document.getElementById('dowChart'),{type:'bar',data:{labels:dowKeys.map(d=>days[d]),datasets:[{data:dowVals,backgroundColor:dowVals.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('dow-tbody').innerHTML=dowKeys.map(d=>{
     const dd=dowData[d];const avg=dd.trades?dd.pnl/dd.trades:0;const wr=dd.trades?(dd.wins/dd.trades*100).toFixed(0):0;
-    return `<tr><td style="font-weight:500">${days[d]}</td><td>${dd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td style="color:#545f72">₪${fmtILS(dd.pnl*rate)}</td><td class="mono" style="color:#545f72">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td style="font-weight:500">${days[d]}</td><td>${dd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td style="color:#767f8e">₪${fmtILS(dd.pnl*rate)}</td><td class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 
   // Hour of day analysis
@@ -8815,10 +8824,10 @@ function renderStats(){
   const hrKeys=Object.keys(hourData).map(Number).sort((a,b)=>a-b);
   const hrVals=hrKeys.map(h=>+hourData[h].pnl.toFixed(2));
   if(hourCh)hourCh.destroy();
-  hourCh=new Chart(document.getElementById('hourChart'),{type:'bar',data:{labels:hrKeys.map(h=>h+':00'),datasets:[{data:hrVals,backgroundColor:hrVals.map(v=>v>=0?'rgba(114,149,184,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#545f72',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#545f72',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  hourCh=new Chart(document.getElementById('hourChart'),{type:'bar',data:{labels:hrKeys.map(h=>h+':00'),datasets:[{data:hrVals,backgroundColor:hrVals.map(v=>v>=0?'rgba(114,149,184,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   document.getElementById('hour-tbody').innerHTML=hrKeys.map(h=>{
     const hd=hourData[h];const avg=hd.trades?hd.pnl/hd.trades:0;const wr=hd.trades?(hd.wins/hd.trades*100).toFixed(0):0;
-    return `<tr><td style="font-weight:500">${h}:00–${h+1}:00</td><td>${hd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td style="color:#545f72">₪${fmtILS(hd.pnl*rate)}</td><td class="mono" style="color:#545f72">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td style="font-weight:500">${h}:00–${h+1}:00</td><td>${hd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td style="color:#767f8e">₪${fmtILS(hd.pnl*rate)}</td><td class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 }
 
@@ -9154,16 +9163,16 @@ function renderCX() {
     customExpenses.sort((a,b)=>b.date.localeCompare(a.date)).map(c=>{
       const ci = customExpenses.indexOf(c);
       return `<tr>
-        <td class="mono" style="font-size:11px;color:#545f72">${fmtD(c.date)}</td>
+        <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(c.date)}</td>
         <td><span class="cat cm">${c.category}</span></td>
         <td style="color:#8892a4">${c.desc}</td>
         <td class="mono cr">${fmt(c.amount)}</td>
         <td><span class="rate-tag">${c.rate}</span></td>
-        <td style="color:#545f72;font-size:11px">${fmtILS(c.amount*c.rate)}</td>
-        <td style="color:#545f72;font-size:11px">${c.note||'—'}</td>
+        <td style="color:#767f8e;font-size:11px">${fmtILS(c.amount*c.rate)}</td>
+        <td style="color:#767f8e;font-size:11px">${c.note||'—'}</td>
         <td><button class="act ed" onclick="openCX(${ci})">✏️</button><button class="act" onclick="cxAskDel(${ci})">🗑</button></td>
       </tr>`;
-    }).join('') : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#545f72">אין הוצאות עדיין</td></tr>`;
+    }).join('') : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#767f8e">אין הוצאות עדיין</td></tr>`;
 }
 
 let _cxEditI = -1;
@@ -10036,7 +10045,7 @@ function renderAcctMenu() {
       <div class="acct-name" style="flex:1">${a.name}</div>
       <div style="font-size:10px;color:var(--t3);margin-left:4px">${cnt} עסקאות</div>
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
-      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:#545f72;cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
+      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
     </div>`;
   }).join('');
 
@@ -10093,11 +10102,11 @@ function pickTradeAcct(ti, evt) {
   const picker = document.getElementById('acct-picker');
   if (!picker) return;
   const cur = tradesList[ti]?.acct || null;
-  const options = [{ id: null, name: 'ללא שיוך', color: '#545f72' }, ...accounts];
+  const options = [{ id: null, name: 'ללא שיוך', color: '#767f8e' }, ...accounts];
   picker.innerHTML = options.map(a =>
     `<div onclick="_setTradeAcct(${ti},'${a.id||''}')" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;${cur===(a.id||null)?'background:rgba(255,255,255,.07)':''}">
-      <span style="width:7px;height:7px;border-radius:50%;background:${a.color||'#545f72'};flex-shrink:0"></span>
-      <span style="flex:1">${a.name}${a.number?'<span style="font-size:10px;color:#545f72;margin-right:5px"> #'+a.number+'</span>':''}</span>
+      <span style="width:7px;height:7px;border-radius:50%;background:${a.color||'#767f8e'};flex-shrink:0"></span>
+      <span style="flex:1">${a.name}${a.number?'<span style="font-size:10px;color:#767f8e;margin-right:5px"> #'+a.number+'</span>':''}</span>
       ${cur===(a.id||null)?'<span style="color:#3d9970;font-size:10px">✓</span>':''}
     </div>`
   ).join('');
@@ -10337,7 +10346,7 @@ function showUpgradeModal(feature) {
           <div style="font-size:13px;font-weight:700;color:${pText[p]}">${pLabels[p]}</div>
           <div style="font-size:11px;color:#8892a4;margin-top:3px">לחץ לשדרוג חבילה ולקבלת גישה</div>
         </div>`).join('')
-    : '<div style="font-size:12px;color:#545f72;padding:12px">צור קשר עם הניהול לקבלת גישה לתכונה זו</div>';
+    : '<div style="font-size:12px;color:#767f8e;padding:12px">צור קשר עם הניהול לקבלת גישה לתכונה זו</div>';
   document.getElementById('upgrade-overlay').classList.add('show');
 }
 
@@ -10779,11 +10788,11 @@ function _showTodayEcalBriefing(todayEvents) {
     <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
       <span style="font-size:14px">📅</span>
       <span style="font-size:12px;font-weight:700;color:#bfa15e">הודעות ⭐⭐⭐ היום — ארה"ב</span>
-      <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:#545f72;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
+      <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:#767f8e;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
     </div>
     ${rows}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-      <div style="font-size:10px;color:#545f72">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
+      <div style="font-size:10px;color:#767f8e">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
       <button onclick="ecalForceRefresh()" style="background:rgba(191,161,94,.12);border:1px solid rgba(191,161,94,.25);color:#bfa15e;border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
     </div>
   </div>`;
@@ -11053,9 +11062,9 @@ async function sendWelcomeWA(users) {
         <div style="width:36px;height:36px;border-radius:9px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.25);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">🎉</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:700;color:#e8ecf4">ברכת ברוכים הבאים — WhatsApp</div>
-          <div style="font-size:10px;color:#545f72;margin-top:2px">${users.length} משתמשים חדשים · ${sent.size} נשלחו</div>
+          <div style="font-size:10px;color:#767f8e;margin-top:2px">${users.length} משתמשים חדשים · ${sent.size} נשלחו</div>
         </div>
-        <button onclick="(()=>{if(window._welcomeTimer)clearInterval(window._welcomeTimer);document.getElementById('_welcome-modal').remove()})()" style="background:none;border:none;color:#545f72;cursor:pointer;font-size:20px;padding:2px 6px">×</button>
+        <button onclick="(()=>{if(window._welcomeTimer)clearInterval(window._welcomeTimer);document.getElementById('_welcome-modal').remove()})()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;padding:2px 6px">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;padding:10px 20px">
         ${users.map((u,i) => {
@@ -11063,8 +11072,8 @@ async function sendWelcomeWA(users) {
           const url = `https://wa.me/${ph}?text=${encoded}`;
           const done = sent.has(i);
           return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);opacity:${done?.5:1}">
-            <div style="flex:1"><div style="font-size:12px;color:${done?'#545f72':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
-            <a href="${url}" target="_blank" rel="noopener" onclick="window._waSentIdx(${i})" style="flex-shrink:0;padding:5px 12px;background:${done?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${done?'#545f72':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${done?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">${done?'✓ נשלח':'📱 שלח'}</a>
+            <div style="flex:1"><div style="font-size:12px;color:${done?'#767f8e':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
+            <a href="${url}" target="_blank" rel="noopener" onclick="window._waSentIdx(${i})" style="flex-shrink:0;padding:5px 12px;background:${done?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${done?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${done?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">${done?'✓ נשלח':'📱 שלח'}</a>
           </div>`;
         }).join('')}
       </div>
@@ -11131,7 +11140,7 @@ function _renderWelcomeBadge(count) {
     <div style="width:38px;height:38px;border-radius:10px;background:rgba(61,153,112,.15);border:1px solid rgba(61,153,112,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;animation:pulse-dot 2s infinite">🎉</div>
     <div style="flex:1">
       <div style="font-size:13px;font-weight:700;color:#3d9970">${count} משתמש${count===1?'':'ים'} חד${count===1?'ש':'שים'} — ממתינ${count===1?'':'ים'} לברכת ברוכים הבאים</div>
-      <div style="font-size:10px;color:#545f72;margin-top:2px">יש לשלוח הודעת וואטספ אוטומטית · לחץ לשליחה</div>
+      <div style="font-size:10px;color:#767f8e;margin-top:2px">יש לשלוח הודעת וואטספ אוטומטית · לחץ לשליחה</div>
     </div>
     <button id="_welcome-send-btn" onclick="document.getElementById('_welcome-badge').dataset.sending='1';_checkWelcomePending().then(sendWelcomeWA)" style="padding:8px 16px;background:rgba(61,153,112,.2);color:#3d9970;border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">📱 שלח ברכות</button>
   `;
@@ -11255,7 +11264,7 @@ function renderFeatureMatrix() {
     return `<tr>
       <td>
         <div style="font-size:12px;color:#c8d0de;font-weight:500">${f.label}</div>
-        <div style="font-size:10px;color:#545f72;margin-top:1px">${f.desc}</div>
+        <div style="font-size:10px;color:#767f8e;margin-top:1px">${f.desc}</div>
       </td>${cells}
     </tr>`;
   }).join('');
@@ -11387,10 +11396,10 @@ async function refreshAdminUsers() {
   const allBtn = document.querySelector('[data-uf="all"]');
   if (allBtn) allBtn.classList.add('active');
   const tbody = document.getElementById('admin-users-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#545f72">טוען...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#767f8e">טוען...</td></tr>';
   const result = await _getUsers();
   if (result && result.error) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:#c75f5f;font-size:11px">❌ שגיאת Firestore: ${result.error}<br><span style="color:#545f72">בדוק הרשאות ו-indexes ב-Firebase Console</span></td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:#c75f5f;font-size:11px">❌ שגיאת Firestore: ${result.error}<br><span style="color:#767f8e">בדוק הרשאות ו-indexes ב-Firebase Console</span></td></tr>`;
     return;
   }
   _adminUsersCache = result || [];
@@ -11500,13 +11509,13 @@ function _renderUsersTable() {
     else if (isPending) badge = '<span style="background:rgba(191,161,94,.15);color:#bfa15e;border:1px solid rgba(191,161,94,.25);border-radius:3px;padding:1px 7px;font-size:10px">ממתין</span>';
     else                badge = '<span style="background:rgba(61,153,112,.12);color:#3d9970;border:1px solid rgba(61,153,112,.2);border-radius:3px;padding:1px 7px;font-size:10px">פעיל</span>';
     return `<tr style="${isBlocked?'opacity:.45':''}">
-      <td style="color:#545f72">${i+1}</td>
+      <td style="color:#767f8e">${i+1}</td>
       <td><span class="user-link" onclick="openUserDetail('${u.uid}')">${u.name||'—'}</span></td>
       <td style="color:#7295b8;font-size:11px">${u.email}</td>
       <td style="font-family:monospace;font-size:11px">${u.phone||'—'}</td>
-      <td style="color:#545f72;font-size:10px">${reg.toLocaleDateString('he-IL')}</td>
-      <td style="color:#545f72;font-size:10px">${last?last.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
-      <td style="color:#545f72;font-size:10px;text-align:center">${u.loginCount||0}</td>
+      <td style="color:#767f8e;font-size:10px">${reg.toLocaleDateString('he-IL')}</td>
+      <td style="color:#767f8e;font-size:10px">${last?last.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
+      <td style="color:#767f8e;font-size:10px;text-align:center">${u.loginCount||0}</td>
       <td><span style="background:${col}20;color:${col};border:1px solid ${col}40;border-radius:3px;padding:1px 7px;font-size:10px">${u.plan||'free'}</span></td>
       <td>${badge}</td>
       <td style="white-space:nowrap;display:flex;gap:4px;align-items:center">
@@ -11530,7 +11539,7 @@ async function refreshLoginLogs() {
   const timeEl   = document.getElementById('logs-refresh-time');
   const btn      = document.getElementById('logs-refresh-btn');
   if (!logsEl) return;
-  logsEl.innerHTML = '<div style="color:#545f72;text-align:center;padding:20px">טוען לוגים...</div>';
+  logsEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:20px">טוען לוגים...</div>';
   if (onlineEl) onlineEl.innerHTML = '';
   if (btn) btn.disabled = true;
   try {
@@ -11558,13 +11567,13 @@ async function refreshLoginLogs() {
             </div>
           </div>`;
       } else {
-        onlineEl.innerHTML = '<div style="font-size:11px;color:#545f72;padding:6px 0 8px">⚫ אין משתמשים מחוברים כרגע</div>';
+        onlineEl.innerHTML = '<div style="font-size:11px;color:#767f8e;padding:6px 0 8px">⚫ אין משתמשים מחוברים כרגע</div>';
       }
     }
 
     // ── Login log ──
     if (snap.empty) {
-      logsEl.innerHTML = '<div style="color:#545f72;text-align:center;padding:20px">אין לוגים עדיין</div>';
+      logsEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:20px">אין לוגים עדיין</div>';
     } else {
       const icons  = { login:'🟢', register:'✨', logout:'🔴' };
       const labels = { login:'כניסה', register:'הרשמה', logout:'יציאה' };
@@ -11578,8 +11587,8 @@ async function refreshLoginLogs() {
             ${l.name||'—'}
           </span>
           <span style="color:#7295b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.email}</span>
-          <span style="color:#545f72;min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
-          <span style="color:#545f72;min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
+          <span style="color:#767f8e;min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
+          <span style="color:#767f8e;min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
         </div>`;
       }).join('');
     }
@@ -11711,20 +11720,20 @@ async function adminQuickPlan(uid, plan, selectEl) {
 async function udpLoadActivity() {
   const listEl = document.getElementById('udp-activity-list');
   if (!listEl || !_udpCurrentUid) return;
-  listEl.innerHTML = '<div style="color:#545f72;text-align:center;padding:16px">טוען...</div>';
+  listEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:16px">טוען...</div>';
   try {
     const snap = await db.collection('loginLogs')
       .where('uid','==',_udpCurrentUid)
       .orderBy('timestamp','desc')
       .limit(20).get();
-    if (snap.empty) { listEl.innerHTML = '<div style="color:#545f72;text-align:center;padding:16px">אין פעילות רשומה</div>'; return; }
+    if (snap.empty) { listEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:16px">אין פעילות רשומה</div>'; return; }
     const icons  = { login:'🟢', register:'✨', logout:'🔴' };
     const labels = { login:'כניסה', register:'הרשמה', logout:'יציאה' };
     listEl.innerHTML = snap.docs.map(d => {
       const l = d.data(), ts = l.timestamp?.toDate ? l.timestamp.toDate() : new Date();
       return `<div class="udp-log-row">
         <span>${icons[l.action]||'•'} ${labels[l.action]||l.action}</span>
-        <span style="color:#545f72;font-size:10px">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
+        <span style="color:#767f8e;font-size:10px">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
       </div>`;
     }).join('');
   } catch(e) {
@@ -12069,12 +12078,12 @@ function _showEmailBroadcastModal(msg, targets) {
     <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px">
       <div style="flex:1">
         <div style="font-size:14px;font-weight:700;color:#e8ecf4">📧 שליחת Email — ${targets.length} משתמשים</div>
-        <div style="font-size:10px;color:#545f72;margin-top:2px">לחץ "פתח מייל" לכל משתמש לשליחה ידנית · <a href="https://www.emailjs.com" target="_blank" style="color:#7295b8">הגדר EmailJS</a> לשליחה אוטומטית</div>
+        <div style="font-size:10px;color:#767f8e;margin-top:2px">לחץ "פתח מייל" לכל משתמש לשליחה ידנית · <a href="https://www.emailjs.com" target="_blank" style="color:#7295b8">הגדר EmailJS</a> לשליחה אוטומטית</div>
       </div>
-      <button onclick="document.getElementById('_email-bc-modal').remove()" style="background:none;border:none;color:#545f72;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
+      <button onclick="document.getElementById('_email-bc-modal').remove()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
     </div>
     <div style="padding:14px 22px;background:rgba(114,149,184,.06);border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="font-size:10px;color:#545f72;margin-bottom:4px">תוכן ההודעה:</div>
+      <div style="font-size:10px;color:#767f8e;margin-bottom:4px">תוכן ההודעה:</div>
       <div style="font-size:12px;color:#e8ecf4;line-height:1.6;white-space:pre-wrap">${msg}</div>
     </div>
     <div style="overflow-y:auto;flex:1;padding:8px 22px 12px">${rows}</div>
@@ -12103,9 +12112,9 @@ async function sendNotifWhatsApp(msg) {
     const url = `https://wa.me/${ph}?text=${encoded}`;
     const isSent = sent.has(i);
     return `<div id="wa-row-${i}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);opacity:${isSent?.5:1}">
-      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#545f72':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
+      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#767f8e':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
       <a href="${url}" target="_blank" rel="noopener" onclick="waMarkSent(${i})"
-        style="flex-shrink:0;padding:5px 12px;background:${isSent?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${isSent?'#545f72':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${isSent?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">
+        style="flex-shrink:0;padding:5px 12px;background:${isSent?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${isSent?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${isSent?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">
         ${isSent ? '✓ נשלח' : '📱 שלח'}
       </a>
     </div>`;
@@ -12120,12 +12129,12 @@ async function sendNotifWhatsApp(msg) {
         <div style="width:38px;height:38px;border-radius:10px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.25);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📱</div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:700;color:#e8ecf4">WhatsApp Broadcast</div>
-          <div style="font-size:10px;color:#545f72;margin-top:2px">${targets.length} משתמשים · ${sent.size} נשלחו</div>
+          <div style="font-size:10px;color:#767f8e;margin-top:2px">${targets.length} משתמשים · ${sent.size} נשלחו</div>
         </div>
-        <button onclick="if(_waBroadcastTimer)clearInterval(_waBroadcastTimer);document.getElementById('wa-broadcast-modal').remove()" style="background:none;border:none;color:#545f72;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
+        <button onclick="if(_waBroadcastTimer)clearInterval(_waBroadcastTimer);document.getElementById('wa-broadcast-modal').remove()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
       </div>
       <div style="padding:14px 22px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:10px;color:#545f72;margin-bottom:6px">תצוגה מקדימה של ההודעה (WhatsApp):</div>
+        <div style="font-size:10px;color:#767f8e;margin-bottom:6px">תצוגה מקדימה של ההודעה (WhatsApp):</div>
         <div style="background:#1a1f2e;border-radius:8px;padding:12px 14px;font-size:12px;color:#e8ecf4;line-height:1.7;white-space:pre-wrap;direction:rtl;border:1px solid rgba(61,153,112,.15)">${branded.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/_([^_\n]+)_/g,'<i>$1</i>')}</div>
         <div style="display:flex;gap:8px;margin-top:10px">
           <button onclick="waAutoSend()" id="wa-auto-btn" style="flex:1;padding:8px;background:rgba(61,153,112,.2);color:#3d9970;border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🚀 שלח לכולם אוטו (${targets.length - sent.size})</button>
@@ -12457,7 +12466,7 @@ async function sendRegistrationEmail(user) {
       <tr><td style="padding:10px 0;color:#8892a4;font-size:12px">תאריך</td>
           <td style="padding:10px 0">${dateStr}</td></tr>
     </table>
-    <div style="margin-top:24px;background:#161b27;border-radius:8px;padding:14px;font-size:12px;color:#545f72;text-align:center">
+    <div style="margin-top:24px;background:#161b27;border-radius:8px;padding:14px;font-size:12px;color:#767f8e;text-align:center">
       Fayna Trading Admin Panel — fayna-trading.firebaseapp.com
     </div>
   </div>
@@ -12480,7 +12489,7 @@ async function sendRegistrationEmail(user) {
   const logoUrl    = siteUrl + 'fayna_logo.jpg';
   const guideUrl   = window._guideUrl || '';
   const igUrl      = window._instagramUrl || '';
-  const unsubLine  = `<br><a href="mailto:${ADMIN_EMAIL}?subject=הסר%20אותי%20מרשימת%20התפוצה" style="color:#545f72;font-size:10px">הסר אותי מרשימת תפוצה</a>`;
+  const unsubLine  = `<br><a href="mailto:${ADMIN_EMAIL}?subject=הסר%20אותי%20מרשימת%20התפוצה" style="color:#767f8e;font-size:10px">הסר אותי מרשימת תפוצה</a>`;
 
   const welcomeHtml = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -12900,6 +12909,9 @@ function openTradeAnnotate(ti) {
       ? `חישוב אוטומטי: $${autoComm} (${t.qty} חוזים × $${commSettings.ratePerContract})`
       : 'חישוב עמלות כבוי — ניתן להזין ידנית';
   }
+  // Symbol (editable) — populate datalist with defaults + custom symbols
+  const symEl = document.getElementById('ta-sym');
+  if (symEl) { symEl.value = t.sym || ''; if (typeof _refreshSymDatalist === 'function') _refreshSymDatalist(); _taSymHint(); }
   // Tags
   _taTags = Array.isArray(t.tags) ? [...t.tags] : [];
   _renderTagsInput();
@@ -12907,6 +12919,26 @@ function openTradeAnnotate(ti) {
   const stopEl = document.getElementById('ta-stop');
   if (stopEl) { stopEl.value = t.stopLoss || ''; _updateRR(t); }
   document.getElementById('ta-modal').classList.add('open');
+}
+
+// Live hint under the symbol field — shows multiplier/type and previews the recalculated P&L
+function _taSymHint() {
+  const el   = document.getElementById('ta-sym');
+  const hint = document.getElementById('ta-sym-hint');
+  if (!el || !hint) return;
+  const sym = (el.value || '').toUpperCase().trim();
+  if (!sym) { hint.textContent = ''; return; }
+  const mult  = _getFuturesMultiplier(sym);
+  const micro = _isMicroContract(sym);
+  const cs    = _customSymbolFor(sym);
+  const kind  = cs ? (cs.name || cs.sym) : (micro ? 'מיקרו' : 'E-mini');
+  let txt = `$${mult}/נקודה · ${kind}`;
+  const t = tradesList[_taIdx];
+  if (t && isFinite(t.buy) && isFinite(t.sell) && t.qty && sym !== (t.sym || '').toUpperCase()) {
+    const newPnl = +((t.sell - t.buy) * t.qty * mult).toFixed(2);
+    txt += ` · גרוס P&L יעודכן ל-${newPnl >= 0 ? '+' : '−'}$${Math.abs(newPnl).toFixed(2)}`;
+  }
+  hint.textContent = txt;
 }
 
 function _updateRR(t) {
@@ -13004,6 +13036,19 @@ function openImgLightbox(src) {
 
 function taSave() {
   if (_taIdx < 0 || !tradesList[_taIdx]) return;
+  // Symbol — allow setting/changing it; recompute gross P&L if the multiplier changed
+  const symEl = document.getElementById('ta-sym');
+  if (symEl) {
+    const newSym = (symEl.value || '').toUpperCase().trim();
+    const tr = tradesList[_taIdx];
+    if (newSym && newSym !== (tr.sym || '').toUpperCase()) {
+      tr.sym = newSym;
+      // buy/sell already encode entry/exit direction → (sell-buy)*qty*mult is the signed gross P&L
+      if (isFinite(tr.buy) && isFinite(tr.sell) && tr.qty) {
+        tr.pnl = +((tr.sell - tr.buy) * tr.qty * _getFuturesMultiplier(newSym)).toFixed(2);
+      }
+    }
+  }
   tradesList[_taIdx].strategy = document.getElementById('ta-strategy').value.trim();
   tradesList[_taIdx].notes    = document.getElementById('ta-notes').value.trim();
   tradesList[_taIdx].stars    = _taStars;
@@ -13014,7 +13059,8 @@ function taSave() {
   const commVal = document.getElementById('ta-comm').value.trim();
   tradesList[_taIdx].commOverride = commVal !== '' ? +parseFloat(commVal).toFixed(2) : null;
   taClose();
-  renderTJ();
+  renderAll();
+  saveData();
   showToast('עסקה עודכנה בהצלחה ✅');
 }
 
@@ -13165,7 +13211,7 @@ window.renderTJ = function renderTJ() {
       ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap;cursor:pointer" onclick="pickTradeAcct(${ti},event)" title="שנה תיק">
            <span style="width:6px;height:6px;border-radius:50%;background:${acctObj.color};flex-shrink:0"></span>${acctObj.name}${acctObj.number?'<span style="font-size:9px;opacity:.6"> #'+acctObj.number+'</span>':''}
          </span>`
-      : `<span style="font-size:10px;color:#545f72;cursor:pointer;border:1px dashed rgba(255,255,255,.15);border-radius:4px;padding:1px 7px" onclick="pickTradeAcct(${ti},event)" title="שייך לתיק">+ תיק</span>`;
+      : `<span style="font-size:10px;color:#767f8e;cursor:pointer;border:1px dashed rgba(255,255,255,.15);border-radius:4px;padding:1px 7px" onclick="pickTradeAcct(${ti},event)" title="שייך לתיק">+ תיק</span>`;
     const starCount = t.stars || 0;
     const starsHtml = starCount
       ? `<span style="color:#bfa15e;font-size:11px">${'★'.repeat(starCount)}</span><span style="color:var(--t3);font-size:11px">${'★'.repeat(5-starCount)}</span>`
@@ -13182,13 +13228,13 @@ window.renderTJ = function renderTJ() {
     const noteTitle = t.notes ? `title="${t.notes.replace(/"/g,'&quot;')}"` : '';
     return `<tr id="tj-row-${ti}" ${noteTitle}>
       <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
-      <td class="mono" style="font-size:11px;color:#545f72">${fmtD(t.date)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
       <td style="color:#8892a4">${t.sym}</td>
-      <td style="color:#545f72">${t.qty}</td>
-      <td class="mono" style="font-size:11px;color:#545f72">${t.buy.toFixed(2)}</td>
-      <td class="mono" style="font-size:11px;color:#545f72">${t.sell.toFixed(2)}</td>
+      <td style="color:#767f8e">${t.qty}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
       <td><div>${stratHtml}</div>${tagsHtml}</td>
@@ -13199,7 +13245,7 @@ window.renderTJ = function renderTJ() {
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
     </tr>`;
-  }).join('') : `<tr><td colspan="14" style="text-align:center;padding:2rem;color:#545f72">אין עסקאות</td></tr>`;
+  }).join('') : `<tr><td colspan="14" style="text-align:center;padding:2rem;color:#767f8e">אין עסקאות</td></tr>`;
 }
 
 function fStrat(s, b) {
@@ -14346,7 +14392,7 @@ function installPWA() {
     steps = [
       `חפש את אייקון <strong style="color:#7295b8">⊕</strong> בצד ימין של שורת הכתובת`,
       `לחץ עליו ← <strong style="color:#3d9970">״התקן״</strong>`,
-      `<em style="color:#545f72">אם לא מופיע:</em> לחץ <strong style="color:#7295b8">⋮</strong> ← <strong style="color:#3d9970">״שמור ושתף״</strong> ← <strong style="color:#3d9970">״התקן את הדף הזה כאפליקציה״</strong>`
+      `<em style="color:#767f8e">אם לא מופיע:</em> לחץ <strong style="color:#7295b8">⋮</strong> ← <strong style="color:#3d9970">״שמור ושתף״</strong> ← <strong style="color:#3d9970">״התקן את הדף הזה כאפליקציה״</strong>`
     ];
     tip = 'האפליקציה תיפתח בחלון נפרד ללא שורת כתובת';
   }
@@ -14356,13 +14402,13 @@ function installPWA() {
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:20000;display:flex;align-items:center;justify-content:center;padding:16px';
   m.innerHTML = `
     <div style="background:#161b27;border:1px solid rgba(61,153,112,.2);border-radius:18px;padding:28px 24px;max-width:360px;width:100%;position:relative;direction:rtl;box-shadow:0 24px 60px rgba(0,0,0,.7)">
-      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:#545f72;font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
+      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:#767f8e;font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
       <div style="text-align:center;font-size:36px;margin-bottom:10px">${icon}</div>
       <div style="font-size:16px;font-weight:700;color:#e8ecf4;text-align:center;margin-bottom:18px">${title}</div>
       <ol style="padding-right:18px;margin:0 0 16px;line-height:1">
         ${steps.map(s => `<li style="font-size:13px;color:#8892a4;margin-bottom:11px;line-height:1.6">${s}</li>`).join('')}
       </ol>
-      <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.18);border-radius:8px;padding:9px 12px;font-size:11px;color:#545f72;text-align:center">
+      <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.18);border-radius:8px;padding:9px 12px;font-size:11px;color:#767f8e;text-align:center">
         💡 ${tip}
       </div>
     </div>`;
@@ -15570,7 +15616,7 @@ function _sessionWarning() {
     <div style="font-size:12px;color:#8892a4;margin-bottom:20px;line-height:1.6" id="ugm-desc"></div>
     <div id="ugm-plans" style="margin-bottom:8px"></div>
     <div style="margin-top:4px;display:flex;gap:8px;justify-content:center">
-      <button onclick="closeUpgradeModal()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#545f72;cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
+      <button onclick="closeUpgradeModal()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#767f8e;cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
     </div>
   </div>
 </div>
