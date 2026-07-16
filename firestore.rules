@@ -1,0 +1,74 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Fayna Trading — Firestore Security Rules
+//
+//  THIS is the real security boundary. The Firebase API key in the HTML is public
+//  by design; nothing that runs in the browser can be trusted. These server-side
+//  rules are what actually stop a user from reading other people's data or making
+//  themselves an admin.
+//
+//  Deploy:  Firebase Console → Firestore Database → Rules → paste → Publish
+//  (or:  firebase deploy --only firestore:rules)
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The admin is identified by the email on the auth token (set by Firebase Auth,
+    // NOT by any field a user can write). Change this if the admin email changes.
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email == 'dorfeina123@gmail.com';
+    }
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    // ── users/{uid} : profile + trading data (td_* fields) ──
+    match /users/{uid} {
+      allow read:   if isOwner(uid) || isAdmin();
+
+      // A user may create ONLY their own doc, and may NOT self-assign admin.
+      allow create: if isOwner(uid)
+                    && (isAdmin() || request.resource.data.isAdmin == false);
+
+      // A user may update their own doc but may NOT change the privileged fields
+      // (isAdmin / plan / status / email). Only the admin can change those.
+      allow update: if isAdmin()
+                    || ( isOwner(uid)
+                         && request.resource.data.isAdmin == resource.data.isAdmin
+                         && request.resource.data.plan    == resource.data.plan
+                         && request.resource.data.status  == resource.data.status
+                         && request.resource.data.email   == resource.data.email );
+
+      allow delete: if isAdmin();
+    }
+
+    // ── invites/{email} : plan pre-assignment, consumed at registration ──
+    match /invites/{email} {
+      // A signed-in user may read/delete only the invite addressed to their email.
+      allow read, delete: if isAdmin()
+                          || (isSignedIn() && request.auth.token.email == email);
+      allow create, update: if isAdmin();
+    }
+
+    // ── settings/{doc} : app-wide settings (contact info, EmailJS public config) ──
+    match /settings/{doc} {
+      allow read:  if isSignedIn();   // app needs contact/EmailJS config
+      allow write: if isAdmin();
+    }
+
+    // ── loginLogs/{id} : login/register activity ──
+    match /loginLogs/{id} {
+      allow create: if isSignedIn();  // a user logs their own activity
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── admin-only collections ──
+    match /adminNotes/{id} { allow read, write: if isAdmin(); }
+    match /adminLogs/{id}  { allow read, write: if isAdmin(); }
+
+    // ── deny everything not explicitly allowed above ──
+    match /{document=**} { allow read, write: if false; }
+  }
+}
