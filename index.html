@@ -2296,18 +2296,17 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </div>
   </div>
 
-  <!-- Start my day btn -->
-  <button class="btn-p" onclick="sw('trades')" style="font-size:11px;padding:6px 13px;background:linear-gradient(135deg,#5e5395,#7f73b2)">
-    📓 פתח יומן עסקאות
+  <!-- Calculator toggle -->
+  <button class="btn-p" onclick="calcToggle()" title="מחשבון" style="font-size:11px;padding:6px 13px;background:linear-gradient(135deg,#5e5395,#7f73b2)">
+    🧮 מחשבון
   </button>
 </div>
 
-  <!-- Last import + header -->
+  <!-- Last import -->
   <div class="last-import anim-fade">
     <span>Last import: <span id="ov-last-import">—</span></span>
     <a href="#" onclick="renderAll();return false">🔄 Resync</a>
     <span style="margin-right:auto"></span>
-    <button class="btn-p" onclick="sw('trades')" style="font-size:11px;padding:5px 12px">📓 פתח יומן</button>
   </div>
 
   <!-- ROW 0: TradeReport-style gauges (Win Rate / Success Rate / Avg P&L / Trades+PnL) -->
@@ -2837,7 +2836,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- TRADES JOURNAL -->
 <div class="tp" id="tp-trades">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div><div style="font-size:15px;font-weight:600">יומן עסקאות — Rithmic R Pro</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מ-Rithmic R Pro ← לחץ "ייבא CSV"</div></div>
+    <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מהפלטפורמה ← לחץ "ייבא CSV / Excel"</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="openAddTrade()" class="btn-p" style="font-size:11px;padding:6px 13px">+ עסקה</button>
       <button id="tj-del-sel" onclick="tjDeleteSelected()" style="display:none;padding:6px 14px;background:rgba(194,88,88,.15);border:1px solid rgba(194,88,88,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--re);font-family:inherit;font-weight:700">🗑 מחק נבחרות (<span id="tj-del-n">0</span>)</button>
@@ -7208,7 +7207,10 @@ function renderCal(){
 function showDayTrades(date){
   const day=tradesList.filter(t=>t.date===date).sort((a,b)=>a.btime.localeCompare(b.btime));
   if(!day.length)return;
+  const gross=day.reduce((s,t)=>s+(+t.pnl||0),0);
+  const comm =day.reduce((s,t)=>s+tradeComm(t),0);
   const total=day.reduce((s,t)=>s+tradeNet(t),0);
+  const contracts=day.reduce((s,t)=>s+(+t.qty||0),0);
   const wins=day.filter(t=>tradeNet(t)>0).length;
   const rows=day.map(t=>{
     const net=tradeNet(t);
@@ -7229,6 +7231,23 @@ function showDayTrades(date){
       </div>
       <div style="font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;class:${total>=0?'cg':'cr'};color:${total>=0?'var(--gr)':'var(--re)'}">${total>=0?'+':'−'}$${Math.abs(total).toFixed(2)}</div>
     </div>
+    <div style="display:flex;justify-content:space-between;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-family:'IBM Plex Mono',monospace">
+      <div style="text-align:center;flex:1">
+        <div style="font-size:9px;color:var(--t3);margin-bottom:2px;font-family:'Heebo',sans-serif">ברוטו (לפני עמלות)</div>
+        <div style="font-size:13px;font-weight:700;color:${gross>=0?'var(--gr)':'var(--re)'}">${gross>=0?'+':'−'}$${Math.abs(gross).toFixed(2)}</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div style="text-align:center;flex:1">
+        <div style="font-size:9px;color:var(--t3);margin-bottom:2px;font-family:'Heebo',sans-serif">עמלות (${contracts} חוזים)</div>
+        <div style="font-size:13px;font-weight:700;color:var(--re)">−$${comm.toFixed(2)}</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div style="text-align:center;flex:1">
+        <div style="font-size:9px;color:var(--t3);margin-bottom:2px;font-family:'Heebo',sans-serif">נטו</div>
+        <div style="font-size:13px;font-weight:700;color:${total>=0?'var(--gr)':'var(--re)'}">${total>=0?'+':'−'}$${Math.abs(total).toFixed(2)}</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:10px;line-height:1.5">💡 היומן מציג <b>נטו</b> (אחרי עמלות). דשבורד הברוקר לרוב מציג <b>ברוטו</b>. אם העמלות כאן גבוהות מהאמת — כוונן ב<b>הוצאות חופשיות ← הגדרות עמלות</b> או כבה חישוב אוטומטי.</div>
     <table style="width:100%;border-collapse:collapse">${rows}</table>
     <div style="text-align:left;margin-top:14px">
       <button onclick="this.closest('[style*=fixed]').remove()" style="padding:6px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t2);cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
@@ -15650,6 +15669,113 @@ function _sessionWarning() {
     <button class="chat-send-btn" onclick="chatSend()">➤</button>
   </div>
 </div>
+
+<!-- ═══ CALCULATOR ═══ -->
+<style>
+.calc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:950;display:none;align-items:center;justify-content:center}
+.calc-overlay.open{display:flex}
+.calc-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:16px;width:280px;box-shadow:0 16px 48px rgba(0,0,0,.5);direction:ltr}
+.calc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;direction:rtl}
+.calc-title{font-size:13px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:6px}
+.calc-close{background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
+.calc-close:hover{color:var(--t1)}
+.calc-screen{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:12px;text-align:right;min-height:64px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.calc-expr{font-size:12px;color:var(--t3);font-family:'IBM Plex Mono',monospace;min-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+.calc-out{font-size:28px;font-weight:700;color:var(--t1);font-family:'IBM Plex Mono',monospace;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-key{border:none;border-radius:10px;padding:14px 0;font-size:17px;font-weight:600;font-family:'IBM Plex Mono',monospace;cursor:pointer;background:var(--bg3);color:var(--t1);transition:filter .1s,transform .05s;-webkit-tap-highlight-color:transparent}
+.calc-key:hover{filter:brightness(1.15)}
+.calc-key:active{transform:scale(.95)}
+.calc-key.op{background:rgba(114,149,184,.18);color:#7295b8}
+.calc-key.fn{background:var(--bg4);color:var(--t2);font-size:15px}
+.calc-key.eq{background:var(--ac);color:#0e1116;grid-row:span 1}
+.calc-key.wide{grid-column:span 2}
+@media(max-width:400px){.calc-box{width:min(280px,calc(100vw - 24px))}}
+</style>
+<div class="calc-overlay" id="calc-overlay" onclick="if(event.target===this)calcToggle()">
+  <div class="calc-box">
+    <div class="calc-head">
+      <span class="calc-title">🧮 מחשבון</span>
+      <button class="calc-close" onclick="calcToggle()" title="סגור">×</button>
+    </div>
+    <div class="calc-screen">
+      <div class="calc-expr" id="calc-expr"></div>
+      <div class="calc-out" id="calc-out">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="calc-key fn" onclick="calcClear()">C</button>
+      <button class="calc-key fn" onclick="calcBack()">⌫</button>
+      <button class="calc-key fn" onclick="calcInput('%')">%</button>
+      <button class="calc-key op" onclick="calcInput('/')">÷</button>
+      <button class="calc-key" onclick="calcInput('7')">7</button>
+      <button class="calc-key" onclick="calcInput('8')">8</button>
+      <button class="calc-key" onclick="calcInput('9')">9</button>
+      <button class="calc-key op" onclick="calcInput('*')">×</button>
+      <button class="calc-key" onclick="calcInput('4')">4</button>
+      <button class="calc-key" onclick="calcInput('5')">5</button>
+      <button class="calc-key" onclick="calcInput('6')">6</button>
+      <button class="calc-key op" onclick="calcInput('-')">−</button>
+      <button class="calc-key" onclick="calcInput('1')">1</button>
+      <button class="calc-key" onclick="calcInput('2')">2</button>
+      <button class="calc-key" onclick="calcInput('3')">3</button>
+      <button class="calc-key op" onclick="calcInput('+')">+</button>
+      <button class="calc-key wide" onclick="calcInput('0')">0</button>
+      <button class="calc-key" onclick="calcInput('.')">.</button>
+      <button class="calc-key eq" onclick="calcEquals()">=</button>
+    </div>
+  </div>
+</div>
+<script>
+let _calcExpr = '';
+function calcToggle(){
+  const ov = document.getElementById('calc-overlay');
+  const open = ov.classList.toggle('open');
+  if(open){ document.addEventListener('keydown', _calcKey); }
+  else    { document.removeEventListener('keydown', _calcKey); }
+}
+function _calcRender(){
+  const out = document.getElementById('calc-out');
+  const ex  = document.getElementById('calc-expr');
+  ex.textContent = _calcExpr.replace(/\*/g,'×').replace(/\//g,'÷');
+  // live preview of result
+  const val = _calcEval(_calcExpr);
+  out.textContent = (val===null) ? (_calcExpr ? '…' : '0') : _calcFmt(val);
+}
+function _calcFmt(n){
+  if(!isFinite(n)) return 'Error';
+  const r = Math.round(n*1e10)/1e10;
+  return r.toLocaleString('en-US',{maximumFractionDigits:6});
+}
+function _calcEval(expr){
+  if(!expr) return null;
+  // percent: turn "50%" into "(50/100)"
+  let e = expr.replace(/(\d+\.?\d*)%/g, '($1/100)');
+  if(!/^[\d+\-*/.()\s]*$/.test(e)) return null;      // only safe chars
+  if(/[+\-*/.]$/.test(e.trim())) return null;         // incomplete
+  try { const v = Function('"use strict";return ('+e+')')(); return (typeof v==='number'&&isFinite(v))?v:null; }
+  catch(_) { return null; }
+}
+function calcInput(ch){
+  const ops = '+-*/';
+  if(ops.includes(ch) && ops.includes(_calcExpr.slice(-1))) _calcExpr = _calcExpr.slice(0,-1); // replace trailing operator
+  _calcExpr += ch; _calcRender();
+}
+function calcClear(){ _calcExpr=''; _calcRender(); }
+function calcBack(){ _calcExpr=_calcExpr.slice(0,-1); _calcRender(); }
+function calcEquals(){
+  const v = _calcEval(_calcExpr);
+  if(v!==null){ _calcExpr = String(Math.round(v*1e10)/1e10); _calcRender(); }
+}
+function _calcKey(e){
+  const k = e.key;
+  if(/[0-9]/.test(k)) return calcInput(k);
+  if(k==='.'||k==='+'||k==='-'||k==='*'||k==='/'||k==='%') return calcInput(k);
+  if(k==='Enter'||k==='='){ e.preventDefault(); return calcEquals(); }
+  if(k==='Backspace'){ e.preventDefault(); return calcBack(); }
+  if(k==='Escape'){ e.preventDefault(); return calcToggle(); }
+  if(k==='c'||k==='C'){ return calcClear(); }
+}
+</script>
 
 <!-- ═══ PROFILE EDIT MODAL ═══ -->
 <div class="modal-bg" id="profile-modal">
