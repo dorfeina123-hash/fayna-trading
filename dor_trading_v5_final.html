@@ -5662,9 +5662,14 @@ function calibrateCommission() {
     return;
   }
 
+  // Apply the calibrated per-contract rate to BOTH micro and full slots so the journal's
+  // total net matches the platform net exactly, regardless of the contract mix.
   commSettings.ratePerContract = rate;
+  commSettings.ratePerContractFull = rate;
   const el = document.getElementById('comm-rate');
   if (el) el.value = rate;
+  const elF = document.getElementById('comm-rate-full');
+  if (elF) elF.value = rate;
 
   const resEl = document.getElementById('comm-calib-result');
   if (resEl) resEl.textContent = `✅ $${rate}/חוזה | ${totalContracts} חוזים | עמלות סה"כ $${totalComm}`;
@@ -5885,7 +5890,7 @@ function renderGauges(opts){
          avgW, avgL, ratio, tradeCount, netPnl, netPnlILS} = opts;
   const wrap = document.getElementById('ov-gauges');
   if(!wrap) return;
-  const ratioTxt = (isFinite(ratio)&&ratio>0) ? ratio.toFixed(2) : '—';
+  const ratioTxt = ratio===Infinity ? '∞' : ((isFinite(ratio)&&ratio>0) ? ratio.toFixed(2) : '—');
   const greenW = Math.abs(avgW), redW = Math.abs(avgL)||1;
   wrap.innerHTML = `
     <div class="gz-card">
@@ -5943,7 +5948,8 @@ function renderOV() {
   const wr = tl.length ? (wins.length/tl.length*100) : 0;
   const avgW = wins.length ? wins.reduce((s,t)=>s+tradeNet(t),0)/wins.length : 0;
   const avgL = losses.length ? losses.reduce((s,t)=>s+tradeNet(t),0)/losses.length : 0;
-  const pf = Math.abs(avgL*losses.length)>0 ? (avgW*wins.length)/Math.abs(avgL*losses.length) : 0;
+  const _grossLoss = Math.abs(avgL*losses.length);
+  const pf = _grossLoss>0 ? (avgW*wins.length)/_grossLoss : (wins.length?Infinity:0); // no losses + wins ⇒ ∞
 
   // Last import time
   const lastDate = tl.length ? [...tl].sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime))[0] : null;
@@ -6011,7 +6017,7 @@ function renderOV() {
     const wrEl = document.getElementById('zm-wr');
     if(wrEl) animCounter(wrEl, wr, '', '%');
     const pfEl = document.getElementById('zm-pf');
-    if(pfEl) animCounter(pfEl, pf, '');
+    if(pfEl){ if(isFinite(pf)) animCounter(pfEl, pf, ''); else pfEl.textContent='∞'; }
     const wEl = document.getElementById('zm-avgw');
     if(wEl) animCounter(wEl, avgW, '$');
     const lEl = document.getElementById('zm-avgl');
@@ -7263,18 +7269,21 @@ function renderTJ(){
   const syms=[...new Set(tradesList.map(t=>t.sym))];
   document.getElementById('sym-btns').innerHTML=syms.map(s=>`<button class="fb ${tjS===s?'active':''}" onclick="fSym('${s}',this)">${s}</button>`).join('');
   let list=[...tradesList];
-  if(tjF==='win')list=list.filter(t=>t.pnl>0);
-  if(tjF==='loss')list=list.filter(t=>t.pnl<0);
+  if(tjF==='win')list=list.filter(t=>tradeNet(t)>0);
+  if(tjF==='loss')list=list.filter(t=>tradeNet(t)<0);
   if(tjS!=='all')list=list.filter(t=>t.sym===tjS);
   list.sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime));
-  const tot=list.reduce((s,t)=>s+t.pnl,0);
-  const w=list.filter(t=>t.pnl>0);
+  // All journal metrics use NET (after commission) — consistent with the per-row P&L and the stats/calendar tabs
+  const tot=+list.reduce((s,t)=>s+tradeNet(t),0).toFixed(2);
+  const w=list.filter(t=>tradeNet(t)>0);
+  const loss=list.filter(t=>tradeNet(t)<0);
+  const tradeDays=new Set(list.map(t=>t.date)).size;
   const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('tj-m').innerHTML=
-    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L סה״כ $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*rate).toFixed(0)}</div></div>`+
-    `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">ימי מסחר</div></div>`+
-    `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${list.length?(w.length/list.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W / ${list.length-w.length}L</div></div>`+
-    `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${tot>=0?'cg':'cr'}">${list.length?'$'+(tot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: $'+(w.reduce((s,t)=>s+t.pnl,0)/w.length).toFixed(1):''}</div></div>`;
+    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*rate).toFixed(0)}</div></div>`+
+    `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">${tradeDays} ימי מסחר</div></div>`+
+    `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${list.length?(w.length/list.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W / ${loss.length}L</div></div>`+
+    `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${tot>=0?'cg':'cr'}">${list.length?'$'+(tot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: $'+(w.reduce((s,t)=>s+tradeNet(t),0)/w.length).toFixed(1):''}</div></div>`;
   document.getElementById('tj-body').innerHTML=list.length?list.map(t=>{
     const ti=tradesList.indexOf(t);
     const sel = !!t._sel;
@@ -8789,14 +8798,15 @@ function renderStats(){
   const commTot=totalComm();
   const avgW=w.length?w.reduce((s,t)=>s+tradeNet(t),0)/w.length:0;
   const avgL=l.length?l.reduce((s,t)=>s+tradeNet(t),0)/l.length:0;
-  const pf=Math.abs(avgL*l.length)>0?(avgW*w.length)/Math.abs(avgL*l.length):0;
+  const grossLoss=Math.abs(avgL*l.length);
+  const pf=grossLoss>0?(avgW*w.length)/grossLoss:(w.length?Infinity:0); // no losses + some wins ⇒ ∞
   const best=tl.length?Math.max(...tl.map(t=>tradeNet(t))):0;
   const worst=tl.length?Math.min(...tl.map(t=>tradeNet(t))):0;
   document.getElementById('ts-m').innerHTML=
     `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*(histRate(new Date().toISOString().slice(0,10)))).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">ברוטו / עמלות</div><div class="mc-v" style="font-size:14px">$${grossTot.toFixed(0)} / <span class="cr">$${commTot.toFixed(0)}</span></div><div class="mc-s">${tl.length} עסקאות</div></div>`+
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${tl.length?(w.length/tl.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W/${l.length}L</div></div>`+
-    `<div class="mc"><div class="mc-l">Profit Factor</div><div class="mc-v cy">${pf.toFixed(2)}</div></div>`+
+    `<div class="mc"><div class="mc-l">Profit Factor</div><div class="mc-v cy">${isFinite(pf)?pf.toFixed(2):'∞'}</div></div>`+
     `<div class="mc"><div class="mc-l">ממוצע רווח</div><div class="mc-v cg">${fmt(avgW)}</div></div>`+
     `<div class="mc"><div class="mc-l">ממוצע הפסד</div><div class="mc-v cr">${fmt(avgL)}</div></div>`+
     `<div class="mc"><div class="mc-l">הכי טוב/גרוע</div><div class="mc-v cg" style="font-size:12px">${fmt(best)}</div><div class="mc-s cr">${fmt(worst)}</div></div>`;
