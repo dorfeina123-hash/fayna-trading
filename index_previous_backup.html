@@ -5845,6 +5845,11 @@ const fmtILS = n => (n<0?'-':'')+'₪'+Math.abs(n).toLocaleString('he-IL',{maxim
 const fmtD   = d => d.split('-').reverse().join('/');
 // Safari-safe date parser: 'YYYY-MM-DD' → Date (Safari can't parse dashes)
 const safeParse = s => { if (!s) return new Date(NaN); const p = String(s).replace(/-/g,'/').replace('T',' ').split('.')[0]; return new Date(p); };
+// ── XSS-safe output helpers ──
+// escHtml: for text placed inside element content (name, notes, symbols, etc.)
+function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// escJs: for a value placed inside a single-quoted JS string within an HTML on* attribute
+function escJs(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'\\x3c').replace(/[\r\n]/g,''); }
 const uid    = ()=>nextId++;
 const catCls = c => ({מבחן:'cm',לייב:'cl',ריסט:'cr2',כלי:'ck',קורס:'cq',מנוי:'cm',ציוד:'cl',שונות:'cr2',אחר:'ca',משיכה:'cww'})[c]||'ca';
 
@@ -11101,7 +11106,7 @@ async function sendWelcomeWA(users) {
           const url = `https://wa.me/${ph}?text=${encoded}`;
           const done = sent.has(i);
           return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);opacity:${done?.5:1}">
-            <div style="flex:1"><div style="font-size:12px;color:${done?'#767f8e':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
+            <div style="flex:1"><div style="font-size:12px;color:${done?'#767f8e':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.phone)}</div></div>
             <a href="${url}" target="_blank" rel="noopener" onclick="window._waSentIdx(${i})" style="flex-shrink:0;padding:5px 12px;background:${done?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${done?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${done?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">${done?'✓ נשלח':'📱 שלח'}</a>
           </div>`;
         }).join('')}
@@ -11539,9 +11544,9 @@ function _renderUsersTable() {
     else                badge = '<span style="background:rgba(61,153,112,.12);color:#3d9970;border:1px solid rgba(61,153,112,.2);border-radius:3px;padding:1px 7px;font-size:10px">פעיל</span>';
     return `<tr style="${isBlocked?'opacity:.45':''}">
       <td style="color:#767f8e">${i+1}</td>
-      <td><span class="user-link" onclick="openUserDetail('${u.uid}')">${u.name||'—'}</span></td>
-      <td style="color:#7295b8;font-size:11px">${u.email}</td>
-      <td style="font-family:monospace;font-size:11px">${u.phone||'—'}</td>
+      <td><span class="user-link" onclick="openUserDetail('${escJs(u.uid)}')">${u.name?escHtml(u.name):'—'}</span></td>
+      <td style="color:#7295b8;font-size:11px">${escHtml(u.email)}</td>
+      <td style="font-family:monospace;font-size:11px">${u.phone?escHtml(u.phone):'—'}</td>
       <td style="color:#767f8e;font-size:10px">${reg.toLocaleDateString('he-IL')}</td>
       <td style="color:#767f8e;font-size:10px">${last?last.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
       <td style="color:#767f8e;font-size:10px;text-align:center">${u.loginCount||0}</td>
@@ -11553,10 +11558,10 @@ function _renderUsersTable() {
           <option value="pro"      ${(u.plan||'free')==='pro'     ?'selected':''}>Pro</option>
           <option value="lifetime" ${(u.plan||'free')==='lifetime'?'selected':''}>Lifetime</option>
         </select>
-        <button onclick="adminQuickReset('${u.email}')" title="איפוס סיסמה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:rgba(191,161,94,.12);color:#bfa15e;font-family:inherit">🔑</button>
-        ${u.emailOptOut ? `<button onclick="adminResubscribe('${u.uid}')" title="החזר לרשימת תפוצה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(199,95,95,.3);background:rgba(199,95,95,.1);color:#c75f5f;font-family:inherit">🔕</button>` : ''}
-        <button onclick="adminQuickBlock('${u.uid}','${u.status||'active'}')" title="${isBlocked?'בטל חסימה':'חסום'}" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:${isBlocked?'rgba(61,153,112,.12)':'rgba(199,95,95,.12)'};color:${isBlocked?'#3d9970':'#c75f5f'};font-family:inherit">${isBlocked?'✅':'🚫'}</button>
-        <button onclick="openUserDetail('${u.uid}')" title="פרטים נוספים" style="padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8892a4;font-family:inherit">⋯</button>
+        <button onclick="adminQuickReset('${escJs(u.email)}')" title="איפוס סיסמה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:rgba(191,161,94,.12);color:#bfa15e;font-family:inherit">🔑</button>
+        ${u.emailOptOut ? `<button onclick="adminResubscribe('${escJs(u.uid)}')" title="החזר לרשימת תפוצה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(199,95,95,.3);background:rgba(199,95,95,.1);color:#c75f5f;font-family:inherit">🔕</button>` : ''}
+        <button onclick="adminQuickBlock('${escJs(u.uid)}','${escJs(u.status||'active')}')" title="${isBlocked?'בטל חסימה':'חסום'}" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:${isBlocked?'rgba(61,153,112,.12)':'rgba(199,95,95,.12)'};color:${isBlocked?'#3d9970':'#c75f5f'};font-family:inherit">${isBlocked?'✅':'🚫'}</button>
+        <button onclick="openUserDetail('${escJs(u.uid)}')" title="פרטים נוספים" style="padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8892a4;font-family:inherit">⋯</button>
       </td>
     </tr>`;
   }).join('');
@@ -11591,7 +11596,7 @@ async function refreshLoginLogs() {
             <div style="display:flex;flex-wrap:wrap;gap:6px">
               ${online.map(u=>`<span style="font-size:11px;color:#e8ecf4;background:rgba(61,153,112,.08);border:1px solid rgba(61,153,112,.25);border-radius:20px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px">
                 <span style="width:6px;height:6px;border-radius:50%;background:#3d9970;animation:pulse-dot 1.5s infinite"></span>
-                ${u.name||u.email}
+                ${escHtml(u.name||u.email)}
               </span>`).join('')}
             </div>
           </div>`;
@@ -12096,7 +12101,7 @@ function _showEmailBroadcastModal(msg, targets) {
     const unsubLine = u.uid ? `\n\n---\nלהסרה מרשימת התפוצה: ${base}?unsub=${u.uid}` : '';
     const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.email}</div></div>
+      <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.email)}</div></div>
       <a href="${ml}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:#7295b8;border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
     </div>`;
   }).join('');
@@ -12141,7 +12146,7 @@ async function sendNotifWhatsApp(msg) {
     const url = `https://wa.me/${ph}?text=${encoded}`;
     const isSent = sent.has(i);
     return `<div id="wa-row-${i}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);opacity:${isSent?.5:1}">
-      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#767f8e':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name||'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${u.phone}</div></div>
+      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#767f8e':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.phone)}</div></div>
       <a href="${url}" target="_blank" rel="noopener" onclick="waMarkSent(${i})"
         style="flex-shrink:0;padding:5px 12px;background:${isSent?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${isSent?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${isSent?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">
         ${isSent ? '✓ נשלח' : '📱 שלח'}
