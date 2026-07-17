@@ -7227,7 +7227,7 @@ function showDayTrades(date){
     const net=tradeNet(t);
     return `<tr>
       <td style="color:var(--t3);font-size:11px">${t.btime.slice(0,5)}</td>
-      <td style="font-weight:600;color:var(--t1)">${t.sym}</td>
+      <td style="font-weight:600;color:var(--t1)">${escHtml(t.sym)}</td>
       <td style="color:var(--t3)">${t.qty}</td>
       <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}</td>
     </tr>`;
@@ -7272,7 +7272,7 @@ function showDayTrades(date){
 let tjF='all',tjS='all';
 function renderTJ(){
   const syms=[...new Set(tradesList.map(t=>t.sym))];
-  document.getElementById('sym-btns').innerHTML=syms.map(s=>`<button class="fb ${tjS===s?'active':''}" onclick="fSym('${s}',this)">${s}</button>`).join('');
+  document.getElementById('sym-btns').innerHTML=syms.map(s=>`<button class="fb ${tjS===s?'active':''}" onclick="fSym('${escJs(s)}',this)">${escHtml(s)}</button>`).join('');
   let list=[...tradesList];
   if(tjF==='win')list=list.filter(t=>tradeNet(t)>0);
   if(tjF==='loss')list=list.filter(t=>tradeNet(t)<0);
@@ -7294,7 +7294,7 @@ function renderTJ(){
     const sel = !!t._sel;
     const acctObj = t.acct ? accounts.find(a=>a.id===t.acct) : null;
     const acctCell = acctObj
-      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap">${acctObj.name}</span>`
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap">${escHtml(acctObj.name)}</span>`
       : `<span style="font-size:10px;color:#374151">—</span>`;
     const spark = typeof _tradeSpark==='function' ? _tradeSpark(t,ti) : '';
     return `<tr class="tj-row" id="tj-row-${ti}" style="${sel?'background:rgba(74,143,168,.12)':''}">
@@ -7302,7 +7302,7 @@ function renderTJ(){
       <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${t.sym}</td><td style="color:#767f8e">${t.qty}</td>
+      <td style="color:#8892a4">${escHtml(t.sym)}</td><td style="color:#767f8e">${t.qty}</td>
       <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
       <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
@@ -13188,7 +13188,7 @@ window.renderTJ = function renderTJ() {
   // Symbol buttons
   const syms = [...new Set(allTrades.map(t=>t.sym))];
   document.getElementById('sym-btns').innerHTML = syms.map(s=>
-    `<button class="fb ${typeof tjS!=='undefined'&&tjS===s?'active':''}" onclick="fSym('${s}',this)">${s}</button>`
+    `<button class="fb ${typeof tjS!=='undefined'&&tjS===s?'active':''}" onclick="fSym('${escJs(s)}',this)">${escHtml(s)}</button>`
   ).join('');
 
   // Strategy filter bar
@@ -13243,7 +13243,7 @@ window.renderTJ = function renderTJ() {
     const acctObj  = t.acct ? accounts.find(a=>a.id===t.acct) : null;
     const acctCell = acctObj
       ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap;cursor:pointer" onclick="pickTradeAcct(${ti},event)" title="שנה תיק">
-           <span style="width:6px;height:6px;border-radius:50%;background:${acctObj.color};flex-shrink:0"></span>${acctObj.name}${acctObj.number?'<span style="font-size:9px;opacity:.6"> #'+acctObj.number+'</span>':''}
+           <span style="width:6px;height:6px;border-radius:50%;background:${acctObj.color};flex-shrink:0"></span>${escHtml(acctObj.name)}${acctObj.number?'<span style="font-size:9px;opacity:.6"> #'+escHtml(acctObj.number)+'</span>':''}
          </span>`
       : `<span style="font-size:10px;color:#767f8e;cursor:pointer;border:1px dashed rgba(255,255,255,.15);border-radius:4px;padding:1px 7px" onclick="pickTradeAcct(${ti},event)" title="שייך לתיק">+ תיק</span>`;
     const starCount = t.stars || 0;
@@ -13265,7 +13265,7 @@ window.renderTJ = function renderTJ() {
       <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${t.sym}</td>
+      <td style="color:#8892a4">${escHtml(t.sym)}</td>
       <td style="color:#767f8e">${t.qty}</td>
       <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
       <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
