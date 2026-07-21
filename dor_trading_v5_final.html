@@ -557,6 +557,8 @@ button{-webkit-appearance:none;appearance:none}
 
 /* ── ZELLA TOP METRIC CARDS ── */
 .zm-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.zm-row-primary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:10px}
+.zm-row-secondary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .zm{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
 .zm:hover{border-color:rgba(255,255,255,.18);transform:translateY(-1px)}
 .zm::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(255,255,255,.025));pointer-events:none}
@@ -565,6 +567,59 @@ button{-webkit-appearance:none;appearance:none}
 .zm-sub{font-size:10px;color:var(--t3);margin-top:5px;display:flex;align-items:center;gap:4px}
 .zm-badge{background:rgba(61,153,112,.15);color:var(--gr);border:1px solid rgba(61,153,112,.2);border-radius:20px;padding:1px 7px;font-size:9px;font-weight:600}
 .zm-badge.neg{background:rgba(199,95,95,.15);color:var(--re);border-color:rgba(199,95,95,.2)}
+/* Primary KPI cards: bigger, more prominent (Daily Profit / Drawdown / Win Rate / Profit Factor) */
+.zm-primary{padding:18px 20px}
+.zm-primary .zm-label{font-size:12px;margin-bottom:12px}
+.zm-primary .zm-val{font-size:var(--kpi-num,32px);letter-spacing:-1px}
+.zm-primary .zm-sub{font-size:12px;margin-top:8px}
+.zm-primary .zm-icon{font-size:15px;margin-inline-end:2px}
+/* Secondary KPI cards: smaller, denser */
+.zm-secondary{padding:10px 12px}
+.zm-secondary .zm-label{font-size:9px;margin-bottom:6px}
+.zm-secondary .zm-val{font-size:17px}
+.zm-secondary .zm-sub{font-size:9px;margin-top:3px}
+
+/* ── HIGH CONTRAST THEME ── */
+body.contrast-mode{--bg0:#000000;--bg1:#0A0A0A;--bg2:#121212;--bg3:#1C1C1C;--bg4:#262626;
+--border:rgba(255,255,255,0.22);--border2:rgba(255,255,255,0.35);
+--t1:#FFFFFF;--t2:#D4D4D4;--t3:#A3A3A3;
+--gr:#00E676;--gd:rgba(0,230,118,.18);--re:#FF5252;--rd:rgba(255,82,82,.18);
+--go:#FFD600;--yd:rgba(255,214,0,.18);--bl:#40C4FF;--bd:rgba(64,196,255,.18);
+--pu:#D500F9;--pd:rgba(213,0,249,.18);--ac:#40C4FF}
+body.contrast-mode{background:var(--bg0)}
+
+/* ── TRADER FOCUS MODE ── */
+body.focus-mode .focus-hide{display:none!important}
+.focus-only{display:none}
+body.focus-mode .focus-only{display:block}
+.focus-map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.focus-map-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .15s}
+.focus-map-card:hover{border-color:var(--border2)}
+.focus-map-card.sel{border-color:var(--ac);background:var(--bg3)}
+body.focus-mode #focus-mode-btn{background:var(--gr)!important;color:#06210f!important;border-color:var(--gr)!important}
+.focus-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:900px){.focus-row{grid-template-columns:repeat(2,1fr)}}
+.focus-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.focus-card .fc-label{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.focus-card .fc-val{font-size:28px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.focus-card .fc-sub{font-size:11px;color:var(--t3);margin-top:6px}
+
+/* ── TRADER STATUS TODAY + TRADING SCORE ── */
+.ts-row{display:flex;gap:14px;margin-bottom:14px;align-items:stretch}
+.ts-status{flex:2;background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ts-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.ts-dot.good{background:var(--gr);box-shadow:0 0 0 5px var(--gd)}
+.ts-dot.warn{background:var(--go);box-shadow:0 0 0 5px var(--yd)}
+.ts-dot.bad{background:var(--re);box-shadow:0 0 0 5px var(--rd)}
+.ts-txt b{font-size:16px;color:var(--t1)}
+.ts-txt div{color:var(--t2);font-size:12px;margin-top:2px}
+.ts-mini{display:flex;gap:20px;margin-inline-start:auto;text-align:center;flex-wrap:wrap}
+.ts-mini div span{display:block;font-size:16px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.ts-mini div small{color:var(--t3);font-size:10px;text-transform:uppercase;letter-spacing:.3px}
+.ts-score{flex:1;min-width:140px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.ts-score-ring{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.ts-score-ring b{background:var(--bg1);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-family:'IBM Plex Mono',monospace}
+.ts-score small{color:var(--t2);font-size:11px}
 
 /* ── GAUGE ROW (TradeReport-style header widgets) ── */
 .gz-row{display:grid;grid-template-columns:1fr 1fr 1.3fr 1fr;gap:10px;margin-bottom:14px}
@@ -676,8 +731,8 @@ button{-webkit-appearance:none;appearance:none}
 /* ── CARD ENTRANCE ── */
 .zcl.entered{animation:fadeInUp .4s ease both}
 
-@media(max-width:1100px){.zg-3,.zg-3r{grid-template-columns:1fr 1fr}.zm-row{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:700px){.zg-3,.zg-3r,.zg-2{grid-template-columns:1fr}.zm-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.zg-3,.zg-3r{grid-template-columns:1fr 1fr}.zm-row{grid-template-columns:repeat(3,1fr)}.zm-row-primary{grid-template-columns:repeat(2,1fr)}.zm-row-secondary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.zg-3,.zg-3r,.zg-2{grid-template-columns:1fr}.zm-row{grid-template-columns:repeat(2,1fr)}.zm-row-primary{grid-template-columns:1fr}.zm-row-secondary{grid-template-columns:1fr}}
 
 
 /* ── 3D DEPTH SYSTEM ── */
@@ -1949,6 +2004,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <button class="nt"        id="nt-stats"       onclick="sw('stats',this)"></button>
       <button class="nt"        id="nt-datamgr"     onclick="sw('datamgr',this)"></button>
       <button class="nt"        id="nt-personal"    onclick="sw('personal',this)"></button>
+      <button class="nt"        id="nt-lr"          onclick="sw('lr',this)"></button>
+      <button class="nt"        id="nt-goals"       onclick="sw('goals',this)"></button>
     </div>
   </div>
   <!-- WORLD CLOCKS -->
@@ -1979,8 +2036,12 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <div style="display:flex;align-items:center;gap:8px">
+    <!-- Notification bell -->
+    <button id="notif-bell-btn" onclick="toggleNotifPanel(event)" title="התראות" style="position:relative;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-size:15px;flex-shrink:0">
+      🔔<span id="notif-badge" style="display:none;position:absolute;top:-3px;left:-3px;background:var(--re);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px"></span>
+    </button>
     <!-- Theme toggle -->
-    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="מצב בהיר/כהה">🌙</button>
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" title="ערכת נושא: Dark Professional (לחץ להחלפה)">☀️</button>
     <button id="pwa-install-btn" onclick="installPWA()" title="התקן אפליקציה" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;padding:0;border:1px solid rgba(61,153,112,.3);background:rgba(61,153,112,.12);color:#3d9970;cursor:pointer;font-size:15px">📲</button>
     <button id="nav-save-btn" onclick="navSave()" title="שמור (Ctrl+S)" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--t3);cursor:pointer;font-size:13px;flex-shrink:0;transition:all .25s">💾</button>
     <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(190,150,80,.35);background:rgba(190,150,80,.1);color:#bfa15e;cursor:pointer;flex-shrink:0;transition:all .2s;padding:0" onmouseover="this.style.background='rgba(190,150,80,.25)'" onmouseout="this.style.background='rgba(190,150,80,.1)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
@@ -2012,6 +2073,10 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
     <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
     <div class="nav-menu-item" id="nm-biz"         onclick="swNav('biz');renderBiz()">🏢 ניהול עסקי</div>
+
+    <div class="nav-menu-section">אישי</div>
+    <div class="nav-menu-item" id="nm-lr"          onclick="swNav('lr');renderLR()">📅 שגרת חיים</div>
+    <div class="nav-menu-item" id="nm-goals"       onclick="swNav('goals');renderPersonalGoals()">🏆 יעדים אישיים</div>
 
     <div class="nav-menu-section">ניהול</div>
     <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
@@ -2162,6 +2227,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   <div class="sn-item" id="sni-course"      onclick="swNav('course')"      title="קורס מסחר"><span class="sn-icon">🎓</span><span class="sn-lbl">קורס מסחר</span></div>
   <div class="sn-item" id="sni-calc"        onclick="swNav('calc')"        title="מחשבונים"><span class="sn-icon">🧮</span><span class="sn-lbl">מחשבונים</span></div>
   <div class="sn-item" id="sni-biz"         onclick="swNav('biz');renderBiz()" title="ניהול עסקי"><span class="sn-icon">🏢</span><span class="sn-lbl">ניהול עסקי</span></div>
+  <div class="sn-item" id="sni-lr"          onclick="swNav('lr');renderLR()" title="שגרת חיים"><span class="sn-icon">📅</span><span class="sn-lbl">שגרת חיים</span></div>
+  <div class="sn-item" id="sni-goals"       onclick="swNav('goals');renderPersonalGoals()" title="יעדים אישיים"><span class="sn-icon">🏆</span><span class="sn-lbl">יעדים אישיים</span></div>
 
   <div class="sn-sep"></div>
   <div class="sn-grp">ניהול</div>
@@ -2304,7 +2371,25 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <div id="daily-tip-wrap"></div>
 
 <!-- STREAK + GOAL + NEXT EVENTS ROW -->
-<div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;margin-bottom:10px;align-items:stretch" id="overview-top-widgets">
+<!-- TRADER STATUS TODAY (always visible — the "5-second read" the whole dashboard is built around) -->
+<div id="trader-status-today"></div>
+
+<!-- FOCUS MODE ONLY: goal-progress gauge for one chosen account + map of all accounts -->
+<div class="focus-only" style="margin-bottom:14px">
+  <div class="zcl" style="margin-bottom:10px">
+    <div class="zcl-title" style="justify-content:space-between">
+      <div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>יעדי התיק</div>
+      <select id="focus-acct-select" onchange="focusSelectAcct(this.value)" style="padding:5px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit"></select>
+    </div>
+    <div id="focus-goal-gauge-body"></div>
+  </div>
+  <div class="zcl">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>מפת כל התיקים</div></div>
+    <div id="focus-accounts-map" class="focus-map-grid"></div>
+  </div>
+</div>
+
+<div class="focus-hide" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;margin-bottom:10px;align-items:stretch" id="overview-top-widgets">
   <!-- Streak -->
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;min-width:140px">
     <span id="streak-display"><span class="streak-badge streak-neutral">— אין נתונים</span></span>
@@ -2349,27 +2434,38 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     </button>
   </div>
 
+  <!-- Focus Mode toggle -->
+  <button class="btn-p" id="focus-mode-btn" onclick="toggleFocusMode()" title="הצג רק מידע חיוני בזמן מסחר" style="font-size:11px;padding:6px 13px;background:var(--bg3);color:var(--t1);border:1px solid var(--border2)">
+    🎯 Focus Mode
+  </button>
+
   <!-- Calculator toggle -->
   <button class="btn-p" onclick="calcToggle()" title="מחשבון" style="font-size:11px;padding:6px 13px;background:linear-gradient(135deg,#5e5395,#7f73b2)">
     🧮 מחשבון
   </button>
 </div>
 
+  <!-- AI INSIGHT — one consolidated card (not a 2nd/3rd AI widget elsewhere) -->
+  <div id="ai-insight-card" class="focus-hide zcl" style="margin-bottom:14px"></div>
+
+  <!-- Daily pre/post trading routine checklist -->
+  <div id="daily-checklist-card" class="focus-hide" style="margin-bottom:14px"></div>
+
   <!-- Last import -->
-  <div class="last-import anim-fade">
+  <div class="last-import anim-fade focus-hide">
     <span>Last import: <span id="ov-last-import">—</span></span>
     <a href="#" onclick="renderAll();return false">🔄 Resync</a>
     <span style="margin-right:auto"></span>
   </div>
 
   <!-- ROW 0: TradeReport-style gauges (Win Rate / Success Rate / Avg P&L / Trades+PnL) -->
-  <div class="gz-row anim-fade" id="ov-gauges"></div>
+  <div class="gz-row anim-fade focus-hide" id="ov-gauges"></div>
 
-  <!-- TOP 5 METRICS -->
-  <div class="zm-row" id="ov-m"></div>
+  <!-- TOP 5 METRICS (shown only in Focus Mode — the always-visible summary is the Trader Status Today card above) -->
+  <div class="focus-only" id="ov-m"></div>
 
   <!-- ROW 2: Radar + Heatmap + Equity Curve -->
-  <div class="zg-3">
+  <div class="zg-3 focus-hide">
     <!-- Radar / Score -->
     <div class="zcl anim-up-1">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#9089bd"></div>ניקוד מסחר</div></div>
@@ -2395,12 +2491,13 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <!-- Daily cumulative P&L -->
     <div class="zcl anim-up-3">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>P&L נטו מצטבר</div></div>
-      <div style="height:180px;position:relative"><canvas id="equityOvChart" aria-label="P&L מצטבר"></canvas></div>
+      <div style="height:240px;position:relative"><canvas id="equityOvChart" aria-label="P&L מצטבר"></canvas></div>
+      <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:4px">גלגלת עכבר להגדלה · גרירה לתזוזה</div>
     </div>
   </div>
 
   <!-- ROW 3: Daily bars + Recent trades + Account balance -->
-  <div class="zg-3r">
+  <div class="zg-3r focus-hide">
     <!-- Daily P&L bars -->
     <div class="zcl anim-up-1">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>P&L יומי נטו</div></div>
@@ -2422,7 +2519,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <!-- ROW 4: Calendar + Drawdown + Scatter -->
-  <div class="zg-3" style="grid-template-columns:2fr 1fr 1fr">
+  <div class="zg-3 focus-hide" style="grid-template-columns:2fr 1fr 1fr">
     <!-- Mini calendar -->
     <div class="zcl anim-up-1">
       <div class="zcl-title" style="justify-content:space-between">
@@ -2439,7 +2536,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <!-- Drawdown -->
     <div class="zcl anim-up-2">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>Drawdown</div></div>
-      <div style="height:160px;position:relative"><canvas id="ddChart" aria-label="Drawdown"></canvas></div>
+      <div style="height:200px;position:relative"><canvas id="ddChart" aria-label="Drawdown"></canvas></div>
       <div id="ov-dd-stats" style="font-size:10px;color:var(--t3);margin-top:6px"></div>
     </div>
 
@@ -2451,7 +2548,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <!-- ROW 5: Company bars -->
-  <div class="zcl anim-up-1">
+  <div class="zcl anim-up-1 focus-hide">
     <div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>הוצאות לפי חברה</div></div>
     <div id="cobars"></div>
   </div>
@@ -2920,6 +3017,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="clx-card" onclick="clxOpen('altwr')"><div class="clx-icon">🔄</div><div class="clx-name">הצלחה חלופית</div></div>
     <div class="clx-card" onclick="clxOpen('consistency')"><div class="clx-icon">🎲</div><div class="clx-name">מחשבון עקביות</div></div>
     <div class="clx-card" onclick="clxOpen('mc')"><div class="clx-icon">🏦</div><div class="clx-name">שרידות תיק ממומן</div></div>
+    <div class="clx-card" onclick="clxOpen('aicheck')"><div class="clx-icon">🤖</div><div class="clx-name">בדיקת עסקה עם AI</div></div>
   </div>
 </div>
 
@@ -3042,6 +3140,38 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 </div>
 
+<!-- AI PRE-TRADE CHECK (rule-based analysis over the trader's own history — no external AI/backend) -->
+<div class="modal-bg clx-mc" id="clx-modal-aicheck" onclick="if(event.target===this)clxClose('aicheck')">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>🤖 בדיקת עסקה עם AI <button class="cx" onclick="clxClose('aicheck')" style="color:#e5e7eb">×</button></h3>
+    <div class="clx-input-row"><label>נכס</label><input type="text" id="aic-sym" placeholder="MNQ, ES..." dir="ltr"></div>
+    <div class="clx-input-row">
+      <label>כיוון</label>
+      <select id="aic-dir"><option value="long">Long</option><option value="short">Short</option></select>
+    </div>
+    <div class="clx-input-row"><label>מחיר כניסה</label><input type="number" id="aic-entry" step="0.01"></div>
+    <div class="clx-input-row"><label>סטופ לוס</label><input type="number" id="aic-stop" step="0.01"></div>
+    <div class="clx-input-row"><label>יעד (Target)</label><input type="number" id="aic-target" step="0.01"></div>
+    <div class="clx-input-row">
+      <label>סטאפ כניסה</label>
+      <select id="aic-setup">
+        <option value="">— לא צויין —</option>
+        <option value="FVG">FVG</option><option value="IFVG">IFVG</option>
+        <option value="Order Flow">Order Flow</option><option value="Volume Profile">Volume Profile</option>
+        <option value="Liquidity">Liquidity</option><option value="Other">אחר</option>
+      </select>
+    </div>
+    <button class="clx-btn" onclick="clxRunAiCheck()">▶ בדוק עסקה</button>
+    <div id="aic-results" style="display:none;margin-top:16px">
+      <div class="clx-mc-result-big">
+        <div class="clx-mc-r-label">ציון איכות עסקה</div>
+        <div class="clx-mc-r-num" id="aic-score">0/100</div>
+      </div>
+      <div id="aic-notes" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- BUSINESS TRACKER (ניהול עסקי) -->
 <div class="tp" id="tp-biz">
   <div style="font-size:15px;font-weight:600;margin-bottom:14px">🏢 ניהול עסקי</div>
@@ -3115,6 +3245,88 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="fax">
       <button class="bn" onclick="bizCloseAdd()">ביטול</button>
       <button class="bs" onclick="bizSaveEvent()">💾 שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIFE ROUTINE TRACKER (שגרת חיים) -->
+<div class="tp" id="tp-lr">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:600">📅 שגרת חיים</div>
+    <button class="btn-p" onclick="lrAddHabit()">+ הרגל חדש</button>
+  </div>
+
+  <div class="zg-3" style="grid-template-columns:1fr 2fr">
+    <div class="zcl">
+      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>השלמה היום</div></div>
+      <div style="text-align:center;padding:10px 0">
+        <div id="lr-today-ring" style="width:90px;height:90px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center">
+          <div style="width:70px;height:70px;border-radius:50%;background:var(--bg1);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace" id="lr-today-pct">0%</div>
+        </div>
+        <div style="font-size:11px;color:var(--t3)" id="lr-today-sub"></div>
+      </div>
+    </div>
+    <div class="zcl">
+      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>🏆 גיימיפיקציה</div></div>
+      <div id="lr-gamification-body"></div>
+    </div>
+  </div>
+
+  <div class="zcl" style="margin-top:14px">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>הרגלים היום</div></div>
+    <div id="lr-habits-today"></div>
+  </div>
+
+  <div class="zg-3" style="grid-template-columns:1fr 1fr;margin-top:14px">
+    <div class="zcl">
+      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>גרף שבועי</div></div>
+      <div id="lr-weekly-graph" style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:8px 0"></div>
+    </div>
+    <div class="zcl">
+      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>אחוזי הצלחה לפי הרגל</div></div>
+      <div id="lr-habit-rates"></div>
+    </div>
+  </div>
+
+  <div class="zcl" style="margin-top:14px">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>הערות אישיות</div></div>
+    <textarea id="lr-notes" placeholder="איך מרגיש היום? מה עבד? מה לשפר?" style="width:100%;height:70px;resize:vertical" oninput="lrSaveNotes()"></textarea>
+  </div>
+</div>
+
+<!-- PERSONAL GOALS (יעדים אישיים) -->
+<div class="tp" id="tp-goals">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:600">🏆 יעדים אישיים</div>
+    <button class="btn-p" onclick="pgOpenAdd()">+ יעד חדש</button>
+  </div>
+  <div id="pg-list"></div>
+</div>
+
+<!-- ADD/EDIT PERSONAL GOAL MODAL -->
+<div class="modal-bg" id="pg-modal" onclick="if(event.target===this)pgCloseAdd()">
+  <div class="modal" style="width:440px">
+    <h3>🎯 יעד אישי <button class="cx" onclick="pgCloseAdd()">×</button></h3>
+    <div class="fr"><label>שם היעד</label><input type="text" id="pg-name" class="fi" placeholder="לדוג׳: לרוץ 5 ק״מ, לחסוך 10,000₪..."></div>
+    <div class="fr">
+      <label>קטגוריה</label>
+      <select id="pg-category" class="fi">
+        <option value="fitness">💪 כושר</option>
+        <option value="financial">💰 פיננסי</option>
+        <option value="educational">📚 לימודי</option>
+        <option value="personal">🌱 אישי</option>
+      </select>
+    </div>
+    <div class="fr"><label>תאריך יעד</label><input type="date" id="pg-date" class="fi"></div>
+    <div class="fr">
+      <label>התקדמות (%)</label>
+      <input type="range" id="pg-progress" min="0" max="100" value="0" oninput="document.getElementById('pg-progress-lbl').textContent=this.value+'%'">
+      <div style="text-align:center;font-size:13px;font-weight:600;margin-top:4px" id="pg-progress-lbl">0%</div>
+    </div>
+    <div class="fr"><label>משימות קשורות (אחת בכל שורה)</label><textarea id="pg-tasks" style="height:60px"></textarea></div>
+    <div class="fax">
+      <button class="bn" onclick="pgCloseAdd()">ביטול</button>
+      <button class="bs" onclick="pgSave()">💾 שמור</button>
     </div>
   </div>
 </div>
@@ -3324,6 +3536,23 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div id="strategy-stats-body">
       <div style="text-align:center;padding:2rem;color:var(--t3);font-size:12px">לחץ ✏️ על עסקה ביומן כדי לסווג אותה לאסטרטגיה</div>
     </div>
+  </div>
+
+  <div class="stat-group-head">
+    <div class="stat-group-title">ניתוח דפוסים אוטומטי</div>
+    <div class="stat-group-sub">נכסים, סטאפים וטעויות חוזרות — מבוסס על נתוני היומן המתקדם</div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="dot" style="background:var(--pu)"></div>ביצועים לפי נכס</div>
+    <div id="symbol-stats-body"></div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="dot" style="background:var(--go)"></div>ביצועים לפי סטאפ כניסה</div>
+    <div id="setup-stats-body"></div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="dot" style="background:var(--re)"></div>עמידה בתוכנית וטעויות חוזרות</div>
+    <div id="mistake-stats-body"></div>
   </div>
 </div>
 
@@ -4540,6 +4769,15 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="acct-footer">
     <button class="acct-add-btn" onclick="addAccount()">+ הוסף תיק</button>
   </div>
+</div>
+
+<!-- NOTIFICATION CENTER PANEL (floating — works from any tab) -->
+<div id="notif-panel" style="position:fixed;z-index:900;background:var(--bg1);border:1px solid var(--border2);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none;width:340px;max-height:480px;overflow:hidden;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)">
+    <b style="font-size:13px">🔔 התראות</b>
+    <button onclick="notifMarkAllRead()" style="background:none;border:none;color:var(--ac);font-size:11px;cursor:pointer;font-family:inherit">סמן הכל כנקרא</button>
+  </div>
+  <div id="notif-list" style="overflow-y:auto;flex:1;padding:4px"></div>
 </div>
 
 <!-- REPORT MENU POPUP -->
@@ -5848,6 +6086,59 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
+      <label>כיוון העסקה</label>
+      <div style="display:flex;gap:8px" id="ta-direction-wrap">
+        <button type="button" class="ta-dir-btn" data-v="long" onclick="taSetDirection('long')" style="flex:1;padding:8px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);color:var(--gr);font-weight:600;cursor:pointer;font-family:inherit">🔼 Long</button>
+        <button type="button" class="ta-dir-btn" data-v="short" onclick="taSetDirection('short')" style="flex:1;padding:8px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);color:var(--re);font-weight:600;cursor:pointer;font-family:inherit">🔽 Short</button>
+      </div>
+    </div>
+
+    <div class="fr">
+      <label>סטאפ כניסה</label>
+      <select id="ta-setup" class="fi">
+        <option value="">— לא צויין —</option>
+        <option value="FVG">FVG</option>
+        <option value="IFVG">IFVG</option>
+        <option value="Order Flow">Order Flow</option>
+        <option value="Volume Profile">Volume Profile</option>
+        <option value="Liquidity">Liquidity</option>
+        <option value="Other">אחר</option>
+      </select>
+    </div>
+
+    <div class="fr">
+      <label>מצב רגשי לפני העסקה</label>
+      <select id="ta-emotion" class="fi">
+        <option value="">— לא צויין —</option>
+        <option value="calm">😌 רגוע</option>
+        <option value="confident">💪 בטוח</option>
+        <option value="excited">🤩 נרגש</option>
+        <option value="fomo">😰 FOMO</option>
+        <option value="frustrated">😤 מתוסכל</option>
+        <option value="revenge">🔥 נקמנות</option>
+        <option value="tired">😴 עייף</option>
+      </select>
+    </div>
+
+    <div class="fr">
+      <label>עמדת בתוכנית המסחר?</label>
+      <div style="display:flex;gap:8px" id="ta-plan-wrap">
+        <button type="button" class="ta-plan-btn" data-v="yes" onclick="taSetFollowedPlan(true)" style="flex:1;padding:8px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);color:var(--gr);font-weight:600;cursor:pointer;font-family:inherit">✅ כן</button>
+        <button type="button" class="ta-plan-btn" data-v="no" onclick="taSetFollowedPlan(false)" style="flex:1;padding:8px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);color:var(--re);font-weight:600;cursor:pointer;font-family:inherit">❌ לא</button>
+      </div>
+    </div>
+
+    <div class="fr">
+      <label>טעות שנעשתה (אם הייתה)</label>
+      <input type="text" id="ta-mistake" class="fi" placeholder="לדוג׳: כניסה מוקדמת מדי, לא עמדתי בסטופ...">
+    </div>
+
+    <div class="fr">
+      <label>לקח / מסקנה</label>
+      <input type="text" id="ta-lesson" class="fi" placeholder="מה למדתי מהעסקה הזו?">
+    </div>
+
+    <div class="fr">
       <label>🏷️ תגיות לעסקה</label>
       <div class="tags-input-wrap" id="tags-wrap" onclick="document.getElementById('tag-input').focus()">
         <div id="tags-display" style="display:contents"></div>
@@ -5880,7 +6171,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
-      <label>📸 צילום מסך / תמונה</label>
+      <label>📸 מסך לפני / במהלך העסקה</label>
       <div id="ta-img-preview" class="ta-img-preview" style="display:none;margin-bottom:8px">
         <img id="ta-img-preview-img" src="" alt="תמונת עסקה" onclick="taOpenLightbox()">
         <button class="ta-img-remove" onclick="taClearImg()" title="הסר תמונה">×</button>
@@ -5888,6 +6179,18 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <label id="ta-img-drop" class="ta-img-drop" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="taDropImg(event)">
         📎 לחץ לבחירת תמונה או גרור לכאן
         <input type="file" id="ta-img-input" accept="image/*" style="display:none" onchange="taLoadImg(this)">
+      </label>
+    </div>
+
+    <div class="fr">
+      <label>📸 מסך אחרי העסקה</label>
+      <div id="ta-img-preview2" class="ta-img-preview" style="display:none;margin-bottom:8px">
+        <img id="ta-img-preview-img2" src="" alt="תמונת עסקה — אחרי" onclick="taOpenLightbox2()">
+        <button class="ta-img-remove" onclick="taClearImg2()" title="הסר תמונה">×</button>
+      </div>
+      <label id="ta-img-drop2" class="ta-img-drop" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="taDropImg2(event)">
+        📎 לחץ לבחירת תמונה או גרור לכאן
+        <input type="file" id="ta-img-input2" accept="image/*" style="display:none" onchange="taLoadImg2(this)">
       </label>
     </div>
 
@@ -5899,6 +6202,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 </script>
@@ -6641,6 +6945,87 @@ function clxDrawChart(id, bals, color) {
   ctx.stroke();
 }
 
+// ── AI PRE-TRADE CHECK — rule-based, grounded in the trader's own recorded history ──
+function clxRunAiCheck() {
+  const g = id => document.getElementById(id);
+  const dir = g('aic-dir').value;
+  const entry = parseFloat(g('aic-entry').value);
+  const stop = parseFloat(g('aic-stop').value);
+  const target = parseFloat(g('aic-target').value);
+  const setup = g('aic-setup').value;
+  const notes = [];
+  let scores = [];
+
+  // 1) Risk/Reward
+  let rr = null;
+  if (isFinite(entry) && isFinite(stop) && isFinite(target) && entry !== stop) {
+    const risk = Math.abs(entry - stop), reward = Math.abs(target - entry);
+    rr = reward / risk;
+    const rrScore = Math.max(0, Math.min(100, Math.round(rr * 50)));
+    scores.push(rrScore);
+    notes.push(`יחס סיכון/סיכוי: <b>${rr.toFixed(2)}</b> ${rr >= 2 ? '✅ טוב' : rr >= 1 ? '⚠️ סביר' : '🚨 נמוך מדי'}`);
+  } else {
+    notes.push('⚠️ הזן כניסה/סטופ/יעד לחישוב יחס סיכון-סיכוי');
+  }
+
+  // 2) Personal history for this setup type
+  if (setup) {
+    const withSetup = tradesList.filter(t => t.setupType === setup);
+    if (withSetup.length >= 3) {
+      const wins = withSetup.filter(t => tradeNet(t) > 0).length;
+      const wr = wins / withSetup.length * 100;
+      scores.push(Math.round(wr));
+      notes.push(`היסטוריה אישית עם סטאפ "${setup}": <b>${wr.toFixed(0)}%</b> הצלחה מתוך ${withSetup.length} עסקאות ${wr>=50?'✅':'⚠️'}`);
+    } else {
+      scores.push(70);
+      notes.push(`אין עדיין מספיק היסטוריה עם סטאפ "${setup}" להשוואה (${withSetup.length} עסקאות)`);
+    }
+  }
+
+  // 3) Today's context — discipline/behavior flags
+  const s = _computeTodayStats();
+  let contextScore = 100;
+  if (s.consecLosses >= 2) { contextScore -= 30; notes.push(`🚨 בעייתי: ${s.consecLosses} הפסדים ברצף היום — סיכון ל-Revenge Trading`); }
+  if (s.tradeCount >= 5) { contextScore -= 20; notes.push(`⚠️ כבר ביצעת ${s.tradeCount} עסקאות היום — מעל למקובל`); }
+  if (s.maxLossLimit != null && s.netPnl < 0 && Math.abs(s.netPnl)/s.maxLossLimit >= 0.8) { contextScore -= 25; notes.push('🚨 קרוב מאוד לסטופ היומי — שקול לא לפתוח עסקה נוספת'); }
+  scores.push(Math.max(0, contextScore));
+  if (contextScore === 100) notes.push('✅ אין דגלים התנהגותיים היום');
+
+  const overall = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 50;
+  g('aic-results').style.display = '';
+  g('aic-score').textContent = overall + '/100';
+  g('aic-score').style.color = overall >= 70 ? 'var(--gr)' : overall >= 40 ? 'var(--go)' : 'var(--re)';
+  g('aic-notes').innerHTML = notes.map(n => `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--t2)">${n}</div>`).join('');
+}
+
+// ── BEHAVIOR ANOMALY DETECTION — compares today's pace/size to the trailing 30-day baseline ──
+function checkBehaviorAnomalies() {
+  const todayStr = new Date().toISOString().slice(0,10);
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().slice(0,10);
+  const baseline = TRADES.filter(t => t.date >= cutoffStr && t.date < todayStr);
+  if (baseline.length < 5) return; // not enough history yet to establish a baseline
+  const byDay = {};
+  baseline.forEach(t => { byDay[t.date] = (byDay[t.date]||0) + 1; });
+  const dayCounts = Object.values(byDay);
+  const avgPerDay = dayCounts.reduce((a,b)=>a+b,0) / dayCounts.length;
+  const s = _computeTodayStats();
+  let fired = {};
+  try { fired = JSON.parse(localStorage.getItem('dor_alertsFired_'+todayStr) || '{}'); } catch(e){}
+  const fire = (key, title, body) => {
+    if (fired[key]) return;
+    fired[key] = true;
+    addNotification('trading_alert', title, body, { key });
+  };
+  if (avgPerDay > 0 && s.tradeCount >= Math.ceil(avgPerDay * 2) && s.tradeCount >= 4) {
+    fire('anomaly_pace', '🚨 קצב מסחר חריג', `היום ביצעת ${s.tradeCount} עסקאות — בערך פי 2 מהממוצע שלך (${avgPerDay.toFixed(1)}/יום) ב-30 הימים האחרונים.`);
+  }
+  if (s.consecLosses >= 2 && s.tradeCount >= 3) {
+    fire('anomaly_revenge', '⚠️ חשד ל-Revenge Trading', 'ממשיך לפתוח עסקאות אחרי מספר הפסדים ברצף היום — בדוק שאתה לא מנסה "להחזיר" הפסד.');
+  }
+  try { localStorage.setItem('dor_alertsFired_'+todayStr, JSON.stringify(fired)); } catch(e){}
+}
+
 function clxDrawMCChart(bals, dd, tgt) {
   const canvas = document.getElementById('clx-mc-chart');
   if (!canvas) return;
@@ -6671,6 +7056,517 @@ function clxDrawMCChart(bals, dd, tgt) {
 // ════════════════════════════════════════════════════════
 let businessEvents = JSON.parse(localStorage.getItem('dor_bizEvents') || 'null') || [];
 let businessNotes  = JSON.parse(localStorage.getItem('dor_bizNotes')  || 'null') || {};
+
+// ── DAILY ROUTINE CHECKLISTS (pre/post trading) ──
+// Keyed by date string: { pre:{news,liquidity,plan,risk}, post:{summary,screenshots,lesson} }
+let dailyChecklist = JSON.parse(localStorage.getItem('dor_dailyChecklist') || 'null') || {};
+// Each user can fully customize their own pre/post trading checklist items (add/rename/remove) —
+// these are just sensible starting defaults, not fixed.
+const _DEFAULT_CHECKLIST_ITEMS = {
+  pre:  [ {k:'news',       label:'בדקתי חדשות היום'},
+          {k:'liquidity',  label:'סקרתי אזורי נזילות'},
+          {k:'plan',       label:'הכנתי תוכנית מסחר'},
+          {k:'risk',       label:'בדקתי סיכון מקסימלי'} ],
+  post: [ {k:'summary',    label:'כתבתי סיכום יום'},
+          {k:'screenshots',label:'צילמתי מסך לעסקאות'},
+          {k:'lesson',     label:'הוצאתי לקח מהיום'} ],
+};
+let checklistItemsConfig = JSON.parse(localStorage.getItem('dor_checklistItemsConfig') || 'null')
+  || JSON.parse(JSON.stringify(_DEFAULT_CHECKLIST_ITEMS));
+const DAILY_CHECKLIST_ITEMS = checklistItemsConfig; // kept as an alias for readability elsewhere
+function saveChecklistItemsConfig() {
+  try { localStorage.setItem('dor_checklistItemsConfig', JSON.stringify(checklistItemsConfig)); } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+function addChecklistItem(period) {
+  const label = (prompt(period==='pre' ? 'פריט חדש לצ׳קליסט "לפני מסחר":' : 'פריט חדש לצ׳קליסט "אחרי מסחר":') || '').trim();
+  if (!label) return;
+  checklistItemsConfig[period].push({ k: 'custom_' + Date.now(), label });
+  saveChecklistItemsConfig();
+  renderDailyChecklist();
+}
+function removeChecklistItem(period, key) {
+  checklistItemsConfig[period] = checklistItemsConfig[period].filter(i => i.k !== key);
+  saveChecklistItemsConfig();
+  renderDailyChecklist();
+}
+function _dcTodayKey() { return new Date().toISOString().slice(0,10); }
+function _dcEnsure(dateKey) {
+  if (!dailyChecklist[dateKey]) dailyChecklist[dateKey] = { pre:{}, post:{} };
+  if (!dailyChecklist[dateKey].pre)  dailyChecklist[dateKey].pre  = {};
+  if (!dailyChecklist[dateKey].post) dailyChecklist[dateKey].post = {};
+  return dailyChecklist[dateKey];
+}
+function toggleChecklistItem(period, key) {
+  const dateKey = _dcTodayKey();
+  const day = _dcEnsure(dateKey);
+  day[period][key] = !day[period][key];
+  try { localStorage.setItem('dor_dailyChecklist', JSON.stringify(dailyChecklist)); } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+  renderDailyChecklist();
+}
+function renderDailyChecklist() {
+  const el = document.getElementById('daily-checklist-card');
+  if (!el) return;
+  const dateKey = _dcTodayKey();
+  const day = _dcEnsure(dateKey);
+  const buildList = (period) => DAILY_CHECKLIST_ITEMS[period].map(item => {
+    const checked = !!day[period][item.k];
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;color:${checked?'var(--t1)':'var(--t2)'}">
+      <span onclick="toggleChecklistItem('${period}','${item.k}')" style="width:16px;height:16px;border-radius:4px;border:2px solid ${checked?'var(--gr)':'var(--border2)'};background:${checked?'var(--gr)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:10px;color:#06210f;flex-shrink:0;cursor:pointer">${checked?'✓':''}</span>
+      <span onclick="toggleChecklistItem('${period}','${item.k}')" style="flex:1;cursor:pointer;${checked?'text-decoration:line-through;opacity:.7':''}">${escHtml(item.label)}</span>
+      <span onclick="event.stopPropagation();removeChecklistItem('${period}','${item.k}')" title="הסר פריט" style="cursor:pointer;color:var(--t3);font-size:11px;padding:2px 5px">✕</span>
+    </div>`;
+  }).join('') + `<div onclick="addChecklistItem('${period}')" style="display:flex;align-items:center;gap:6px;padding:8px 0;cursor:pointer;font-size:12px;color:var(--ac)">+ הוסף פריט אישי</div>`;
+  const preDone = DAILY_CHECKLIST_ITEMS.pre.filter(i=>day.pre[i.k]).length;
+  const postDone = DAILY_CHECKLIST_ITEMS.post.filter(i=>day.post[i.k]).length;
+  el.innerHTML = `
+    <div class="zg-3" style="grid-template-columns:1fr 1fr">
+      <div class="zcl">
+        <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>לפני מסחר</div><span style="font-size:11px;color:var(--t3)">${preDone}/${DAILY_CHECKLIST_ITEMS.pre.length}</span></div>
+        ${buildList('pre')}
+      </div>
+      <div class="zcl">
+        <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>אחרי מסחר</div><span style="font-size:11px;color:var(--t3)">${postDone}/${DAILY_CHECKLIST_ITEMS.post.length}</span></div>
+        ${buildList('post')}
+      </div>
+    </div>`;
+}
+
+// ── AI DAILY AUTO-SUMMARY (rule-based analysis over the user's own trade history — no external AI/backend) ──
+function generateDailySummary() {
+  const s = _computeTodayStats();
+  if (!s.tradeCount) return { text: 'עדיין לא בוצעו עסקאות היום.', tradeCount:0, winPct:0, mainIssue:null, bestHour:null, recommendation:'הגדר תוכנית מסחר לפני הכניסה הראשונה.' };
+  // Best hour today (by count of profitable trades, falling back to net P&L)
+  const hourMap = {};
+  s.todayTrades.forEach(t => {
+    const h = t.btime ? parseInt(t.btime.split(':')[0]) : null;
+    if (h == null || isNaN(h)) return;
+    if (!hourMap[h]) hourMap[h] = { pnl:0, trades:0, wins:0 };
+    hourMap[h].pnl += tradeNet(t); hourMap[h].trades++;
+    if (tradeNet(t) > 0) hourMap[h].wins++;
+  });
+  const hourKeys = Object.keys(hourMap);
+  let bestHour = null;
+  if (hourKeys.length) {
+    bestHour = hourKeys.reduce((best,h) => hourMap[h].pnl > (hourMap[best]?.pnl ?? -Infinity) ? h : best, hourKeys[0]);
+  }
+  // Main issue: most common recorded mistake today, else late-entry heuristic, else off-plan flag
+  const mistakesToday = s.todayTrades.map(t=>(t.mistake||'').trim()).filter(Boolean);
+  let mainIssue = mistakesToday.length ? mistakesToday[mistakesToday.length-1] : null;
+  if (!mainIssue && s.consecLosses >= 2) mainIssue = 'הפסדים ברצף — ייתכן מסחר רגשי';
+  if (!mainIssue && s.planFollowedPct != null && s.planFollowedPct < 70) mainIssue = 'חריגה חוזרת מתוכנית המסחר';
+  let recommendation = 'המשך לפי התוכנית — ביצועים תקינים.';
+  if (s.consecLosses >= 2) recommendation = 'להוריד כמות עסקאות מחר ולהמתין לאישור נוסף.';
+  else if (s.tradeCount > 5) recommendation = 'שקול להגביל את מספר העסקאות ליום.';
+  else if (s.winPct < 40 && s.tradeCount >= 3) recommendation = 'לבחון מחדש את תנאי הכניסה — אחוז הצלחה נמוך היום.';
+  const text = `סיכום יום:\nביצעת ${s.tradeCount} עסקאות.\nאחוז הצלחה: ${s.winPct.toFixed(0)}%.` +
+    (mainIssue ? `\nהבעיה העיקרית היום: ${mainIssue}.` : '') +
+    (bestHour!=null ? `\nהשעה הכי טובה שלך: ${bestHour}:00-${(parseInt(bestHour)+1)%24}:00.` : '') +
+    `\nהמלצה למחר: ${recommendation}`;
+  return { text, tradeCount:s.tradeCount, winPct:s.winPct, mainIssue, bestHour, recommendation };
+}
+
+function _getTopRecurringMistake() {
+  const map = {};
+  tradesList.forEach(t => {
+    const m = (t.mistake || '').trim();
+    if (!m) return;
+    const key = m.toLowerCase();
+    if (!map[key]) map[key] = { label:m, count:0 };
+    map[key].count++;
+  });
+  const list = Object.values(map).sort((a,b)=>b.count-a.count);
+  return list[0] || null;
+}
+function _getStrongestPoint() {
+  // Best-performing setup type with a meaningful sample size, else best hour-of-day, else best strategy
+  const setupMap = {};
+  tradesList.forEach(t => {
+    const s = (t.setupType||'').trim(); if (!s) return;
+    if (!setupMap[s]) setupMap[s] = {pnl:0,trades:0,wins:0};
+    setupMap[s].pnl += tradeNet(t); setupMap[s].trades++;
+    if (tradeNet(t)>0) setupMap[s].wins++;
+  });
+  const setupKeys = Object.keys(setupMap).filter(k=>setupMap[k].trades>=3);
+  if (setupKeys.length) {
+    const best = setupKeys.reduce((b,k)=>setupMap[k].pnl>setupMap[b].pnl?k:b, setupKeys[0]);
+    const wr = (setupMap[best].wins/setupMap[best].trades*100).toFixed(0);
+    return `הסטאפ החזק שלך: "${best}" (${wr}% הצלחה)`;
+  }
+  const stratMap = {};
+  tradesList.forEach(t => {
+    const s = (t.strategy||'').trim(); if (!s) return;
+    if (!stratMap[s]) stratMap[s] = {pnl:0,trades:0};
+    stratMap[s].pnl += tradeNet(t); stratMap[s].trades++;
+  });
+  const stratKeys = Object.keys(stratMap).filter(k=>stratMap[k].trades>=3);
+  if (stratKeys.length) {
+    const best = stratKeys.reduce((b,k)=>stratMap[k].pnl>stratMap[b].pnl?k:b, stratKeys[0]);
+    return `האסטרטגיה החזקה שלך: "${best}"`;
+  }
+  return null;
+}
+function renderAiInsightCard() {
+  const el = document.getElementById('ai-insight-card');
+  if (!el) return;
+  const s = _computeTodayStats();
+  const sc = _computeTradingScore(s);
+  const summary = generateDailySummary();
+  const mistake = _getTopRecurringMistake();
+  const strength = _getStrongestPoint();
+  el.innerHTML = `
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>🧠 AI Insight</div></div>
+    <div style="font-size:13px;color:var(--t1);margin-bottom:8px">${sc.statusLabel}</div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 0;border-top:1px solid var(--border)">
+      <b style="color:var(--t1)">המלצה לשיפור:</b> ${summary.recommendation}
+    </div>
+    ${mistake ? `<div style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 0;border-top:1px solid var(--border)"><b style="color:var(--t1)">טעות חוזרת:</b> ${escHtml(mistake.label)} <span class="zm-badge neg">${mistake.count}×</span></div>` : ''}
+    ${strength ? `<div style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 0;border-top:1px solid var(--border)"><b style="color:var(--t1)">נקודת חוזקה:</b> ${strength}</div>` : ''}
+  `;
+}
+
+// ── SMART TRADING ALERTS → feed the unified notification bell (de-duped per day) ──
+function checkTradingAlerts() {
+  const s = _computeTodayStats();
+  const dateKey = s.todayStr;
+  let fired = {};
+  try { fired = JSON.parse(localStorage.getItem('dor_alertsFired_'+dateKey) || '{}'); } catch(e){}
+  const fire = (key, type, title, body) => {
+    if (fired[key]) return;
+    fired[key] = true;
+    addNotification(type, title, body, { dateKey, key });
+  };
+  if (s.maxLossLimit != null && s.netPnl < 0) {
+    const usedPct = Math.abs(s.netPnl) / s.maxLossLimit * 100;
+    if (usedPct >= 100) fire('stop_hit', 'trading_alert', '🚨 חריגה מהסטופ היומי', `הפסדת $${Math.abs(s.netPnl).toFixed(0)} — מעל הסטופ היומי שהגדרת ($${s.maxLossLimit.toFixed(0)}). שקול לעצור.`);
+    else if (usedPct >= 80) fire('stop_near', 'trading_alert', '⚠️ מתקרב לסטופ היומי', `הגעת ל-${usedPct.toFixed(0)}% מהסטופ היומי. שקול זהירות מוגברת.`);
+  }
+  if (s.consecLosses >= 2) fire('consec_'+s.consecLosses, 'trading_alert', '⚠️ הפסדים ברצף', `הפסדת ${s.consecLosses} עסקאות ברצף. האם אתה עומד לעצור לפי התוכנית?`);
+  if (s.tradeCount > 5) fire('trade_count', 'trading_alert', '🚨 חריגה ממספר עסקאות', `ביצעת ${s.tradeCount} עסקאות היום — מעל למקובל. שקול לסיים למסחר היום.`);
+  if (s.netPnl > 0 && s.maxLossLimit != null) {
+    // Treat 2x the daily-stop as a rough daily profit-target proxy when no explicit target exists
+    const targetProxy = s.maxLossLimit * 2;
+    if (s.netPnl >= targetProxy) fire('target_hit', 'trading_alert', '🎯 הגעת ליעד היומי', `הרווח היומי שלך ($${s.netPnl.toFixed(0)}) הגיע ליעד. שקול לסיים מסחר.`);
+  }
+  try { localStorage.setItem('dor_alertsFired_'+dateKey, JSON.stringify(fired)); } catch(e){}
+}
+
+// ── LIFE ROUTINE TRACKER (lr- namespace) — fully independent module ──
+let habits = JSON.parse(localStorage.getItem('dor_habits') || 'null') || [];
+let habitLog = JSON.parse(localStorage.getItem('dor_habitLog') || 'null') || {};
+let lrNotes = JSON.parse(localStorage.getItem('dor_lrNotes') || 'null') || {};
+const LR_ICONS = ['✅','😴','🏃','💧','🥗','📖','👨‍👩‍👧','🧘','💼','🎯'];
+
+function _lrTodayKey() { return new Date().toISOString().slice(0,10); }
+function _lrSave() {
+  try {
+    localStorage.setItem('dor_habits', JSON.stringify(habits));
+    localStorage.setItem('dor_habitLog', JSON.stringify(habitLog));
+  } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+function lrAddHabit() {
+  const name = (prompt('שם ההרגל החדש (לדוג׳: שינה 7 שעות, אימון, קריאה, זמן משפחה...):') || '').trim();
+  if (!name) return;
+  const icon = LR_ICONS[habits.length % LR_ICONS.length];
+  habits.push({ id:'habit_'+Date.now(), name, icon, category:'personal', createdAt:_lrTodayKey(), active:true });
+  _lrSave();
+  renderLR();
+}
+function lrDeleteHabit(id) {
+  if (!confirm('למחוק הרגל זה? היסטוריית המעקב שלו תישאר בנתונים אך לא תוצג יותר.')) return;
+  habits = habits.filter(h => h.id !== id);
+  _lrSave();
+  renderLR();
+}
+function lrToggleHabit(id) {
+  const dateKey = _lrTodayKey();
+  if (!habitLog[dateKey]) habitLog[dateKey] = {};
+  habitLog[dateKey][id] = !habitLog[dateKey][id];
+  _lrSave();
+  renderLR();
+}
+function lrSaveNotes() {
+  const dateKey = _lrTodayKey();
+  lrNotes[dateKey] = document.getElementById('lr-notes').value;
+  try { localStorage.setItem('dor_lrNotes', JSON.stringify(lrNotes)); } catch(e){}
+  clearTimeout(window._lrNotesTimer);
+  window._lrNotesTimer = setTimeout(() => { if (typeof _cloudSave === 'function') _cloudSave(); }, 800);
+}
+function _lrComputeStreak(habitId) {
+  let streak = 0;
+  let d = new Date();
+  // If today isn't done yet, start counting from yesterday (still an active streak until end of day)
+  const todayKey = _lrTodayKey();
+  if (!habitLog[todayKey]?.[habitId]) d.setDate(d.getDate() - 1);
+  while (true) {
+    const key = d.toISOString().slice(0,10);
+    if (habitLog[key]?.[habitId]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+function _lrDayCompletionPct(dateKey) {
+  const activeHabits = habits.filter(h => h.active !== false);
+  if (!activeHabits.length) return 0;
+  const done = activeHabits.filter(h => habitLog[dateKey]?.[h.id]).length;
+  return Math.round(done / activeHabits.length * 100);
+}
+function _lrComputeGamification() {
+  const activeHabits = habits.filter(h => h.active !== false);
+  let totalChecks = 0;
+  Object.values(habitLog).forEach(day => { totalChecks += Object.values(day).filter(Boolean).length; });
+  const goals = (typeof personalGoals !== 'undefined') ? personalGoals : [];
+  const goalPoints = goals.reduce((s,g) => s + Math.round((g.progress||0)/10), 0);
+  const points = totalChecks * 10 + goalPoints * 5;
+  const level = Math.floor(points / 200) + 1;
+  const bestStreak = activeHabits.reduce((max,h) => Math.max(max, _lrComputeStreak(h.id)), 0);
+  const achievements = [];
+  if (bestStreak >= 7) achievements.push('🔥 7 ימים רצופים');
+  if (bestStreak >= 30) achievements.push('🏅 30 ימים רצופים');
+  const last30 = [...Array(30)].map((_,i) => { const d=new Date(); d.setDate(d.getDate()-i); return d.toISOString().slice(0,10); });
+  const fullMonthDays = last30.filter(k => _lrDayCompletionPct(k) === 100).length;
+  if (fullMonthDays >= 1) achievements.push('🎯 יום מושלם');
+  if (goals.some(g => (g.progress||0) >= 100)) achievements.push('🏆 יעד הושג');
+  return { points, level, bestStreak, achievements };
+}
+function renderLR() {
+  const todayKey = _lrTodayKey();
+  const activeHabits = habits.filter(h => h.active !== false);
+  const pct = _lrDayCompletionPct(todayKey);
+  const ringEl = document.getElementById('lr-today-ring');
+  if (ringEl) ringEl.style.background = `conic-gradient(var(--gr) 0 ${pct}%, var(--bg4) ${pct}% 100%)`;
+  const pctEl = document.getElementById('lr-today-pct'); if (pctEl) pctEl.textContent = pct + '%';
+  const subEl = document.getElementById('lr-today-sub');
+  if (subEl) subEl.textContent = activeHabits.length ? `${activeHabits.filter(h=>habitLog[todayKey]?.[h.id]).length}/${activeHabits.length} הרגלים הושלמו` : 'הוסף הרגל ראשון';
+
+  const listEl = document.getElementById('lr-habits-today');
+  if (listEl) {
+    listEl.innerHTML = activeHabits.length ? activeHabits.map(h => {
+      const checked = !!habitLog[todayKey]?.[h.id];
+      const streak = _lrComputeStreak(h.id);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span onclick="lrToggleHabit('${h.id}')" style="width:22px;height:22px;border-radius:6px;border:2px solid ${checked?'var(--gr)':'var(--border2)'};background:${checked?'var(--gr)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">${checked?'✓':''}</span>
+        <span style="font-size:16px">${h.icon}</span>
+        <span style="flex:1;font-size:13px;color:${checked?'var(--t1)':'var(--t2)'}">${escHtml(h.name)}</span>
+        ${streak>0?`<span style="font-size:11px;color:var(--go)">🔥 ${streak}</span>`:''}
+        <span onclick="lrDeleteHabit('${h.id}')" style="cursor:pointer;color:var(--t3);font-size:11px;padding:2px 5px">✕</span>
+      </div>`;
+    }).join('') : '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">אין עדיין הרגלים — לחץ "+ הרגל חדש"</div>';
+  }
+
+  // Weekly graph — last 7 days completion %
+  const wEl = document.getElementById('lr-weekly-graph');
+  if (wEl) {
+    const days = [...Array(7)].map((_,i) => { const d=new Date(); d.setDate(d.getDate()-(6-i)); return d.toISOString().slice(0,10); });
+    const dayLabels = ['א','ב','ג','ד','ה','ו','ש'];
+    wEl.innerHTML = days.map(k => {
+      const p = _lrDayCompletionPct(k);
+      const d = new Date(k);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
+        <div style="width:100%;background:var(--bg4);border-radius:4px;height:${Math.max(4,p)}%;background:${p>=70?'var(--gr)':p>=40?'var(--go)':'var(--re)'}"></div>
+        <span style="font-size:9px;color:var(--t3)">${dayLabels[d.getDay()]}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Per-habit success rate (last 30 days) + simple trend (last 7 vs previous 7)
+  const rEl = document.getElementById('lr-habit-rates');
+  if (rEl) {
+    const last30 = [...Array(30)].map((_,i) => { const d=new Date(); d.setDate(d.getDate()-i); return d.toISOString().slice(0,10); });
+    rEl.innerHTML = activeHabits.length ? activeHabits.map(h => {
+      const doneCount = last30.filter(k => habitLog[k]?.[h.id]).length;
+      const rate = Math.round(doneCount/30*100);
+      const last7 = last30.slice(0,7).filter(k=>habitLog[k]?.[h.id]).length;
+      const prev7 = last30.slice(7,14).filter(k=>habitLog[k]?.[h.id]).length;
+      const trend = last7 > prev7 ? '📈' : last7 < prev7 ? '📉' : '➡️';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <span style="color:var(--t2)">${h.icon} ${escHtml(h.name)}</span>
+        <span><b class="${rate>=70?'cg':rate>=40?'':'cr'}">${rate}%</b> <span style="font-size:11px">${trend}</span></span>
+      </div>`;
+    }).join('') : '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">אין עדיין נתונים</div>';
+  }
+
+  const gEl = document.getElementById('lr-gamification-body');
+  if (gEl) {
+    const gam = _lrComputeGamification();
+    gEl.innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px">
+        <div><div style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">${gam.points}</div><div style="font-size:10px;color:var(--t3)">נקודות</div></div>
+        <div><div style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">Lv.${gam.level}</div><div style="font-size:10px;color:var(--t3)">רמה</div></div>
+        <div><div style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">🔥 ${gam.bestStreak}</div><div style="font-size:10px;color:var(--t3)">רצף מיטבי</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${gam.achievements.length ? gam.achievements.map(a=>`<span class="zm-badge">${a}</span>`).join('') : '<span style="font-size:11px;color:var(--t3)">השג רצפים ויעדים לפתיחת הישגים</span>'}</div>
+    `;
+  }
+
+  const notesEl = document.getElementById('lr-notes');
+  if (notesEl) notesEl.value = lrNotes[todayKey] || '';
+}
+
+// ── PERSONAL GOALS (fitness/financial/educational/personal) — separate from account trading goals ──
+let personalGoals = JSON.parse(localStorage.getItem('dor_personalGoals') || 'null') || [];
+let _pgEditId = null;
+const PG_CATEGORY_INFO = { fitness:{icon:'💪',label:'כושר'}, financial:{icon:'💰',label:'פיננסי'}, educational:{icon:'📚',label:'לימודי'}, personal:{icon:'🌱',label:'אישי'} };
+function _pgSave() {
+  try { localStorage.setItem('dor_personalGoals', JSON.stringify(personalGoals)); } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+function pgOpenAdd(id) {
+  _pgEditId = id || null;
+  const g = id ? personalGoals.find(x=>x.id===id) : null;
+  document.getElementById('pg-name').value = g?.name || '';
+  document.getElementById('pg-category').value = g?.category || 'personal';
+  document.getElementById('pg-date').value = g?.targetDate || '';
+  document.getElementById('pg-progress').value = g?.progress || 0;
+  document.getElementById('pg-progress-lbl').textContent = (g?.progress||0) + '%';
+  document.getElementById('pg-tasks').value = (g?.relatedTasks||[]).join('\n');
+  document.getElementById('pg-modal').classList.add('open');
+}
+function pgCloseAdd() { document.getElementById('pg-modal').classList.remove('open'); _pgEditId = null; }
+function pgSave() {
+  const name = document.getElementById('pg-name').value.trim();
+  if (!name) { showToast('נא להזין שם יעד', 'error'); return; }
+  const data = {
+    name,
+    category: document.getElementById('pg-category').value,
+    targetDate: document.getElementById('pg-date').value || null,
+    progress: +document.getElementById('pg-progress').value,
+    relatedTasks: document.getElementById('pg-tasks').value.split('\n').map(t=>t.trim()).filter(Boolean),
+  };
+  if (_pgEditId) {
+    const g = personalGoals.find(x=>x.id===_pgEditId);
+    if (g) Object.assign(g, data);
+  } else {
+    personalGoals.push({ id:'pg_'+Date.now(), ...data });
+  }
+  _pgSave();
+  pgCloseAdd();
+  renderPersonalGoals();
+  showToast('✅ היעד נשמר', 'success');
+}
+function pgDelete(id) {
+  if (!confirm('למחוק יעד זה?')) return;
+  personalGoals = personalGoals.filter(g => g.id !== id);
+  _pgSave();
+  renderPersonalGoals();
+}
+function renderPersonalGoals() {
+  const el = document.getElementById('pg-list');
+  if (!el) return;
+  if (!personalGoals.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3);font-size:13px">אין עדיין יעדים אישיים — לחץ "+ יעד חדש"</div>'; return; }
+  el.innerHTML = personalGoals.map(g => {
+    const info = PG_CATEGORY_INFO[g.category] || {icon:'🎯',label:''};
+    const pct = Math.max(0, Math.min(100, g.progress||0));
+    return `<div class="zcl" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:var(--t1)">${info.icon} ${escHtml(g.name)}</div>
+        <div style="display:flex;gap:6px">
+          <span onclick="pgOpenAdd('${g.id}')" style="cursor:pointer;color:var(--t3);font-size:12px">✏️</span>
+          <span onclick="pgDelete('${g.id}')" style="cursor:pointer;color:var(--t3);font-size:12px">✕</span>
+        </div>
+      </div>
+      <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:${pct}%;background:var(--gr)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-top:5px">
+        <span>${pct}% הושלם</span>
+        <span>${g.targetDate ? 'יעד: '+fmtD(g.targetDate) : ''}</span>
+      </div>
+      ${g.relatedTasks?.length ? `<div style="margin-top:8px;font-size:11px;color:var(--t2)">${g.relatedTasks.map(t=>'• '+escHtml(t)).join('<br>')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── UNIFIED NOTIFICATION CENTER ──
+// type: 'system' | 'new_user' | 'goal_achieved' | 'trading_alert' | 'ai_insight' | 'reminder' | 'task_incomplete'
+let notifications = JSON.parse(localStorage.getItem('dor_notifications') || 'null') || [];
+const NOTIF_TYPE_ICON = {
+  system:'⚙️', new_user:'👤', goal_achieved:'🎯', trading_alert:'🚨',
+  ai_insight:'🧠', reminder:'⏰', task_incomplete:'📋'
+};
+
+function saveNotifications() {
+  try { localStorage.setItem('dor_notifications', JSON.stringify(notifications)); } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+  renderNotifBell();
+}
+
+// Central entry point for ALL future notification producers (signup, goals, trading alerts, AI insights, reminders...)
+function addNotification(type, title, body, meta) {
+  notifications.unshift({
+    id: 'ntf_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+    type: type || 'system', title: title || '', body: body || '',
+    date: new Date().toISOString(), read: false, meta: meta || null
+  });
+  if (notifications.length > 500) notifications.length = 500;
+  saveNotifications();
+}
+
+function renderNotifBell() {
+  const badge = document.getElementById('notif-badge');
+  if (!badge) return;
+  const unread = notifications.filter(n => !n.read).length;
+  if (unread > 0) { badge.style.display = ''; badge.textContent = unread > 99 ? '99+' : unread; }
+  else badge.style.display = 'none';
+  const listEl = document.getElementById('notif-list');
+  if (listEl && document.getElementById('notif-panel')?.style.display !== 'none') _notifRenderList();
+}
+
+function _notifRenderList() {
+  const listEl = document.getElementById('notif-list');
+  if (!listEl) return;
+  if (!notifications.length) { listEl.innerHTML = '<div style="padding:30px 16px;text-align:center;color:var(--t3);font-size:12px">אין התראות עדיין</div>'; return; }
+  listEl.innerHTML = notifications.slice(0,100).map(n => {
+    const icon = NOTIF_TYPE_ICON[n.type] || '🔔';
+    const d = new Date(n.date);
+    const dateTxt = isNaN(d) ? '' : d.toLocaleString('he-IL', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<div onclick="notifMarkRead('${n.id}')" style="display:flex;gap:10px;padding:10px 10px;border-radius:8px;cursor:pointer;${n.read?'':'background:rgba(59,130,246,.08)'}" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(59,130,246,.08)'}'">
+      <div style="font-size:16px;flex-shrink:0">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px">
+          <b style="font-size:12px;color:var(--t1)">${escHtml(n.title)}</b>
+          ${n.read?'':'<span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>'}
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">${escHtml(n.body)}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px">${dateTxt}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function notifMarkRead(id) {
+  const n = notifications.find(x => x.id === id);
+  if (n && !n.read) { n.read = true; saveNotifications(); _notifRenderList(); }
+}
+function notifMarkAllRead() {
+  notifications.forEach(n => n.read = true);
+  saveNotifications();
+  _notifRenderList();
+}
+function toggleNotifPanel(evt) {
+  const panel = document.getElementById('notif-panel');
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) { panel.style.display = 'none'; return; }
+  const btn = evt?.currentTarget || document.getElementById('notif-bell-btn');
+  if (btn && btn.getBoundingClientRect) {
+    const rect = btn.getBoundingClientRect();
+    panel.style.top = Math.min(rect.bottom + 8, window.innerHeight - 100) + 'px';
+    const rightGap = window.innerWidth - rect.right;
+    panel.style.right = Math.max(8, rightGap - 150) + 'px';
+    panel.style.left = 'auto';
+  }
+  panel.style.display = 'flex';
+  _notifRenderList();
+}
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.getElementById('notif-bell-btn');
+  if (!panel || panel.style.display === 'none') return;
+  if (panel.contains(e.target) || (btn && btn.contains(e.target))) return;
+  panel.style.display = 'none';
+});
+document.addEventListener('DOMContentLoaded', () => { try{ renderNotifBell(); }catch(e){} });
 let _bizViewDate = new Date();
 
 // Note: withdrawals are NOT a business-event type — they live in a single place
@@ -6895,6 +7791,184 @@ const catCls = c => ({מבחן:'cm',לייב:'cl',ריסט:'cr2',כלי:'ck',ק�
 let equityOvCh,dailyOvCh,catOvCh,radarCh,ddCh,scatterCh;
 
 // Animated counter
+// ── TRADER FOCUS MODE ──
+function _computeTodayStats() {
+  const todayStr = new Date().toISOString().slice(0,10);
+  const todayTrades = TRADES.filter(t => t.date === todayStr);
+  const wins = todayTrades.filter(t=>tradeNet(t)>0);
+  const losses = todayTrades.filter(t=>tradeNet(t)<0);
+  const netPnl = todayTrades.reduce((s,t)=>s+tradeNet(t),0);
+  const winPct = todayTrades.length ? (wins.length/todayTrades.length*100) : 0;
+  let maxLossLimit = null, maxLossRemaining = null;
+  const acctList = (typeof accounts !== 'undefined' && accounts) ? accounts : [];
+  const acct = acctList.find(a=>a.active) || acctList[0] || null;
+  if (acct && acct.goals && acct.goals.burn && acct.goals.burn.limit) {
+    maxLossLimit = +acct.goals.burn.limit;
+    maxLossRemaining = maxLossLimit - Math.max(0, -netPnl);
+  }
+  // Active trading time span (earliest btime -> latest stime/btime today)
+  let activeMinutes = 0;
+  if (todayTrades.length) {
+    const times = [];
+    todayTrades.forEach(t => { if(t.btime) times.push(t.btime); if(t.stime) times.push(t.stime); });
+    if (times.length >= 2) {
+      const sorted = [...times].sort();
+      const [h1,m1] = sorted[0].split(':').map(Number);
+      const [h2,m2] = sorted[sorted.length-1].split(':').map(Number);
+      activeMinutes = Math.max(0, (h2*60+m2) - (h1*60+m1));
+    }
+  }
+  // Consecutive losses (most recent trades today, in entry order)
+  const chronoToday = [...todayTrades].sort((a,b)=>(a.btime||'').localeCompare(b.btime||''));
+  let consecLosses = 0;
+  for (let i=chronoToday.length-1;i>=0;i--){ if(tradeNet(chronoToday[i])<0) consecLosses++; else break; }
+  // Plan-adherence % (only counts trades where followedPlan was explicitly recorded)
+  const withPlanFlag = todayTrades.filter(t => t.followedPlan === true || t.followedPlan === false);
+  const planFollowedPct = withPlanFlag.length ? (withPlanFlag.filter(t=>t.followedPlan===true).length/withPlanFlag.length*100) : null;
+  return { todayStr, tradeCount: todayTrades.length, wins: wins.length, losses: losses.length, netPnl, winPct,
+    maxLossLimit, maxLossRemaining, activeMinutes, consecLosses, planFollowedPct, todayTrades };
+}
+
+// Daily Trading Score (0-100) — distinct from the overall-period Zella score above:
+// this one looks ONLY at today, weighing rule-adherence rather than raw profitability.
+function _computeTradingScore(s) {
+  // 1) Daily-stop adherence
+  let dailyStopScore = 100;
+  if (s.maxLossLimit != null) {
+    const used = Math.max(0, -s.netPnl) / s.maxLossLimit;
+    dailyStopScore = Math.max(0, Math.round(100 - used*100));
+  }
+  // 2) Risk/Reward (avg of today's trades that have a stopLoss recorded)
+  let rrScore = 70; // neutral default when no stop-loss data exists yet
+  const withStop = s.todayTrades.filter(t => t.stopLoss && t.buy && Math.abs(t.buy - t.stopLoss) > 0);
+  if (withStop.length) {
+    const avgRR = withStop.reduce((sum,t) => {
+      const risk = Math.abs(t.buy - t.stopLoss);
+      const reward = Math.abs(tradeNet(t));
+      return sum + (risk>0 ? reward/risk : 0);
+    }, 0) / withStop.length;
+    rrScore = Math.max(0, Math.min(100, Math.round(avgRR * 50)));
+  }
+  // 3) Trade-count adherence (soft default cap of 5/day if no custom limit exists)
+  const tradeCountCap = 5;
+  const tradeCountScore = s.tradeCount <= tradeCountCap ? 100 : Math.max(0, Math.round(100 - (s.tradeCount - tradeCountCap)*15));
+  // 4) Plan-adherence / discipline
+  let disciplineScore = s.planFollowedPct != null ? Math.round(s.planFollowedPct) : 85;
+  if (s.consecLosses >= 3) disciplineScore = Math.max(0, disciplineScore - 25);
+  const overall = Math.round((dailyStopScore + rrScore + tradeCountScore + disciplineScore) / 4);
+  let status = 'good', statusLabel = '🟢 ביצועים טובים היום';
+  if (overall < 40 || (s.maxLossLimit!=null && s.netPnl <= -s.maxLossLimit) || s.consecLosses >= 3) { status='bad'; statusLabel='🔴 חריגה מהכללים — עצור והערך'; }
+  else if (overall < 70 || s.consecLosses >= 2) { status='warn'; statusLabel='🟡 דורש זהירות'; }
+  return { overall, dailyStopScore, rrScore, tradeCountScore, disciplineScore, status, statusLabel };
+}
+
+function renderTraderStatus() {
+  const el = document.getElementById('trader-status-today');
+  if (!el) return;
+  const s = _computeTodayStats();
+  const sc = _computeTradingScore(s);
+  const planTxt = s.planFollowedPct==null ? '—' : (s.planFollowedPct>=80?'כן':(s.planFollowedPct>=50?'חלקית':'לא'));
+  const ring = `conic-gradient(${sc.status==='good'?'var(--gr)':sc.status==='warn'?'var(--go)':'var(--re)'} 0 ${sc.overall}%, var(--bg4) ${sc.overall}% 100%)`;
+  el.innerHTML = `
+  <div class="ts-row">
+    <div class="ts-status">
+      <div class="ts-dot ${sc.status}"></div>
+      <div class="ts-txt">
+        <b>${sc.statusLabel}</b>
+        <div>${s.activeMinutes>0?'זמן מסחר פעיל '+s.activeMinutes+' דק׳ · ':''}${s.tradeCount} עסקאות היום</div>
+      </div>
+      <div class="ts-mini">
+        <div><span class="${s.netPnl>=0?'cg':'cr'}">${s.netPnl>=0?'+':'-'}$${Math.abs(s.netPnl).toFixed(0)}</span><small>P&L היום</small></div>
+        <div><span>${s.tradeCount}</span><small>עסקאות</small></div>
+        <div><span class="${s.maxLossLimit==null?'':(s.maxLossRemaining<=0?'cr':'cg')}">${s.maxLossLimit==null?'—':'$'+Math.max(0,s.maxLossRemaining).toFixed(0)}</span><small>נותר עד סטופ</small></div>
+        <div><span>${planTxt}</span><small>לפי תוכנית</small></div>
+      </div>
+    </div>
+    <div class="ts-score">
+      <div class="ts-score-ring" style="background:${ring}"><b>${sc.overall}</b></div>
+      <small>ציון מסחר יומי</small>
+    </div>
+  </div>`;
+}
+function toggleFocusMode() {
+  const on = document.body.classList.toggle('focus-mode');
+  try{ localStorage.setItem('td_focusMode', on ? '1':'0'); }catch(e){}
+  if (on) renderFocusPanel();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  try { if (localStorage.getItem('td_focusMode') === '1') document.body.classList.add('focus-mode'); } catch(e) {}
+});
+
+// ── FOCUS MODE: goal-progress gauge for one chosen account + map of all accounts ──
+let _focusSelectedAcctId = null;
+try { _focusSelectedAcctId = localStorage.getItem('td_focusAcctId') || null; } catch(e){}
+
+function focusSelectAcct(id) {
+  _focusSelectedAcctId = id || null;
+  try { localStorage.setItem('td_focusAcctId', _focusSelectedAcctId || ''); } catch(e){}
+  renderFocusGoalGauge();
+  renderFocusAccountsMap();
+}
+
+function renderFocusPanel() {
+  const sel = document.getElementById('focus-acct-select');
+  const list = (typeof accounts !== 'undefined' && accounts) ? accounts : [];
+  if (sel) {
+    if (!list.find(a => a.id === _focusSelectedAcctId)) _focusSelectedAcctId = list[0]?.id || null;
+    sel.innerHTML = list.map(a => `<option value="${a.id}" ${a.id===_focusSelectedAcctId?'selected':''}>${escHtml(a.name)}</option>`).join('') || '<option value="">אין תיקים</option>';
+  }
+  renderFocusGoalGauge();
+  renderFocusAccountsMap();
+}
+
+function renderFocusGoalGauge() {
+  const body = document.getElementById('focus-goal-gauge-body');
+  if (!body) return;
+  const list = (typeof accounts !== 'undefined' && accounts) ? accounts : [];
+  const a = list.find(x => x.id === _focusSelectedAcctId);
+  if (!a) { body.innerHTML = '<div style="padding:16px;text-align:center;color:var(--t3);font-size:12px">אין תיקים עדיין — צור תיק דרך 🎯 כל התיקים</div>'; return; }
+  _ensureAcctShape(a);
+  const pnl = computeAcctNet(a.id);
+  const g = a.goals;
+  let html = '';
+  if (g.withdrawal?.target) html += _goalProgressBarHtml('יעד משיכה', Math.max(0,pnl), g.withdrawal.target, 'var(--gr)');
+  if (g.pass?.target)       html += _goalProgressBarHtml('יעד מעבר',  Math.max(0,pnl), g.pass.target, 'var(--bl)');
+  if (g.burn?.limit)        html += _goalProgressBarHtml('סף שריפה', Math.abs(Math.min(0,pnl)), g.burn.limit, 'var(--re)');
+  (g.custom||[]).forEach(c => { if (c.target) html += _goalProgressBarHtml(c.name||'יעד מותאם', Math.max(0,pnl), c.target, 'var(--pu)'); });
+  if (!html) html = '<div style="padding:12px;text-align:center;color:var(--t3);font-size:12px">לא הוגדרו יעדים לתיק זה — הגדר ב-🎯 כל התיקים</div>';
+  body.innerHTML = html;
+}
+
+function renderFocusAccountsMap() {
+  const el = document.getElementById('focus-accounts-map');
+  if (!el) return;
+  const list = (typeof accounts !== 'undefined' && accounts) ? accounts : [];
+  if (!list.length) { el.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">אין תיקים עדיין</div>'; return; }
+  el.innerHTML = list.map(a => {
+    _ensureAcctShape(a);
+    const pnl = computeAcctNet(a.id);
+    const statusInfo = ACCT_STATUS_INFO[a.status] || null;
+    const goalBar = _acctGoalMiniBar(a, pnl);
+    return `<div class="focus-map-card ${a.id===_focusSelectedAcctId?'sel':''}" onclick="focusSelectAcct('${a.id}');document.getElementById('focus-acct-select').value='${a.id}'">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${a.color||'var(--ac)'};flex-shrink:0"></span>
+        <b style="font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.name)}</b>
+      </div>
+      <div class="${pnl>=0?'cg':'cr'}" style="font-size:15px;font-weight:700;font-family:'IBM Plex Mono',monospace">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</div>
+      ${statusInfo?`<div style="font-size:9px;color:${statusInfo.color};margin-top:2px">${statusInfo.label}</div>`:''}
+      ${goalBar}
+    </div>`;
+  }).join('');
+}
+
+// Shared zoom/pan config for the main equity + drawdown charts (chartjs-plugin-zoom)
+function _zoomOpts() {
+  return {
+    pan:{enabled:true,mode:'x',modifierKey:null},
+    zoom:{wheel:{enabled:true},pinch:{enabled:true},drag:{enabled:false},mode:'x'},
+    limits:{x:{minRange:5}}
+  };
+}
 function animCounter(el, target, prefix='', suffix='', duration=800) {
   const start = 0;
   const startTime = performance.now();
@@ -6980,6 +8054,12 @@ function renderGauges(opts){
 }
 
 function renderOV() {
+  renderTraderStatus();
+  if (typeof renderAiInsightCard === 'function') renderAiInsightCard();
+  renderDailyChecklist();
+  if (typeof renderFocusPanel === 'function') renderFocusPanel();
+  if (typeof checkTradingAlerts === 'function') checkTradingAlerts();
+  if (typeof checkBehaviorAnomalies === 'function') checkBehaviorAnomalies();
   const exp = records.filter(r=>r.type==='הוצאה');
   const wd  = records.filter(r=>r.type==='משיכה');
   const tl  = tradesList;
@@ -6991,6 +8071,9 @@ function renderOV() {
   const wr = tl.length ? (wins.length/tl.length*100) : 0;
   const avgW = wins.length ? wins.reduce((s,t)=>s+tradeNet(t),0)/wins.length : 0;
   const avgL = losses.length ? losses.reduce((s,t)=>s+tradeNet(t),0)/losses.length : 0;
+  // Max drawdown in $ (running peak-to-trough on cumulative net P&L)
+  let _ddC=0,_ddPk=0,maxDD$=0;
+  tl.forEach(t=>{_ddC+=tradeNet(t);_ddPk=Math.max(_ddPk,_ddC);maxDD$=Math.min(maxDD$,_ddC-_ddPk);});
   const _grossLoss = Math.abs(avgL*losses.length);
   const pf = _grossLoss>0 ? (avgW*wins.length)/_grossLoss : (wins.length?Infinity:0); // no losses + wins ⇒ ∞
 
@@ -6998,34 +8081,43 @@ function renderOV() {
   const lastDate = tl.length ? [...tl].sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime))[0] : null;
   document.getElementById('ov-last-import').textContent = lastDate ? fmtD(lastDate.date)+' '+lastDate.btime.slice(0,5) : '—';
 
-  // ── TOP METRIC CARDS ──
+  // ── TOP METRIC CARDS ── (primary row: Net P&L / Win% / Max DD / Profit Factor — secondary row: Day Win% / Avg W-L)
   const mEl = document.getElementById('ov-m');
   mEl.innerHTML = `
-    <div class="zm anim-up ${netPnl>=0?'glow-green':'glow-red'}">
-      <div class="zm-label">Net P&L <span class="zm-badge ${netPnl<0?'neg':''}">${tl.length} עסקאות</span></div>
+  <div class="zm-row-primary">
+    <div class="zm zm-primary anim-up ${netPnl>=0?'glow-green':'glow-red'}">
+      <div class="zm-label"><span class="zm-icon">💰</span>Net P&L <span class="zm-badge ${netPnl<0?'neg':''}">${tl.length} עסקאות</span></div>
       <div class="zm-val ${netPnl>=0?'cg':'cr'}" id="zm-pnl">—</div>
       <div class="win-bar"><div class="win-bar-fill" style="width:${Math.min(Math.abs(netPnl)/30,100)}%;background:${netPnl>=0?'linear-gradient(90deg,var(--gr),#00ff88)':'linear-gradient(90deg,var(--re),#ff8888)'}"></div></div>
       <div class="zm-sub">₪<span id="zm-pnl-ils">—</span></div>
     </div>
-    <div class="zm anim-up-1">
-      <div class="zm-label">Trade Win %</div>
+    <div class="zm zm-primary anim-up-1">
+      <div class="zm-label"><span class="zm-icon">🎯</span>Trade Win %</div>
       <div class="zm-val ${wr>=50?'cg':'cr'}" id="zm-wr">—</div>
       <div class="win-bar"><div class="win-bar-fill" style="width:${wr}%"></div></div>
       <div class="zm-sub">${wins.length}W / ${losses.length}L</div>
     </div>
-    <div class="zm anim-up-2">
-      <div class="zm-label">Profit Factor</div>
+    <div class="zm zm-primary anim-up-2">
+      <div class="zm-label"><span class="zm-icon">📉</span>Drawdown</div>
+      <div class="zm-val cr" id="zm-dd">—</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.min(Math.abs(maxDD$)/30,100)}%;background:var(--re)"></div></div>
+      <div class="zm-sub">שיא נסיגה מהפסגה</div>
+    </div>
+    <div class="zm zm-primary anim-up-3">
+      <div class="zm-label"><span class="zm-icon">⚡</span>Profit Factor</div>
       <div class="zm-val ${pf>=1?'cg':'cr'}" id="zm-pf">—</div>
       <div class="prog-bar"><div class="prog-fill" style="width:${Math.min(pf/3*100,100)}%;background:${pf>=1?'var(--gr)':'var(--re)'}"></div></div>
       <div class="zm-sub">avg W: $${avgW.toFixed(1)} / L: $${avgL.toFixed(1)}</div>
     </div>
-    <div class="zm anim-up-3">
+  </div>
+  <div class="zm-row-secondary">
+    <div class="zm zm-secondary anim-up-4">
       <div class="zm-label">Day Win %</div>
       <div class="zm-val" id="zm-dwr" style="color:var(--go)">—</div>
       <div class="prog-bar"><div id="zm-dwr-bar" class="prog-fill" style="background:var(--go)"></div></div>
       <div class="zm-sub" id="zm-dwr-sub"></div>
     </div>
-    <div class="zm anim-up-4">
+    <div class="zm zm-secondary anim-up-4">
       <div class="zm-label">Avg Win / Loss</div>
       <div style="display:flex;align-items:baseline;gap:6px">
         <div class="zm-val cg" id="zm-avgw">—</div>
@@ -7036,20 +8128,24 @@ function renderOV() {
         <div style="background:var(--gr);border-radius:3px;flex:${Math.abs(avgW)}"></div>
         <div style="background:var(--re);border-radius:3px;flex:${Math.abs(avgL)||1}"></div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px">
+    </div>
+    <div class="zm zm-secondary anim-up-4">
+      <div class="zm-label">עסקאות W / L</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
         <div style="display:flex;align-items:center;gap:3px">
           <span style="width:6px;height:6px;border-radius:50%;background:var(--gr);flex-shrink:0"></span>
-          <span style="font-size:11px;font-weight:600;color:var(--gr)">${wins.length}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--gr)">${wins.length}</span>
           <span style="font-size:9px;color:var(--t3)">W</span>
         </div>
         <div style="font-size:10px;color:var(--t3)">יחס <span style="color:var(--t1);font-weight:600;font-family:'IBM Plex Mono',monospace">${avgL ? (avgW/Math.abs(avgL)).toFixed(2) : '—'}</span></div>
         <div style="display:flex;align-items:center;gap:3px">
           <span style="font-size:9px;color:var(--t3)">L</span>
-          <span style="font-size:11px;font-weight:600;color:var(--re)">${losses.length}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--re)">${losses.length}</span>
           <span style="width:6px;height:6px;border-radius:50%;background:var(--re);flex-shrink:0"></span>
         </div>
       </div>
-    </div>`;
+    </div>
+  </div>`;
 
   // Animate counters
   setTimeout(() => {
@@ -7061,6 +8157,8 @@ function renderOV() {
     if(wrEl) animCounter(wrEl, wr, '', '%');
     const pfEl = document.getElementById('zm-pf');
     if(pfEl){ if(isFinite(pf)) animCounter(pfEl, pf, ''); else pfEl.textContent='∞'; }
+    const ddEl = document.getElementById('zm-dd');
+    if(ddEl) animCounter(ddEl, maxDD$, '$');
     const wEl = document.getElementById('zm-avgw');
     if(wEl) animCounter(wEl, avgW, '$');
     const lEl = document.getElementById('zm-avgl');
@@ -7166,7 +8264,7 @@ function renderOV() {
   let cum=0; const eq=chrono.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
   if(equityOvCh) equityOvCh.destroy();
   const eCtx = document.getElementById('equityOvChart');
-  if(eCtx) equityOvCh = new Chart(eCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(61,153,112,.35)');g.addColorStop(1,'rgba(61,153,112,.01)');return g;}),borderWidth:2,fill:true,pointRadius:0,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{display:false},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:1000,easing:'easeInOutQuart'}}});
+  if(eCtx) equityOvCh = new Chart(eCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#22c55e',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(34,197,94,.35)');g.addColorStop(1,'rgba(34,197,94,.01)');return g;}),borderWidth:2,fill:true,pointRadius:0,pointHoverRadius:4,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>' $'+c.raw.toFixed(2)}},zoom:_zoomOpts()},scales:{x:{display:false},y:{ticks:{color:'#94a3b8',font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.06)'},border:{display:false}}},animation:{duration:1000,easing:'easeInOutQuart'}}});
 
   // ── DAILY BARS ──
   const dailyMap={};
@@ -7252,7 +8350,7 @@ function renderOV() {
   if(ddStatsEl)ddStatsEl.innerHTML=`Max DD: <span class="cr">$${Math.abs(maxDD2).toFixed(2)}</span>`;
   if(ddCh)ddCh.destroy();
   const ddCtx=document.getElementById('ddChart');
-  if(ddCtx)ddCh=new Chart(ddCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:ddArr,borderColor:'rgba(199,95,95,.8)',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,160);g.addColorStop(0,'rgba(199,95,95,.3)');g.addColorStop(1,'rgba(199,95,95,.01)');return g;}),borderWidth:1.5,fill:true,pointRadius:0,tension:0.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:800}}});
+  if(ddCtx)ddCh=new Chart(ddCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:ddArr,borderColor:'#ef4444',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,160);g.addColorStop(0,'rgba(239,68,68,.32)');g.addColorStop(1,'rgba(239,68,68,.01)');return g;}),borderWidth:1.5,fill:true,pointRadius:0,pointHoverRadius:4,tension:0.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>' $'+c.raw.toFixed(2)}},zoom:_zoomOpts()},scales:{x:{display:false},y:{ticks:{color:'#94a3b8',font:{size:8},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.06)'},border:{display:false}}},animation:{duration:800}}});
 
   // ── SCATTER (trade time performance) ──
   const scatterData=tl.map(t=>({x:parseInt(t.btime.split(':')[0]),y:+tradeNet(t).toFixed(2),r:Math.max(2,Math.min(8,Math.abs(tradeNet(t))/20+2))}));
@@ -10153,6 +11251,7 @@ const _NAV_LABELS = {
   trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות', coach:'🧠 מאמן מנטאלי',
   course:'🎓 קורס מסחר', calc:'🧮 מחשבונים', biz:'🏢 ניהול עסקי',
   datamgr:'⚙️ ניהול נתונים', personal:'👤 אזור אישי',
+  lr:'📅 שגרת חיים', goals:'🏆 יעדים אישיים',
   software:'📥 תוכנות מסחר', firms:'🏆 מימון', news:'📰 חדשות',
   ecal:'📅 יומן כלכלי', help:'❓ עזרה', billing:'💳 תשלום', admin:'🛡️ ניהול',
   drivers:'🧭 דרייברים',
@@ -10648,6 +11747,13 @@ function _cloudSave() {
         td_accounts: (typeof accounts !== 'undefined') ? accounts : [],
         td_bizEvents: (typeof businessEvents !== 'undefined') ? businessEvents : [],
         td_bizNotes: (typeof businessNotes !== 'undefined') ? businessNotes : {},
+        td_notifications: (typeof notifications !== 'undefined') ? notifications.slice(-300) : [],
+        td_dailyChecklist: (typeof dailyChecklist !== 'undefined') ? dailyChecklist : {},
+        td_checklistItemsConfig: (typeof checklistItemsConfig !== 'undefined') ? checklistItemsConfig : {},
+        td_habits: (typeof habits !== 'undefined') ? habits : [],
+        td_habitLog: (typeof habitLog !== 'undefined') ? habitLog : {},
+        td_lrNotes: (typeof lrNotes !== 'undefined') ? lrNotes : {},
+        td_personalGoals: (typeof personalGoals !== 'undefined') ? personalGoals : [],
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
       _updateSyncDot('synced');
@@ -10676,6 +11782,22 @@ async function _cloudLoad() {
       if (d.td_accounts?.length && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
       if (d.td_bizEvents?.length && typeof businessEvents !== 'undefined') { businessEvents = d.td_bizEvents; localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents)); }
       if (d.td_bizNotes && typeof businessNotes !== 'undefined') { businessNotes = d.td_bizNotes; localStorage.setItem('dor_bizNotes', JSON.stringify(businessNotes)); }
+      if (d.td_notifications?.length) { notifications = d.td_notifications; localStorage.setItem('dor_notifications', JSON.stringify(notifications)); }
+      if (typeof renderNotifBell === 'function') renderNotifBell();
+      if (d.td_dailyChecklist && typeof dailyChecklist !== 'undefined') { dailyChecklist = d.td_dailyChecklist; localStorage.setItem('dor_dailyChecklist', JSON.stringify(dailyChecklist)); }
+      // Mutate in place (don't reassign) — DAILY_CHECKLIST_ITEMS is a const alias to this same object
+      if (d.td_checklistItemsConfig?.pre && typeof checklistItemsConfig !== 'undefined') {
+        checklistItemsConfig.pre  = d.td_checklistItemsConfig.pre;
+        checklistItemsConfig.post = d.td_checklistItemsConfig.post || [];
+        localStorage.setItem('dor_checklistItemsConfig', JSON.stringify(checklistItemsConfig));
+      }
+      if (typeof renderDailyChecklist === 'function') renderDailyChecklist();
+      if (d.td_habits?.length && typeof habits !== 'undefined') { habits = d.td_habits; localStorage.setItem('dor_habits', JSON.stringify(habits)); }
+      if (d.td_habitLog && typeof habitLog !== 'undefined') { habitLog = d.td_habitLog; localStorage.setItem('dor_habitLog', JSON.stringify(habitLog)); }
+      if (d.td_lrNotes && typeof lrNotes !== 'undefined') { lrNotes = d.td_lrNotes; localStorage.setItem('dor_lrNotes', JSON.stringify(lrNotes)); }
+      if (d.td_personalGoals?.length && typeof personalGoals !== 'undefined') { personalGoals = d.td_personalGoals; localStorage.setItem('dor_personalGoals', JSON.stringify(personalGoals)); }
+      if (typeof renderLR === 'function') renderLR();
+      if (typeof renderPersonalGoals === 'function') renderPersonalGoals();
       if (typeof renderBiz === 'function') renderBiz();
       applyRecurring();
       renderAll();
@@ -11889,7 +13011,7 @@ async function doRegister() {
     _registering = false; // Firestore doc written — safe to continue
 
     await _logEvent(uid, email, name, 'register');
-    sendRegistrationEmail({ name, email, phone });
+    sendRegistrationEmail({ name, email, phone, plan });
 
     // Manually set currentUser and show app
     currentUser = { ...userData, uid, isAdmin: isAdm };
@@ -11917,7 +13039,7 @@ async function doRegister() {
           await db.collection('users').doc(cred2.user.uid).set(userData);
           _registering = false;
           await _logEvent(cred2.user.uid, email, name, 'register');
-          sendRegistrationEmail({ name, email, phone });
+          sendRegistrationEmail({ name, email, phone, plan });
           currentUser = { ...userData, uid: cred2.user.uid, isAdmin: isAdm };
           showMsg(msg,'ok','✅ נרשמת בהצלחה! ברוך הבא');
           setTimeout(() => showApp(), 800);
@@ -13845,6 +14967,8 @@ async function sendRegistrationEmail(user) {
           <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="mailto:${user.email}" style="color:#7295b8">${user.email}</a></td></tr>
       <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px">טלפון</td>
           <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="tel:${user.phone}" style="color:#7295b8">${user.phone}</a></td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px">סוג חשבון</td>
+          <td style="padding:10px 0;border-bottom:1px solid #252d40;font-weight:600">${user.plan || 'pro'}</td></tr>
       <tr><td style="padding:10px 0;color:#8892a4;font-size:12px">תאריך</td>
           <td style="padding:10px 0">${dateStr}</td></tr>
     </table>
@@ -14260,7 +15384,10 @@ function _applyTickerHTML() {}     // no-op
 // ── TRADE ANNOTATION ──
 let _taIdx = -1;
 let _taStars = 0;
-let _taImg = null; // base64 or null
+let _taImg = null;  // base64 or null — before/during screenshot
+let _taImg2 = null; // base64 or null — after screenshot
+let _taDirection = '';    // 'long' | 'short' | ''
+let _taFollowedPlan = null; // true | false | null (unset)
 
 function openTradeAnnotate(ti) {
   _taIdx = ti;
@@ -14278,9 +15405,20 @@ function openTradeAnnotate(ti) {
   document.getElementById('ta-notes').value    = t.notes    || '';
   _taStars = t.stars || 0;
   _renderTaStars(_taStars);
-  // Load existing image
+  // Load existing image(s)
   _taImg = t.image || null;
   _renderTaImgPreview();
+  _taImg2 = t.image2 || null;
+  _renderTaImgPreview2();
+  // Advanced journal fields
+  _taDirection = t.direction || '';
+  _renderTaDirection();
+  _taFollowedPlan = (t.followedPlan === true || t.followedPlan === false) ? t.followedPlan : null;
+  _renderTaFollowedPlan();
+  const setupEl = document.getElementById('ta-setup'); if (setupEl) setupEl.value = t.setupType || '';
+  const emoEl = document.getElementById('ta-emotion'); if (emoEl) emoEl.value = t.emotionBefore || '';
+  const mistakeEl = document.getElementById('ta-mistake'); if (mistakeEl) mistakeEl.value = t.mistake || '';
+  const lessonEl = document.getElementById('ta-lesson'); if (lessonEl) lessonEl.value = t.lesson || '';
   // Commission override
   const commEl = document.getElementById('ta-comm');
   if (commEl) {
@@ -14411,6 +15549,74 @@ function taOpenLightbox() {
   document.getElementById('img-lightbox').classList.add('open');
 }
 
+// ── Second (after-trade) screenshot — mirrors the functions above ──
+function _renderTaImgPreview2() {
+  const preview = document.getElementById('ta-img-preview2');
+  const drop    = document.getElementById('ta-img-drop2');
+  const img     = document.getElementById('ta-img-preview-img2');
+  if (!preview || !drop) return;
+  if (_taImg2) { img.src = _taImg2; preview.style.display = ''; drop.style.display = 'none'; }
+  else { preview.style.display = 'none'; drop.style.display = ''; if (img) img.src = ''; }
+}
+function taLoadImg2(inp) {
+  const file = inp.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const imgEl = new Image();
+    imgEl.onload = function() {
+      const maxW = 1200, maxH = 900;
+      let w = imgEl.width, h = imgEl.height;
+      if (w > maxW) { h = h * maxW / w; w = maxW; }
+      if (h > maxH) { w = w * maxH / h; h = maxH; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(imgEl, 0, 0, w, h);
+      _taImg2 = canvas.toDataURL('image/jpeg', 0.72);
+      _renderTaImgPreview2();
+    };
+    imgEl.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  inp.value = '';
+}
+function taDropImg2(e) {
+  e.preventDefault();
+  document.getElementById('ta-img-drop2')?.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) taLoadImg2({ files: [file] });
+}
+function taClearImg2() { _taImg2 = null; _renderTaImgPreview2(); }
+function taOpenLightbox2() {
+  if (!_taImg2) return;
+  document.getElementById('img-lightbox-img').src = _taImg2;
+  document.getElementById('img-lightbox').classList.add('open');
+}
+
+// ── Direction + plan-adherence toggles ──
+function taSetDirection(d) {
+  _taDirection = (_taDirection === d) ? '' : d;
+  _renderTaDirection();
+}
+function _renderTaDirection() {
+  document.querySelectorAll('.ta-dir-btn').forEach(b => {
+    const on = b.dataset.v === _taDirection;
+    b.style.background = on ? (b.dataset.v==='long' ? 'var(--gd)' : 'var(--rd)') : 'var(--bg3)';
+    b.style.borderColor = on ? (b.dataset.v==='long' ? 'var(--gr)' : 'var(--re)') : 'var(--border2)';
+  });
+}
+function taSetFollowedPlan(v) {
+  _taFollowedPlan = (_taFollowedPlan === v) ? null : v;
+  _renderTaFollowedPlan();
+}
+function _renderTaFollowedPlan() {
+  document.querySelectorAll('.ta-plan-btn').forEach(b => {
+    const on = (b.dataset.v === 'yes' && _taFollowedPlan === true) || (b.dataset.v === 'no' && _taFollowedPlan === false);
+    b.style.background = on ? (b.dataset.v==='yes' ? 'var(--gd)' : 'var(--rd)') : 'var(--bg3)';
+    b.style.borderColor = on ? (b.dataset.v==='yes' ? 'var(--gr)' : 'var(--re)') : 'var(--border2)';
+  });
+}
+
 function openImgLightbox(src) {
   document.getElementById('img-lightbox-img').src = src;
   document.getElementById('img-lightbox').classList.add('open');
@@ -14435,7 +15641,14 @@ function taSave() {
   tradesList[_taIdx].notes    = document.getElementById('ta-notes').value.trim();
   tradesList[_taIdx].stars    = _taStars;
   tradesList[_taIdx].image    = _taImg || null;
+  tradesList[_taIdx].image2   = _taImg2 || null;
   tradesList[_taIdx].tags     = [..._taTags];
+  tradesList[_taIdx].direction    = _taDirection || null;
+  tradesList[_taIdx].followedPlan = _taFollowedPlan;
+  tradesList[_taIdx].setupType    = document.getElementById('ta-setup')?.value || null;
+  tradesList[_taIdx].emotionBefore = document.getElementById('ta-emotion')?.value || null;
+  tradesList[_taIdx].mistake      = (document.getElementById('ta-mistake')?.value || '').trim() || null;
+  tradesList[_taIdx].lesson       = (document.getElementById('ta-lesson')?.value || '').trim() || null;
   const stopVal = document.getElementById('ta-stop')?.value.trim();
   tradesList[_taIdx].stopLoss = stopVal ? parseFloat(stopVal) : null;
   const commVal = document.getElementById('ta-comm').value.trim();
@@ -14448,12 +15661,20 @@ function taSave() {
 
 function taClose() {
   document.getElementById('ta-modal').classList.remove('open');
-  _taIdx = -1; _taStars = 0; _taImg = null;
+  _taIdx = -1; _taStars = 0; _taImg = null; _taImg2 = null;
+  _taDirection = ''; _taFollowedPlan = null;
   _taTags = [];
   document.querySelectorAll('.star-pick').forEach(s=>s.classList.remove('on'));
   const lbl = document.getElementById('ta-stars-lbl');
   if (lbl) lbl.textContent = '';
   _renderTaImgPreview();
+  _renderTaImgPreview2();
+  _renderTaDirection();
+  _renderTaFollowedPlan();
+  const setupEl = document.getElementById('ta-setup'); if (setupEl) setupEl.value = '';
+  const emoEl = document.getElementById('ta-emotion'); if (emoEl) emoEl.value = '';
+  const mistakeEl = document.getElementById('ta-mistake'); if (mistakeEl) mistakeEl.value = '';
+  const lessonEl = document.getElementById('ta-lesson'); if (lessonEl) lessonEl.value = '';
   const stopEl = document.getElementById('ta-stop');
   if (stopEl) stopEl.value = '';
   const rrEl = document.getElementById('ta-rr-display');
@@ -14519,11 +15740,108 @@ function renderStrategyStats() {
     </table>`;
 }
 
-// Patch renderStats to also run strategy stats (use assignment to avoid hoisting)
+// Generic grouped-performance table renderer — shared by symbol/setup breakdowns
+function _renderGroupedPerfTable(elId, groupMap, emptyMsg, colLabel) {
+  const body = document.getElementById(elId);
+  if (!body) return;
+  const keys = Object.keys(groupMap).sort((a,b) => groupMap[b].pnl - groupMap[a].pnl);
+  if (!keys.length) { body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--t3);font-size:12px">${emptyMsg}</div>`; return; }
+  const maxAbs = Math.max(...keys.map(k=>Math.abs(groupMap[k].pnl)), 1);
+  body.innerHTML = `
+    <table class="tbl" style="width:100%">
+      <thead><tr><th>${colLabel}</th><th>עסקאות</th><th>Win %</th><th>P&L נטו $</th><th>ממוצע/עסקה</th></tr></thead>
+      <tbody>${keys.map(k=>{
+        const d = groupMap[k];
+        const wr = d.trades ? (d.wins/d.trades*100).toFixed(0) : 0;
+        const avg = d.trades ? d.pnl/d.trades : 0;
+        const barW = Math.round(Math.abs(d.pnl)/maxAbs*100);
+        return `<tr>
+          <td><div style="display:flex;align-items:center;gap:8px">
+            <span class="strat-badge" style="max-width:160px">${escHtml(k)}</span>
+            <div style="flex:1;max-width:80px;background:var(--bg4);border-radius:2px;height:3px;overflow:hidden">
+              <div style="width:${barW}%;height:100%;background:${d.pnl>=0?'var(--gr)':'var(--re)'};border-radius:2px"></div>
+            </div>
+          </div></td>
+          <td>${d.trades}</td>
+          <td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td>
+          <td class="mono ${d.pnl>=0?'cg':'cr'}" style="font-weight:600">${fmt(d.pnl)}</td>
+          <td class="mono" style="color:var(--t3)">${fmt(avg)}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+function renderSymbolStats() {
+  const map = {};
+  tradesList.forEach(t => {
+    const s = (t.sym || '').trim();
+    if (!s) return;
+    if (!map[s]) map[s] = {pnl:0, trades:0, wins:0};
+    const net = tradeNet(t);
+    map[s].pnl += net; map[s].trades++;
+    if (net > 0) map[s].wins++;
+  });
+  _renderGroupedPerfTable('symbol-stats-body', map, 'אין עדיין עסקאות לניתוח', 'נכס');
+}
+
+function renderSetupStats() {
+  const map = {};
+  tradesList.forEach(t => {
+    const s = (t.setupType || '').trim();
+    if (!s) return;
+    if (!map[s]) map[s] = {pnl:0, trades:0, wins:0};
+    const net = tradeNet(t);
+    map[s].pnl += net; map[s].trades++;
+    if (net > 0) map[s].wins++;
+  });
+  _renderGroupedPerfTable('setup-stats-body', map, 'סמן סטאפ כניסה בעריכת עסקה (✏️) כדי לראות ניתוח כאן', 'סטאפ');
+}
+
+function renderMistakeStats() {
+  const body = document.getElementById('mistake-stats-body');
+  if (!body) return;
+  const withPlanFlag = tradesList.filter(t => t.followedPlan === true || t.followedPlan === false);
+  const offPlan = withPlanFlag.filter(t => t.followedPlan === false);
+  const offPlanPct = withPlanFlag.length ? Math.round(offPlan.length/withPlanFlag.length*100) : null;
+  // Recurring mistakes — group identical free-text mistake entries (trimmed, case-insensitive)
+  const mistakeMap = {};
+  tradesList.forEach(t => {
+    const m = (t.mistake || '').trim();
+    if (!m) return;
+    const key = m.toLowerCase();
+    if (!mistakeMap[key]) mistakeMap[key] = { label:m, count:0 };
+    mistakeMap[key].count++;
+  });
+  const topMistakes = Object.values(mistakeMap).sort((a,b)=>b.count-a.count).slice(0,5);
+  let html = '';
+  if (withPlanFlag.length) {
+    html += `<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:12px 14px;background:var(--bg3);border-radius:10px">
+      <div style="font-size:26px;font-weight:700;font-family:'IBM Plex Mono',monospace" class="${offPlanPct<=20?'cg':'cr'}">${offPlanPct}%</div>
+      <div style="font-size:12px;color:var(--t2)">מהעסקאות המסומנות היו <b style="color:var(--t1)">לא לפי התוכנית</b> (${offPlan.length} מתוך ${withPlanFlag.length})</div>
+    </div>`;
+  } else {
+    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:14px">סמן "עמדת בתוכנית?" בעריכת עסקאות כדי לראות כאן אחוז חריגה מהתוכנית</div>`;
+  }
+  if (topMistakes.length) {
+    html += `<div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">טעויות חוזרות</div>` +
+      topMistakes.map(m => `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px;color:var(--t1)">${escHtml(m.label)}</span>
+        <span class="zm-badge neg">${m.count}×</span>
+      </div>`).join('');
+  } else {
+    html += `<div style="font-size:12px;color:var(--t3)">אין עדיין טעויות חוזרות מתועדות — הוסף "טעות שנעשתה" בעריכת עסקאות</div>`;
+  }
+  body.innerHTML = html;
+}
+
+// Patch renderStats to also run strategy + symbol + setup + mistake analysis (use assignment to avoid hoisting)
 const _origRenderStats = window.renderStats;
 window.renderStats = function() {
   if (_origRenderStats) _origRenderStats();
   renderStrategyStats();
+  renderSymbolStats();
+  renderSetupStats();
+  renderMistakeStats();
   renderHourHeatmap();
 };
 
@@ -16001,22 +17319,36 @@ async function doGoogleAuth() {
 }
 
 // ════════════════════════════════════════════════════
-//  THEME TOGGLE (Dark / Light)
+//  THEME SWITCHER (Dark Professional / Light / High Contrast)
 // ════════════════════════════════════════════════════
+const THEME_INFO = {
+  dark:     { icon:'☀️', label:'Dark Professional', next:'light' },
+  light:    { icon:'⚡', label:'Light Mode',         next:'contrast' },
+  contrast: { icon:'🌙', label:'High Contrast',      next:'dark' },
+};
+function _applyTheme(mode) {
+  document.body.classList.toggle('light-mode', mode === 'light');
+  document.body.classList.toggle('contrast-mode', mode === 'contrast');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) {
+    const info = THEME_INFO[mode] || THEME_INFO.dark;
+    btn.textContent = info.icon;
+    btn.title = 'ערכת נושא: ' + info.label + ' (לחץ להחלפה)';
+  }
+}
 function _initTheme() {
   const saved = localStorage.getItem('fayna_theme') || 'dark';
-  if (saved === 'light') document.body.classList.add('light-mode');
-  else document.body.classList.remove('light-mode');
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) { btn.style.display = ''; btn.textContent = saved === 'light' ? '🌙' : '☀️'; }
+  _applyTheme(THEME_INFO[saved] ? saved : 'dark');
 }
-
-function toggleTheme() {
-  const isLight = document.body.classList.toggle('light-mode');
-  localStorage.setItem('fayna_theme', isLight ? 'light' : 'dark');
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+function cycleTheme() {
+  const cur = localStorage.getItem('fayna_theme') || 'dark';
+  const next = (THEME_INFO[cur] || THEME_INFO.dark).next;
+  localStorage.setItem('fayna_theme', next);
+  _applyTheme(next);
+  if (typeof showToast === 'function') showToast((THEME_INFO[next]||{}).label || next, 'info', 1200);
 }
+// Kept for backward compatibility with any older callers.
+function toggleTheme() { cycleTheme(); }
 
 // ════════════════════════════════════════════════════
 //  NAV AVATAR
