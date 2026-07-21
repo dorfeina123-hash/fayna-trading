@@ -2754,7 +2754,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       <div class="fr"><label>תאריך *</label><input type="date" id="me-date"></div>
       <div class="fr">
         <label>תיק</label>
-        <select id="me-acct" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)"></select>
+        <select id="me-acct" onchange="meAcctSelectChange()" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)"></select>
+        <input type="text" id="me-acct-new" placeholder="שם התיק החדש..." style="display:none;width:100%;margin-top:6px;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
       </div>
     </div>
 
@@ -2794,8 +2795,29 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <!-- ACCOUNT GOALS -->
 <div class="modal-bg" id="acct-goals-modal" onclick="if(event.target===this)closeAcctGoals()">
   <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
-    <h3>🎯 יעדים לתיק — <span id="ag-acct-name"></span> <button class="cx" onclick="closeAcctGoals()">×</button></h3>
-    <div id="ag-progress-summary" style="margin-bottom:14px"></div>
+    <h3>🎯 יעדים ומעקב — <span id="ag-acct-name"></span> <button class="cx" onclick="closeAcctGoals()">×</button></h3>
+
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">📋 פרטי תיק</div>
+    <div class="g2">
+      <div class="fr"><label>חברת פרופ / סוג תיק</label><input type="text" id="ag-company" placeholder="לדוגמה: Apex, Topstep, אישי"></div>
+      <div class="fr">
+        <label>שלב התיק</label>
+        <select id="ag-status" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
+          <option value="evaluation">🧪 אתגר / Evaluation</option>
+          <option value="passed">✅ עבר אתגר</option>
+          <option value="funded">💰 חשבון ממומן</option>
+          <option value="pending_withdrawal">🚀 בדרך למשיכה</option>
+          <option value="withdrawn">🏁 בוצעה משיכה</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fr"><label>גודל חשבון התחלתי ($)</label><input type="number" id="ag-acct-size" step="1" placeholder="לדוגמה: 25000" dir="ltr"></div>
+      <div class="fr"><label>תאריך פתיחת התיק</label><input type="date" id="ag-open-date"></div>
+    </div>
+    <div class="fr"><label>סכום משיכה ראשון מתוכנן ($)</label><input type="number" id="ag-planned-withdrawal" step="1" placeholder="לדוגמה: 1000" dir="ltr"></div>
+
+    <div id="ag-progress-summary" style="margin:14px 0"></div>
 
     <div class="fr">
       <label>💸 יעד למשיכה ($)</label>
@@ -2815,6 +2837,16 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">➕ יעדים מותאמים אישית</div>
     <div id="ag-custom-list"></div>
     <button type="button" onclick="agAddCustom()" style="margin-bottom:10px;padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">+ הוסף יעד מותאם אישית</button>
+
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🏦 היסטוריית משיכות</div>
+    <div id="ag-withdrawals-summary" style="font-size:11px;color:var(--t3);margin-bottom:8px"></div>
+    <div id="ag-withdrawals-list" style="margin-bottom:8px"></div>
+    <div class="g2" style="align-items:end">
+      <div class="fr" style="margin-bottom:0"><label style="font-size:10px">תאריך משיכה</label><input type="date" id="ag-wd-date"></div>
+      <div class="fr" style="margin-bottom:0"><label style="font-size:10px">סכום ($)</label><input type="number" id="ag-wd-amount" step="1" placeholder="0" dir="ltr"></div>
+    </div>
+    <div class="fr"><input type="text" id="ag-wd-note" placeholder="הערה (אופציונלי)"></div>
+    <button type="button" onclick="agAddWithdrawal()" style="margin-bottom:10px;padding:6px 12px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.4);border-radius:6px;cursor:pointer;font-size:11px;color:#3d9970;font-family:inherit;font-weight:600">+ הוסף משיכה</button>
 
     <div class="fax">
       <button class="bn" onclick="closeAcctGoals()">ביטול</button>
@@ -5911,10 +5943,21 @@ function _mePopulateAcctSelect() {
   if (!sel) return;
   const cur = sel.value;
   sel.innerHTML = '<option value="">ללא שיוך</option>' +
-    accounts.map(a => `<option value="${a.id}">${a.name}${a.number?' #'+a.number:''}</option>`).join('');
+    accounts.map(a => `<option value="${a.id}">${escHtml(a.name)}${a.number?' #'+escHtml(a.number):''}</option>`).join('') +
+    '<option value="__new__">➕ תיק חדש (הקלד שם)</option>';
   const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
   if (selIds.length===1) sel.value = selIds[0];
   else if (cur) sel.value = cur;
+  meAcctSelectChange();
+}
+
+function meAcctSelectChange() {
+  const sel = document.getElementById('me-acct');
+  const newInp = document.getElementById('me-acct-new');
+  if (!sel || !newInp) return;
+  const isNew = sel.value === '__new__';
+  newInp.style.display = isNew ? '' : 'none';
+  if (isNew) newInp.focus();
 }
 
 function openManualEntry() {
@@ -5926,6 +5969,7 @@ function openManualEntry() {
     document.getElementById('me-which').value = '';
     document.getElementById('me-notes').value = '';
     document.getElementById('me-ocr-status').textContent = '';
+    document.getElementById('me-acct-new').value = '';
     _meImg = null;
     _renderMeImgPreview();
     _mePopulateAcctSelect();
@@ -6088,7 +6132,16 @@ function saveManualEntry() {
     const count = parseInt(g('me-count').value);
     const which = (g('me-which').value||'').trim();
     const notes = (g('me-notes').value||'').trim();
-    const acct  = g('me-acct').value || null;
+    let acct = g('me-acct').value || null;
+    if (acct === '__new__') {
+      const newName = (g('me-acct-new').value||'').trim();
+      if (!newName) { showToast('נא להזין שם לתיק החדש','error'); return; }
+      if (accounts.length >= 1 && !canUse('multi_accounts')) { showUpgradeModal('multi_accounts'); return; }
+      const newAcct = _newAccountObject(newName, null);
+      accounts.push(newAcct);
+      saveAccounts(); renderAcctMenu();
+      acct = newAcct.id;
+    }
     const trade = {
       sym: which ? which.toUpperCase() : '📝 סיכום יומי',
       qty: 0, buy: 0, sell: 0,
@@ -10379,14 +10432,17 @@ function renderAcctMenu() {
     const isSel = allSel || selectedAccounts.has(a.id);
     const hasGoals = a.goals && (a.goals.withdrawal?.target || a.goals.pass?.target || a.goals.burn?.limit || (a.goals.custom||[]).length);
     const goalBar = hasGoals ? _acctGoalMiniBar(a, pnl) : '';
+    const statusInfo = ACCT_STATUS_INFO[a.status] || null;
+    const statusBadge = statusInfo ? `<span style="font-size:9px;color:${statusInfo.color};white-space:nowrap;margin-left:4px" title="שלב התיק">${statusInfo.label}</span>` : '';
     return `<div class="acct-item ${isSel?'checked':''}" onclick="acctToggle('${a.id}',this)" style="flex-wrap:wrap">
       <div class="acct-check" style="${isSel?'background:'+a.color+';border-color:'+a.color:''}">
         ${isSel?'✓':''}
       </div>
       <div class="acct-dot" style="background:${a.color}"></div>
-      <div class="acct-name" style="flex:1">${a.name}</div>
+      <div class="acct-name" style="flex:1">${escHtml(a.name)}${a.number?` <span style="font-size:9px;color:var(--t3)">#${escHtml(a.number)}</span>`:''}${statusBadge}</div>
       <div style="font-size:10px;color:var(--t3);margin-left:4px">${cnt} עסקאות</div>
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
+      <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
       <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
       <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
       ${goalBar}
@@ -10441,7 +10497,6 @@ function applyAcctFilter() {
 
 // Click on "—" or account name in trades row — shows floating picker
 function pickTradeAcct(ti, evt) {
-  if (!accounts.length) { showToast('צור תיק תחילה דרך "+ הוסף תיק"','info'); return; }
   if (evt) evt.stopPropagation();
   const picker = document.getElementById('acct-picker');
   if (!picker) return;
@@ -10450,10 +10505,11 @@ function pickTradeAcct(ti, evt) {
   picker.innerHTML = options.map(a =>
     `<div onclick="_setTradeAcct(${ti},'${a.id||''}')" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;${cur===(a.id||null)?'background:rgba(255,255,255,.07)':''}">
       <span style="width:7px;height:7px;border-radius:50%;background:${a.color||'#767f8e'};flex-shrink:0"></span>
-      <span style="flex:1">${a.name}${a.number?'<span style="font-size:10px;color:#767f8e;margin-right:5px"> #'+a.number+'</span>':''}</span>
+      <span style="flex:1">${escHtml(a.name)}${a.number?'<span style="font-size:10px;color:#767f8e;margin-right:5px"> #'+escHtml(a.number)+'</span>':''}</span>
       ${cur===(a.id||null)?'<span style="color:#3d9970;font-size:10px">✓</span>':''}
     </div>`
-  ).join('');
+  ).join('') +
+    `<div onclick="_newTradeAcct(${ti})" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;border-top:1px solid var(--border2);margin-top:4px;color:#bfa15e;font-weight:600">➕ תיק חדש (הקלד שם)</div>`;
   const ref = evt ? evt.currentTarget : document.body;
   const rect = ref.getBoundingClientRect ? ref.getBoundingClientRect() : {bottom:200,right:200};
   picker.style.display = 'block';
@@ -10467,6 +10523,20 @@ function _setTradeAcct(ti, acctId) {
   tradesList[ti].acct = acctId || null;
   document.getElementById('acct-picker').style.display = 'none';
   renderTJ(); saveData();
+}
+
+// Type a brand-new account name straight from the trades table — no need to pre-create it elsewhere
+function _newTradeAcct(ti) {
+  document.getElementById('acct-picker').style.display = 'none';
+  if (accounts.length >= 1 && !canUse('multi_accounts')) { showUpgradeModal('multi_accounts'); return; }
+  const name = prompt('שם התיק החדש:', '');
+  if (!name || !name.trim()) return;
+  const newAcct = _newAccountObject(name, null);
+  accounts.push(newAcct);
+  saveAccounts(); renderAcctMenu();
+  tradesList[ti].acct = newAcct.id;
+  renderTJ(); saveData();
+  showToast(`✅ תיק "${newAcct.name}" נוצר ושויך לעסקה`, 'success');
 }
 
 function bulkAssignAcct(acctId) {
@@ -10501,30 +10571,66 @@ function getActiveTrades() {
   return window._filteredTrades || tradesList;
 }
 
+// Shared account-object factory — every creation path (add-account, inline-picker, manual-entry) uses this
+// so all accounts get the same default shape (goals + tracking/status fields).
+function _newAccountObject(name, number) {
+  return {
+    id:     'acct_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    name:   name.trim(),
+    number: (number||'').trim() || null,
+    color:  ACCT_COLORS[accounts.length % ACCT_COLORS.length],
+    active: true, type: 'prop',
+    company: '',            // חברת פרופ / סוג תיק
+    accountSize: null,      // גודל חשבון התחלתי
+    openDate: new Date().toISOString().slice(0,10), // תאריך פתיחת התיק
+    plannedWithdrawal: null,// סכום משיכה ראשון מתוכנן
+    status: 'evaluation',   // evaluation | passed | funded | pending_withdrawal | withdrawn
+    withdrawals: [],        // [{id,date,amount,note}]
+    goals:  { withdrawal:{target:null}, pass:{target:null,deadline:null,buffer:null}, burn:{limit:null}, custom:[] }
+  };
+}
+
 function addAccount() {
   if (accounts.length >= 1 && !canUse('multi_accounts')) { showUpgradeModal('multi_accounts'); return; }
   const name = prompt('שם התיק (לדוגמה: APEX $25K):','');
   if (!name || !name.trim()) return;
   const num  = prompt('מספר חשבון (אופציונלי — ניתן להשאיר ריק):','');
-  const colorIdx = accounts.length % ACCT_COLORS.length;
-  accounts.push({
-    id:     'acct_' + Date.now(),
-    name:   name.trim(),
-    number: (num||'').trim() || null,
-    color:  ACCT_COLORS[colorIdx],
-    active: true, type: 'prop',
-    goals:  { withdrawal:{target:null}, pass:{target:null,deadline:null,buffer:null}, burn:{limit:null}, custom:[] }
-  });
+  accounts.push(_newAccountObject(name, num));
   saveAccounts();
   renderAcctMenu();
 }
 
 function deleteAccount(id) {
+  const a = accounts.find(x=>x.id===id);
+  if (!a) return;
+  const cnt = tradesList.filter(t=>t.acct===id).length;
+  const warn = cnt ? `\n(${cnt} עסקאות משויכות לתיק זה יישארו ביומן, רק ללא שיוך לתיק)` : '';
+  if (!confirm(`למחוק את התיק "${a.name}"?${warn}`)) return;
   accounts = accounts.filter(a=>a.id !== id);
   selectedAccounts.delete(id);
+  if (typeof tjAcct !== 'undefined' && tjAcct === id) { tjAcct = '__all__'; }
   saveAccounts();
   renderAcctMenu();
   applyAcctFilter();
+  renderAll();
+  showToast(`🗑 תיק "${a.name}" נמחק`, 'info');
+}
+
+// Rename an existing account (and/or its account number) — updates everywhere the account is shown,
+// since every render reads a.name live from this same accounts array.
+function renameAccount(id) {
+  const a = accounts.find(x=>x.id===id);
+  if (!a) return;
+  const newName = prompt('שם התיק:', a.name || '');
+  if (newName === null) return; // cancelled
+  if (!newName.trim()) { showToast('שם התיק לא יכול להישאר ריק', 'error'); return; }
+  const newNum = prompt('מספר חשבון (אופציונלי — ניתן להשאיר ריק):', a.number || '');
+  a.name = newName.trim();
+  if (newNum !== null) a.number = newNum.trim() || null;
+  saveAccounts();
+  renderAcctMenu();
+  renderAll();
+  showToast(`✏️ התיק עודכן ל-"${a.name}"`, 'success');
 }
 
 // ════════════════════════════════════════════════════════
@@ -10556,34 +10662,75 @@ function _acctGoalMiniBar(a, pnl) {
   else if (g.pass?.target)       { label = 'יעד מעבר';   target = g.pass.target; }
   else if (g.burn?.limit)        { label = 'סף שריפה';   target = g.burn.limit; color = '#c75f5f'; }
   else return '';
-  const base = g.burn?.limit && !g.withdrawal?.target && !g.pass?.target ? Math.abs(Math.min(0,pnl)) : Math.max(0,pnl);
+  const isBurn = g.burn?.limit && !g.withdrawal?.target && !g.pass?.target;
+  const base = isBurn ? Math.abs(Math.min(0,pnl)) : Math.max(0,pnl);
   const pct = Math.max(0, Math.min(100, (base/target)*100));
+  const near = !isBurn && pct >= 80 ? ' 🔥' : '';
   return `<div style="width:100%;margin-top:4px" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:2px"><span>${label}</span><span>${pct.toFixed(0)}%</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:2px"><span>${label}${near}</span><span>${pct.toFixed(0)}%</span></div>
     <div class="goal-progress-bar" style="height:4px"><div class="goal-progress-fill" style="width:${pct}%;background:${color}"></div></div>
   </div>`;
 }
 
-function openAcctGoals(id) {
-  const a = accounts.find(x=>x.id===id);
-  if (!a) return;
+const ACCT_STATUS_INFO = {
+  evaluation:          { label:'🧪 אתגר / Evaluation', color:'#bfa15e' },
+  passed:              { label:'✅ עבר אתגר',           color:'#7295b8' },
+  funded:              { label:'💰 חשבון ממומן',        color:'#3d9970' },
+  pending_withdrawal:  { label:'🚀 בדרך למשיכה',        color:'#9089bd' },
+  withdrawn:           { label:'🏁 בוצעה משיכה',        color:'#34d399' },
+};
+
+function _ensureAcctShape(a) {
   a.goals = a.goals || { withdrawal:{target:null}, pass:{target:null,deadline:null,buffer:null}, burn:{limit:null}, custom:[] };
   a.goals.withdrawal = a.goals.withdrawal || {target:null};
   a.goals.pass       = a.goals.pass       || {target:null,deadline:null,buffer:null};
   a.goals.burn       = a.goals.burn       || {limit:null};
   a.goals.custom     = a.goals.custom     || [];
+  a.status           = a.status || 'evaluation';
+  a.withdrawals      = a.withdrawals || [];
+  return a;
+}
+
+function openAcctGoals(id) {
+  const a = accounts.find(x=>x.id===id);
+  if (!a) return;
+  _ensureAcctShape(a);
   _agAcctId = id;
   _agCustom = a.goals.custom.map(c=>({...c}));
   document.getElementById('ag-acct-name').textContent = a.name;
+  document.getElementById('ag-company').value             = a.company || '';
+  document.getElementById('ag-status').value               = a.status;
+  document.getElementById('ag-acct-size').value            = a.accountSize || '';
+  document.getElementById('ag-open-date').value            = a.openDate || '';
+  document.getElementById('ag-planned-withdrawal').value   = a.plannedWithdrawal || '';
   document.getElementById('ag-withdrawal').value    = a.goals.withdrawal.target || '';
   document.getElementById('ag-pass-target').value   = a.goals.pass.target || '';
   document.getElementById('ag-pass-deadline').value = a.goals.pass.deadline || '';
   document.getElementById('ag-pass-buffer').value   = a.goals.pass.buffer || '';
   document.getElementById('ag-burn-limit').value    = a.goals.burn.limit || '';
+  document.getElementById('ag-wd-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('ag-wd-amount').value = '';
+  document.getElementById('ag-wd-note').value = '';
   _agRenderCustomList();
+  _agRenderWithdrawals();
+
   const pnl = computeAcctNet(id);
+  const manualDays = tradesList.filter(t=>t.acct===id && t.isManual).length;
+  const tradeCnt   = tradesList.filter(t=>t.acct===id).length;
   const parts = [];
-  if (a.goals.withdrawal.target) parts.push(_goalProgressBarHtml('💸 יעד משיכה', Math.max(0,pnl), a.goals.withdrawal.target, '#3d9970'));
+  const statusInfo = ACCT_STATUS_INFO[a.status] || ACCT_STATUS_INFO.evaluation;
+  parts.push(`<div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:8px">
+    <span style="color:${statusInfo.color};font-weight:700">${statusInfo.label}</span>
+    <span>${tradeCnt} עסקאות ביומן${manualDays?` (${manualDays} מסיכום ידני)`:''}</span>
+  </div>`);
+  if (a.goals.withdrawal.target) {
+    const pct = Math.max(0, Math.min(100, (Math.max(0,pnl)/a.goals.withdrawal.target)*100));
+    const remaining = Math.max(0, a.goals.withdrawal.target - Math.max(0,pnl));
+    let sub = `נשאר $${remaining.toFixed(0)} עד המשיכה`;
+    if (pct >= 80 && pct < 100) sub = `🔥 קרוב למשיכה! ${sub}`;
+    if (pct >= 100) sub = `🎉 היעד הושג! אפשר למשוך`;
+    parts.push(_goalProgressBarHtml('💸 יעד משיכה', Math.max(0,pnl), a.goals.withdrawal.target, '#3d9970', sub));
+  }
   if (a.goals.pass.target) {
     let sub = '';
     if (a.goals.pass.deadline) {
@@ -10594,7 +10741,10 @@ function openAcctGoals(id) {
   }
   if (a.goals.burn.limit) parts.push(_goalProgressBarHtml('🔥 סף שריפה (הפסד)', Math.abs(Math.min(0,pnl)), a.goals.burn.limit, '#c75f5f'));
   (a.goals.custom||[]).forEach(c => { if (c.target) parts.push(_goalProgressBarHtml('🎯 '+(c.name||'יעד'), Math.max(0,pnl), c.target, '#bfa15e')); });
-  document.getElementById('ag-progress-summary').innerHTML = parts.join('') || '<div style="font-size:11px;color:var(--t3)">הגדר יעד כדי לראות התקדמות</div>';
+  if (!a.goals.withdrawal.target && !a.goals.pass.target && !a.goals.burn.limit && !(a.goals.custom||[]).length) {
+    parts.push('<div style="font-size:11px;color:var(--t3)">הגדר יעד כדי לראות התקדמות</div>');
+  }
+  document.getElementById('ag-progress-summary').innerHTML = parts.join('');
   document.getElementById('acct-goals-modal').classList.add('open');
 }
 
@@ -10602,6 +10752,52 @@ function closeAcctGoals() {
   const m = document.getElementById('acct-goals-modal');
   if (m) m.classList.remove('open');
   _agAcctId = null;
+}
+
+// ── Withdrawal history ──
+function _agRenderWithdrawals() {
+  const a = accounts.find(x=>x.id===_agAcctId);
+  const listEl = document.getElementById('ag-withdrawals-list');
+  const sumEl  = document.getElementById('ag-withdrawals-summary');
+  if (!a || !listEl || !sumEl) return;
+  const wds = [...(a.withdrawals||[])].sort((x,y)=>(y.date||'').localeCompare(x.date||''));
+  listEl.innerHTML = wds.length ? wds.map(w => {
+    const i = a.withdrawals.indexOf(w);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:4px;font-size:11px">
+      <span class="mono" style="color:var(--t3);min-width:78px">${fmtD(w.date)}</span>
+      <span style="color:#3d9970;font-weight:700;min-width:70px">$${(+w.amount||0).toFixed(0)}</span>
+      <span style="flex:1;color:var(--t3)">${escHtml(w.note||'')}</span>
+      <button type="button" onclick="agRemoveWithdrawal(${i})" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:11px">✕</button>
+    </div>`;
+  }).join('') : '<div style="font-size:11px;color:var(--t3)">אין משיכות רשומות עדיין</div>';
+  const total = (a.withdrawals||[]).reduce((s,w)=>s+(+w.amount||0),0);
+  const cumulativeProfit = computeAcctNet(a.id);
+  sumEl.innerHTML = `סה״כ נמשך: <b style="color:#3d9970">$${total.toFixed(0)}</b> · רווח מצטבר מהתיק (כולל מה שעדיין בפנים): <b style="color:${cumulativeProfit>=0?'#3d9970':'#c75f5f'}">${cumulativeProfit>=0?'+':''}$${cumulativeProfit.toFixed(0)}</b>`;
+}
+
+function agAddWithdrawal() {
+  const a = accounts.find(x=>x.id===_agAcctId);
+  if (!a) return;
+  const date   = document.getElementById('ag-wd-date').value;
+  const amount = parseFloat(document.getElementById('ag-wd-amount').value);
+  const note   = (document.getElementById('ag-wd-note').value||'').trim();
+  if (!date) { showToast('נא לבחור תאריך משיכה','error'); return; }
+  if (isNaN(amount) || amount<=0) { showToast('נא להזין סכום משיכה תקין','error'); return; }
+  a.withdrawals = a.withdrawals || [];
+  a.withdrawals.push({ id:'wd_'+Date.now(), date, amount:+amount.toFixed(2), note });
+  document.getElementById('ag-wd-amount').value = '';
+  document.getElementById('ag-wd-note').value = '';
+  saveAccounts();
+  _agRenderWithdrawals();
+  showToast('🏦 משיכה נרשמה', 'success');
+}
+
+function agRemoveWithdrawal(i) {
+  const a = accounts.find(x=>x.id===_agAcctId);
+  if (!a || !a.withdrawals) return;
+  a.withdrawals.splice(i,1);
+  saveAccounts();
+  _agRenderWithdrawals();
 }
 
 function _agRenderCustomList() {
@@ -10632,6 +10828,11 @@ function saveAcctGoals() {
   if (!a) { closeAcctGoals(); return; }
   const g = id => document.getElementById(id);
   const num = v => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+  a.company           = (g('ag-company').value||'').trim();
+  a.status             = g('ag-status').value || 'evaluation';
+  a.accountSize        = num(g('ag-acct-size').value);
+  a.openDate           = g('ag-open-date').value || null;
+  a.plannedWithdrawal  = num(g('ag-planned-withdrawal').value);
   a.goals = {
     withdrawal: { target: num(g('ag-withdrawal').value) },
     pass: {
@@ -13646,7 +13847,7 @@ window.renderTJ = function renderTJ() {
       : '';
     abtns.innerHTML =
       `<button class="fb ${tjAcct==='__all__'?'active':''}" onclick="fAcct('__all__',this)">כל התיקים</button>` +
-      accounts.map(a=>`<button class="fb ${tjAcct===a.id?'active':''}" onclick="fAcct('${a.id}',this)" style="${tjAcct===a.id?'':'border-color:'+a.color+'40;color:'+a.color}">${a.name}${a.number?' <span style="opacity:.6;font-size:9px">#'+a.number+'</span>':''}</button>`).join('') +
+      accounts.map(a=>`<button class="fb ${tjAcct===a.id?'active':''}" onclick="fAcct('${a.id}',this)" style="${tjAcct===a.id?'':'border-color:'+a.color+'40;color:'+a.color}">${escHtml(a.name)}${a.number?' <span style="opacity:.6;font-size:9px">#'+escHtml(a.number)+'</span>':''}</button>`).join('') +
       bulkBtn;
   } else if (afbar) { afbar.style.display = 'none'; }
 
@@ -13692,15 +13893,21 @@ window.renderTJ = function renderTJ() {
       ? `<img class="trade-thumb" src="${t.image}" onclick="openImgLightbox(tradesList[${ti}].image)" title="לחץ להגדלה">`
       : `<button class="act" onclick="openTradeAnnotate(${ti})" title="הוסף תמונה" style="font-size:11px;opacity:.4">📷</button>`;
     const noteTitle = t.notes ? `title="${t.notes.replace(/"/g,'&quot;')}"` : '';
+    const symHtml = t.isManual
+      ? `<span title="${t.manualTradeCount?t.manualTradeCount+' עסקאות (יומן ידני)':'יומן ידני'}" style="color:#bfa15e">✍️ ${escHtml(t.sym)}</span>`
+      : escHtml(t.sym);
+    const qtyHtml = t.isManual ? (t.manualTradeCount!=null ? t.manualTradeCount : '—') : t.qty;
+    const buyHtml = t.isManual ? '—' : t.buy.toFixed(2);
+    const sellHtml= t.isManual ? '—' : t.sell.toFixed(2);
     return `<tr id="tj-row-${ti}" ${noteTitle}>
       <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
       <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${escHtml(t.sym)}</td>
-      <td style="color:#767f8e">${t.qty}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
+      <td style="color:#8892a4">${symHtml}</td>
+      <td style="color:#767f8e">${qtyHtml}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${buyHtml}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${sellHtml}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
       <td><div>${stratHtml}</div>${tagsHtml}</td>
