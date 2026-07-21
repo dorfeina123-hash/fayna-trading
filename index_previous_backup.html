@@ -870,8 +870,8 @@ body::before {
 .acct-trigger-arrow { margin-right: auto; color: var(--t3); font-size: 10px; transition: transform .2s; }
 .acct-trigger.open .acct-trigger-arrow { transform: rotate(180deg); }
 .acct-menu {
-  display: none; position: absolute; top: calc(100% + 6px);
-  right: 0; min-width: 260px; z-index: 300;
+  display: none; position: fixed;
+  min-width: 260px; z-index: 800;
   background: linear-gradient(145deg, rgba(26,32,46,.99), rgba(18,22,33,.99));
   border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
   box-shadow: 0 16px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
@@ -2275,25 +2275,11 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 
   <!-- ACCOUNT SELECTOR -->
   <div class="acct-dropdown" id="acct-dropdown" style="margin-right:auto">
-    <button class="acct-trigger" id="acct-trigger-btn" onclick="toggleAcctMenu()">
+    <button class="acct-trigger" id="acct-trigger-btn" onclick="toggleAcctMenu(event)">
       <svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="4" height="4" rx="1" fill="currentColor"/><rect x="7" y="1" width="4" height="4" rx="1" fill="currentColor"/><rect x="1" y="7" width="4" height="4" rx="1" fill="currentColor"/><rect x="7" y="7" width="4" height="4" rx="1" fill="currentColor"/></svg>
       <span id="acct-trigger-label">כל התיקים</span>
       <span class="acct-trigger-arrow">▼</span>
     </button>
-    <div class="acct-menu" id="acct-menu">
-      <div class="acct-menu-header">התיקים שלי</div>
-      <div class="acct-item all checked" id="acct-all" onclick="acctSelectAll()">
-        <div class="acct-check">✓</div>
-        <div class="acct-name">כל התיקים</div>
-        <div id="acct-all-pnl" class="acct-pnl cg"></div>
-      </div>
-      <div class="acct-divider"></div>
-      <div id="acct-list"></div>
-      <div class="acct-divider"></div>
-      <div class="acct-footer">
-        <button class="acct-add-btn" onclick="addAccount()">+ הוסף תיק</button>
-      </div>
-    </div>
   </div>
 
   <!-- Calculator toggle -->
@@ -2963,7 +2949,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <div class="filter-topbar" style="margin-bottom:8px">
-    <div class="acct-dropdown"><button class="acct-trigger" onclick="toggleAcctMenu()" style="min-width:120px"><span id="acct-trigger-label2">כל התיקים</span> <span style="color:var(--t3);margin-right:auto">▼</span></button></div>
+    <div class="acct-dropdown"><button class="acct-trigger" onclick="toggleAcctMenu(event)" style="min-width:120px"><span id="acct-trigger-label2">כל התיקים</span> <span style="color:var(--t3);margin-right:auto">▼</span></button></div>
     <div style="margin-right:auto"></div>
   </div>
   <div class="mrow" id="tj-m"></div>
@@ -4261,6 +4247,22 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
 <!-- ACCOUNT PICKER POPUP -->
 <div id="acct-picker" style="position:fixed;z-index:800;background:#161b27;border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none;min-width:170px"></div>
+
+<!-- ACCOUNTS MANAGEMENT MENU (floating — works from any tab, not tied to one page's DOM) -->
+<div class="acct-menu" id="acct-menu" style="position:fixed">
+  <div class="acct-menu-header">התיקים שלי</div>
+  <div class="acct-item all checked" id="acct-all" onclick="acctSelectAll()">
+    <div class="acct-check">✓</div>
+    <div class="acct-name">כל התיקים</div>
+    <div id="acct-all-pnl" class="acct-pnl cg"></div>
+  </div>
+  <div class="acct-divider"></div>
+  <div id="acct-list"></div>
+  <div class="acct-divider"></div>
+  <div class="acct-footer">
+    <button class="acct-add-btn" onclick="addAccount()">+ הוסף תיק</button>
+  </div>
+</div>
 
 <!-- REPORT MENU POPUP -->
 <div id="report-menu" style="position:fixed;z-index:800;background:#161b27;border:1px solid rgba(144,137,189,.25);border-radius:10px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.6);display:none;min-width:190px">
@@ -10459,13 +10461,25 @@ function renderAcctMenu() {
   document.querySelectorAll('#acct-trigger-label, #acct-trigger-label2').forEach(el => { if(el) el.textContent=label; });
 }
 
-function toggleAcctMenu() {
+// Floating menu (position:fixed) shared by every "כל התיקים ▼" trigger, wherever it appears in the app —
+// positioned relative to whichever button was actually clicked, so it works from any tab.
+function toggleAcctMenu(evt) {
   const menu = document.getElementById('acct-menu');
-  const btn = document.getElementById('acct-trigger-btn');
   if (!menu) return;
+  const btn = evt?.currentTarget || document.getElementById('acct-trigger-btn');
   const isOpen = menu.classList.contains('open');
-  if (isOpen) { menu.classList.remove('open'); btn?.classList.remove('open'); }
-  else { menu.classList.add('open'); btn?.classList.add('open'); renderAcctMenu(); }
+  document.querySelectorAll('.acct-trigger.open').forEach(b => b.classList.remove('open'));
+  if (isOpen) { menu.classList.remove('open'); return; }
+  if (btn && btn.getBoundingClientRect) {
+    const rect = btn.getBoundingClientRect();
+    menu.style.top   = Math.min(rect.bottom + 6, window.innerHeight - 60) + 'px';
+    const rightGap   = window.innerWidth - rect.right;
+    menu.style.right = Math.max(8, rightGap) + 'px';
+    menu.style.left  = 'auto';
+  }
+  menu.classList.add('open');
+  btn?.classList.add('open');
+  renderAcctMenu();
 }
 
 function acctSelectAll() {
@@ -10849,12 +10863,14 @@ function saveAcctGoals() {
   showToast('🎯 יעדי התיק נשמרו', 'success');
 }
 
-// Close menu on outside click
+// Close menu on outside click — checks every "כל התיקים ▼" trigger (there's one per tab) plus the menu itself
 document.addEventListener('click', e => {
-  const dd = document.getElementById('acct-dropdown');
-  if (dd && !dd.contains(e.target)) {
-    document.getElementById('acct-menu')?.classList.remove('open');
-    document.getElementById('acct-trigger-btn')?.classList.remove('open');
+  const menu = document.getElementById('acct-menu');
+  const clickedTrigger = e.target.closest('.acct-trigger');
+  const clickedInsideMenu = menu && menu.contains(e.target);
+  if (!clickedTrigger && !clickedInsideMenu) {
+    menu?.classList.remove('open');
+    document.querySelectorAll('.acct-trigger.open').forEach(b => b.classList.remove('open'));
   }
 });
 
@@ -13847,7 +13863,11 @@ window.renderTJ = function renderTJ() {
       : '';
     abtns.innerHTML =
       `<button class="fb ${tjAcct==='__all__'?'active':''}" onclick="fAcct('__all__',this)">כל התיקים</button>` +
-      accounts.map(a=>`<button class="fb ${tjAcct===a.id?'active':''}" onclick="fAcct('${a.id}',this)" style="${tjAcct===a.id?'':'border-color:'+a.color+'40;color:'+a.color}">${escHtml(a.name)}${a.number?' <span style="opacity:.6;font-size:9px">#'+escHtml(a.number)+'</span>':''}</button>`).join('') +
+      accounts.map(a=>`<span style="display:inline-flex;align-items:center;gap:1px">
+        <button class="fb ${tjAcct===a.id?'active':''}" onclick="fAcct('${a.id}',this)" style="${tjAcct===a.id?'':'border-color:'+a.color+'40;color:'+a.color};border-top-left-radius:0;border-bottom-left-radius:0">${escHtml(a.name)}${a.number?' <span style="opacity:.6;font-size:9px">#'+escHtml(a.number)+'</span>':''}</button>
+        <button onclick="event.stopPropagation();renameAccount('${a.id}')" title="שנה שם" style="padding:3px 5px;background:transparent;border:1px solid var(--border2);border-right:none;color:var(--t3);cursor:pointer;font-size:9px;border-radius:0">✏️</button>
+        <button onclick="event.stopPropagation();deleteAccount('${a.id}')" title="מחק תיק" style="padding:3px 5px;background:transparent;border:1px solid var(--border2);border-right:none;color:var(--t3);cursor:pointer;font-size:9px;border-top-right-radius:5px;border-bottom-right-radius:5px">✕</button>
+      </span>`).join('') +
       bulkBtn;
   } else if (afbar) { afbar.style.display = 'none'; }
 

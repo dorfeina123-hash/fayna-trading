@@ -850,6 +850,51 @@ body::before {
 .main { position: relative; z-index: 1; }
 
 
+/* ── CALCULATORS (מחשבונים) — namespaced clx- to avoid clashing with existing .card/.calc-screen ── */
+.clx-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.clx-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .15s}
+.clx-card:hover{border-color:var(--gr);box-shadow:0 4px 14px rgba(39,160,101,.15)}
+.clx-icon{font-size:26px;margin-bottom:8px}
+.clx-name{font-size:12px;font-weight:700;color:var(--t1);line-height:1.3}
+.clx-input-row{margin-bottom:12px}
+.clx-input-row label{font-size:11px;font-weight:600;color:var(--t3);display:block;margin-bottom:4px}
+.clx-input-row input,.clx-input-row select{width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--t1);font-family:inherit}
+.clx-input-row input:focus,.clx-input-row select:focus{border-color:var(--gr);outline:none}
+.clx-checkbox-row{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.clx-checkbox-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--gr);flex-shrink:0}
+.clx-checkbox-row label{font-size:13px;font-weight:600;cursor:pointer;color:var(--t1)}
+.clx-result-big{background:var(--gd);border:1px solid rgba(39,160,101,.3);border-radius:10px;padding:14px;text-align:center;margin-bottom:10px}
+.clx-result-label{font-size:11px;color:var(--gr);font-weight:600;margin-bottom:4px}
+.clx-result-num{font-size:30px;font-weight:900;color:var(--gr)}
+.clx-results-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.clx-result-sm{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px;text-align:center}
+.clx-r-label{font-size:10px;color:var(--t3);font-weight:500;margin-bottom:3px}
+.clx-r-val{font-size:17px;font-weight:800;color:var(--t1)}
+.clx-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border2);margin-top:10px}
+.clx-table{width:100%;border-collapse:collapse;font-size:11px;min-width:480px}
+.clx-table th{padding:6px 4px;background:var(--bg3);color:var(--t2);font-weight:700;position:sticky;top:0}
+.clx-table td{padding:5px 4px;text-align:center;border-bottom:1px solid var(--border)}
+.clx-table tr:nth-child(even) td:not(:first-child){background:var(--bg3)}
+.clx-table td:first-child{background:var(--bg4);color:var(--t1);font-weight:700;position:sticky;right:0}
+.clx-cell-pos{color:var(--gr);font-weight:700}
+.clx-cell-neg{color:var(--re);font-weight:600}
+.clx-cell-zero{color:var(--t3);font-weight:600}
+.clx-btn{width:100%;padding:11px;background:var(--gr);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:6px}
+.clx-btn:hover{filter:brightness(1.1)}
+.clx-mc .modal{background:#0f1117;color:#e5e7eb}
+.clx-mc-result-big{background:#1a1d27;border:1px solid #2d3045;border-radius:10px;padding:16px;text-align:center;margin-bottom:10px}
+.clx-mc-r-label{font-size:12px;color:#9ca3af;margin-bottom:4px}
+.clx-mc-r-num{font-size:34px;font-weight:900}
+.clx-mc-r-num.clx-survive{color:#4ade80}
+.clx-mc-r-num.clx-burn{color:#f87171}
+.clx-mc-results-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.clx-mc-result-sm{background:#1a1d27;border:1px solid #2d3045;border-radius:8px;padding:10px;text-align:center}
+.clx-mc-s-label{font-size:10px;color:#9ca3af}
+.clx-mc-s-val{font-size:17px;font-weight:800;color:#e5e7eb}
+.clx-mc .clx-input-row label{color:#9ca3af}
+.clx-mc .clx-input-row input,.clx-mc .clx-input-row select{background:#1a1d27;border-color:#2d3045;color:#e5e7eb}
+.clx-note{background:var(--gd);border:1px solid rgba(39,160,101,.3);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--gr);font-weight:600;line-height:1.5;margin-bottom:12px}
+
 /* ── ACCOUNT SELECTOR ── */
 .acct-bar {
   display: flex; align-items: center; gap: 8px;
@@ -1947,6 +1992,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="nav-menu-item" id="nm-stats"       onclick="swNav('stats')">📊 סטטיסטיקות</div>
     <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
     <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
+    <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
 
     <div class="nav-menu-section">ניהול</div>
     <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
@@ -2095,6 +2141,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 
   <div class="sn-item" id="sni-coach"       onclick="swNav('coach')"       title="מאמן מנטאלי"><span class="sn-icon">🧠</span><span class="sn-lbl">מאמן מנטאלי</span></div>
   <div class="sn-item" id="sni-course"      onclick="swNav('course')"      title="קורס מסחר"><span class="sn-icon">🎓</span><span class="sn-lbl">קורס מסחר</span></div>
+  <div class="sn-item" id="sni-calc"        onclick="swNav('calc')"        title="מחשבונים"><span class="sn-icon">🧮</span><span class="sn-lbl">מחשבונים</span></div>
 
   <div class="sn-sep"></div>
   <div class="sn-grp">ניהול</div>
@@ -2837,6 +2884,139 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="fax">
       <button class="bn" onclick="closeAcctGoals()">ביטול</button>
       <button class="bs" onclick="saveAcctGoals()">💾 שמור יעדים</button>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATORS (מחשבונים) -->
+<div class="tp" id="tp-calc">
+  <div style="font-size:15px;font-weight:600;margin-bottom:3px">🧮 מחשבונים</div>
+  <div style="font-size:11px;color:var(--t3);margin-bottom:14px">כלי עזר מהירים לתכנון מסחר וניהול סיכונים</div>
+  <div class="clx-grid">
+    <div class="clx-card" onclick="clxOpen('goal')"><div class="clx-icon">🎯</div><div class="clx-name">מחשבון יעד שנתי</div></div>
+    <div class="clx-card" onclick="clxOpen('rr')"><div class="clx-icon">📊</div><div class="clx-name">טבלת סיכון/סיכוי</div></div>
+    <div class="clx-card" onclick="clxOpen('contracts')"><div class="clx-icon">📐</div><div class="clx-name">נקודות / חוזים</div></div>
+    <div class="clx-card" onclick="clxOpen('altwr')"><div class="clx-icon">🔄</div><div class="clx-name">הצלחה חלופית</div></div>
+    <div class="clx-card" onclick="clxOpen('consistency')"><div class="clx-icon">🎲</div><div class="clx-name">מחשבון עקביות</div></div>
+    <div class="clx-card" onclick="clxOpen('mc')"><div class="clx-icon">🏦</div><div class="clx-name">שרידות תיק ממומן</div></div>
+  </div>
+</div>
+
+<!-- CLX MODAL: GOAL -->
+<div class="modal-bg" id="clx-modal-goal" onclick="if(event.target===this)clxClose('goal')">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>🎯 מחשבון יעד שנתי <button class="cx" onclick="clxClose('goal')">×</button></h3>
+    <div class="clx-input-row"><label>יעד שנתי (₪)</label><input type="number" id="clx-g-annual" value="1000000" oninput="clxCalcGoal()"></div>
+    <div class="clx-input-row"><label>שער דולר (₪)</label><input type="number" id="clx-g-rate" value="3.7" step="0.01" oninput="clxCalcGoal()"></div>
+    <div class="clx-checkbox-row"><input type="checkbox" id="clx-g-friday" onchange="clxCalcGoal()"><label for="clx-g-friday">כולל יום שישי</label></div>
+    <div class="clx-input-row"><label>עסקאות ביום</label><input type="number" id="clx-g-tday" value="3" oninput="clxCalcGoal()"></div>
+    <div class="clx-input-row"><label>כמות תיקים</label><input type="number" id="clx-g-acc" value="1" oninput="clxCalcGoal()"></div>
+    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-g-wr" value="50" oninput="clxCalcGoal()"></div>
+    <div class="clx-input-row"><label>יחס R:R</label><input type="number" id="clx-g-rr" value="2" step="0.1" oninput="clxCalcGoal()"></div>
+    <div class="clx-result-big">
+      <div class="clx-result-label">יעד שנתי בדולר</div>
+      <div class="clx-result-num" id="clx-g-r-annual">$0</div>
+    </div>
+    <div class="clx-results-grid">
+      <div class="clx-result-sm"><div class="clx-r-label">חודשי</div><div class="clx-r-val" id="clx-g-r-monthly">$0</div></div>
+      <div class="clx-result-sm"><div class="clx-r-label">שבועי</div><div class="clx-r-val" id="clx-g-r-weekly">$0</div></div>
+      <div class="clx-result-sm"><div class="clx-r-label">יומי</div><div class="clx-r-val" id="clx-g-r-daily">$0</div></div>
+      <div class="clx-result-sm"><div class="clx-r-label">לעסקה</div><div class="clx-r-val" id="clx-g-r-trade">$0</div></div>
+      <div class="clx-result-sm"><div class="clx-r-label">סיכון לעסקה</div><div class="clx-r-val" id="clx-g-r-risk">$0</div></div>
+      <div class="clx-result-sm"><div class="clx-r-label">סיכון לתיק</div><div class="clx-r-val" id="clx-g-r-riskac">$0</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLX MODAL: R:R TABLE -->
+<div class="modal-bg" id="clx-modal-rr" onclick="if(event.target===this)clxClose('rr')">
+  <div class="modal" style="width:560px;max-height:92vh;overflow-y:auto">
+    <h3>📊 טבלת סיכון/סיכוי <button class="cx" onclick="clxClose('rr')">×</button></h3>
+    <div class="clx-input-row"><label>יחידת סיכון ($)</label><input type="number" id="clx-rr-unit" value="200" oninput="clxBuildRR()"></div>
+    <div id="clx-rr-container"></div>
+  </div>
+</div>
+
+<!-- CLX MODAL: CONTRACTS -->
+<div class="modal-bg" id="clx-modal-contracts" onclick="if(event.target===this)clxClose('contracts')">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>📐 נקודות / חוזים <button class="cx" onclick="clxClose('contracts')">×</button></h3>
+    <div class="clx-input-row"><label>סיכון ($)</label><input type="number" id="clx-c-risk" value="200" oninput="clxCalcContracts()"></div>
+    <div class="clx-input-row"><label>נקודות סטופ</label><input type="number" id="clx-c-pts" value="10" oninput="clxCalcContracts()"></div>
+    <div class="clx-input-row"><label>שווי נקודה ($) — NQ=20, ES=50</label><input type="number" id="clx-c-pv" value="20" step="0.01" oninput="clxCalcContracts()"></div>
+    <div class="clx-result-big">
+      <div class="clx-result-label">מספר חוזים</div>
+      <div class="clx-result-num" id="clx-c-res">0</div>
+    </div>
+    <div class="clx-result-sm" style="max-width:200px;margin:0 auto 16px">
+      <div class="clx-r-label">סיכון בפועל</div>
+      <div class="clx-r-val" id="clx-c-actual">$0</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">טבלה מהירה</div>
+    <div id="clx-c-table"></div>
+  </div>
+</div>
+
+<!-- CLX MODAL: ALT WIN RATE -->
+<div class="modal-bg" id="clx-modal-altwr" onclick="if(event.target===this)clxClose('altwr')">
+  <div class="modal" style="width:520px;max-height:92vh;overflow-y:auto">
+    <h3>🔄 הצלחה חלופית <button class="cx" onclick="clxClose('altwr')">×</button></h3>
+    <div class="clx-note">אם אחוז ההצלחה שלך משתנה — מה יחס ה-R:R שתצטרך כדי לשמור על אותה תוחלת?</div>
+    <div class="clx-input-row"><label>אחוז הצלחה נוכחי (%)</label><input type="number" id="clx-aw-wr" value="45" oninput="clxCalcAltWR()"></div>
+    <div class="clx-input-row"><label>יחס R:R נוכחי</label><input type="number" id="clx-aw-rr" value="4" step="0.1" oninput="clxCalcAltWR()"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">R:R הנדרש לפי אחוז הצלחה</div>
+    <div id="clx-aw-container"></div>
+  </div>
+</div>
+
+<!-- CLX MODAL: CONSISTENCY -->
+<div class="modal-bg" id="clx-modal-consistency" onclick="if(event.target===this)clxClose('consistency')">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>🎲 מחשבון עקביות <button class="cx" onclick="clxClose('consistency')">×</button></h3>
+    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-con-wr" value="58"></div>
+    <div class="clx-input-row"><label>רווח ממוצע ($)</label><input type="number" id="clx-con-win" value="300"></div>
+    <div class="clx-input-row"><label>הפסד ממוצע ($)</label><input type="number" id="clx-con-loss" value="200"></div>
+    <div class="clx-input-row"><label>מספר עסקאות</label><input type="number" id="clx-con-n" value="500"></div>
+    <button class="clx-btn" onclick="clxRunConsistency()">▶ הרץ סימולציה</button>
+    <div id="clx-con-results" style="display:none">
+      <div class="clx-results-grid" style="margin-top:14px">
+        <div class="clx-result-sm"><div class="clx-r-label">רווח כולל</div><div class="clx-r-val cg" id="clx-con-total">$0</div></div>
+        <div class="clx-result-sm"><div class="clx-r-label">הצלחה בפועל</div><div class="clx-r-val" id="clx-con-actualwr">0%</div></div>
+        <div class="clx-result-sm"><div class="clx-r-label">מקס. ניצחונות</div><div class="clx-r-val cg" id="clx-con-maxw">0</div></div>
+        <div class="clx-result-sm"><div class="clx-r-label">מקס. הפסדים</div><div class="clx-r-val cr" id="clx-con-maxl">0</div></div>
+      </div>
+      <canvas id="clx-con-chart" height="140" style="margin-top:12px;width:100%"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- CLX MODAL: MONTE CARLO -->
+<div class="modal-bg clx-mc" id="clx-modal-mc" onclick="if(event.target===this)clxClose('mc')">
+  <div class="modal" style="width:520px;max-height:92vh;overflow-y:auto">
+    <h3>🏦 שרידות תיק ממומן <button class="cx" onclick="clxClose('mc')" style="color:#e5e7eb">×</button></h3>
+    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-mc-wr" value="50"></div>
+    <div class="clx-input-row"><label>יחס R:R</label><input type="number" id="clx-mc-rr" value="2" step="0.1"></div>
+    <div class="clx-input-row"><label>סיכון לעסקה ($)</label><input type="number" id="clx-mc-risk" value="100"></div>
+    <div class="clx-input-row"><label>דראודאון מקסימלי ($)</label><input type="number" id="clx-mc-dd" value="2000"></div>
+    <div class="clx-input-row"><label>סף משיכה ($)</label><input type="number" id="clx-mc-target" value="3000"></div>
+    <div class="clx-input-row"><label>מספר עסקאות</label><input type="number" id="clx-mc-trades" value="500"></div>
+    <div class="clx-input-row">
+      <label>סוג דראודאון</label>
+      <select id="clx-mc-ddtype"><option value="static">קבוע (Static)</option><option value="trailing">נגרר (Trailing)</option></select>
+    </div>
+    <button class="clx-btn" onclick="clxRunMC()">▶ הרץ סימולציה (1,000 תיקים)</button>
+    <div id="clx-mc-results" style="display:none">
+      <div class="clx-mc-result-big">
+        <div class="clx-mc-r-label">הסתברות לשרידה עד המשיכה</div>
+        <div class="clx-mc-r-num" id="clx-mc-survive">0%</div>
+      </div>
+      <div class="clx-mc-results-grid">
+        <div class="clx-mc-result-sm"><div class="clx-mc-s-label">תיקים שנשרפו</div><div class="clx-mc-s-val" id="clx-mc-burned">0%</div></div>
+        <div class="clx-mc-result-sm"><div class="clx-mc-s-label">עסקאות עד שריפה</div><div class="clx-mc-s-val" id="clx-mc-avgburn">—</div></div>
+        <div class="clx-mc-result-sm"><div class="clx-mc-s-label">נמשך בממוצע</div><div class="clx-mc-s-val" id="clx-mc-avgpay">$0</div></div>
+        <div class="clx-mc-result-sm"><div class="clx-mc-s-label">משיכות לתיק</div><div class="clx-mc-s-val" id="clx-mc-avgpayouts">0</div></div>
+      </div>
+      <canvas id="clx-mc-chart" height="140" style="width:100%"></canvas>
     </div>
   </div>
 </div>
@@ -6167,6 +6347,226 @@ function saveManualEntry() {
   }
 }
 
+// ════════════════════════════════════════════════════════
+// CALCULATORS (מחשבונים) — ported from idt-students tools, all client-side/pure math
+// ════════════════════════════════════════════════════════
+function clxOpen(name) {
+  const m = document.getElementById('clx-modal-'+name);
+  if (!m) return;
+  m.classList.add('open');
+  if (name === 'goal')      clxCalcGoal();
+  if (name === 'rr')        clxBuildRR();
+  if (name === 'contracts') clxCalcContracts();
+  if (name === 'altwr')     clxCalcAltWR();
+}
+function clxClose(name) {
+  document.getElementById('clx-modal-'+name)?.classList.remove('open');
+}
+
+// -- GOAL --
+function clxCalcGoal() {
+  const g = id => document.getElementById(id);
+  const annual = parseFloat(g('clx-g-annual').value) || 0;
+  const rate   = parseFloat(g('clx-g-rate').value) || 3.7;
+  const friday = g('clx-g-friday').checked;
+  const tday   = parseFloat(g('clx-g-tday').value) || 3;
+  const acc    = parseFloat(g('clx-g-acc').value) || 1;
+  const wr     = (parseFloat(g('clx-g-wr').value) || 50) / 100;
+  const rr     = parseFloat(g('clx-g-rr').value) || 2;
+
+  const annUSD  = annual / rate;
+  const monthly = annUSD / 12;
+  const weekly  = monthly / 4;
+  const daily   = weekly / (friday ? 6 : 5);
+  const perTrade= daily / tday;
+  const exp     = wr * rr - (1 - wr);
+  const risk    = exp > 0 ? perTrade / exp : 0;
+
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  g('clx-g-r-annual').textContent  = fmt(annUSD);
+  g('clx-g-r-monthly').textContent = fmt(monthly);
+  g('clx-g-r-weekly').textContent  = fmt(weekly);
+  g('clx-g-r-daily').textContent   = fmt(daily);
+  g('clx-g-r-trade').textContent   = fmt(perTrade);
+  g('clx-g-r-risk').textContent    = fmt(risk);
+  g('clx-g-r-riskac').textContent  = fmt(risk / acc);
+}
+
+// -- RR TABLE --
+function clxBuildRR() {
+  const unit = parseFloat(document.getElementById('clx-rr-unit').value) || 200;
+  const rrs = [0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.5,4,4.5,5];
+  const wrs = [0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85];
+  let html = '<div class="clx-table-wrap"><table class="clx-table"><thead><tr><th>R:R</th>';
+  wrs.forEach(w => { html += '<th>' + Math.round(w*100) + '%</th>'; });
+  html += '</tr></thead><tbody>';
+  rrs.forEach(r => {
+    html += '<tr><td>' + r.toFixed(1) + '</td>';
+    wrs.forEach(w => {
+      const v = Math.round(unit * (w * r - (1 - w)));
+      const cls = v > 0 ? 'clx-cell-pos' : v < 0 ? 'clx-cell-neg' : 'clx-cell-zero';
+      html += '<td class="' + cls + '">' + (v > 0 ? '+' : '') + v + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('clx-rr-container').innerHTML = html;
+}
+
+// -- CONTRACTS --
+function clxCalcContracts() {
+  const g = id => document.getElementById(id);
+  const risk = parseFloat(g('clx-c-risk').value) || 200;
+  const pts  = parseFloat(g('clx-c-pts').value) || 10;
+  const pv   = parseFloat(g('clx-c-pv').value) || 20;
+  const contracts = Math.floor(risk / (pts * pv));
+  g('clx-c-res').textContent = contracts;
+  g('clx-c-actual').textContent = '$' + (contracts * pts * pv).toLocaleString();
+
+  const rows = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+  let html = '<div class="clx-table-wrap"><table class="clx-table"><thead><tr><th>נקודות</th><th>חוזים</th><th>סיכון בפועל</th></tr></thead><tbody>';
+  rows.forEach(p => {
+    const c = Math.floor(risk / (p * pv));
+    html += '<tr><td>' + p + '</td><td class="clx-cell-pos">' + c + '</td><td>$' + (c * p * pv) + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  g('clx-c-table').innerHTML = html;
+}
+
+// -- ALT WIN RATE --
+function clxCalcAltWR() {
+  const g = id => document.getElementById(id);
+  const wr = (parseFloat(g('clx-aw-wr').value) || 45) / 100;
+  const rr = parseFloat(g('clx-aw-rr').value) || 4;
+  const targetExp = wr * rr - (1 - wr);
+  const altWrs = [0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85];
+  let html = '<div class="clx-table-wrap"><table class="clx-table"><thead><tr><th>אחוז הצלחה</th><th>R:R נדרש</th><th>תוחלת</th></tr></thead><tbody>';
+  altWrs.forEach(aw => {
+    const newRR = (targetExp + (1 - aw)) / aw;
+    const isCurr = Math.abs(aw - wr) < 0.001;
+    const cls = newRR < 0 ? 'clx-cell-neg' : isCurr ? 'clx-cell-pos' : '';
+    html += '<tr>' +
+      '<td' + (isCurr ? ' style="background:var(--gr);color:#fff"' : '') + '>' + Math.round(aw*100) + '%</td>' +
+      '<td class="' + cls + '">' + (newRR <= 0 ? '∞' : newRR.toFixed(2)) + '</td>' +
+      '<td class="' + (targetExp > 0 ? 'clx-cell-pos' : 'clx-cell-neg') + '">' + targetExp.toFixed(3) + '</td>' +
+    '</tr>';
+  });
+  html += '</tbody></table></div>';
+  g('clx-aw-container').innerHTML = html;
+}
+
+// -- CONSISTENCY --
+function clxRunConsistency() {
+  const g = id => document.getElementById(id);
+  const wr   = (parseFloat(g('clx-con-wr').value) || 58) / 100;
+  const win  = parseFloat(g('clx-con-win').value) || 300;
+  const loss = parseFloat(g('clx-con-loss').value) || 200;
+  const n    = parseInt(g('clx-con-n').value) || 500;
+
+  let bal = 0, wins = 0, maxW = 0, maxL = 0, cW = 0, cL = 0;
+  const bals = [0];
+  for (let i = 0; i < n; i++) {
+    if (Math.random() < wr) { bal += win; wins++; cW++; cL = 0; if (cW > maxW) maxW = cW; }
+    else { bal -= loss; cL++; cW = 0; if (cL > maxL) maxL = cL; }
+    bals.push(bal);
+  }
+
+  g('clx-con-total').textContent = (bal >= 0 ? '+' : '') + '$' + Math.round(bal).toLocaleString();
+  g('clx-con-total').className = 'clx-r-val ' + (bal >= 0 ? 'cg' : 'cr');
+  g('clx-con-actualwr').textContent = Math.round(wins/n*100) + '%';
+  g('clx-con-maxw').textContent = maxW;
+  g('clx-con-maxl').textContent = maxL;
+  g('clx-con-results').style.display = 'block';
+  clxDrawChart('clx-con-chart', bals, '#27a065');
+}
+
+// -- MONTE CARLO --
+function clxRunMC() {
+  const g = id => document.getElementById(id);
+  const wr  = (parseFloat(g('clx-mc-wr').value) || 50) / 100;
+  const rr  = parseFloat(g('clx-mc-rr').value) || 2;
+  const risk= parseFloat(g('clx-mc-risk').value) || 100;
+  const dd  = parseFloat(g('clx-mc-dd').value) || 2000;
+  const tgt = parseFloat(g('clx-mc-target').value) || 3000;
+  const n   = parseInt(g('clx-mc-trades').value) || 500;
+  const ddtype = g('clx-mc-ddtype').value;
+
+  const SIMS = 1000;
+  let burned = 0, totalPay = 0, totalPayouts = 0;
+  const burnTrades = [];
+  let sampleBals = null;
+  for (let s = 0; s < SIMS; s++) {
+    let bal = 0, peak = 0, isBurned = false;
+    const bals = [0];
+    for (let t = 0; t < n; t++) {
+      bal += Math.random() < wr ? risk * rr : -risk;
+      if (bal > peak) peak = bal;
+      if (bal >= tgt) { totalPay += bal; totalPayouts++; bal = 0; peak = 0; }
+      const drawdown = ddtype === 'trailing' ? peak - bal : -bal;
+      if (drawdown >= dd) { burned++; isBurned = true; burnTrades.push(t+1); break; }
+      if (s === 0) bals.push(bal);
+    }
+    if (!isBurned) totalPay += bal;
+    if (s === 0) sampleBals = bals;
+  }
+
+  const survive = ((SIMS - burned) / SIMS * 100).toFixed(1);
+  g('clx-mc-survive').textContent = survive + '%';
+  g('clx-mc-survive').className = 'clx-mc-r-num ' + (parseFloat(survive) >= 50 ? 'clx-survive' : 'clx-burn');
+  g('clx-mc-burned').textContent = (burned/SIMS*100).toFixed(1) + '%';
+  g('clx-mc-avgburn').textContent = burnTrades.length ? Math.round(burnTrades.reduce((a,b)=>a+b,0)/burnTrades.length) : '—';
+  g('clx-mc-avgpay').textContent = '$' + Math.round(totalPay/SIMS).toLocaleString();
+  g('clx-mc-avgpayouts').textContent = (totalPayouts/SIMS).toFixed(1);
+  g('clx-mc-results').style.display = 'block';
+  if (sampleBals) clxDrawMCChart(sampleBals, dd, tgt);
+}
+
+// -- CHARTS (plain canvas, no external chart lib needed) --
+function clxDrawChart(id, bals, color) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const W = canvas.parentElement.offsetWidth - 4;
+  canvas.width = W * 2; canvas.height = 280;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+  const w = W, h = 140;
+  const mn = Math.min.apply(null, bals), mx = Math.max.apply(null, bals), rng = (mx - mn) || 1;
+  const zeroY = h - ((0 - mn) / rng) * (h - 20) - 10;
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(w, zeroY); ctx.stroke();
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  bals.forEach((b,i) => {
+    const x = (i/(bals.length-1)) * w, y = h - ((b - mn) / rng) * (h - 20) - 10;
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+
+function clxDrawMCChart(bals, dd, tgt) {
+  const canvas = document.getElementById('clx-mc-chart');
+  if (!canvas) return;
+  const W = canvas.parentElement.offsetWidth - 4;
+  canvas.width = W * 2; canvas.height = 280;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2,2);
+  const w = W, h = 140;
+  const allV = bals.concat([-dd, tgt]);
+  const mn = Math.min.apply(null, allV), mx = Math.max.apply(null, allV), rng = (mx - mn) || 1;
+  const toY = v => h - ((v - mn) / rng) * (h - 24) - 12;
+  ctx.strokeStyle = '#f87171'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(0, toY(-dd)); ctx.lineTo(w, toY(-dd)); ctx.stroke();
+  ctx.strokeStyle = '#4ade80';
+  ctx.beginPath(); ctx.moveTo(0, toY(tgt)); ctx.lineTo(w, toY(tgt)); ctx.stroke();
+  ctx.setLineDash([]); ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  bals.forEach((b,i) => {
+    const x = (i/(bals.length-1)) * w, y = toY(b);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+
 function _isMicroContract(sym) {
   const cs = _customSymbolFor(sym);
   if (cs) return !!cs.micro;
@@ -9459,7 +9859,7 @@ const _NAV_LABELS = {
   overview:'🏠 סקירה', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
   pnl:'📈 P&L', custom:'💳 הוצאות חופשיות', calendar:'📅 לוח שנה',
   trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות', coach:'🧠 מאמן מנטאלי',
-  course:'🎓 קורס מסחר',
+  course:'🎓 קורס מסחר', calc:'🧮 מחשבונים',
   datamgr:'⚙️ ניהול נתונים', personal:'👤 אזור אישי',
   software:'📥 תוכנות מסחר', firms:'🏆 מימון', news:'📰 חדשות',
   ecal:'📅 יומן כלכלי', help:'❓ עזרה', billing:'💳 תשלום', admin:'🛡️ ניהול',
