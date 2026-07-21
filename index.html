@@ -2744,6 +2744,85 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 </div>
 
+<!-- MANUAL DAY SUMMARY (P&L only — no full trade file) -->
+<div class="modal-bg" id="manual-entry-modal" onclick="if(event.target===this)closeManualEntry()">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>✍️ יומן ידני — סיכום יום <button class="cx" onclick="closeManualEntry()">×</button></h3>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.5">במקום להעלות קובץ עסקאות מלא — רשום כמה הרווחת/הפסדת היום (וכמה עסקאות, אם ידוע). זה נכנס לכל הסטטיסטיקות, לוח השנה והגרפים בדיוק כמו יום רגיל.</div>
+
+    <div class="g2">
+      <div class="fr"><label>תאריך *</label><input type="date" id="me-date"></div>
+      <div class="fr">
+        <label>תיק</label>
+        <select id="me-acct" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)"></select>
+      </div>
+    </div>
+
+    <div class="fr">
+      <label>💰 P&amp;L נטו ליום ($) *</label>
+      <input type="number" id="me-pnl" step="0.01" placeholder="לדוגמה: 245.50 או -120" style="width:100%;padding:8px 10px;font-size:14px;font-weight:700;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)" dir="ltr">
+    </div>
+
+    <div class="g2">
+      <div class="fr"><label>מס' עסקאות (אופציונלי)</label><input type="number" id="me-count" min="0" step="1" placeholder="לדוגמה: 4"></div>
+      <div class="fr"><label>אילו עסקאות (אופציונלי)</label><input type="text" id="me-which" placeholder="לדוגמה: NQ, ES"></div>
+    </div>
+
+    <div class="fr"><label>הערה (אופציונלי)</label><textarea id="me-notes" placeholder="הקשר, מה קרה היום..." style="height:55px;resize:vertical"></textarea></div>
+
+    <div class="fr">
+      <label>📸 צילום מסך של הפלטפורמה (אופציונלי) — נזהה סכום אוטומטית</label>
+      <div id="me-img-preview" class="ta-img-preview" style="display:none;margin-bottom:8px">
+        <img id="me-img-preview-img" src="" alt="צילום מסך">
+        <button class="ta-img-remove" onclick="meClearImg()" title="הסר תמונה">×</button>
+      </div>
+      <label id="me-img-drop" class="ta-img-drop" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="meDropImg(event)">
+        📎 לחץ לבחירת צילום מסך או גרור לכאן
+        <input type="file" id="me-img-input" accept="image/*" style="display:none" onchange="meLoadImg(this)">
+      </label>
+      <button type="button" id="me-ocr-btn" onclick="meRunOcr()" style="display:none;margin-top:8px;width:100%;padding:8px;border-radius:7px;background:rgba(114,149,184,.15);border:1px solid rgba(114,149,184,.4);color:#7295b8;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🔍 זהה סכום מהתמונה</button>
+      <div id="me-ocr-status" style="font-size:10px;color:var(--t3);margin-top:6px"></div>
+    </div>
+
+    <div class="fax">
+      <button class="bn" onclick="closeManualEntry()">ביטול</button>
+      <button class="bs" id="me-save-btn" onclick="saveManualEntry()">💾 שמור יום</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT GOALS -->
+<div class="modal-bg" id="acct-goals-modal" onclick="if(event.target===this)closeAcctGoals()">
+  <div class="modal" style="width:480px;max-height:92vh;overflow-y:auto">
+    <h3>🎯 יעדים לתיק — <span id="ag-acct-name"></span> <button class="cx" onclick="closeAcctGoals()">×</button></h3>
+    <div id="ag-progress-summary" style="margin-bottom:14px"></div>
+
+    <div class="fr">
+      <label>💸 יעד למשיכה ($)</label>
+      <input type="number" id="ag-withdrawal" step="1" placeholder="לדוגמה: 2000" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)" dir="ltr">
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🚀 יעד למעבר (Combine / שלב הבא)</div>
+    <div class="g2">
+      <div class="fr"><label>יעד רווח ($)</label><input type="number" id="ag-pass-target" step="1" placeholder="לדוגמה: 3000" dir="ltr"></div>
+      <div class="fr"><label>יעד תאריך</label><input type="date" id="ag-pass-deadline"></div>
+    </div>
+    <div class="fr"><label>יעד באפר / כרית ביטחון ($)</label><input type="number" id="ag-pass-buffer" step="1" placeholder="לדוגמה: 500 מעל הדראודאון המקסימלי" dir="ltr"></div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🔥 יעד/סף שריפה</div>
+    <div class="fr"><label>הפסד מקסימלי מותר ($, מספר חיובי)</label><input type="number" id="ag-burn-limit" step="1" placeholder="לדוגמה: 1500" dir="ltr"></div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">➕ יעדים מותאמים אישית</div>
+    <div id="ag-custom-list"></div>
+    <button type="button" onclick="agAddCustom()" style="margin-bottom:10px;padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit">+ הוסף יעד מותאם אישית</button>
+
+    <div class="fax">
+      <button class="bn" onclick="closeAcctGoals()">ביטול</button>
+      <button class="bs" onclick="saveAcctGoals()">💾 שמור יעדים</button>
+    </div>
+  </div>
+</div>
+
 <!-- MENTAL COACH -->
 <div class="tp" id="tp-coach">
   <div id="coach-view-home">
@@ -2839,6 +2918,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מהפלטפורמה ← לחץ "ייבא CSV / Excel"</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="openAddTrade()" class="btn-p" style="font-size:11px;padding:6px 13px">+ עסקה</button>
+      <button onclick="openManualEntry()" style="padding:6px 13px;background:rgba(191,161,94,.15);border:1px solid rgba(191,161,94,.45);border-radius:6px;cursor:pointer;font-size:11px;color:#bfa15e;font-family:inherit;font-weight:600">✍️ יומן ידני</button>
       <button id="tj-del-sel" onclick="tjDeleteSelected()" style="display:none;padding:6px 14px;background:rgba(194,88,88,.15);border:1px solid rgba(194,88,88,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--re);font-family:inherit;font-weight:700">🗑 מחק נבחרות (<span id="tj-del-n">0</span>)</button>
       <button id="tj-sel-mode-btn" onclick="tjToggleSelMode()" style="padding:6px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit;font-weight:600;transition:all .2s">☑ בחר עסקאות</button>
       <button onclick="showReportMenu('trades',this)" style="padding:6px 12px;background:var(--bg3);border:1px solid rgba(144,137,189,.35);border-radius:6px;cursor:pointer;font-size:11px;color:#9089bd;font-family:inherit">📊 דוח P&amp;L</button>
@@ -5821,6 +5901,217 @@ function saveAddTrade() {
   }
 }
 
+// ════════════════════════════════════════════════════════
+// MANUAL DAY SUMMARY — log a day's P&L without a full trade file
+// ════════════════════════════════════════════════════════
+let _meImg = null;
+
+function _mePopulateAcctSelect() {
+  const sel = document.getElementById('me-acct');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">ללא שיוך</option>' +
+    accounts.map(a => `<option value="${a.id}">${a.name}${a.number?' #'+a.number:''}</option>`).join('');
+  const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
+  if (selIds.length===1) sel.value = selIds[0];
+  else if (cur) sel.value = cur;
+}
+
+function openManualEntry() {
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('me-date').value  = today;
+    document.getElementById('me-pnl').value   = '';
+    document.getElementById('me-count').value = '';
+    document.getElementById('me-which').value = '';
+    document.getElementById('me-notes').value = '';
+    document.getElementById('me-ocr-status').textContent = '';
+    _meImg = null;
+    _renderMeImgPreview();
+    _mePopulateAcctSelect();
+    document.getElementById('manual-entry-modal').classList.add('open');
+  } catch(err) {
+    showToast('שגיאה בפתיחת טופס: '+err.message,'error');
+    console.error('openManualEntry error:', err);
+  }
+}
+
+function closeManualEntry() {
+  const m = document.getElementById('manual-entry-modal');
+  if (m) m.classList.remove('open');
+}
+
+function _renderMeImgPreview() {
+  const preview = document.getElementById('me-img-preview');
+  const drop    = document.getElementById('me-img-drop');
+  const img     = document.getElementById('me-img-preview-img');
+  const ocrBtn  = document.getElementById('me-ocr-btn');
+  if (_meImg) {
+    img.src = _meImg;
+    preview.style.display = '';
+    drop.style.display = 'none';
+    if (ocrBtn) ocrBtn.style.display = '';
+  } else {
+    preview.style.display = 'none';
+    drop.style.display = '';
+    if (img) img.src = '';
+    if (ocrBtn) ocrBtn.style.display = 'none';
+  }
+}
+
+function meLoadImg(inp) {
+  const file = inp.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const imgEl = new Image();
+    imgEl.onload = function() {
+      // Keep a larger, higher-res copy for OCR accuracy than the trade-annotation thumbnails
+      const maxW = 1600, maxH = 1200;
+      let w = imgEl.width, h = imgEl.height;
+      if (w > maxW) { h = h * maxW / w; w = maxW; }
+      if (h > maxH) { w = w * maxH / h; h = maxH; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(imgEl, 0, 0, w, h);
+      _meImg = canvas.toDataURL('image/jpeg', 0.85);
+      _renderMeImgPreview();
+      document.getElementById('me-ocr-status').textContent = '';
+    };
+    imgEl.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  inp.value = '';
+}
+
+function meDropImg(e) {
+  e.preventDefault();
+  document.getElementById('me-img-drop').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) meLoadImg({ files: [file] });
+}
+
+function meClearImg() {
+  _meImg = null;
+  _renderMeImgPreview();
+}
+
+// Lazy-load Tesseract.js only when the user actually asks to run OCR
+let _tesseractLoading = null;
+function _loadTesseract() {
+  if (window.Tesseract) return Promise.resolve();
+  if (_tesseractLoading) return _tesseractLoading;
+  _tesseractLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.0/tesseract.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('טעינת מנוע זיהוי הטקסט נכשלה'));
+    document.head.appendChild(s);
+  });
+  return _tesseractLoading;
+}
+
+// Try to find the most likely "net P&L" dollar figure inside OCR'd text.
+// Looks for $ amounts near P&L-ish keywords first, falls back to the largest amount found.
+function _extractPnlCandidate(text) {
+  const amountRe = /-?\(?\$?\s?-?[\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?\)?/g;
+  const lines = text.split('\n');
+  const keywordRe = /(net|p\s*&?\s*l|p&l|pnl|profit|loss|total|realized|day|today|closed)/i;
+  let best = null;
+  for (const line of lines) {
+    if (!keywordRe.test(line)) continue;
+    const matches = line.match(amountRe);
+    if (!matches) continue;
+    for (const m of matches) {
+      const val = _parseMoneyStr(m);
+      if (val !== null) { best = val; }
+    }
+  }
+  if (best !== null) return best;
+  // Fallback: largest absolute dollar-looking figure anywhere in the text
+  const all = text.match(amountRe) || [];
+  let bestAbs = -1, fallback = null;
+  for (const m of all) {
+    const val = _parseMoneyStr(m);
+    if (val === null) continue;
+    if (Math.abs(val) > bestAbs) { bestAbs = Math.abs(val); fallback = val; }
+  }
+  return fallback;
+}
+
+function _parseMoneyStr(m) {
+  let s = m.trim();
+  let neg = false;
+  if (s.startsWith('(') && s.endsWith(')')) { neg = true; s = s.slice(1,-1); }
+  if (s.startsWith('-')) { neg = true; }
+  s = s.replace(/[^\d.]/g, '');
+  if (!s) return null;
+  let val = parseFloat(s);
+  if (isNaN(val)) return null;
+  if (neg) val = -val;
+  return val;
+}
+
+async function meRunOcr() {
+  if (!_meImg) return;
+  const statusEl = document.getElementById('me-ocr-status');
+  const btn = document.getElementById('me-ocr-btn');
+  try {
+    btn.disabled = true;
+    statusEl.textContent = '⏳ טוען מנוע זיהוי טקסט...';
+    await _loadTesseract();
+    statusEl.textContent = '🔍 מזהה טקסט מהתמונה... (עשוי לקחת כ-10-20 שניות)';
+    const result = await window.Tesseract.recognize(_meImg, 'eng');
+    const text = result?.data?.text || '';
+    const candidate = _extractPnlCandidate(text);
+    if (candidate !== null) {
+      document.getElementById('me-pnl').value = candidate.toFixed(2);
+      statusEl.innerHTML = `✅ זוהה סכום: <b>$${candidate.toFixed(2)}</b> — בדוק ותקן במידת הצורך לפני השמירה.`;
+    } else {
+      statusEl.textContent = '⚠️ לא הצלחתי לזהות סכום ברור בתמונה — נא להזין ידנית.';
+    }
+  } catch(err) {
+    console.error('meRunOcr error:', err);
+    statusEl.textContent = '⚠️ זיהוי אוטומטי נכשל — נא להזין את הסכום ידנית.';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function saveManualEntry() {
+  try {
+    const g = id => document.getElementById(id);
+    const date  = g('me-date').value;
+    const pnl   = parseFloat(g('me-pnl').value);
+    if (!date)          { showToast('נא לבחור תאריך','error'); return; }
+    if (isNaN(pnl))     { showToast('נא להזין סכום P&L','error'); return; }
+    const count = parseInt(g('me-count').value);
+    const which = (g('me-which').value||'').trim();
+    const notes = (g('me-notes').value||'').trim();
+    const acct  = g('me-acct').value || null;
+    const trade = {
+      sym: which ? which.toUpperCase() : '📝 סיכום יומי',
+      qty: 0, buy: 0, sell: 0,
+      pnl: +pnl.toFixed(2),
+      commOverride: 0, // manual entry P&L is already net — no auto-commission
+      date, btime: '23:59:00', stime: '',
+      dur: '', strategy: 'יומן ידני',
+      notes,
+      stars: 0,
+      acct,
+      isManual: true,
+      manualTradeCount: (!isNaN(count) && count>=0) ? count : null,
+      image: _meImg || null,
+    };
+    tradesList.push(trade);
+    renderAll(); saveData(); closeManualEntry();
+    showToast(`✅ יום ${fmtD ? fmtD(date) : date} נשמר · נטו: ${pnl>=0?'+':''}$${pnl.toFixed(2)}`, 'success', 4000);
+  } catch(err) {
+    showToast('שגיאה בשמירה: '+err.message,'error');
+    console.error('saveManualEntry:', err);
+  }
+}
+
 function _isMicroContract(sym) {
   const cs = _customSymbolFor(sym);
   if (cs) return !!cs.micro;
@@ -7296,15 +7587,21 @@ function renderTJ(){
     const acctCell = acctObj
       ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap">${escHtml(acctObj.name)}</span>`
       : `<span style="font-size:10px;color:#374151">—</span>`;
-    const spark = typeof _tradeSpark==='function' ? _tradeSpark(t,ti) : '';
+    const spark = (!t.isManual && typeof _tradeSpark==='function') ? _tradeSpark(t,ti) : '';
+    const symCell = t.isManual
+      ? `<span title="${t.manualTradeCount?t.manualTradeCount+' עסקאות (ידני)':'יומן ידני'}" style="color:#bfa15e;font-size:11px">✍️ ${escHtml(t.sym)}</span>`
+      : escHtml(t.sym);
+    const qtyCell = t.isManual ? (t.manualTradeCount!=null ? t.manualTradeCount : '—') : t.qty;
+    const buyCell = t.isManual ? '—' : t.buy.toFixed(2);
+    const sellCell= t.isManual ? '—' : t.sell.toFixed(2);
     return `<tr class="tj-row" id="tj-row-${ti}" style="${sel?'background:rgba(74,143,168,.12)':''}">
       <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" ${sel?'checked':''} onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
       <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${escHtml(t.sym)}</td><td style="color:#767f8e">${t.qty}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${t.buy.toFixed(2)}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${t.sell.toFixed(2)}</td>
+      <td style="color:#8892a4">${symCell}</td><td style="color:#767f8e">${qtyCell}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${buyCell}</td>
+      <td class="mono" style="font-size:11px;color:#767f8e">${sellCell}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td style="padding:3px 5px">${spark}</td>
       <td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${tradeNet(t)>=0?'+':'−'}$${Math.abs(tradeNet(t)).toFixed(2)}</td>
@@ -9601,6 +9898,7 @@ function _cloudSave() {
         td_commSettings: commSettings,
         td_customSymbols: customSymbols,
         td_recurringTemplates: recurringTemplates,
+        td_accounts: (typeof accounts !== 'undefined') ? accounts : [],
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
       _updateSyncDot('synced');
@@ -9626,9 +9924,11 @@ async function _cloudLoad() {
       if (d.td_commSettings)               Object.assign(commSettings, d.td_commSettings);
       if (d.td_customSymbols?.length)      customSymbols = d.td_customSymbols;
       if (d.td_recurringTemplates?.length) recurringTemplates = d.td_recurringTemplates;
+      if (d.td_accounts?.length && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
       applyRecurring();
       renderAll();
       renderSymbolManager(); _refreshSymDatalist();
+      if (typeof renderAcctMenu === 'function') renderAcctMenu();
       _updateSyncDot('synced');
       // Also update localStorage as local cache
       localStorage.setItem('dor_records',   JSON.stringify(records));
@@ -10053,6 +10353,12 @@ const ACCT_COLORS = ['#9089bd','#7295b8','#3d9970','#bfa15e','#c97272','#f472b6'
 
 function saveAccounts() {
   localStorage.setItem('dor_accounts', JSON.stringify(accounts));
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+
+// Net P&L for one account — same math used everywhere else (tradeNet = pnl minus commission)
+function computeAcctNet(id) {
+  return +tradesList.filter(t=>t.acct===id).reduce((s,t)=>s+tradeNet(t),0).toFixed(2);
 }
 
 function renderAcctMenu() {
@@ -10068,10 +10374,12 @@ function renderAcctMenu() {
   if (allItem) { allItem.className='acct-item all'+(allSel?' checked':''); allItem.querySelector('.acct-check').textContent=allSel?'✓':''; }
 
   const items = accounts.map(a => {
-    const pnl = +tradesList.filter(t=>t.acct===a.id).reduce((s,t)=>s+tradeNet(t),0).toFixed(2);
+    const pnl = computeAcctNet(a.id);
     const cnt = tradesList.filter(t=>t.acct===a.id).length;
     const isSel = allSel || selectedAccounts.has(a.id);
-    return `<div class="acct-item ${isSel?'checked':''}" onclick="acctToggle('${a.id}',this)">
+    const hasGoals = a.goals && (a.goals.withdrawal?.target || a.goals.pass?.target || a.goals.burn?.limit || (a.goals.custom||[]).length);
+    const goalBar = hasGoals ? _acctGoalMiniBar(a, pnl) : '';
+    return `<div class="acct-item ${isSel?'checked':''}" onclick="acctToggle('${a.id}',this)" style="flex-wrap:wrap">
       <div class="acct-check" style="${isSel?'background:'+a.color+';border-color:'+a.color:''}">
         ${isSel?'✓':''}
       </div>
@@ -10079,7 +10387,9 @@ function renderAcctMenu() {
       <div class="acct-name" style="flex:1">${a.name}</div>
       <div style="font-size:10px;color:var(--t3);margin-left:4px">${cnt} עסקאות</div>
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
+      <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
       <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
+      ${goalBar}
     </div>`;
   }).join('');
 
@@ -10202,7 +10512,8 @@ function addAccount() {
     name:   name.trim(),
     number: (num||'').trim() || null,
     color:  ACCT_COLORS[colorIdx],
-    active: true, type: 'prop'
+    active: true, type: 'prop',
+    goals:  { withdrawal:{target:null}, pass:{target:null,deadline:null,buffer:null}, burn:{limit:null}, custom:[] }
   });
   saveAccounts();
   renderAcctMenu();
@@ -10214,6 +10525,127 @@ function deleteAccount(id) {
   saveAccounts();
   renderAcctMenu();
   applyAcctFilter();
+}
+
+// ════════════════════════════════════════════════════════
+// ACCOUNT GOALS — withdrawal / pass (combine) / burn (max loss) / custom
+// ════════════════════════════════════════════════════════
+let _agAcctId = null;
+let _agCustom = [];
+
+function _goalProgressBarHtml(label, current, target, color, sub) {
+  if (!target) return '';
+  const pct = Math.max(0, Math.min(100, (current/target)*100));
+  return `<div class="goal-widget" style="margin-bottom:8px;padding:9px 12px">
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
+        <span style="color:var(--t2);font-weight:600">${label}</span>
+        <span style="color:${color}">${current>=0?'$':'−$'}${Math.abs(current).toFixed(0)} / $${target.toFixed(0)} (${pct.toFixed(0)}%)</span>
+      </div>
+      <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+      ${sub?`<div style="font-size:10px;color:var(--t3);margin-top:4px">${sub}</div>`:''}
+    </div>
+  </div>`;
+}
+
+// Small inline bar shown right in the account list (withdrawal goal takes priority, else pass, else burn)
+function _acctGoalMiniBar(a, pnl) {
+  const g = a.goals || {};
+  let label, target, color = a.color;
+  if (g.withdrawal?.target)      { label = 'יעד משיכה';  target = g.withdrawal.target; }
+  else if (g.pass?.target)       { label = 'יעד מעבר';   target = g.pass.target; }
+  else if (g.burn?.limit)        { label = 'סף שריפה';   target = g.burn.limit; color = '#c75f5f'; }
+  else return '';
+  const base = g.burn?.limit && !g.withdrawal?.target && !g.pass?.target ? Math.abs(Math.min(0,pnl)) : Math.max(0,pnl);
+  const pct = Math.max(0, Math.min(100, (base/target)*100));
+  return `<div style="width:100%;margin-top:4px" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:2px"><span>${label}</span><span>${pct.toFixed(0)}%</span></div>
+    <div class="goal-progress-bar" style="height:4px"><div class="goal-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function openAcctGoals(id) {
+  const a = accounts.find(x=>x.id===id);
+  if (!a) return;
+  a.goals = a.goals || { withdrawal:{target:null}, pass:{target:null,deadline:null,buffer:null}, burn:{limit:null}, custom:[] };
+  a.goals.withdrawal = a.goals.withdrawal || {target:null};
+  a.goals.pass       = a.goals.pass       || {target:null,deadline:null,buffer:null};
+  a.goals.burn       = a.goals.burn       || {limit:null};
+  a.goals.custom     = a.goals.custom     || [];
+  _agAcctId = id;
+  _agCustom = a.goals.custom.map(c=>({...c}));
+  document.getElementById('ag-acct-name').textContent = a.name;
+  document.getElementById('ag-withdrawal').value    = a.goals.withdrawal.target || '';
+  document.getElementById('ag-pass-target').value   = a.goals.pass.target || '';
+  document.getElementById('ag-pass-deadline').value = a.goals.pass.deadline || '';
+  document.getElementById('ag-pass-buffer').value   = a.goals.pass.buffer || '';
+  document.getElementById('ag-burn-limit').value    = a.goals.burn.limit || '';
+  _agRenderCustomList();
+  const pnl = computeAcctNet(id);
+  const parts = [];
+  if (a.goals.withdrawal.target) parts.push(_goalProgressBarHtml('💸 יעד משיכה', Math.max(0,pnl), a.goals.withdrawal.target, '#3d9970'));
+  if (a.goals.pass.target) {
+    let sub = '';
+    if (a.goals.pass.deadline) {
+      const days = Math.ceil((new Date(a.goals.pass.deadline) - new Date()) / 86400000);
+      sub = days >= 0 ? `⏳ ${days} ימים ליעד (${a.goals.pass.deadline})` : `⚠️ עבר תאריך היעד (${a.goals.pass.deadline})`;
+    }
+    parts.push(_goalProgressBarHtml('🚀 יעד מעבר', Math.max(0,pnl), a.goals.pass.target, '#7295b8', sub));
+  }
+  if (a.goals.burn.limit) parts.push(_goalProgressBarHtml('🔥 סף שריפה (הפסד)', Math.abs(Math.min(0,pnl)), a.goals.burn.limit, '#c75f5f'));
+  (a.goals.custom||[]).forEach(c => { if (c.target) parts.push(_goalProgressBarHtml('🎯 '+(c.name||'יעד'), Math.max(0,pnl), c.target, '#bfa15e')); });
+  document.getElementById('ag-progress-summary').innerHTML = parts.join('') || '<div style="font-size:11px;color:var(--t3)">הגדר יעד כדי לראות התקדמות</div>';
+  document.getElementById('acct-goals-modal').classList.add('open');
+}
+
+function closeAcctGoals() {
+  const m = document.getElementById('acct-goals-modal');
+  if (m) m.classList.remove('open');
+  _agAcctId = null;
+}
+
+function _agRenderCustomList() {
+  const el = document.getElementById('ag-custom-list');
+  if (!el) return;
+  el.innerHTML = _agCustom.map((c,i) => `
+    <div class="g2" style="margin-bottom:6px;align-items:end">
+      <div class="fr" style="margin-bottom:0"><input type="text" placeholder="שם היעד" value="${escHtml(c.name||'')}" oninput="_agCustom[${i}].name=this.value"></div>
+      <div style="display:flex;gap:6px">
+        <input type="number" placeholder="סכום $" value="${c.target||''}" oninput="_agCustom[${i}].target=parseFloat(this.value)||null" style="flex:1;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
+        <button type="button" onclick="agRemoveCustom(${i})" style="padding:0 10px;background:rgba(194,88,88,.15);border:1px solid rgba(194,88,88,.4);border-radius:6px;color:var(--re);cursor:pointer;font-family:inherit">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function agAddCustom() {
+  _agCustom.push({ id:'g_'+Date.now(), name:'', target:null });
+  _agRenderCustomList();
+}
+
+function agRemoveCustom(i) {
+  _agCustom.splice(i,1);
+  _agRenderCustomList();
+}
+
+function saveAcctGoals() {
+  const a = accounts.find(x=>x.id===_agAcctId);
+  if (!a) { closeAcctGoals(); return; }
+  const g = id => document.getElementById(id);
+  const num = v => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+  a.goals = {
+    withdrawal: { target: num(g('ag-withdrawal').value) },
+    pass: {
+      target:   num(g('ag-pass-target').value),
+      deadline: g('ag-pass-deadline').value || null,
+      buffer:   num(g('ag-pass-buffer').value),
+    },
+    burn: { limit: num(g('ag-burn-limit').value) },
+    custom: _agCustom.filter(c=>c.name && c.target),
+  };
+  saveAccounts();
+  renderAcctMenu();
+  closeAcctGoals();
+  showToast('🎯 יעדי התיק נשמרו', 'success');
 }
 
 // Close menu on outside click
