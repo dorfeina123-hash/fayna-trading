@@ -28,11 +28,18 @@ jobs:
           FILES=$(git diff --name-only --diff-filter=ACMR "$BEFORE" "${{ github.sha }}" -- '*.html' | grep -v -E '^(index\.html|index_previous_backup\.html)$' || true)
           COUNT=$(echo "$FILES" | grep -c . || true)
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          FILE_FIRST=$(echo "$FILES" | head -n1)
+          # Prefer the canonical source file if it's among the changed files, even when
+          # other unrelated .html files changed in the same push — avoids silently skipping
+          # the index.html update just because more than one .html file was touched.
+          if echo "$FILES" | grep -qx "dor_trading_v5_final.html"; then
+            FILE_FIRST="dor_trading_v5_final.html"
+          else
+            FILE_FIRST=$(echo "$FILES" | head -n1)
+          fi
           echo "file=$FILE_FIRST" >> "$GITHUB_OUTPUT"
 
       - name: Update index.html
-        if: steps.find.outputs.count == '1'
+        if: steps.find.outputs.count != '0' && steps.find.outputs.file != ''
         run: |
           NEWFILE="${{ steps.find.outputs.file }}"
           echo "Updating index.html from $NEWFILE"
