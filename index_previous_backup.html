@@ -16,14 +16,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-:root{--bg0:#111318;--bg1:#181c24;--bg2:#1e2330;--bg3:#252b3a;--bg4:#2d3444;
---border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
---t1:#e2e5ea;--t2:#8a96a8;--t3:#767f8e;
---gr:#27a065;--gd:rgba(39,160,101,.11);--re:#c25858;--rd:rgba(194,88,88,.11);
---go:#b8902a;--yd:rgba(184,144,42,.11);--bl:#4a8fa8;--bd:rgba(74,143,168,.10);
---pu:#8f86c2;--pd:rgba(143,134,194,.10);--ac:#4a8fa8}
+:root{--bg0:#0F172A;--bg1:#151E32;--bg2:#1B2540;--bg3:#222E4E;--bg4:#2A375C;
+--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+--t1:#F1F5F9;--t2:#94A3B8;--t3:#64748B;
+--gr:#22c55e;--gd:rgba(34,197,94,.13);--re:#ef4444;--rd:rgba(239,68,68,.13);
+--go:#eab308;--yd:rgba(234,179,8,.13);--bl:#3b82f6;--bd:rgba(59,130,246,.12);
+--pu:#a855f7;--pd:rgba(168,85,247,.12);--ac:#3b82f6;
+--kpi-num:32px;--txt-sec:15px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#111318;color:var(--t1);font-family:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{background:var(--bg0);color:var(--t1);font-family:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 /* Emoji icon holders: center the glyph and give it enough room so it never crowds the adjacent label */
 .sn-icon,.mbn-icon{display:inline-flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
 .topnav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:16px;height:52px;position:sticky;top:0;z-index:200}
@@ -894,6 +895,23 @@ body::before {
 .clx-mc .clx-input-row label{color:#9ca3af}
 .clx-mc .clx-input-row input,.clx-mc .clx-input-row select{background:#1a1d27;border-color:#2d3045;color:#e5e7eb}
 .clx-note{background:var(--gd);border:1px solid rgba(39,160,101,.3);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--gr);font-weight:600;line-height:1.5;margin-bottom:12px}
+
+/* ── BUSINESS TRACKER (ניהול עסקי) — namespaced biz- ── */
+.biz-month-picker{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px}
+.biz-month-nav{background:var(--bg3);border:1px solid var(--border2);color:var(--t1);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;font-family:inherit}
+.biz-month-label{font-size:14px;font-weight:700;color:var(--t1);min-width:110px;text-align:center}
+.biz-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.biz-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
+.biz-card-lbl{font-size:10px;color:var(--t3);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.biz-card-val{font-size:18px;font-weight:800;color:var(--t1)}
+.biz-add-row{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.biz-add-btn{background:var(--gr);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+.biz-list-empty{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px 14px;text-align:center;font-size:12px;color:var(--t3);line-height:1.7}
+.biz-tx-row{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;margin-bottom:6px;font-size:12px}
+.biz-tx-icon{font-size:16px}
+.biz-tx-main{flex:1}
+.biz-tx-date{color:var(--t3);font-size:10px}
+.biz-tx-del{background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px}
 
 /* ── ACCOUNT SELECTOR ── */
 .acct-bar {
@@ -1993,6 +2011,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
     <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
     <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
+    <div class="nav-menu-item" id="nm-biz"         onclick="swNav('biz');renderBiz()">🏢 ניהול עסקי</div>
 
     <div class="nav-menu-section">ניהול</div>
     <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
@@ -2142,6 +2161,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   <div class="sn-item" id="sni-coach"       onclick="swNav('coach')"       title="מאמן מנטאלי"><span class="sn-icon">🧠</span><span class="sn-lbl">מאמן מנטאלי</span></div>
   <div class="sn-item" id="sni-course"      onclick="swNav('course')"      title="קורס מסחר"><span class="sn-icon">🎓</span><span class="sn-lbl">קורס מסחר</span></div>
   <div class="sn-item" id="sni-calc"        onclick="swNav('calc')"        title="מחשבונים"><span class="sn-icon">🧮</span><span class="sn-lbl">מחשבונים</span></div>
+  <div class="sn-item" id="sni-biz"         onclick="swNav('biz');renderBiz()" title="ניהול עסקי"><span class="sn-icon">🏢</span><span class="sn-lbl">ניהול עסקי</span></div>
 
   <div class="sn-sep"></div>
   <div class="sn-grp">ניהול</div>
@@ -2841,6 +2861,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
           <option value="funded">💰 חשבון ממומן</option>
           <option value="pending_withdrawal">🚀 בדרך למשיכה</option>
           <option value="withdrawn">🏁 בוצעה משיכה</option>
+          <option value="burned">💥 נשרף</option>
         </select>
       </div>
     </div>
@@ -3017,6 +3038,83 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
         <div class="clx-mc-result-sm"><div class="clx-mc-s-label">משיכות לתיק</div><div class="clx-mc-s-val" id="clx-mc-avgpayouts">0</div></div>
       </div>
       <canvas id="clx-mc-chart" height="140" style="width:100%"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- BUSINESS TRACKER (ניהול עסקי) -->
+<div class="tp" id="tp-biz">
+  <div style="font-size:15px;font-weight:600;margin-bottom:14px">🏢 ניהול עסקי</div>
+
+  <div class="biz-month-picker">
+    <button class="biz-month-nav" onclick="bizChMonth(-1)">‹</button>
+    <span class="biz-month-label" id="biz-month-label"></span>
+    <button class="biz-month-nav" onclick="bizChMonth(1)">›</button>
+  </div>
+
+  <div class="biz-grid3">
+    <div class="biz-card"><div class="biz-card-lbl">רווח נקי</div><div class="biz-card-val" id="biz-m-net">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">הוצאות</div><div class="biz-card-val cr" id="biz-m-expenses">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">הכנסות</div><div class="biz-card-val cg" id="biz-m-income">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">משיכות 💰</div><div class="biz-card-val" id="biz-m-wdcount">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">עברו לרייב 🚀</div><div class="biz-card-val cg" id="biz-m-passed">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">מבחנים שנקנו ✏️</div><div class="biz-card-val" id="biz-m-tests">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">סכום משיכות 💳</div><div class="biz-card-val cg" id="biz-m-wdsum">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">שריפות לרייב 💥</div><div class="biz-card-val cr" id="biz-m-burnlive">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">שריפות מבחן 🔥</div><div class="biz-card-val cr" id="biz-m-burntest">0</div></div>
+  </div>
+
+  <div class="biz-add-row">
+    <button class="biz-add-btn" onclick="bizOpenAdd()">+ הוספה</button>
+    <div style="font-size:13px;font-weight:600;color:var(--t1)">תנועות החודש</div>
+  </div>
+  <div id="biz-month-list"></div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--t1);margin:18px 0 8px">הערות לחודש</div>
+  <input type="text" id="biz-notes" placeholder="הערות..." oninput="bizSaveNotes()" style="width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--t1)">
+
+  <div style="font-size:13px;font-weight:600;color:var(--t1);margin:22px 0 8px" id="biz-year-title">סיכום שנתי</div>
+  <div class="biz-grid3">
+    <div class="biz-card"><div class="biz-card-lbl">רווח נקי</div><div class="biz-card-val" id="biz-y-net">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">הוצאות</div><div class="biz-card-val cr" id="biz-y-expenses">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">הכנסות</div><div class="biz-card-val cg" id="biz-y-income">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">משיכות 💰</div><div class="biz-card-val" id="biz-y-wdcount">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">עברו לרייב 🚀</div><div class="biz-card-val cg" id="biz-y-passed">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">מבחנים שנקנו ✏️</div><div class="biz-card-val" id="biz-y-tests">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">סכום משיכות 💳</div><div class="biz-card-val cg" id="biz-y-wdsum">$0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">שריפות לרייב 💥</div><div class="biz-card-val cr" id="biz-y-burnlive">0</div></div>
+    <div class="biz-card"><div class="biz-card-lbl">שריפות מבחן 🔥</div><div class="biz-card-val cr" id="biz-y-burntest">0</div></div>
+  </div>
+  <div id="biz-year-list" style="margin-top:10px"></div>
+</div>
+
+<!-- BIZ ADD TRANSACTION MODAL -->
+<div class="modal-bg" id="biz-add-modal" onclick="if(event.target===this)bizCloseAdd()">
+  <div class="modal" style="width:440px;max-height:92vh;overflow-y:auto">
+    <h3>+ תנועה חדשה <button class="cx" onclick="bizCloseAdd()">×</button></h3>
+    <div class="fr">
+      <label>סוג תנועה</label>
+      <select id="biz-type" onchange="bizTypeChange()" style="width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--t1)">
+        <option value="income">💵 הכנסה</option>
+        <option value="expense">💸 הוצאה</option>
+        <option value="test">✏️ מבחן שנקנה</option>
+        <option value="passed">🚀 עבר לרייב</option>
+        <option value="burn_live">💥 נשרף בלייב</option>
+        <option value="burn_test">🔥 נשרף במבחן</option>
+      </select>
+      <div style="font-size:10px;color:var(--t3);margin-top:4px">💡 משיכות מנוהלות דרך 🎯 יעדי התיק הספציפי (בתפריט "כל התיקים")</div>
+    </div>
+    <div class="fr"><label>תאריך</label><input type="date" id="biz-date"></div>
+    <div class="fr" id="biz-amount-row"><label>סכום ($)</label><input type="number" id="biz-amount" step="0.01" placeholder="0"></div>
+    <div class="fr" id="biz-acct-row" style="display:none">
+      <label>תיק קשור (אופציונלי)</label>
+      <select id="biz-acct" style="width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--t1)"></select>
+      <div style="font-size:10px;color:var(--t3);margin-top:4px" id="biz-acct-hint"></div>
+    </div>
+    <div class="fr"><label>הערה (אופציונלי)</label><input type="text" id="biz-note" placeholder="הערה..."></div>
+    <div class="fax">
+      <button class="bn" onclick="bizCloseAdd()">ביטול</button>
+      <button class="bs" onclick="bizSaveEvent()">💾 שמור</button>
     </div>
   </div>
 </div>
@@ -6567,6 +6665,200 @@ function clxDrawMCChart(bals, dd, tgt) {
   ctx.stroke();
 }
 
+// ════════════════════════════════════════════════════════
+// BUSINESS TRACKER (ניהול עסקי) — independent of the existing expenses/records
+// system, so it can't disturb any of that logic. Own data + own Firestore field.
+// ════════════════════════════════════════════════════════
+let businessEvents = JSON.parse(localStorage.getItem('dor_bizEvents') || 'null') || [];
+let businessNotes  = JSON.parse(localStorage.getItem('dor_bizNotes')  || 'null') || {};
+let _bizViewDate = new Date();
+
+// Note: withdrawals are NOT a business-event type — they live in a single place
+// (accounts[].withdrawals[], managed from the 🎯 per-account goals window) and the
+// business tracker's משיכות/סכום-משיכות stats are aggregated from there directly.
+const BIZ_TYPE_INFO = {
+  income:     { icon:'💵', label:'הכנסה',        hasAmount:true,  showAcct:false, statusOnSave:null },
+  expense:    { icon:'💸', label:'הוצאה',         hasAmount:true,  showAcct:false, statusOnSave:null },
+  test:       { icon:'✏️', label:'מבחן שנקנה',    hasAmount:false, showAcct:true,  statusOnSave:null },
+  passed:     { icon:'🚀', label:'עבר לרייב',     hasAmount:false, showAcct:true,  statusOnSave:'funded' },
+  burn_live:  { icon:'💥', label:'נשרף בלייב',    hasAmount:false, showAcct:true,  statusOnSave:'burned' },
+  burn_test:  { icon:'🔥', label:'נשרף במבחן',    hasAmount:false, showAcct:true,  statusOnSave:'burned' },
+};
+
+// Sum of every account's withdrawals within a date range predicate — the single source of truth
+function _bizWithdrawalsInRange(matchFn) {
+  const all = [];
+  (typeof accounts !== 'undefined' ? accounts : []).forEach(a => {
+    (a.withdrawals || []).forEach(w => { if (matchFn(w.date)) all.push(w); });
+  });
+  return all;
+}
+
+function saveBizData() {
+  localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents));
+  localStorage.setItem('dor_bizNotes',  JSON.stringify(businessNotes));
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+
+function bizChMonth(delta) {
+  _bizViewDate.setMonth(_bizViewDate.getMonth() + delta);
+  renderBiz();
+}
+
+function _bizMonthKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+const BIZ_MONTH_NAMES = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+function _bizAggregate(list, dateMatchFn) {
+  const sum = (t) => list.filter(e=>e.type===t).reduce((s,e)=>s+(+e.amount||0),0);
+  const cnt = (t) => list.filter(e=>e.type===t).length;
+  const income = sum('income'), expenses = sum('expense');
+  const wds = dateMatchFn ? _bizWithdrawalsInRange(dateMatchFn) : [];
+  return {
+    income, expenses, net: income - expenses,
+    wdCount: wds.length, wdSum: wds.reduce((s,w)=>s+(+w.amount||0),0),
+    tests: cnt('test'), passed: cnt('passed'),
+    burnLive: cnt('burn_live'), burnTest: cnt('burn_test'),
+  };
+}
+
+function _bizRenderList(elId, list, emptyHtml) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!list.length) { el.innerHTML = emptyHtml; return; }
+  const sorted = [...list].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  el.innerHTML = sorted.map(e => {
+    const info = BIZ_TYPE_INFO[e.type] || {icon:'📌',label:e.type};
+    const amtTxt = info.hasAmount ? `<b>$${(+e.amount||0).toFixed(0)}</b> · ` : '';
+    return `<div class="biz-tx-row">
+      <span class="biz-tx-icon">${info.icon}</span>
+      <div class="biz-tx-main">
+        <div>${amtTxt}${info.label}${e.note?' — '+escHtml(e.note):''}</div>
+        <div class="biz-tx-date">${fmtD(e.date)}</div>
+      </div>
+      <button class="biz-tx-del" onclick="bizDeleteEvent('${e.id}')" title="מחק">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function renderBiz() {
+  const y = _bizViewDate.getFullYear(), m = _bizViewDate.getMonth();
+  const label = document.getElementById('biz-month-label');
+  if (label) label.textContent = BIZ_MONTH_NAMES[m] + ' ' + y;
+  const monthKey = _bizMonthKey(_bizViewDate);
+  const yearKey  = String(y);
+
+  const monthList = businessEvents.filter(e => (e.date||'').slice(0,7) === monthKey);
+  const yearList  = businessEvents.filter(e => (e.date||'').slice(0,4) === yearKey);
+
+  const mAgg = _bizAggregate(monthList, d => (d||'').slice(0,7) === monthKey);
+  const setTxt = (id, v) => { const el=document.getElementById(id); if (el) el.textContent = v; };
+  setTxt('biz-m-net', (mAgg.net>=0?'+':'')+'$'+mAgg.net.toFixed(0));
+  setTxt('biz-m-expenses', '$'+mAgg.expenses.toFixed(0));
+  setTxt('biz-m-income', '$'+mAgg.income.toFixed(0));
+  setTxt('biz-m-wdcount', mAgg.wdCount);
+  setTxt('biz-m-passed', mAgg.passed);
+  setTxt('biz-m-tests', mAgg.tests);
+  setTxt('biz-m-wdsum', '$'+mAgg.wdSum.toFixed(0));
+  setTxt('biz-m-burnlive', mAgg.burnLive);
+  setTxt('biz-m-burntest', mAgg.burnTest);
+  _bizRenderList('biz-month-list', monthList, '<div class="biz-list-empty">אין תנועות החודש<br>לחץ "+הוספה" כדי לרשום הכנסה או הוצאה</div>');
+
+  const yAgg = _bizAggregate(yearList, d => (d||'').slice(0,4) === yearKey);
+  const yTitle = document.getElementById('biz-year-title');
+  if (yTitle) yTitle.textContent = 'סיכום שנתי · ' + y;
+  setTxt('biz-y-net', (yAgg.net>=0?'+':'')+'$'+yAgg.net.toFixed(0));
+  setTxt('biz-y-expenses', '$'+yAgg.expenses.toFixed(0));
+  setTxt('biz-y-income', '$'+yAgg.income.toFixed(0));
+  setTxt('biz-y-wdcount', yAgg.wdCount);
+  setTxt('biz-y-passed', yAgg.passed);
+  setTxt('biz-y-tests', yAgg.tests);
+  setTxt('biz-y-wdsum', '$'+yAgg.wdSum.toFixed(0));
+  setTxt('biz-y-burnlive', yAgg.burnLive);
+  setTxt('biz-y-burntest', yAgg.burnTest);
+  _bizRenderList('biz-year-list', yearList, '<div class="biz-list-empty">אין נתונים השנה</div>');
+
+  const notesEl = document.getElementById('biz-notes');
+  if (notesEl) notesEl.value = businessNotes[monthKey] || '';
+}
+
+let _bizNotesTimer = null;
+function bizSaveNotes() {
+  const monthKey = _bizMonthKey(_bizViewDate);
+  businessNotes[monthKey] = document.getElementById('biz-notes').value;
+  clearTimeout(_bizNotesTimer);
+  _bizNotesTimer = setTimeout(saveBizData, 600);
+}
+
+function _bizPopulateAcctSelect() {
+  const sel = document.getElementById('biz-acct');
+  if (!sel) return;
+  const list = typeof accounts !== 'undefined' ? accounts : [];
+  sel.innerHTML = '<option value="">— ללא שיוך —</option>' +
+    list.map(a => `<option value="${a.id}">${escHtml(a.name)}</option>`).join('');
+}
+function bizOpenAdd() {
+  document.getElementById('biz-type').value = 'income';
+  document.getElementById('biz-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('biz-amount').value = '';
+  document.getElementById('biz-note').value = '';
+  _bizPopulateAcctSelect();
+  const acctSel = document.getElementById('biz-acct');
+  if (acctSel) acctSel.value = '';
+  bizTypeChange();
+  document.getElementById('biz-add-modal').classList.add('open');
+}
+function bizCloseAdd() {
+  document.getElementById('biz-add-modal')?.classList.remove('open');
+}
+function bizTypeChange() {
+  const type = document.getElementById('biz-type').value;
+  const info = BIZ_TYPE_INFO[type];
+  document.getElementById('biz-amount-row').style.display = info?.hasAmount ? '' : 'none';
+  const acctRow = document.getElementById('biz-acct-row');
+  if (acctRow) acctRow.style.display = info?.showAcct ? '' : 'none';
+  const hint = document.getElementById('biz-acct-hint');
+  if (hint) {
+    if (type === 'passed') hint.textContent = '💡 אם תבחר תיק, הסטטוס שלו יתעדכן אוטומטית ל"💰 ממומן"';
+    else if (type === 'burn_live' || type === 'burn_test') hint.textContent = '💡 אם תבחר תיק, הסטטוס שלו יתעדכן אוטומטית ל"💥 נשרף"';
+    else hint.textContent = '';
+  }
+}
+function bizSaveEvent() {
+  const type = document.getElementById('biz-type').value;
+  const date = document.getElementById('biz-date').value;
+  const info = BIZ_TYPE_INFO[type];
+  if (!date) { showToast('נא לבחור תאריך','error'); return; }
+  let amount = null;
+  if (info?.hasAmount) {
+    amount = parseFloat(document.getElementById('biz-amount').value);
+    if (isNaN(amount) || amount < 0) { showToast('נא להזין סכום תקין','error'); return; }
+  }
+  const note = (document.getElementById('biz-note').value||'').trim();
+  const acctSel = document.getElementById('biz-acct');
+  const acctId = (info?.showAcct && acctSel) ? acctSel.value : '';
+  businessEvents.push({ id:'biz_'+Date.now(), type, date, amount, note, acctId: acctId || null });
+
+  if (acctId && info?.statusOnSave) {
+    const acct = (typeof accounts !== 'undefined' ? accounts : []).find(a => a.id === acctId);
+    if (acct) {
+      acct.status = info.statusOnSave;
+      if (typeof saveAccounts === 'function') saveAccounts();
+      if (typeof renderAcctMenu === 'function') renderAcctMenu();
+    }
+  }
+
+  saveBizData();
+  bizCloseAdd();
+  renderBiz();
+  showToast('✅ התנועה נשמרה', 'success');
+}
+function bizDeleteEvent(id) {
+  if (!confirm('למחוק תנועה זו?')) return;
+  businessEvents = businessEvents.filter(e => e.id !== id);
+  saveBizData();
+  renderBiz();
+}
+
 function _isMicroContract(sym) {
   const cs = _customSymbolFor(sym);
   if (cs) return !!cs.micro;
@@ -9859,7 +10151,7 @@ const _NAV_LABELS = {
   overview:'🏠 סקירה', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
   pnl:'📈 P&L', custom:'💳 הוצאות חופשיות', calendar:'📅 לוח שנה',
   trades:'📓 יומן עסקאות', stats:'📊 סטטיסטיקות', coach:'🧠 מאמן מנטאלי',
-  course:'🎓 קורס מסחר', calc:'🧮 מחשבונים',
+  course:'🎓 קורס מסחר', calc:'🧮 מחשבונים', biz:'🏢 ניהול עסקי',
   datamgr:'⚙️ ניהול נתונים', personal:'👤 אזור אישי',
   software:'📥 תוכנות מסחר', firms:'🏆 מימון', news:'📰 חדשות',
   ecal:'📅 יומן כלכלי', help:'❓ עזרה', billing:'💳 תשלום', admin:'🛡️ ניהול',
@@ -10354,6 +10646,8 @@ function _cloudSave() {
         td_customSymbols: customSymbols,
         td_recurringTemplates: recurringTemplates,
         td_accounts: (typeof accounts !== 'undefined') ? accounts : [],
+        td_bizEvents: (typeof businessEvents !== 'undefined') ? businessEvents : [],
+        td_bizNotes: (typeof businessNotes !== 'undefined') ? businessNotes : {},
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
       _updateSyncDot('synced');
@@ -10380,6 +10674,9 @@ async function _cloudLoad() {
       if (d.td_customSymbols?.length)      customSymbols = d.td_customSymbols;
       if (d.td_recurringTemplates?.length) recurringTemplates = d.td_recurringTemplates;
       if (d.td_accounts?.length && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
+      if (d.td_bizEvents?.length && typeof businessEvents !== 'undefined') { businessEvents = d.td_bizEvents; localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents)); }
+      if (d.td_bizNotes && typeof businessNotes !== 'undefined') { businessNotes = d.td_bizNotes; localStorage.setItem('dor_bizNotes', JSON.stringify(businessNotes)); }
+      if (typeof renderBiz === 'function') renderBiz();
       applyRecurring();
       renderAll();
       renderSymbolManager(); _refreshSymDatalist();
@@ -11092,6 +11389,7 @@ const ACCT_STATUS_INFO = {
   funded:              { label:'💰 חשבון ממומן',        color:'#3d9970' },
   pending_withdrawal:  { label:'🚀 בדרך למשיכה',        color:'#9089bd' },
   withdrawn:           { label:'🏁 בוצעה משיכה',        color:'#34d399' },
+  burned:              { label:'💥 נשרף',              color:'#c25858' },
 };
 
 function _ensureAcctShape(a) {
@@ -11336,6 +11634,7 @@ function toggleSymFilter(sym, el) {
 
 // Init accounts on load
 setTimeout(()=>{ renderAcctMenu(); }, 300);
+setTimeout(()=>{ if (typeof renderBiz === 'function') renderBiz(); }, 300);
 
 </script>
 
