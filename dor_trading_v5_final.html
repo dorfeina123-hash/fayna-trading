@@ -468,6 +468,42 @@ body{background:var(--bg0);color:var(--t1);font-family:'Heebo',-apple-system,Bli
   .zt-pnl{font-size:11px}
 }
 
+/* ── CHART HEIGHT ADAPTATION (mobile) ──
+   Chart.js reads its canvas size from the wrapper's CSS box at render/resize
+   time, so shrinking these wrapper heights is purely visual — it doesn't touch
+   any chart config, data, or the zoom/pan plugin (pinch-zoom keeps working
+   exactly as before, just inside a shorter box). Desktop/tablet (>480px)
+   heights are untouched. */
+@media(max-width:480px){
+  .zcl:has(#equityOvChart) > div[style*="height:240px"]{height:180px!important}
+  .zcl:has(#dailyOvChart) > div[style*="height:180px"]{height:140px!important}
+  .zcl:has(#ddChart) > div[style*="height:200px"]{height:160px!important}
+  .zcl:has(#scatterChart) > div[style*="height:160px"]{height:130px!important}
+  .zcl:has(#catOvChart) > div[style*="height:130px"]{height:110px!important}
+  .card:has(#eqchart) > div[style*="height:240px"],
+  .card:has(#dchart) > div[style*="height:240px"]{height:180px!important}
+  .zcl:has(#dowChart) > div[style*="height:160px"],
+  .zcl:has(#hourChart) > div[style*="height:160px"]{height:130px!important}
+  .chart-h2{height:140px}
+  .adm-chart-wrap{height:110px}
+}
+
+/* Short / landscape phone screens — vertical space is scarce even though
+   width is wide, so target by max-height rather than max-width. */
+@media(max-height:420px) and (orientation:landscape){
+  .zcl:has(#equityOvChart) > div[style*="height:240px"],
+  .card:has(#eqchart) > div[style*="height:240px"],
+  .card:has(#dchart) > div[style*="height:240px"]{height:130px!important}
+  .zcl:has(#dailyOvChart) > div[style*="height:180px"],
+  .zcl:has(#ddChart) > div[style*="height:200px"]{height:110px!important}
+  .zcl:has(#scatterChart) > div[style*="height:160px"],
+  .zcl:has(#dowChart) > div[style*="height:160px"],
+  .zcl:has(#hourChart) > div[style*="height:160px"]{height:100px!important}
+  .zcl:has(#catOvChart) > div[style*="height:130px"]{height:90px!important}
+  .radar-wrap{height:110px!important}
+  .chart-h2{height:100px!important}
+}
+
 /* ══════════════════════════════════════════════
    SAFARI / CHROME CROSS-BROWSER COMPATIBILITY
    ══════════════════════════════════════════════ */
@@ -1837,6 +1873,62 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   .side-panel{width:min(300px,86vw)}
   /* Tour tip inside viewport */
   .tour-tip{width:min(290px,calc(100vw - 24px))}
+
+  /* ── REAL touch targets (44px floor) — overrides the earlier 768px blocks that
+     shrank buttons instead of growing them. Applies to every primary tappable control. ── */
+  .btn-p{padding:11px 16px!important;font-size:13px!important;min-height:44px;border-radius:9px}
+  .nt{padding:11px 14px;font-size:13px;min-height:44px;display:inline-flex;align-items:center}
+  .fb{padding:9px 14px!important;min-height:44px!important;font-size:12px;display:inline-flex;align-items:center}
+  .bn,.bs{padding:12px 18px;font-size:13px;min-height:44px;border-radius:9px}
+  .act{min-width:44px!important;min-height:44px!important}
+  .cx{min-width:36px;min-height:36px;font-size:20px;display:flex;align-items:center;justify-content:center}
+  button,.mob-menu-btn,#theme-toggle-btn,#notif-bell-btn,#pwa-install-btn,#nav-save-btn,#nav-undo-btn,#nav-instagram-btn{min-height:40px;min-width:40px}
+  input[type="checkbox"],input[type="radio"]{width:20px;height:20px}
+  /* Extra breathing room between stacked tappable rows */
+  .acct-item,.nav-menu-item,.sn-item{min-height:44px}
+}
+
+/* ── RESPONSIVE TABLE → CARD VIEW (mobile) ──
+   Tables opted into `.tbl-cards` render as stacked cards instead of a cramped,
+   horizontally-scrolling grid under ~600px. Each <td> needs a data-label attribute
+   (added in JS) which becomes the small caption via ::before. Desktop/tablet (>600px)
+   render as a normal table — no visual change there. */
+@media(max-width:600px){
+  table.tbl-cards{width:100%}
+  table.tbl-cards thead{display:none}
+  table.tbl-cards,table.tbl-cards tbody,table.tbl-cards tr,table.tbl-cards td{display:block;width:100%}
+  table.tbl-cards tr{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;padding:4px 12px}
+  table.tbl-cards td{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);text-align:left;min-height:0}
+  table.tbl-cards td:last-child{border-bottom:none}
+  table.tbl-cards td::before{content:attr(data-label);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-inline-end:10px;flex-shrink:0}
+  table.tbl-cards td:empty{display:none}
+  /* Tables with no data-label yet still get the safety net of horizontal scroll */
+  table.tbl:not(.tbl-cards){min-width:0}
+}
+
+/* ── MOBILE DASHBOARD: info-priority reordering (Overview tab) ──
+   On mobile the user needs a 5-second snapshot first: daily P&L / account status
+   (Trader Status Today), next goal, Drawdown, recent trades. Everything else
+   (AI insight, checklist, radar/heatmap/equity, company bars…) is secondary and
+   tucked behind a "הצג עוד נתונים" toggle. This is a pure visual reorder via
+   flex `order` — no DOM nodes are moved and no existing render functions are
+   touched, so desktop/tablet layout and all functionality stay unchanged. */
+@media(max-width:768px){
+  #tp-overview{display:flex;flex-direction:column}
+  #tp-overview>#daily-tip-wrap{order:1}
+  #tp-overview>#trader-status-today{order:2}
+  #tp-overview>.focus-only{order:3}
+  #tp-overview>#overview-top-widgets{order:4}
+  #tp-overview>#acct-topbar{order:5}
+  #tp-overview>#ov-row3{order:6}   /* Recent trades row */
+  #tp-overview>#ov-row4{order:7}   /* Drawdown row */
+  #tp-overview>#mob-more-toggle{order:8;display:flex!important}
+  #tp-overview>.mob-secondary{order:9}
+  #tp-overview:not(.mob-expanded)>.mob-secondary{display:none!important}
+
+  #mob-more-toggle{width:100%;margin-bottom:12px;padding:11px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border2);color:var(--t1);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;justify-content:center;align-items:center;gap:6px;min-height:44px}
+  #mob-more-toggle:active{background:var(--bg3)}
+  body.focus-mode #tp-overview>#mob-more-toggle{display:none!important}
 }
 
 /* Small phones (iPhone SE/mini, compact Androids) */
@@ -2387,6 +2479,28 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>מפת כל התיקים</div></div>
     <div id="focus-accounts-map" class="focus-map-grid"></div>
   </div>
+
+  <!-- Rule-based discipline score: user-defined trading rules, auto-evaluated against real trade data -->
+  <div class="zcl">
+    <div class="zcl-title" style="justify-content:space-between">
+      <div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>ציון עמידה בחוקים</div>
+      <button class="btn-p" onclick="ruleOpenAdd()" style="font-size:11px;padding:5px 12px">+ חוק חדש</button>
+    </div>
+    <div style="display:flex;gap:24px;margin:10px 0 14px;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-size:24px;font-weight:700;font-family:'IBM Plex Mono',monospace" id="rules-period-score">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">ציון תקופה</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:24px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--t1)" id="rules-today-progress">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">היום</div>
+      </div>
+    </div>
+    <table class="tbl tbl-cards" style="width:100%;font-size:12px">
+      <thead><tr><th>חוק</th><th>תנאי</th><th>רצף</th><th>ממוצע</th><th>עמידה</th><th></th></tr></thead>
+      <tbody id="rules-list-body"></tbody>
+    </table>
+  </div>
 </div>
 
 <div class="focus-hide" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;margin-bottom:10px;align-items:stretch" id="overview-top-widgets">
@@ -2445,27 +2559,32 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </button>
 </div>
 
+  <!-- Mobile-only: toggle to reveal secondary info (analytics/AI/checklist/etc.) below the priority snapshot -->
+  <button type="button" id="mob-more-toggle" class="focus-hide" onclick="_mobToggleSecondary()" style="display:none">
+    <span id="mob-more-toggle-txt">📊 הצג עוד נתונים</span>
+  </button>
+
   <!-- AI INSIGHT — one consolidated card (not a 2nd/3rd AI widget elsewhere) -->
-  <div id="ai-insight-card" class="focus-hide zcl" style="margin-bottom:14px"></div>
+  <div id="ai-insight-card" class="focus-hide zcl mob-secondary" style="margin-bottom:14px"></div>
 
   <!-- Daily pre/post trading routine checklist -->
-  <div id="daily-checklist-card" class="focus-hide" style="margin-bottom:14px"></div>
+  <div id="daily-checklist-card" class="focus-hide mob-secondary" style="margin-bottom:14px"></div>
 
   <!-- Last import -->
-  <div class="last-import anim-fade focus-hide">
+  <div class="last-import anim-fade focus-hide mob-secondary">
     <span>Last import: <span id="ov-last-import">—</span></span>
     <a href="#" onclick="renderAll();return false">🔄 Resync</a>
     <span style="margin-right:auto"></span>
   </div>
 
   <!-- ROW 0: TradeReport-style gauges (Win Rate / Success Rate / Avg P&L / Trades+PnL) -->
-  <div class="gz-row anim-fade focus-hide" id="ov-gauges"></div>
+  <div class="gz-row anim-fade focus-hide mob-secondary" id="ov-gauges"></div>
 
   <!-- TOP 5 METRICS (shown only in Focus Mode — the always-visible summary is the Trader Status Today card above) -->
   <div class="focus-only" id="ov-m"></div>
 
   <!-- ROW 2: Radar + Heatmap + Equity Curve -->
-  <div class="zg-3 focus-hide">
+  <div class="zg-3 focus-hide mob-secondary" id="ov-row2">
     <!-- Radar / Score -->
     <div class="zcl anim-up-1">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#9089bd"></div>ניקוד מסחר</div></div>
@@ -2497,7 +2616,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <!-- ROW 3: Daily bars + Recent trades + Account balance -->
-  <div class="zg-3r focus-hide">
+  <div class="zg-3r focus-hide" id="ov-row3">
     <!-- Daily P&L bars -->
     <div class="zcl anim-up-1">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>P&L יומי נטו</div></div>
@@ -2519,7 +2638,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <!-- ROW 4: Calendar + Drawdown + Scatter -->
-  <div class="zg-3 focus-hide" style="grid-template-columns:2fr 1fr 1fr">
+  <div class="zg-3 focus-hide" id="ov-row4" style="grid-template-columns:2fr 1fr 1fr">
     <!-- Mini calendar -->
     <div class="zcl anim-up-1">
       <div class="zcl-title" style="justify-content:space-between">
@@ -2548,7 +2667,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 
   <!-- ROW 5: Company bars -->
-  <div class="zcl anim-up-1 focus-hide">
+  <div class="zcl anim-up-1 focus-hide mob-secondary" id="ov-row5">
     <div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>הוצאות לפי חברה</div></div>
     <div id="cobars"></div>
   </div>
@@ -3331,6 +3450,36 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
 </div>
 
+<!-- TRADING RULE (Focus Mode discipline score) -->
+<div class="modal-bg" id="rule-modal" onclick="if(event.target===this)ruleCloseAdd()">
+  <div class="modal" style="width:440px">
+    <h3>📏 חוק מסחר <button class="cx" onclick="ruleCloseAdd()">×</button></h3>
+    <div class="fr"><label>שם החוק</label><input type="text" id="rule-label" class="fi" placeholder="לדוג׳: התחלת יום עד השעה 14:30"></div>
+    <div class="fr">
+      <label>סוג חוק</label>
+      <select id="rule-type" class="fi" onchange="_ruleUpdateTypeUI()">
+        <option value="time_start">שעת התחלת מסחר</option>
+        <option value="pct_field">אחוז עסקאות עומד בתנאי</option>
+        <option value="max_loss_trade">הפסד מקסימלי לעסקה ($)</option>
+        <option value="max_loss_day">הפסד מקסימלי ליום ($)</option>
+      </select>
+    </div>
+    <div class="fr" id="rule-row-time"><label>עד השעה</label><input type="time" id="rule-threshold-time" class="fi" value="14:30"></div>
+    <div class="fr" id="rule-row-field">
+      <label>שדה לבדיקה</label>
+      <select id="rule-field" class="fi">
+        <option value="strategy">קישור לתוכנית מסחר (Playbook)</option>
+        <option value="stopLoss">הזנת סטופ-לוס</option>
+      </select>
+    </div>
+    <div class="fr" id="rule-row-num"><label>סף (<span id="rule-num-suffix">%</span>)</label><input type="number" id="rule-threshold-num" class="fi" value="100"></div>
+    <div class="fax">
+      <button class="bn" onclick="ruleCloseAdd()">ביטול</button>
+      <button class="bs" onclick="ruleSave()">💾 שמור</button>
+    </div>
+  </div>
+</div>
+
 <!-- MENTAL COACH -->
 <div class="tp" id="tp-coach">
   <div id="coach-view-home">
@@ -3459,7 +3608,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <span id="acct-filter-btns"></span>
   </div>
   <div class="card" style="padding:0 17px">
-    <div class="sth"><table class="tbl" id="tj-table">
+    <div class="sth"><table class="tbl tbl-cards" id="tj-table">
       <thead><tr>
         <th style="width:22px" id="tj-chk-head" title="בחר הכל"><input type="checkbox" class="chk" onchange="tjSelAll(this.checked)" style="display:none"></th>
         <th>תאריך</th><th>שעה</th><th>תיק</th><th>סימול</th><th>כמות</th><th>קנייה</th><th>מכירה</th><th>משך</th><th>נטו $</th><th>אסטרטגיה</th><th>⭐</th><th style="width:28px">📷</th><th style="width:70px"></th>
@@ -3481,8 +3630,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="card"><div class="ct"><div class="dot"></div>P&L יומי</div><div style="height:240px;position:relative"><canvas id="dchart"></canvas></div></div>
   </div>
   <div class="g2">
-    <div class="card"><div class="ct"><div class="dot"></div>10 הכי טוב (נטו)</div><table class="tbl"><thead><tr><th>תאריך</th><th>שעה</th><th>נטו $</th></tr></thead><tbody id="top10"></tbody></table></div>
-    <div class="card"><div class="ct"><div class="dot" style="background:var(--re)"></div>10 הכי גרוע (נטו)</div><table class="tbl"><thead><tr><th>תאריך</th><th>שעה</th><th>נטו $</th></tr></thead><tbody id="bot10"></tbody></table></div>
+    <div class="card"><div class="ct"><div class="dot"></div>10 הכי טוב (נטו)</div><table class="tbl tbl-cards"><thead><tr><th>תאריך</th><th>שעה</th><th>נטו $</th></tr></thead><tbody id="top10"></tbody></table></div>
+    <div class="card"><div class="ct"><div class="dot" style="background:var(--re)"></div>10 הכי גרוע (נטו)</div><table class="tbl tbl-cards"><thead><tr><th>תאריך</th><th>שעה</th><th>נטו $</th></tr></thead><tbody id="bot10"></tbody></table></div>
   </div>
 
   <div class="stat-group-head">
@@ -3501,14 +3650,14 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   </div>
   <div class="card" style="margin-top:10px">
     <div class="ct"><div class="dot"></div>סטטיסטיקות לפי יום בשבוע</div>
-    <table class="tbl" id="dow-tbl">
+    <table class="tbl tbl-cards" id="dow-tbl">
       <thead><tr><th>יום</th><th>עסקאות</th><th>Win %</th><th>P&L נטו $</th><th>P&L נטו ₪</th><th>ממוצע/עסקה</th></tr></thead>
       <tbody id="dow-tbody"></tbody>
     </table>
   </div>
   <div class="card" style="margin-top:10px">
     <div class="ct"><div class="dot"></div>סטטיסטיקות לפי שעת מסחר</div>
-    <table class="tbl" id="hour-tbl">
+    <table class="tbl tbl-cards" id="hour-tbl">
       <thead><tr><th>שעה</th><th>עסקאות</th><th>Win %</th><th>P&L נטו $</th><th>P&L נטו ₪</th><th>ממוצע/עסקה</th></tr></thead>
       <tbody id="hour-tbody"></tbody>
     </table>
@@ -6201,10 +6350,26 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" defer></script>
 <script>
+// ── PERF: xlsx.full.min.js (~1MB) is only needed for actual Excel import/export
+// actions, so it's lazy-loaded on first use instead of blocking page load.
+// _ensureXlsxLoaded() returns a cached Promise — safe to call from multiple
+// places, the script tag is only ever injected once. ──
+let _xlsxLoadPromise = null;
+function _ensureXlsxLoaded() {
+  if (typeof XLSX !== 'undefined') return Promise.resolve();
+  if (_xlsxLoadPromise) return _xlsxLoadPromise;
+  _xlsxLoadPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = () => resolve();
+    s.onerror = () => { _xlsxLoadPromise = null; reject(new Error('xlsx load failed')); };
+    document.head.appendChild(s);
+  });
+  return _xlsxLoadPromise;
+}
 </script>
 <script>
 const HIST_RATES = {
@@ -7003,7 +7168,7 @@ function checkBehaviorAnomalies() {
   const todayStr = new Date().toISOString().slice(0,10);
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
   const cutoffStr = cutoff.toISOString().slice(0,10);
-  const baseline = TRADES.filter(t => t.date >= cutoffStr && t.date < todayStr);
+  const baseline = tradesList.filter(t => t.date >= cutoffStr && t.date < todayStr);
   if (baseline.length < 5) return; // not enough history yet to establish a baseline
   const byDay = {};
   baseline.forEach(t => { byDay[t.date] = (byDay[t.date]||0) + 1; });
@@ -7794,7 +7959,7 @@ let equityOvCh,dailyOvCh,catOvCh,radarCh,ddCh,scatterCh;
 // ── TRADER FOCUS MODE ──
 function _computeTodayStats() {
   const todayStr = new Date().toISOString().slice(0,10);
-  const todayTrades = TRADES.filter(t => t.date === todayStr);
+  const todayTrades = tradesList.filter(t => t.date === todayStr);
   const wins = todayTrades.filter(t=>tradeNet(t)>0);
   const losses = todayTrades.filter(t=>tradeNet(t)<0);
   const netPnl = todayTrades.reduce((s,t)=>s+tradeNet(t),0);
@@ -7899,6 +8064,26 @@ document.addEventListener('DOMContentLoaded', () => {
   try { if (localStorage.getItem('td_focusMode') === '1') document.body.classList.add('focus-mode'); } catch(e) {}
 });
 
+// ── MOBILE: "הצג עוד נתונים" toggle — reveals secondary analytics/AI/checklist cards below the priority snapshot ──
+function _mobToggleSecondary() {
+  const ov = document.getElementById('tp-overview');
+  if (!ov) return;
+  const on = ov.classList.toggle('mob-expanded');
+  const txt = document.getElementById('mob-more-toggle-txt');
+  if (txt) txt.textContent = on ? '🔼 הסתר נתונים נוספים' : '📊 הצג עוד נתונים';
+  try { localStorage.setItem('td_mobSecondaryOpen', on ? '1' : '0'); } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (localStorage.getItem('td_mobSecondaryOpen') === '1') {
+      const ov = document.getElementById('tp-overview');
+      if (ov) ov.classList.add('mob-expanded');
+      const txt = document.getElementById('mob-more-toggle-txt');
+      if (txt) txt.textContent = '🔼 הסתר נתונים נוספים';
+    }
+  } catch(e){}
+});
+
 // ── FOCUS MODE: goal-progress gauge for one chosen account + map of all accounts ──
 let _focusSelectedAcctId = null;
 try { _focusSelectedAcctId = localStorage.getItem('td_focusAcctId') || null; } catch(e){}
@@ -7919,6 +8104,7 @@ function renderFocusPanel() {
   }
   renderFocusGoalGauge();
   renderFocusAccountsMap();
+  if (typeof renderTradingRules === 'function') renderTradingRules();
 }
 
 function renderFocusGoalGauge() {
@@ -7959,6 +8145,198 @@ function renderFocusAccountsMap() {
       ${goalBar}
     </div>`;
   }).join('');
+}
+
+// ── FOCUS MODE: rule-based discipline score ──
+// User-defined, quantifiable trading rules (start time, playbook/stop-loss usage, max loss
+// per trade/day) auto-evaluated against real trade data — Rule Streak, Average Performance
+// and Follow Rate per rule, plus an overall period score. Distinct from _computeTradingScore
+// (today-only, fixed heuristics) and the checklist (manual self-report checkboxes) — this is
+// the only piece that scores objective, user-configurable rules against actual journal data.
+let tradingRules = JSON.parse(localStorage.getItem('dor_tradingRules') || 'null') || [
+  { id:'rule_start_day',      label:'התחלת יום מסחר עד השעה',              type:'time_start',     threshold:'14:30' },
+  { id:'rule_playbook',       label:'קישור עסקאות לתוכנית מסחר (Playbook)', type:'pct_field', field:'strategy',  threshold:100 },
+  { id:'rule_stoploss',       label:'הזנת סטופ-לוס לכל העסקאות',           type:'pct_field', field:'stopLoss',  threshold:100 },
+  { id:'rule_max_loss_trade', label:'הפסד מקסימלי לעסקה',                  type:'max_loss_trade', threshold:500 },
+  { id:'rule_max_loss_day',   label:'הפסד מקסימלי ליום',                   type:'max_loss_day',   threshold:1000 },
+];
+let _ruleEditId = null;
+const RULE_TYPE_INFO = {
+  time_start:      { fmt:v=>v },
+  pct_field:       { fmt:v=>v+'%' },
+  max_loss_trade:  { fmt:v=>'$'+v },
+  max_loss_day:    { fmt:v=>'$'+v },
+};
+
+function _saveTradingRules() {
+  try { localStorage.setItem('dor_tradingRules', JSON.stringify(tradingRules)); } catch(e){}
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
+
+// Groups tradesList into per-day buckets (only days that actually have ≥1 trade)
+function _ruleDaysData() {
+  const byDate = {};
+  tradesList.forEach(t => { if(!t.date) return; (byDate[t.date] = byDate[t.date]||[]).push(t); });
+  return Object.keys(byDate).sort().map(date => ({ date, trades: byDate[date] }));
+}
+
+// Evaluates ONE rule against ONE day's trades → { met:boolean|null, value:number|string|null }
+// met===null means "no data to judge this rule on this day" (excluded from stats, not counted as a miss)
+function _evalRuleDay(rule, day) {
+  const trades = day.trades;
+  if (!trades.length) return { met:null, value:null };
+  switch (rule.type) {
+    case 'time_start': {
+      const times = trades.map(t=>t.btime).filter(Boolean).sort();
+      if (!times.length) return { met:null, value:null };
+      const first = times[0].slice(0,5);
+      return { met: first <= rule.threshold, value: first };
+    }
+    case 'pct_field': {
+      const cnt = trades.filter(t => !!t[rule.field]).length;
+      const pct = Math.round(cnt/trades.length*100);
+      return { met: pct >= rule.threshold, value: pct };
+    }
+    case 'max_loss_trade': {
+      const worst = Math.abs(Math.min(0, ...trades.map(t=>tradeNet(t))));
+      return { met: worst <= rule.threshold, value: worst };
+    }
+    case 'max_loss_day': {
+      const net = trades.reduce((s,t)=>s+tradeNet(t),0);
+      const loss = Math.abs(Math.min(0, net));
+      return { met: loss <= rule.threshold, value: loss };
+    }
+    default: return { met:null, value:null };
+  }
+}
+
+function _computeRuleStats(rule) {
+  const days = _ruleDaysData();
+  const evaluated = days.map(d => Object.assign({date:d.date}, _evalRuleDay(rule, d))).filter(d => d.met !== null);
+  const metDays = evaluated.filter(d=>d.met);
+  const followRate = evaluated.length ? Math.round(metDays.length/evaluated.length*100) : 0;
+  // Rule Streak: consecutive most-recent trading days (chronological) where the rule was met
+  let streak = 0;
+  for (let i=evaluated.length-1;i>=0;i--){ if(evaluated[i].met) streak++; else break; }
+  // Average Performance: mean of the raw per-day metric across days that had data
+  let avgValue = null;
+  if (evaluated.length) {
+    if (rule.type === 'time_start') {
+      const mins = evaluated.map(d=>{ const [h,m]=d.value.split(':').map(Number); return h*60+m; });
+      const avgMin = Math.round(mins.reduce((a,b)=>a+b,0)/mins.length);
+      avgValue = String(Math.floor(avgMin/60)).padStart(2,'0')+':'+String(avgMin%60).padStart(2,'0');
+    } else {
+      const avgNum = evaluated.reduce((s,d)=>s+d.value,0)/evaluated.length;
+      avgValue = rule.type==='pct_field' ? Math.round(avgNum) : Math.round(avgNum);
+    }
+  }
+  return { followRate, streak, avgValue, daysConsidered: evaluated.length };
+}
+
+function _computeAllRulesStats() {
+  return tradingRules.map(r => ({ rule:r, stats:_computeRuleStats(r) }));
+}
+
+function _computeRulePeriodScore() {
+  const all = _computeAllRulesStats().filter(x=>x.stats.daysConsidered>0);
+  if (!all.length) return null;
+  return Math.round(all.reduce((s,x)=>s+x.stats.followRate,0)/all.length);
+}
+
+function _computeRulesToday() {
+  const todayStr = new Date().toISOString().slice(0,10);
+  const day = { date:todayStr, trades: tradesList.filter(t=>t.date===todayStr) };
+  let met=0, total=0;
+  tradingRules.forEach(r => {
+    const res = _evalRuleDay(r, day);
+    if (res.met !== null) { total++; if(res.met) met++; }
+  });
+  return { met, total };
+}
+
+function renderTradingRules() {
+  const el = document.getElementById('rules-list-body');
+  if (!el) return;
+  const scoreEl = document.getElementById('rules-period-score');
+  const todayEl = document.getElementById('rules-today-progress');
+  const score = _computeRulePeriodScore();
+  if (scoreEl) {
+    scoreEl.textContent = score!=null ? score+'%' : '—';
+    scoreEl.style.color = score==null ? 'var(--t3)' : score>=70 ? 'var(--gr)' : score>=40 ? 'var(--go)' : 'var(--re)';
+  }
+  const today = _computeRulesToday();
+  if (todayEl) todayEl.textContent = today.total ? `${today.met}/${today.total}` : '—';
+
+  if (!tradingRules.length) {
+    el.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--t3)">אין חוקים מוגדרים — לחץ "+ חוק חדש" להוספה</td></tr>`;
+    return;
+  }
+  el.innerHTML = _computeAllRulesStats().map(({rule,stats}) => {
+    const info = RULE_TYPE_INFO[rule.type] || {fmt:v=>v};
+    const icon = stats.daysConsidered===0 ? '<span style="color:var(--t3)">○</span>'
+      : stats.followRate>=70 ? '<span style="color:var(--gr)">✓</span>'
+      : stats.followRate>=40 ? '<span style="color:var(--go)">!</span>'
+      : '<span style="color:var(--re)">✕</span>';
+    return `<tr>
+      <td data-label="חוק">${icon} ${escHtml(rule.label)}</td>
+      <td data-label="תנאי">${info.fmt(rule.threshold)}</td>
+      <td data-label="רצף">${stats.streak} ימים</td>
+      <td data-label="ממוצע">${stats.avgValue!=null ? info.fmt(stats.avgValue) : '—'}</td>
+      <td data-label="עמידה">${stats.daysConsidered ? stats.followRate+'%' : '—'}</td>
+      <td data-label="">
+        <span onclick="ruleOpenAdd('${rule.id}')" style="cursor:pointer;color:var(--t3);font-size:12px;margin-inline-end:8px">✏️</span>
+        <span onclick="ruleDelete('${rule.id}')" style="cursor:pointer;color:var(--t3);font-size:12px">✕</span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function _ruleUpdateTypeUI() {
+  const type = document.getElementById('rule-type').value;
+  document.getElementById('rule-row-time').style.display  = type==='time_start' ? '' : 'none';
+  document.getElementById('rule-row-field').style.display = type==='pct_field' ? '' : 'none';
+  document.getElementById('rule-row-num').style.display    = (type==='pct_field'||type==='max_loss_trade'||type==='max_loss_day') ? '' : 'none';
+  document.getElementById('rule-num-suffix').textContent   = type==='pct_field' ? '%' : (type==='max_loss_trade'||type==='max_loss_day') ? '$' : '';
+}
+
+function ruleOpenAdd(id) {
+  _ruleEditId = id || null;
+  const r = id ? tradingRules.find(x=>x.id===id) : null;
+  document.getElementById('rule-label').value = r?.label || '';
+  document.getElementById('rule-type').value = r?.type || 'pct_field';
+  document.getElementById('rule-threshold-num').value = (r && r.type!=='time_start') ? r.threshold : 100;
+  document.getElementById('rule-threshold-time').value = (r && r.type==='time_start') ? r.threshold : '14:30';
+  if (r?.field) document.getElementById('rule-field').value = r.field;
+  _ruleUpdateTypeUI();
+  document.getElementById('rule-modal').classList.add('open');
+}
+function ruleCloseAdd() { document.getElementById('rule-modal').classList.remove('open'); _ruleEditId = null; }
+function ruleSave() {
+  const label = document.getElementById('rule-label').value.trim();
+  if (!label) { showToast('נא להזין שם חוק', 'error'); return; }
+  const type = document.getElementById('rule-type').value;
+  const data = { label, type };
+  if (type==='time_start') { data.threshold = document.getElementById('rule-threshold-time').value || '14:30'; }
+  else {
+    data.threshold = +document.getElementById('rule-threshold-num').value || 0;
+    if (type==='pct_field') data.field = document.getElementById('rule-field').value;
+  }
+  if (_ruleEditId) {
+    const r = tradingRules.find(x=>x.id===_ruleEditId);
+    if (r) { delete r.field; Object.assign(r, data); }
+  } else {
+    tradingRules.push({ id:'rule_'+Date.now(), ...data });
+  }
+  _saveTradingRules();
+  ruleCloseAdd();
+  renderTradingRules();
+  showToast('✅ החוק נשמר', 'success');
+}
+function ruleDelete(id) {
+  if (!confirm('למחוק חוק זה?')) return;
+  tradingRules = tradingRules.filter(r => r.id !== id);
+  _saveTradingRules();
+  renderTradingRules();
 }
 
 // Shared zoom/pan config for the main equity + drawdown charts (chartjs-plugin-zoom)
@@ -10774,10 +11152,13 @@ function _parseRithmicCSV(text) {
   return trades;
 }
 
-function importCSV(inp){
+async function importCSV(inp){
   if (!canUse('import_csv')) { showUpgradeModal('import_csv'); inp.value=''; return; }
   const files=Array.from(inp.files);if(!files.length)return;
   inp.value='';
+  if (files.some(f=>f.name.toLowerCase().endsWith('.xlsx'))) {
+    try { await _ensureXlsxLoaded(); } catch(e) { showToast('טעינת ספריית XLSX נכשלה, נסה שוב','error'); }
+  }
   let processed=0, totalImported=0, totalSkipped=0;
   const existing = new Set(tradesList.map(_tradeKey));
 
@@ -10966,7 +11347,7 @@ function renderStats(){
   if(dCh)dCh.destroy();
   dCh=new Chart(document.getElementById('dchart'),{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dd2,backgroundColor:dd2.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const srt=[...tl].sort((a,b)=>tradeNet(b)-tradeNet(a));
-  const rf=t=>`<tr><td class="mono" style="font-size:10px;color:#767f8e">${fmtD(t.date)}</td><td style="color:#767f8e;font-size:10px">${t.btime.slice(0,5)}</td><td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
+  const rf=t=>`<tr><td data-label="תאריך" class="mono" style="font-size:10px;color:#767f8e">${fmtD(t.date)}</td><td data-label="שעה" style="color:#767f8e;font-size:10px">${t.btime.slice(0,5)}</td><td data-label="נטו $" class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
   document.getElementById('top10').innerHTML=srt.slice(0,10).map(rf).join('');
   document.getElementById('bot10').innerHTML=srt.slice(-10).reverse().map(rf).join('');
 
@@ -10986,7 +11367,7 @@ function renderStats(){
   const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('dow-tbody').innerHTML=dowKeys.map(d=>{
     const dd=dowData[d];const avg=dd.trades?dd.pnl/dd.trades:0;const wr=dd.trades?(dd.wins/dd.trades*100).toFixed(0):0;
-    return `<tr><td style="font-weight:500">${days[d]}</td><td>${dd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td style="color:#767f8e">₪${fmtILS(dd.pnl*rate)}</td><td class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="יום" style="font-weight:500">${days[d]}</td><td data-label="עסקאות">${dd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:#767f8e">₪${fmtILS(dd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 
   // Hour of day analysis
@@ -11003,7 +11384,7 @@ function renderStats(){
   hourCh=new Chart(document.getElementById('hourChart'),{type:'bar',data:{labels:hrKeys.map(h=>h+':00'),datasets:[{data:hrVals,backgroundColor:hrVals.map(v=>v>=0?'rgba(114,149,184,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   document.getElementById('hour-tbody').innerHTML=hrKeys.map(h=>{
     const hd=hourData[h];const avg=hd.trades?hd.pnl/hd.trades:0;const wr=hd.trades?(hd.wins/hd.trades*100).toFixed(0):0;
-    return `<tr><td style="font-weight:500">${h}:00–${h+1}:00</td><td>${hd.trades}</td><td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td style="color:#767f8e">₪${fmtILS(hd.pnl*rate)}</td><td class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="שעה" style="font-weight:500">${h}:00–${h+1}:00</td><td data-label="עסקאות">${hd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:#767f8e">₪${fmtILS(hd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 }
 
@@ -11754,6 +12135,7 @@ function _cloudSave() {
         td_habitLog: (typeof habitLog !== 'undefined') ? habitLog : {},
         td_lrNotes: (typeof lrNotes !== 'undefined') ? lrNotes : {},
         td_personalGoals: (typeof personalGoals !== 'undefined') ? personalGoals : [],
+        td_tradingRules: (typeof tradingRules !== 'undefined') ? tradingRules : [],
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
       _updateSyncDot('synced');
@@ -11796,8 +12178,10 @@ async function _cloudLoad() {
       if (d.td_habitLog && typeof habitLog !== 'undefined') { habitLog = d.td_habitLog; localStorage.setItem('dor_habitLog', JSON.stringify(habitLog)); }
       if (d.td_lrNotes && typeof lrNotes !== 'undefined') { lrNotes = d.td_lrNotes; localStorage.setItem('dor_lrNotes', JSON.stringify(lrNotes)); }
       if (d.td_personalGoals?.length && typeof personalGoals !== 'undefined') { personalGoals = d.td_personalGoals; localStorage.setItem('dor_personalGoals', JSON.stringify(personalGoals)); }
+      if (d.td_tradingRules?.length && typeof tradingRules !== 'undefined') { tradingRules = d.td_tradingRules; localStorage.setItem('dor_tradingRules', JSON.stringify(tradingRules)); }
       if (typeof renderLR === 'function') renderLR();
       if (typeof renderPersonalGoals === 'function') renderPersonalGoals();
+      if (typeof renderTradingRules === 'function') renderTradingRules();
       if (typeof renderBiz === 'function') renderBiz();
       applyRecurring();
       renderAll();
@@ -12761,7 +13145,7 @@ setTimeout(()=>{ if (typeof renderBiz === 'function') renderBiz(); }, 300);
 </script>
 
 <!-- EmailJS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -15707,7 +16091,7 @@ function renderStrategyStats() {
   const maxAbs = Math.max(...keys.map(k=>Math.abs(stratMap[k].pnl)), 1);
   const rate   = HIST_RATES[new Date().toISOString().slice(0,7)] || 3.0;
   body.innerHTML = `
-    <table class="tbl" style="width:100%">
+    <table class="tbl tbl-cards" style="width:100%">
       <thead><tr>
         <th>אסטרטגיה</th><th>עסקאות</th><th>Win %</th>
         <th>P&L נטו $</th><th>ממוצע/עסקה</th><th>⭐ ממוצע</th>
@@ -15722,7 +16106,7 @@ function renderStrategyStats() {
           : '<span style="color:var(--t3)">—</span>';
         const barW = Math.round(Math.abs(d.pnl)/maxAbs*100);
         return `<tr>
-          <td>
+          <td data-label="אסטרטגיה">
             <div style="display:flex;align-items:center;gap:8px">
               <span class="strat-badge" style="max-width:160px">${k}</span>
               <div style="flex:1;max-width:80px;background:var(--bg4);border-radius:2px;height:3px;overflow:hidden">
@@ -15730,11 +16114,11 @@ function renderStrategyStats() {
               </div>
             </div>
           </td>
-          <td>${d.trades}</td>
-          <td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td>
-          <td class="mono ${d.pnl>=0?'cg':'cr'}" style="font-weight:600">${fmt(d.pnl)}</td>
-          <td class="mono" style="color:var(--t3)">${fmt(avg)}</td>
-          <td style="color:#bfa15e;font-size:12px">${starBar}${as>0?' <span style="font-size:10px;color:var(--t3)">('+as.toFixed(1)+')</span>':''}</td>
+          <td data-label="עסקאות">${d.trades}</td>
+          <td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td>
+          <td data-label="P&L נטו $" class="mono ${d.pnl>=0?'cg':'cr'}" style="font-weight:600">${fmt(d.pnl)}</td>
+          <td data-label="ממוצע/עסקה" class="mono" style="color:var(--t3)">${fmt(avg)}</td>
+          <td data-label="⭐ ממוצע" style="color:#bfa15e;font-size:12px">${starBar}${as>0?' <span style="font-size:10px;color:var(--t3)">('+as.toFixed(1)+')</span>':''}</td>
         </tr>`;
       }).join('')}</tbody>
     </table>`;
@@ -15748,7 +16132,7 @@ function _renderGroupedPerfTable(elId, groupMap, emptyMsg, colLabel) {
   if (!keys.length) { body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--t3);font-size:12px">${emptyMsg}</div>`; return; }
   const maxAbs = Math.max(...keys.map(k=>Math.abs(groupMap[k].pnl)), 1);
   body.innerHTML = `
-    <table class="tbl" style="width:100%">
+    <table class="tbl tbl-cards" style="width:100%">
       <thead><tr><th>${colLabel}</th><th>עסקאות</th><th>Win %</th><th>P&L נטו $</th><th>ממוצע/עסקה</th></tr></thead>
       <tbody>${keys.map(k=>{
         const d = groupMap[k];
@@ -15756,16 +16140,16 @@ function _renderGroupedPerfTable(elId, groupMap, emptyMsg, colLabel) {
         const avg = d.trades ? d.pnl/d.trades : 0;
         const barW = Math.round(Math.abs(d.pnl)/maxAbs*100);
         return `<tr>
-          <td><div style="display:flex;align-items:center;gap:8px">
+          <td data-label="${colLabel}"><div style="display:flex;align-items:center;gap:8px">
             <span class="strat-badge" style="max-width:160px">${escHtml(k)}</span>
             <div style="flex:1;max-width:80px;background:var(--bg4);border-radius:2px;height:3px;overflow:hidden">
               <div style="width:${barW}%;height:100%;background:${d.pnl>=0?'var(--gr)':'var(--re)'};border-radius:2px"></div>
             </div>
           </div></td>
-          <td>${d.trades}</td>
-          <td class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td>
-          <td class="mono ${d.pnl>=0?'cg':'cr'}" style="font-weight:600">${fmt(d.pnl)}</td>
-          <td class="mono" style="color:var(--t3)">${fmt(avg)}</td>
+          <td data-label="עסקאות">${d.trades}</td>
+          <td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td>
+          <td data-label="P&L נטו $" class="mono ${d.pnl>=0?'cg':'cr'}" style="font-weight:600">${fmt(d.pnl)}</td>
+          <td data-label="ממוצע/עסקה" class="mono" style="color:var(--t3)">${fmt(avg)}</td>
         </tr>`;
       }).join('')}</tbody>
     </table>`;
@@ -15937,20 +16321,20 @@ window.renderTJ = function renderTJ() {
     const buyHtml = t.isManual ? '—' : t.buy.toFixed(2);
     const sellHtml= t.isManual ? '—' : t.sell.toFixed(2);
     return `<tr id="tj-row-${ti}" ${noteTitle}>
-      <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
-      <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
-      <td>${acctCell}</td>
-      <td style="color:#8892a4">${symHtml}</td>
-      <td style="color:#767f8e">${qtyHtml}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${buyHtml}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${sellHtml}</td>
-      <td style="color:#3a4252;font-size:11px">${t.dur}</td>
-      <td class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
-      <td><div>${stratHtml}</div>${tagsHtml}</td>
-      <td style="white-space:nowrap">${starsHtml}</td>
-      <td style="text-align:center">${imgHtml}</td>
-      <td>
+      <td data-label="" id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
+      <td data-label="תאריך" class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
+      <td data-label="שעה" style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
+      <td data-label="תיק">${acctCell}</td>
+      <td data-label="סימול" style="color:#8892a4">${symHtml}</td>
+      <td data-label="כמות" style="color:#767f8e">${qtyHtml}</td>
+      <td data-label="קנייה" class="mono" style="font-size:11px;color:#767f8e">${buyHtml}</td>
+      <td data-label="מכירה" class="mono" style="font-size:11px;color:#767f8e">${sellHtml}</td>
+      <td data-label="משך" style="color:#3a4252;font-size:11px">${t.dur}</td>
+      <td data-label="נטו $" class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
+      <td data-label="אסטרטגיה"><div>${stratHtml}</div>${tagsHtml}</td>
+      <td data-label="⭐" style="white-space:nowrap">${starsHtml}</td>
+      <td data-label="" style="text-align:center">${imgHtml}</td>
+      <td data-label="">
         <button class="act ed" onclick="openTradeAnnotate(${ti})" title="ערוך">✏️</button>
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
@@ -16080,7 +16464,7 @@ function _importExpensesFromRows(rows) {
   return { imported, skipped };
 }
 
-function importExpensesCSV(inp) {
+async function importExpensesCSV(inp) {
   const file = inp.files[0];
   if (!file) return;
   inp.value = '';
@@ -16088,6 +16472,7 @@ function importExpensesCSV(inp) {
   const isXlsx = file.name.toLowerCase().endsWith('.xlsx');
 
   if (isXlsx) {
+    try { await _ensureXlsxLoaded(); } catch(e) {}
     if (typeof XLSX === 'undefined') { showToast('ספריית XLSX לא נטענה, נסה שוב', 'error'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -18244,8 +18629,9 @@ async function renderAdminLogs() {
 // ════════════════════════════════════════════════════
 //  EXCEL EXPORT (SheetJS)
 // ════════════════════════════════════════════════════
-function exportToExcel() {
+async function exportToExcel() {
   if (!tradesList.length) { showToast('אין עסקאות לייצוא'); return; }
+  try { await _ensureXlsxLoaded(); } catch(e) {}
   if (typeof XLSX === 'undefined') { showToast('❌ ספריית Excel לא נטענה'); return; }
   const rows = tradesList.map(t => ({
     'תאריך': t.date||'',
