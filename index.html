@@ -83,6 +83,12 @@ body{background:var(--bg0);color:var(--t1);font-family:'Heebo',-apple-system,Bli
 /* Text answer */
 .coach-textarea{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--t1);font-family:inherit;font-size:13px;resize:vertical;min-height:80px;outline:none;line-height:1.55}
 .coach-textarea:focus{border-color:var(--ac)}
+.coach-num-wrap{display:flex;align-items:center;gap:8px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);padding:4px 12px;transition:border-color .13s}
+.coach-num-wrap:focus-within{border-color:var(--ac)}
+.coach-num-wrap .cur{font-size:15px;color:var(--t3);font-weight:600}
+.coach-num-inp{flex:1;border:none;background:transparent;color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;outline:none;padding:8px 0;text-align:center}
+.coach-num-inp::-webkit-outer-spin-button,.coach-num-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.coach-num-inp[type=number]{-moz-appearance:textfield}
 /* Results */
 .coach-result{max-width:560px;margin:0 auto;padding:20px;text-align:center}
 .coach-score-ring{position:relative;width:120px;height:120px;margin:0 auto 16px}
@@ -3082,9 +3088,10 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
       </div>
     </div>
     <div class="g2">
-      <div class="fr"><label>גודל חשבון התחלתי ($)</label><input type="number" id="ag-acct-size" step="1" placeholder="לדוגמה: 25000" dir="ltr"></div>
+      <div class="fr"><label>גודל חשבון התחלתי ($)</label><input type="number" id="ag-acct-size" step="1" placeholder="לדוגמה: 25000" dir="ltr" oninput="_agLiveBalancePreview()"></div>
       <div class="fr"><label>תאריך פתיחת התיק</label><input type="date" id="ag-open-date"></div>
     </div>
+    <div class="fr"><label>💰 יתרת חשבון נוכחית ($)</label><input type="number" id="ag-balance" step="1" placeholder="לדוגמה: 26400" dir="ltr" oninput="_agLiveBalancePreview()"><div id="ag-balance-note" style="font-size:10px;color:var(--t3);margin-top:4px"></div></div>
     <div class="fr"><label>סכום משיכה ראשון מתוכנן ($)</label><input type="number" id="ag-planned-withdrawal" step="1" placeholder="לדוגמה: 1000" dir="ltr"></div>
 
     <div id="ag-progress-summary" style="margin:14px 0"></div>
@@ -3102,7 +3109,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
     <div class="fr"><label>יעד באפר / כרית ביטחון ($)</label><input type="number" id="ag-pass-buffer" step="1" placeholder="לדוגמה: 500 מעל הדראודאון המקסימלי" dir="ltr"></div>
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🔥 יעד/סף שריפה</div>
-    <div class="fr"><label>הפסד מקסימלי מותר ($, מספר חיובי)</label><input type="number" id="ag-burn-limit" step="1" placeholder="לדוגמה: 1500" dir="ltr"></div>
+    <div class="fr"><label>הפסד מקסימלי מותר ($, מספר חיובי)</label><input type="number" id="ag-burn-limit" step="1" placeholder="לדוגמה: 1500" dir="ltr" oninput="_agLiveBalancePreview()"></div>
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">➕ יעדים מותאמים אישית</div>
     <div id="ag-custom-list"></div>
@@ -9054,6 +9061,15 @@ let coachSessions = JSON.parse(localStorage.getItem('coach_sessions')||'[]');
 let _coachSession = null;
 let _coachQIdx    = 0;
 let _coachAltIdx  = {};
+// Persistent daily loss limit ($) — set once by the user, remembered across all future mental-coach sessions
+let coachDailyLossLimit = (() => { const v = parseFloat(localStorage.getItem('coach_daily_loss_limit')); return isNaN(v) ? null : v; })();
+function coachSaveDailyLossLimit(val) {
+  const n = parseFloat(val);
+  coachDailyLossLimit = isNaN(n) || n<0 ? null : n;
+  if (coachDailyLossLimit===null) localStorage.removeItem('coach_daily_loss_limit');
+  else localStorage.setItem('coach_daily_loss_limit', String(coachDailyLossLimit));
+  if (typeof _cloudSave === 'function') _cloudSave();
+}
 
 // ── Session type metadata ──
 const COACH_TYPES = {
@@ -9075,11 +9091,10 @@ const COACH_QUESTIONS = {
       text:'האם הגדרת פלן מסחרי ספציפי להיום — סטאפים, זמנים, מגבלות?',
       hint:'פלן = לפחות: "אני מחפש X סטאפ, עד Y שעה, עם Z אחוז סיכון מקסימלי".',
       alts:['האם יש לך בכתב מה אתה מחפש לסחור היום?', 'האם ידעת לענות "כן" על השאלה: מה הכניסה הבאה שאני מחפש?'] },
-    { id:'do3', cat:'🛡 סיכון', key:'daily_risk', weight:1.2, type:'scale5',
+    { id:'do3', cat:'🛡 סיכון', key:'daily_risk', weight:1.2, type:'number',
       text:'מה מגבלת ההפסד היומית שלך היום?',
-      hint:'ענה בסקלה: 1=לא הגדרתי, 5=הגדרתי בדיוק ואני יודע מתי לעצור.',
-      alts:['האם יש לך "Stop Trading" ברור — נקודה שבה סוגר הכל ויוצא?'],
-      labels:['לא הגדרתי','כללי','בינוני','ברור','מוגדר בדיוק'] },
+      hint:'הזן סכום מדויק בדולרים — הנקודה שבה אתה עוצר ויוצא מהמסחר להיום.',
+      alts:['האם יש לך "Stop Trading" ברור — נקודה שבה סוגר הכל ויוצא?'] },
     { id:'do4', cat:'🎯 פוקוס', key:'focus_area', weight:0, type:'text',
       text:'מה הסטאפ הספציפי שאתה מחפש היום?',
       hint:'כתב בדיוק: "אני מחפש Breakout מעל X, עם אישור Y". ספציפי = טוב יותר.',
@@ -9367,6 +9382,15 @@ function _coachRenderQuestion() {
       <button class="coach-yn-btn yes${ans==='yes'?' sel':''}" onclick="coachAnswer('${q.id}','yes')">✅ כן</button>
       <button class="coach-yn-btn no${ans==='no'?' sel':''}"   onclick="coachAnswer('${q.id}','no')">❌ לא</button>
     </div>`;
+  } else if (q.type==='number') {
+    const val = (ans!==undefined && ans!=='__skip__') ? ans : (coachDailyLossLimit!=null ? coachDailyLossLimit : '');
+    inputHtml = `<div class="coach-num-wrap">
+      <span class="cur">$</span>
+      <input type="number" inputmode="decimal" min="0" step="1" class="coach-num-inp" id="coach-num-inp"
+        placeholder="לדוגמה: 250" value="${val}"
+        onkeydown="if(event.key==='-'||event.key==='e'||event.key==='+')event.preventDefault()"
+        onblur="coachAnswerNumber('${q.id}',this.value)">
+    </div>`;
   } else {
     const val = (ans && ans!=='__skip__') ? ans : '';
     inputHtml = `<textarea class="coach-textarea" id="coach-text-inp" placeholder="כתוב כאן..." onblur="coachAnswer('${q.id}',this.value)">${val}</textarea>`;
@@ -9405,13 +9429,25 @@ function coachAnswer(qid, val) {
   if (!val && val!==0) return;
   _coachSession.answers[qid] = val;
   const q = COACH_QUESTIONS[_coachSession.type].find(x=>x.id===qid);
-  if (q && q.type!=='text') _coachRenderQuestion();
+  if (q && q.type!=='text' && q.type!=='number') _coachRenderQuestion();
+}
+
+// Numbers-only answer (currently used by the daily loss-limit question) — validates, stores on the
+// session, and remembers the value as the default for every future mental-coach session/day.
+function coachAnswerNumber(qid, raw) {
+  const n = parseFloat(String(raw).replace(/[^\d.]/g,''));
+  if (isNaN(n) || n<0) { _coachSession.answers[qid] = '__skip__'; return; }
+  const val = Math.round(n*100)/100;
+  _coachSession.answers[qid] = val;
+  coachSaveDailyLossLimit(val);
 }
 
 function coachNext() {
   const ta = document.getElementById('coach-text-inp');
-  if (ta) { const qs=COACH_QUESTIONS[_coachSession.type]; coachAnswer(qs[_coachQIdx].id, ta.value||'__skip__'); }
+  const na = document.getElementById('coach-num-inp');
   const qs = COACH_QUESTIONS[_coachSession.type];
+  if (ta) { coachAnswer(qs[_coachQIdx].id, ta.value||'__skip__'); }
+  if (na) { coachAnswerNumber(qs[_coachQIdx].id, na.value); }
   if (_coachQIdx < qs.length-1) { _coachQIdx++; _coachRenderQuestion(); }
   else { coachFinish(); }
 }
@@ -9427,6 +9463,7 @@ function coachFinish() {
     const a = _coachSession.answers[q.id];
     if(!a || a==='__skip__') return; // skip unanswered
     if(q.type==='scale5'&&typeof a==='number'){ total+=((a-1)/4)*q.weight; max+=q.weight; }
+    else if(q.type==='number'&&typeof a==='number'){ total+=(a>=0?1:0)*q.weight; max+=q.weight; }
     else if(q.type==='yesno'){
       const good=(a==='yes'&&q.goodIs==='yes')||(a==='no'&&q.goodIs==='no');
       total+=(good?1:0)*q.weight; max+=q.weight;
@@ -12136,6 +12173,7 @@ function _cloudSave() {
         td_lrNotes: (typeof lrNotes !== 'undefined') ? lrNotes : {},
         td_personalGoals: (typeof personalGoals !== 'undefined') ? personalGoals : [],
         td_tradingRules: (typeof tradingRules !== 'undefined') ? tradingRules : [],
+        td_coachDailyLossLimit: (typeof coachDailyLossLimit !== 'undefined') ? coachDailyLossLimit : null,
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
       _updateSyncDot('synced');
@@ -12179,6 +12217,7 @@ async function _cloudLoad() {
       if (d.td_lrNotes && typeof lrNotes !== 'undefined') { lrNotes = d.td_lrNotes; localStorage.setItem('dor_lrNotes', JSON.stringify(lrNotes)); }
       if (d.td_personalGoals?.length && typeof personalGoals !== 'undefined') { personalGoals = d.td_personalGoals; localStorage.setItem('dor_personalGoals', JSON.stringify(personalGoals)); }
       if (d.td_tradingRules?.length && typeof tradingRules !== 'undefined') { tradingRules = d.td_tradingRules; localStorage.setItem('dor_tradingRules', JSON.stringify(tradingRules)); }
+      if (d.td_coachDailyLossLimit !== undefined && d.td_coachDailyLossLimit !== null && typeof coachDailyLossLimit !== 'undefined') { coachDailyLossLimit = d.td_coachDailyLossLimit; localStorage.setItem('coach_daily_loss_limit', String(coachDailyLossLimit)); }
       if (typeof renderLR === 'function') renderLR();
       if (typeof renderPersonalGoals === 'function') renderPersonalGoals();
       if (typeof renderTradingRules === 'function') renderTradingRules();
@@ -12645,6 +12684,7 @@ function renderAcctMenu() {
       </div>
       <div class="acct-dot" style="background:${a.color}"></div>
       <div class="acct-name" style="flex:1">${escHtml(a.name)}${a.number?` <span style="font-size:9px;color:var(--t3)">#${escHtml(a.number)}</span>`:''}${statusBadge}</div>
+      ${(a.balance!=null)?`<div style="font-size:10px;color:var(--t2);margin-left:4px" title="יתרת חשבון נוכחית">💰 $${(+a.balance).toLocaleString('en-US',{maximumFractionDigits:0})}</div>`:''}
       <div style="font-size:10px;color:var(--t3);margin-left:4px">${cnt} עסקאות</div>
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
       <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
@@ -12799,6 +12839,7 @@ function _newAccountObject(name, number) {
     active: true, type: 'prop',
     company: '',            // חברת פרופ / סוג תיק
     accountSize: null,      // גודל חשבון התחלתי
+    balance: null,          // יתרת חשבון נוכחית (מתעדכן ידנית)
     openDate: new Date().toISOString().slice(0,10), // תאריך פתיחת התיק
     plannedWithdrawal: null,// סכום משיכה ראשון מתוכנן
     status: 'evaluation',   // evaluation | passed | funded | pending_withdrawal | withdrawn
@@ -12906,7 +12947,31 @@ function _ensureAcctShape(a) {
   a.goals.custom     = a.goals.custom     || [];
   a.status           = a.status || 'evaluation';
   a.withdrawals      = a.withdrawals || [];
+  if (a.balance === undefined) a.balance = null; // יתרת חשבון נוכחית — נוסף בגרסה מאוחרת יותר
   return a;
+}
+
+// Live preview under the balance field — shows change vs. starting size and distance to the burn/stop
+// limit, so the Balance value is actually put to use rather than just stored.
+function _agLiveBalancePreview() {
+  const noteEl = document.getElementById('ag-balance-note');
+  if (!noteEl) return;
+  const bal  = parseFloat(document.getElementById('ag-balance')?.value);
+  const size = parseFloat(document.getElementById('ag-acct-size')?.value);
+  const burn = parseFloat(document.getElementById('ag-burn-limit')?.value);
+  if (isNaN(bal)) { noteEl.textContent = ''; return; }
+  const parts = [];
+  if (!isNaN(size) && size>0) {
+    const diff = bal - size;
+    const pct  = (diff/size)*100;
+    parts.push(`${diff>=0?'+':'−'}$${Math.abs(diff).toFixed(0)} (${diff>=0?'+':'−'}${Math.abs(pct).toFixed(1)}%) מהגודל ההתחלתי`);
+  }
+  if (!isNaN(burn) && burn>0 && !isNaN(size) && size>0) {
+    const floor = size - burn; // המינימום המותר ביתרה לפי סף השריפה
+    const cushion = bal - floor;
+    parts.push(cushion>=0 ? `כרית של $${cushion.toFixed(0)} עד סף השריפה` : `⚠️ מתחת לסף השריפה ב-$${Math.abs(cushion).toFixed(0)}`);
+  }
+  noteEl.textContent = parts.join(' · ');
 }
 
 function openAcctGoals(id) {
@@ -12919,8 +12984,10 @@ function openAcctGoals(id) {
   document.getElementById('ag-company').value             = a.company || '';
   document.getElementById('ag-status').value               = a.status;
   document.getElementById('ag-acct-size').value            = a.accountSize || '';
+  document.getElementById('ag-balance').value               = a.balance ?? '';
   document.getElementById('ag-open-date').value            = a.openDate || '';
   document.getElementById('ag-planned-withdrawal').value   = a.plannedWithdrawal || '';
+  _agLiveBalancePreview();
   document.getElementById('ag-withdrawal').value    = a.goals.withdrawal.target || '';
   document.getElementById('ag-pass-target').value   = a.goals.pass.target || '';
   document.getElementById('ag-pass-deadline').value = a.goals.pass.deadline || '';
@@ -12941,6 +13008,12 @@ function openAcctGoals(id) {
     <span style="color:${statusInfo.color};font-weight:700">${statusInfo.label}</span>
     <span>${tradeCnt} עסקאות ביומן${manualDays?` (${manualDays} מסיכום ידני)`:''}</span>
   </div>`);
+  if (a.balance != null) {
+    parts.push(`<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:8px;padding:8px 10px;background:var(--bg4);border-radius:7px">
+      <span style="color:var(--t2)">💰 יתרת חשבון נוכחית</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--t1)">$${(+a.balance).toLocaleString('en-US',{maximumFractionDigits:0})}</span>
+    </div>`);
+  }
   if (a.goals.withdrawal.target) {
     const pct = Math.max(0, Math.min(100, (Math.max(0,pnl)/a.goals.withdrawal.target)*100));
     const remaining = Math.max(0, a.goals.withdrawal.target - Math.max(0,pnl));
@@ -13049,6 +13122,7 @@ function saveAcctGoals() {
   a.company           = (g('ag-company').value||'').trim();
   a.status             = g('ag-status').value || 'evaluation';
   a.accountSize        = num(g('ag-acct-size').value);
+  a.balance            = num(g('ag-balance').value);
   a.openDate           = g('ag-open-date').value || null;
   a.plannedWithdrawal  = num(g('ag-planned-withdrawal').value);
   a.goals = {
