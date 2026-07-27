@@ -2241,6 +2241,106 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .ob-fields{display:flex;flex-direction:column;gap:11px;text-align:right;margin-bottom:6px}
 .ob-fields label{font-size:12px;color:var(--t2);display:flex;flex-direction:column;gap:5px}
 .ob-fields input{padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--t1);font-size:14px;font-family:inherit}
+
+/* ══════════════════════════════════════════════════════════════
+   v22 — MOBILE PROPORTIONS (iPhone + Android)
+   Loaded last so it wins over earlier breakpoints.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Real viewport height on phones ──
+   Mobile browsers shrink/grow the toolbar; 100vh overflows and creates the
+   "content cut off at the bottom" effect. dvh tracks the visible area. */
+@supports (height:100dvh){
+  body{min-height:100dvh}
+  .side-panel{height:100dvh}
+  .modal{max-height:88dvh}
+  .ob-box{max-height:88dvh}
+}
+
+@media(max-width:768px){
+  /* ── 2. No iOS auto-zoom on focus ──
+     Safari zooms the whole page when a focused field is under 16px.
+     16px on every control keeps the layout locked. */
+  input,select,textarea,
+  .fr input,.fr select,.fr textarea,
+  .ob-fields input,.admin-input{font-size:16px!important}
+  /* readonly / display-only fields don't receive text, so they stay compact */
+  input[readonly]{font-size:13px!important}
+
+  /* ── 3. Safe areas (notch + home indicator) ── */
+  .main{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}
+  .mob-bottom-nav{height:calc(58px + env(safe-area-inset-bottom,0px))}
+  .modal-bg{padding:10px;align-items:flex-end}
+  .modal{width:100%!important;max-width:100%!important;border-radius:16px 16px 10px 10px;
+         padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+
+  /* ── 4. Command Center — phone proportions ──
+     Balance gets a full-width hero row; the rest pair up two-per-row. */
+  .cc-top{grid-template-columns:1fr 1fr;gap:8px}
+  .cc-kpi{padding:11px 13px;border-radius:11px}
+  .cc-kpi:first-child{grid-column:1/-1}
+  .cc-kpi:first-child .cc-kpi-v{font-size:30px}
+  .cc-kpi-v{font-size:20px}
+  .cc-kpi-l{font-size:10px}
+  .cc-kpi-s{font-size:10.5px}
+  .cc-mid,.cc-bot{gap:8px}
+  .cc-side{grid-template-columns:1fr 1fr}
+  .cc-mini{padding:10px 12px}
+  .cc-mini:last-child{grid-column:1/-1;align-items:center;text-align:center}
+  .cc-mini-v{font-size:19px}
+  .cc-chart-wrap{height:170px!important}
+  .cc-row{padding:9px 0}
+
+  /* ── 5. Touch targets — 44px minimum ── */
+  .ref-share-btn,.act-dd-btn,.act-mi,.hdr-mi,.fb,.cyc-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .ref-share-btn{flex:1;min-width:calc(50% - 4px)}
+  .ob-choice{min-height:56px}
+  .ob-next{min-height:48px}
+
+  /* ── 6. Header — fits a 360px screen without crowding ── */
+  .topnav{gap:5px;padding:0 8px}
+  .nav-user-badge{max-width:96px}
+  #ref-chip{height:32px}
+
+  /* ── 7. Referral + pricing panels ── */
+  .ref-stat{padding:10px 8px}
+  .ref-stat-v{font-size:19px}
+  #ref-link-input{font-size:11px!important;min-width:0}
+  .price-card{padding:16px 15px}
+  .pa-card{padding:14px}
+
+  /* ── 8. Achievements — 2 per row instead of squeezed 3 ── */
+  .ach-grid{grid-template-columns:1fr 1fr;gap:7px}
+  .ach{padding:9px 7px}
+  .ach-t{font-size:11px}
+  .ach-d{font-size:9.5px}
+
+  /* ── 9. Nothing may push the page sideways ── */
+  html,body{max-width:100%;overflow-x:hidden}
+  .zcl,.card,.pa-card{max-width:100%}
+  img,canvas,svg,iframe{max-width:100%}
+}
+
+/* ── Small phones: iPhone SE / mini, compact Androids ── */
+@media(max-width:390px){
+  .cc-kpi:first-child .cc-kpi-v{font-size:26px}
+  .cc-kpi-v{font-size:18px}
+  .cc-kpi{padding:10px 11px}
+  .cc-side{grid-template-columns:1fr}
+  .cc-mini:last-child{grid-column:auto}
+  .ach-grid{grid-template-columns:1fr 1fr}
+  .ob-box{padding:22px 16px}
+  .ob-title{font-size:17px}
+  .cc-chart-wrap{height:150px!important}
+}
+
+/* ── Landscape phones: keep sheets reachable ── */
+@media(max-height:500px) and (max-width:950px){
+  .modal-bg{align-items:center}
+  .modal{max-height:94dvh;border-radius:12px}
+  .ob-box{max-height:94dvh;padding:18px 20px}
+  .cc-chart-wrap{height:140px!important}
+}
 </style>
 
 <nav class="topnav">
@@ -20775,7 +20875,7 @@ function renderCommandCenter() {
     <div class="zcl cc-equity">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>Equity — P&L מצטבר</div>
         <span style="font-size:11px;color:var(--t3)">${tradesList.length} עסקאות</span></div>
-      <div style="height:210px;position:relative"><canvas id="ccEquityChart" aria-label="Equity"></canvas></div>
+      <div class="cc-chart-wrap" style="height:210px;position:relative"><canvas id="ccEquityChart" aria-label="Equity"></canvas></div>
     </div>
     <div class="cc-side">
       <div class="zcl cc-mini">
