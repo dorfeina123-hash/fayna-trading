@@ -5526,6 +5526,67 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:#767f8e;display:none">אין משתמשים רשומים עדיין</div>
   </div>
 
+  <!-- v23: MAILING LIST & UNSUBSCRIBES -->
+  <div class="admin-section" style="border-color:rgba(239,68,68,.2)">
+    <div class="admin-section-title"><div class="dot" style="background:#ef4444"></div>📧 ניהול רשימת תפוצה והסרות
+      <button class="fb" onclick="renderMailingAdmin()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
+    </div>
+
+    <!-- counters -->
+    <div class="mrow" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">
+      <div class="mc"><div class="mc-l">פעילים בדיוור</div><div class="mc-v" style="color:var(--gr)" id="mail-n-active">—</div></div>
+      <div class="mc"><div class="mc-l">הוסרו</div><div class="mc-v" style="color:var(--re)" id="mail-n-unsub">—</div></div>
+      <div class="mc"><div class="mc-l">ברשימת חסימה (DNC)</div><div class="mc-v" style="color:var(--go)" id="mail-n-dnc">—</div></div>
+    </div>
+
+    <!-- quick actions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:9px;padding:11px">
+        <div style="font-size:11px;font-weight:700;color:var(--re);margin-bottom:4px">✉️ התקבלה תשובת "הסר" במייל</div>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:7px">הדבק את כתובת השולח (או את כל שורת השולח) — המערכת תסיר ותחסום</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="mail-reply-email" placeholder="israel@mail.com" dir="ltr" style="flex:1;padding:7px 9px;font-size:11px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit">
+          <button onclick="adminUnsubByReply()" style="padding:7px 13px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:var(--re);color:#fff;font-family:inherit;white-space:nowrap">🔕 הסר</button>
+        </div>
+      </div>
+      <div style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:9px;padding:11px">
+        <div style="font-size:11px;font-weight:700;color:var(--go);margin-bottom:4px">🚫 חסימה קבועה ידנית</div>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:7px">כתובת שתיחסם לתמיד — גם אם תירשם למערכת בעתיד</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="mail-dnc-email" placeholder="israel@mail.com" dir="ltr" style="flex:1;padding:7px 9px;font-size:11px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit">
+          <button onclick="adminAddDNCOnly()" style="padding:7px 13px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(234,179,8,.4);background:rgba(234,179,8,.12);color:var(--go);font-family:inherit;white-space:nowrap">חסום</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- filters + search -->
+    <div class="fbar" id="mail-filter-bar" style="margin-bottom:8px">
+      <button class="fb active" onclick="setMailFilter('all',this)">הכל</button>
+      <button class="fb" onclick="setMailFilter('active',this)" style="color:#22c55e">✅ פעילים</button>
+      <button class="fb" onclick="setMailFilter('unsub',this)" style="color:#ef4444">🔕 הוסרו</button>
+      <button class="fb" onclick="setMailFilter('dnc',this)" style="color:#eab308">🚫 חסומים</button>
+      <input type="text" placeholder="🔎 חיפוש שם או מייל..." oninput="mailSearchInput(this.value)" style="margin-right:auto;padding:5px 10px;font-size:11px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit;min-width:180px">
+    </div>
+
+    <div style="overflow-x:auto;max-height:360px;overflow-y:auto">
+      <table class="users-table" style="min-width:700px">
+        <thead><tr><th>שם</th><th>אימייל</th><th>סטטוס</th><th>תאריך הסרה</th><th>מקור</th><th style="width:120px">פעולה</th></tr></thead>
+        <tbody id="mail-tbody"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:14px">לחץ "רענן" לטעינה</td></tr></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:12px">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:5px">📜 היסטוריית פעולות דיוור</div>
+      <div id="mail-logs" style="max-height:200px;overflow-y:auto"></div>
+    </div>
+
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="fb" onclick="adminBackfillConsent()" style="padding:6px 12px;font-size:11px">🧩 השלם שדות למשתמשים ותיקים</button>
+      <span style="font-size:10px;color:var(--t3)">מוסיף emailSubscriptionStatus / subscriptionPlan / referralCode למשתמשים שנרשמו לפני העדכון</span>
+      <span id="backfill-status" style="font-size:11px;color:var(--gr)"></span>
+    </div>
+  </div>
+
   <!-- LOGIN LOGS -->
   <div class="admin-section" style="border-color:rgba(114,149,184,.2)">
     <div class="admin-section-title" style="margin-bottom:10px">
@@ -14556,10 +14617,12 @@ async function doRegister() {
       lastLogin:    firebase.firestore.FieldValue.serverTimestamp(),
       loginCount:   1,
       welcomeSent:  false,
+      ..._consentDefaults(),
       ..._refPayload(uid),
     };
     await db.collection('users').doc(uid).set(userData);
-    _recordReferral(uid, email, name, userData.referredBy);
+    _applyConsentOnRegister(uid, email);
+    _recordReferral(uid, email, name, userData.referredByCode);
     _registering = false; // Firestore doc written — safe to continue
 
     await _logEvent(uid, email, name, 'register');
@@ -14588,9 +14651,10 @@ async function doRegister() {
           const userData = { email, name, phone, plan, status, isAdmin:isAdm,
             registeredAt:firebase.firestore.FieldValue.serverTimestamp(),
             lastLogin:firebase.firestore.FieldValue.serverTimestamp(), loginCount:1, welcomeSent:false,
-            ..._refPayload(cred2.user.uid) };
+            ..._consentDefaults(), ..._refPayload(cred2.user.uid) };
           await db.collection('users').doc(cred2.user.uid).set(userData);
-          _recordReferral(cred2.user.uid, email, name, userData.referredBy);
+          _applyConsentOnRegister(cred2.user.uid, email);
+          _recordReferral(cred2.user.uid, email, name, userData.referredByCode);
           _registering = false;
           await _logEvent(cred2.user.uid, email, name, 'register');
           sendRegistrationEmail({ name, email, phone, plan });
@@ -15253,6 +15317,7 @@ async function adminUploadGuidePDF(inp) {
 async function renderAdminPanel() {
   await renderAdminMetrics();
   try { renderGrowthDash(); } catch(e){}
+  try { renderMailingAdmin(); } catch(e){}
   await refreshAdminUsers();
   loadAdminSettings();
   loadAdminEmailJSFields();
@@ -15786,6 +15851,10 @@ async function adminQuickPlan(uid, plan, selectEl) {
     } else {
       upd.planCycle = null; upd.planExpiresAt = null; upd.planStatus = null; upd.cancelAtPeriodEnd = false;
     }
+    /* v23: mirror into the future-payment field set */
+    upd.subscriptionPlan   = _normPlan(plan);
+    upd.subscriptionStatus = plan === 'free' ? 'active' : 'active';
+    upd.paymentStatus      = plan === 'free' ? 'not_paid' : 'paid';
     await db.collection('users').doc(uid).update(upd);
     const idx = _adminUsersCache.findIndex(u => u.uid === uid);
     const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
@@ -16119,14 +16188,15 @@ function _updateBannerStatus() {
 // ── Branded Email HTML builder ────────────────────────────────
 function _buildEmailHTML(userName, msg, uid) {
   const yr = new Date().getFullYear();
-  const base = window.location.origin + window.location.pathname;
+  /* v23: always link to the public site — never a local file:// path */
+  const base = (typeof PUBLIC_SITE_URL !== 'undefined' && PUBLIC_SITE_URL)
+    ? PUBLIC_SITE_URL
+    : (window.location.origin + window.location.pathname);
   const unsubUrl = uid ? `${base}?unsub=${uid}` : '';
-  const unsubBlock = unsubUrl
-    ? `<div style="margin-top:22px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center">
-        <p style="font-size:11px;color:#a0aec0;margin:0 0 6px">לא רוצה לקבל עדכונים? <a href="${unsubUrl}" style="color:#a0aec0;text-decoration:underline">הסר אותי מרשימת התפוצה</a></p>
-        <p style="font-size:10px;color:#c8cdd4;margin:0">ניתן גם להשיב למייל זה עם המילה <strong>הסר</strong></p>
-       </div>`
-    : '';
+  const unsubBlock = `<div style="margin-top:22px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center">
+        <p style="font-size:11px;color:#a0aec0;margin:0 0 6px"><strong>הפסקת קבלת עדכונים</strong> — השב למייל זה עם המילה <strong>"הסר"</strong></p>
+        ${unsubUrl ? `<p style="font-size:11px;color:#a0aec0;margin:0">או <a href="${unsubUrl}" style="color:#a0aec0;text-decoration:underline">לחץ כאן להסרה מיידית</a></p>` : ''}
+       </div>`;
   return `<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#f0f2f5;font-family:Arial,'Arial Hebrew',sans-serif;direction:rtl}.w{max-width:600px;margin:28px auto}.c{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,.13)}.hd{background:linear-gradient(135deg,#070b12 0%,#162035 55%,#0d1626 100%);padding:38px 44px;text-align:center}.lg{font-size:30px;font-weight:800;color:#3d9970;letter-spacing:-.5px;margin-bottom:6px}.lg span{color:#fff}.tg{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:3.5px;text-transform:uppercase}.bar{height:3px;background:linear-gradient(90deg,#3d9970,#7295b8,#9089bd)}.bd{padding:36px 44px}.gr{font-size:16px;font-weight:600;color:#1a202c;margin-bottom:18px}.mb{background:#f7fafc;border-right:4px solid #3d9970;border-radius:0 8px 8px 0;padding:18px 22px;margin:18px 0;font-size:15px;line-height:1.8;color:#2d3748;white-space:pre-wrap}.fi{font-size:11px;color:#a0aec0;margin-top:18px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center}.ft{background:#070b12;padding:28px 44px;text-align:center}.fn{font-size:15px;font-weight:700;color:#3d9970;margin-bottom:3px}.fs{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin-bottom:14px}.fc{font-size:10px;color:rgba(255,255,255,.18)}</style>
 </head><body><div class="w"><div class="c">
@@ -16148,8 +16218,11 @@ async function sendNotifEmail(msg) {
   const prog = document.getElementById('adm-notif-progress');
   const res  = await _getUsers();
   const all  = Array.isArray(res) ? res : [];
-  const targets = all.filter(u => u.email && !u.isAdmin && u.status !== 'suspended' && !u.emailOptOut);
+  /* v23: single consent gate — status, unsubscribe flag and the permanent DNC list */
+  const targets = (await filterEmailable(all)).filter(u => !u.isAdmin);
+  const skipped = all.filter(u => u.email && !u.isAdmin).length - targets.length;
   if (!targets.length) { showToast('אין משתמשים פעילים עם מייל','warn'); return; }
+  if (skipped > 0) showToast(`${skipped} נמענים דולגו (הוסרו מהתפוצה) 🔕`,'info');
 
   // No EmailJS → show preview modal with mailto links
   if (!EJS_CONFIG.publicKey || !EJS_CONFIG.serviceId || !EJS_CONFIG.templateId) {
@@ -16184,7 +16257,8 @@ function _showEmailBroadcastModal(msg, targets) {
   const body = encodeURIComponent(`שלום,\n\n${msg}\n\n---\nFayna Trading — Professional Trading Journal`);
   const base = window.location.origin + window.location.pathname;
   const rows = targets.map(u => {
-    const unsubLine = u.uid ? `\n\n---\nלהסרה מרשימת התפוצה: ${base}?unsub=${u.uid}` : '';
+    const unsubLine = `\n\n---\nהפסקת קבלת עדכונים — השב למייל זה עם המילה "הסר"` +
+      (u.uid ? `\nאו להסרה מיידית: ${(typeof PUBLIC_SITE_URL!=='undefined'?PUBLIC_SITE_URL:base)}?unsub=${u.uid}` : '');
     const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.email)}</div></div>
@@ -16784,8 +16858,8 @@ async function _handleUnsubParam() {
       const snap = await db.collection('users').doc(uid).get();
       const userData = snap.exists ? snap.data() : {};
 
-      // Mark opted-out in Firestore
-      await db.collection('users').doc(uid).update({ emailOptOut: true });
+      // v23: full consent engine — status fields + permanent DNC + audit log
+      await unsubscribeUser(uid, userData.email || '', 'link', true);
 
       // Notify admin via Web3Forms
       const WEB3FORMS_KEY = '8ef4276d-2519-4d4f-8a84-b84cd6f46419';
@@ -20377,6 +20451,11 @@ async function _recordReferral(uid, email, name, code) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
     await db.collection('users').doc(uid).update({ referredBy: referrerUid }).catch(()=>{});
+    /* v23: keep an at-a-glance counter + list on the referrer's own document */
+    await db.collection('users').doc(referrerUid).update({
+      referralCount: firebase.firestore.FieldValue.increment(1),
+      referredUsers: firebase.firestore.FieldValue.arrayUnion(uid),
+    }).catch(()=>{});
     localStorage.removeItem('fx_ref');
   } catch(e){ console.warn('_recordReferral:', e); }
 }
@@ -20547,7 +20626,7 @@ function _subCheck() {
   if (!exp) return; /* premium/lifetime or no period set */
   const msLeft = exp - new Date();
   if (msLeft <= 0) {
-    const upd = { plan:'free', planStatus:'expired' };
+    const upd = { plan:'free', planStatus:'expired', subscriptionPlan:'free', subscriptionStatus:'expired', paymentStatus:'not_paid' };
     db.collection('users').doc(currentUser.uid).update(upd).catch(()=>{});
     Object.assign(currentUser, upd);
     updateNavBadge();
@@ -20582,8 +20661,8 @@ async function cancelSubscription() {
   if (!currentUser?.uid) return;
   if (!await customConfirm('לבטל את המנוי? הגישה תישמר עד סוף התקופה הנוכחית ואז החשבון יעבור ל-Free.')) return;
   try {
-    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:true, planStatus:'cancelled' });
-    Object.assign(currentUser, { cancelAtPeriodEnd:true, planStatus:'cancelled' });
+    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:true, planStatus:'cancelled', subscriptionStatus:'cancelled' });
+    Object.assign(currentUser, { cancelAtPeriodEnd:true, planStatus:'cancelled', subscriptionStatus:'cancelled' });
     _logBillingRequest('cancel', currentUser.plan, currentUser.planCycle);
     addNotification('billing','המנוי בוטל','הגישה תישמר עד סוף התקופה. אפשר לחדש בכל רגע.');
     renderNotifBell(); renderMySub();
@@ -20594,8 +20673,8 @@ async function cancelSubscription() {
 async function resumeSubscription() {
   if (!currentUser?.uid) return;
   try {
-    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:false, planStatus:'active' });
-    Object.assign(currentUser, { cancelAtPeriodEnd:false, planStatus:'active' });
+    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:false, planStatus:'active', subscriptionStatus:'active' });
+    Object.assign(currentUser, { cancelAtPeriodEnd:false, planStatus:'active', subscriptionStatus:'active' });
     _logBillingRequest('resume', currentUser.plan, currentUser.planCycle);
     renderMySub();
     showToast('המנוי חודש ✅','success');
@@ -20692,6 +20771,360 @@ function renderMySub() {
       ? `<button onclick="cancelSubscription()" style="padding:7px 14px;border-radius:7px;font-size:11px;background:none;border:1px solid var(--border2);color:var(--t3);cursor:pointer;font-family:inherit">בטל מנוי</button>` : ''}
     ${cancelled ? `<button class="btn-p" onclick="resumeSubscription()" style="font-size:11px;padding:7px 16px">חדש מנוי</button>` : ''}
   </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   v23 — EMAIL CONSENT ENGINE
+   Firestore model:
+     users/{uid}   emailSubscriptionStatus: 'active' | 'unsubscribed'
+                   unsubscribeDate, unsubscribeSource, resubscribeDate
+                   emailOptOut (legacy mirror — kept in sync both ways)
+                   subscriptionPlan, subscriptionStatus, paymentStatus
+                   referralCode, referralCount
+     dnc/{emailKey}      permanent block, survives delete + re-register
+     mailingLogs/{auto}  full audit trail of every consent change
+   Every outbound email passes through canEmail() first.
+   ══════════════════════════════════════════════════════════════════ */
+
+const UNSUB_WORDS = ['הסר','הסירו','להסיר','remove','unsubscribe','stop','אנסאב'];
+function _emailKey(email) { return (email||'').trim().toLowerCase().replace(/[^a-z0-9@._+-]/g,''); }
+
+/* ── consent state of a single user object ── */
+function _isUnsubscribed(u) {
+  if (!u) return false;
+  if (u.emailSubscriptionStatus === 'unsubscribed') return true;
+  if (u.emailSubscriptionStatus === 'active') return false;
+  return u.emailOptOut === true;            // legacy fallback
+}
+
+/* ── DNC list (permanent, keyed by email — not by uid) ── */
+let _dncCache = null, _dncLoadedAt = 0;
+async function loadDNC(force) {
+  if (!force && _dncCache && Date.now() - _dncLoadedAt < 60000) return _dncCache;
+  try {
+    const snap = await db.collection('dnc').get();
+    _dncCache = new Map(snap.docs.map(d => [d.id, d.data()]));
+    _dncLoadedAt = Date.now();
+  } catch(e) { _dncCache = _dncCache || new Map(); }
+  return _dncCache;
+}
+async function isDNC(email) {
+  const k = _emailKey(email);
+  if (!k) return false;
+  const m = await loadDNC();
+  if (m.has(k)) return true;
+  try { const d = await db.collection('dnc').doc(k).get(); return d.exists; } catch(e) { return false; }
+}
+async function addToDNC(email, source, meta) {
+  const k = _emailKey(email);
+  if (!k) return false;
+  try {
+    await db.collection('dnc').doc(k).set({
+      email: k,
+      source: source || 'manual',
+      name: meta?.name || '',
+      uid: meta?.uid || null,
+      addedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      addedBy: currentUser?.email || 'system',
+    }, { merge:true });
+    if (_dncCache) _dncCache.set(k, { email:k, source });
+    return true;
+  } catch(e) { console.warn('addToDNC:', e); return false; }
+}
+async function removeFromDNC(email) {
+  const k = _emailKey(email);
+  if (!k) return false;
+  try { await db.collection('dnc').doc(k).delete(); _dncCache?.delete(k); return true; }
+  catch(e) { return false; }
+}
+
+/* ── audit trail ── */
+async function _logMailing(action, email, details, auto) {
+  try {
+    await db.collection('mailingLogs').add({
+      action,                                   // unsubscribe | resubscribe | dnc_add | dnc_remove | blocked_send
+      email: _emailKey(email),
+      details: details || '',
+      automatic: !!auto,
+      byAdmin: auto ? null : (currentUser?.email || null),
+      byAdminUid: auto ? null : (currentUser?.uid || null),
+      at: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch(e) { console.warn('_logMailing:', e); }
+}
+
+/* ── THE GATE — every send path calls this ── */
+async function canEmail(user) {
+  if (!user || !user.email) return false;
+  if (_isUnsubscribed(user)) return false;
+  if (user.status === 'blocked' || user.status === 'suspended') return false;
+  if (await isDNC(user.email)) return false;
+  return true;
+}
+/* synchronous pre-filter for bulk lists (DNC map already loaded) */
+function canEmailSync(user, dncMap) {
+  if (!user || !user.email) return false;
+  if (_isUnsubscribed(user)) return false;
+  if (user.status === 'blocked' || user.status === 'suspended') return false;
+  if (dncMap && dncMap.has(_emailKey(user.email))) return false;
+  return true;
+}
+async function filterEmailable(users) {
+  const dnc = await loadDNC(true);
+  return (users||[]).filter(u => canEmailSync(u, dnc));
+}
+
+/* ── core state changes ── */
+async function unsubscribeUser(uid, email, source, auto) {
+  const payload = {
+    emailSubscriptionStatus: 'unsubscribed',
+    emailOptOut: true,                                   // legacy mirror
+    unsubscribeDate: firebase.firestore.FieldValue.serverTimestamp(),
+    unsubscribeSource: source || 'manual',
+  };
+  let name = '';
+  try {
+    if (uid) {
+      const s = await db.collection('users').doc(uid).get();
+      if (s.exists) { name = s.data().name || ''; email = email || s.data().email; }
+      await db.collection('users').doc(uid).update(payload);
+    } else if (email) {
+      const q = await db.collection('users').where('email','==',_emailKey(email)).limit(5).get();
+      for (const d of q.docs) { name = name || d.data().name || ''; await d.ref.update(payload); }
+    }
+  } catch(e) { console.warn('unsubscribeUser:', e); }
+  await addToDNC(email, source || 'manual', { name, uid });
+  await _logMailing('unsubscribe', email, 'מקור: ' + (source||'manual'), auto);
+  const idx = _adminUsersCache.findIndex(u => u.uid === uid || _emailKey(u.email) === _emailKey(email));
+  if (idx >= 0) Object.assign(_adminUsersCache[idx], { emailSubscriptionStatus:'unsubscribed', emailOptOut:true, unsubscribeSource:source||'manual' });
+  return true;
+}
+
+async function resubscribeUser(uid, email) {
+  const payload = {
+    emailSubscriptionStatus: 'active',
+    emailOptOut: false,
+    resubscribeDate: firebase.firestore.FieldValue.serverTimestamp(),
+    unsubscribeSource: null,
+  };
+  try {
+    if (uid) {
+      const s = await db.collection('users').doc(uid).get();
+      if (s.exists) email = email || s.data().email;
+      await db.collection('users').doc(uid).update(payload);
+    } else if (email) {
+      const q = await db.collection('users').where('email','==',_emailKey(email)).limit(5).get();
+      for (const d of q.docs) await d.ref.update(payload);
+    }
+  } catch(e) { console.warn('resubscribeUser:', e); }
+  await removeFromDNC(email);
+  await _logMailing('resubscribe', email, 'הוחזר לרשימת התפוצה', false);
+  const idx = _adminUsersCache.findIndex(u => u.uid === uid || _emailKey(u.email) === _emailKey(email));
+  if (idx >= 0) Object.assign(_adminUsersCache[idx], { emailSubscriptionStatus:'active', emailOptOut:false });
+  return true;
+}
+
+/* ── new-user defaults + DNC carry-over on re-registration ── */
+function _consentDefaults() {
+  return {
+    emailSubscriptionStatus: 'active',
+    emailOptOut: false,
+    unsubscribeDate: null,
+    unsubscribeSource: null,
+    /* future-payment scaffolding (kept alongside the live plan fields) */
+    subscriptionPlan: 'free',
+    subscriptionStatus: 'active',
+    paymentStatus: 'not_paid',
+    referralCount: 0,
+  };
+}
+/* If this email is on the DNC list, a fresh registration must NOT re-open mailing. */
+async function _applyConsentOnRegister(uid, email) {
+  try {
+    const upd = { referralCode: _refCode(uid) };
+    if (await isDNC(email)) {
+      Object.assign(upd, {
+        emailSubscriptionStatus: 'unsubscribed',
+        emailOptOut: true,
+        unsubscribeSource: 'dnc_carryover',
+        unsubscribeDate: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      await _logMailing('dnc_block_register', email, 'נרשם מחדש — נשאר חסום לדיוור', true);
+    }
+    await db.collection('users').doc(uid).update(upd);
+  } catch(e) { console.warn('_applyConsentOnRegister:', e); }
+}
+
+/* ── ADMIN: mailing management ── */
+let _mailFilter = 'all', _mailSearch = '';
+function setMailFilter(f, btn) {
+  _mailFilter = f;
+  document.querySelectorAll('#mail-filter-bar .fb').forEach(b=>b.classList.remove('active'));
+  btn?.classList.add('active');
+  renderMailingAdmin();
+}
+function mailSearchInput(v) { _mailSearch = (v||'').toLowerCase().trim(); renderMailingAdmin(); }
+
+async function renderMailingAdmin() {
+  const body = document.getElementById('mail-tbody');
+  if (!body || !currentUser?.isAdmin) return;
+  body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:14px">טוען...</td></tr>';
+  try {
+    const users = (_adminUsersCache && _adminUsersCache.length) ? _adminUsersCache : await _getUsers();
+    const dnc = await loadDNC(true);
+    let rows = users.filter(u => u.email);
+    if (_mailFilter === 'active') rows = rows.filter(u => !_isUnsubscribed(u) && !dnc.has(_emailKey(u.email)));
+    if (_mailFilter === 'unsub')  rows = rows.filter(u => _isUnsubscribed(u));
+    if (_mailFilter === 'dnc')    rows = rows.filter(u => dnc.has(_emailKey(u.email)));
+    if (_mailSearch) rows = rows.filter(u =>
+      (u.email||'').toLowerCase().includes(_mailSearch) || (u.name||'').toLowerCase().includes(_mailSearch));
+
+    /* counters */
+    const nActive = users.filter(u => u.email && !_isUnsubscribed(u) && !dnc.has(_emailKey(u.email))).length;
+    const nUnsub  = users.filter(u => _isUnsubscribed(u)).length;
+    const set = (id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
+    set('mail-n-active', nActive); set('mail-n-unsub', nUnsub); set('mail-n-dnc', dnc.size);
+
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:14px">אין תוצאות</td></tr>'; return; }
+    body.innerHTML = rows.slice(0,300).map(u => {
+      const off = _isUnsubscribed(u), inDnc = dnc.has(_emailKey(u.email));
+      const d = u.unsubscribeDate?.toDate ? u.unsubscribeDate.toDate().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}) : '—';
+      const srcMap = { link:'קישור במייל', reply:'תשובת מייל', manual:'ידני (מנהל)', dnc_carryover:'DNC — הרשמה חוזרת' };
+      const badge = off
+        ? '<span style="background:rgba(239,68,68,.14);color:var(--re);border:1px solid rgba(239,68,68,.28);border-radius:4px;padding:1px 7px;font-size:10px">הוסר</span>'
+        : '<span style="background:rgba(34,197,94,.12);color:var(--gr);border:1px solid rgba(34,197,94,.25);border-radius:4px;padding:1px 7px;font-size:10px">פעיל</span>';
+      return `<tr>
+        <td>${escHtml(u.name||'—')}</td>
+        <td style="color:var(--bl);font-size:11px">${escHtml(u.email)}</td>
+        <td>${badge}${inDnc?' <span title="ברשימת חסימה קבועה" style="font-size:10px">🚫</span>':''}</td>
+        <td style="color:var(--t3);font-size:10px">${d}</td>
+        <td style="color:var(--t3);font-size:10px">${escHtml(srcMap[u.unsubscribeSource]||u.unsubscribeSource||'—')}</td>
+        <td style="white-space:nowrap">
+          ${off
+            ? `<button onclick="adminMailResub('${escJs(u.uid)}','${escJs(u.email)}')" style="padding:4px 10px;border-radius:5px;font-size:10px;cursor:pointer;border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.1);color:var(--gr);font-family:inherit">↩ החזר לתפוצה</button>`
+            : `<button onclick="adminMailUnsub('${escJs(u.uid)}','${escJs(u.email)}')" style="padding:4px 10px;border-radius:5px;font-size:10px;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--t2);font-family:inherit">🔕 הסר</button>`}
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--re);padding:14px">שגיאה בטעינה</td></tr>';
+  }
+  renderMailingLogs();
+}
+
+async function adminMailUnsub(uid, email) {
+  if (!await customConfirm(`להסיר את ${email} מרשימת התפוצה?\nהמייל ייכנס גם לרשימת החסימה הקבועה.`)) return;
+  await unsubscribeUser(uid || null, email, 'manual', false);
+  await _logAdminAction('הסרה מתפוצה', email);
+  showToast('המשתמש הוסר מרשימת התפוצה 🔕','success');
+  renderMailingAdmin(); _renderUsersTable();
+}
+async function adminMailResub(uid, email) {
+  if (!await customConfirm(`להחזיר את ${email} לרשימת התפוצה?\nהמייל יוסר גם מרשימת החסימה.`)) return;
+  await resubscribeUser(uid || null, email);
+  await _logAdminAction('החזרה לתפוצה', email);
+  showToast('המשתמש הוחזר לרשימת התפוצה ✅','success');
+  renderMailingAdmin(); _renderUsersTable();
+}
+/* One-click handling of a "הסר" reply that arrived in the admin inbox */
+async function adminUnsubByReply() {
+  const inp = document.getElementById('mail-reply-email');
+  const raw = (inp?.value || '').trim();
+  if (!raw) { showToast('הדבק כתובת מייל','error'); return; }
+  /* accepts a bare address or a pasted line like: ישראל <israel@mail.com> הסר */
+  const m = raw.match(/[\w.+-]+@[\w.-]+\.\w+/);
+  if (!m) { showToast('לא זוהתה כתובת מייל תקינה','error'); return; }
+  /* If the whole reply was pasted, confirm it really contains an opt-out word */
+  const low = raw.toLowerCase();
+  const hasWord = UNSUB_WORDS.some(w => low.includes(w.toLowerCase()));
+  if (raw.length > 40 && !hasWord &&
+      !await customConfirm('לא זוהתה מילת הסרה ("הסר" / REMOVE / UNSUBSCRIBE) בטקסט.\nלהסיר בכל זאת?')) return;
+  const email = _emailKey(m[0]);
+  let uid = null;
+  try {
+    const q = await db.collection('users').where('email','==',email).limit(1).get();
+    if (!q.empty) uid = q.docs[0].id;
+  } catch(e){}
+  await unsubscribeUser(uid, email, 'reply', true);
+  await _logAdminAction('הסרה מתשובת מייל', email);
+  if (inp) inp.value = '';
+  showToast(`${email} הוסר וחסום לדיוור 🔕`,'success');
+  renderMailingAdmin(); _renderUsersTable();
+}
+/* Adds an address that never registered (e.g. a lead list) straight to DNC */
+async function adminAddDNCOnly() {
+  const inp = document.getElementById('mail-dnc-email');
+  const raw = (inp?.value || '').trim();
+  const m = raw.match(/[\w.+-]+@[\w.-]+\.\w+/);
+  if (!m) { showToast('כתובת מייל לא תקינה','error'); return; }
+  await addToDNC(m[0], 'manual_dnc', {});
+  await _logMailing('dnc_add', m[0], 'נוסף ידנית לרשימת חסימה', false);
+  await _logAdminAction('הוספה ל-DNC', m[0]);
+  if (inp) inp.value = '';
+  showToast('נוסף לרשימת החסימה 🚫','success');
+  renderMailingAdmin();
+}
+
+async function renderMailingLogs() {
+  const el = document.getElementById('mail-logs');
+  if (!el) return;
+  try {
+    const snap = await db.collection('mailingLogs').orderBy('at','desc').limit(40).get();
+    if (snap.empty) { el.innerHTML = '<div style="color:var(--t3);font-size:11px;padding:8px">אין פעולות רשומות</div>'; return; }
+    const icons = { unsubscribe:'🔕', resubscribe:'✅', dnc_add:'🚫', dnc_remove:'♻️', dnc_block_register:'⛔', blocked_send:'🛑' };
+    const names = { unsubscribe:'הסרה', resubscribe:'החזרה לתפוצה', dnc_add:'הוספה ל-DNC', dnc_remove:'הסרה מ-DNC', dnc_block_register:'נחסם בהרשמה חוזרת', blocked_send:'שליחה נחסמה' };
+    el.innerHTML = snap.docs.map(d=>{
+      const l = d.data();
+      const t = l.at?.toDate ? l.at.toDate().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}) : '';
+      const who = l.automatic ? 'אוטומטי' : (l.byAdmin || 'מנהל');
+      return `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+        <span>${icons[l.action]||'•'}</span>
+        <span style="color:var(--t1)">${names[l.action]||l.action}</span>
+        <span style="color:var(--bl)">${escHtml(l.email||'')}</span>
+        <span style="color:var(--t3);margin-right:auto">${escHtml(who)} · ${t}</span>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--t3);font-size:11px;padding:8px">—</div>'; }
+}
+
+/* One-time migration for accounts created before v23.
+   Only fills fields that are missing — never overwrites a real value,
+   so existing users and their current state are untouched. */
+async function adminBackfillConsent() {
+  if (!currentUser?.isAdmin) return;
+  const st = document.getElementById('backfill-status');
+  if (!await customConfirm('להשלים שדות חסרים לכל המשתמשים הוותיקים?\nלא ידרוס אף ערך קיים.')) return;
+  if (st) st.textContent = 'מעבד...';
+  let touched = 0;
+  try {
+    const users = await _getUsers();
+    for (const u of users) {
+      const upd = {};
+      if (u.emailSubscriptionStatus === undefined)
+        upd.emailSubscriptionStatus = (u.emailOptOut === true) ? 'unsubscribed' : 'active';
+      if (u.emailOptOut === undefined) upd.emailOptOut = false;
+      if (u.subscriptionPlan   === undefined) upd.subscriptionPlan   = _normPlan(u.plan);
+      if (u.subscriptionStatus === undefined) upd.subscriptionStatus = u.planStatus || 'active';
+      if (u.paymentStatus      === undefined) upd.paymentStatus      = _normPlan(u.plan) === 'free' ? 'not_paid' : 'paid';
+      if (u.referralCode === undefined) upd.referralCode = _refCode(u.uid);
+      if (u.referralCount === undefined) upd.referralCount = 0;
+      if (!Object.keys(upd).length) continue;
+      await db.collection('users').doc(u.uid).update(upd);
+      /* an already-opted-out veteran belongs on the permanent block list too */
+      if (upd.emailSubscriptionStatus === 'unsubscribed' && u.email)
+        await addToDNC(u.email, 'backfill', { name:u.name, uid:u.uid });
+      touched++;
+    }
+    _adminUsersCache = [];
+    await refreshAdminUsers().catch(()=>{});
+    if (st) st.textContent = `✅ הושלמו ${touched} משתמשים`;
+    await _logAdminAction('השלמת שדות', `${touched} משתמשים`);
+    showToast(`הושלמו שדות ל-${touched} משתמשים ✅`,'success');
+    renderMailingAdmin();
+  } catch(e) {
+    if (st) st.textContent = '❌ שגיאה';
+    showToast('שגיאה בהשלמת השדות','error');
+  }
 }
 
 /* ── ADMIN: GROWTH & REVENUE DASHBOARD ── */
