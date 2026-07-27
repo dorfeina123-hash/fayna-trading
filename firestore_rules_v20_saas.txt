@@ -1,0 +1,62 @@
+// ═══════════════════════════════════════════════════════════════
+// Fayna Trading v20 — חוקי Firestore לקולקציות החדשות (SaaS)
+// הוסף את הבלוקים האלה בתוך match /databases/{database}/documents
+// ב-Firebase Console → Firestore Database → Rules
+// ═══════════════════════════════════════════════════════════════
+
+// מעקב הפניות: מי הזמין את מי
+// כל משתמש מחובר יכול ליצור את רשומת ההפניה של עצמו,
+// ולקרוא רשומות שבהן הוא המזמין (למסך "הזמן חברים")
+match /referrals/{refereeUid} {
+  allow create: if request.auth != null && request.auth.uid == refereeUid;
+  allow update: if request.auth != null && request.auth.uid == refereeUid;
+  allow read:   if request.auth != null &&
+                (resource.data.referrerUid == request.auth.uid ||
+                 request.auth.uid == refereeUid ||
+                 get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
+}
+
+// מיפוי קוד הזמנה קצר → מזהה המשתמש
+// הקישור האישי חושף רק קוד קצר, לא את מזהה החשבון.
+// קריאה פתוחה (נדרשת בזמן הרשמה, לפני התחברות), כתיבה רק לבעל הקוד.
+match /refCodes/{code} {
+  allow read: if true;
+  allow create, update: if request.auth != null &&
+                        request.resource.data.uid == request.auth.uid;
+}
+
+// מונה קליקים על קישור הזמנה (אנונימי — לפני הרשמה, לפי קוד)
+match /refClicks/{code} {
+  allow read: if request.auth != null;
+  // increment בלבד, גם ללא התחברות (מבקר שפתח קישור)
+  allow create, update: if request.resource.data.keys().hasOnly(['count','last']);
+}
+
+// בקשות חיוב: checkout / ביטול / חידוש / התעניינות
+match /billing_requests/{reqId} {
+  allow create: if true; // גם משתמש לא רשום יכול להשאיר פנייה מעמוד התמחור
+  allow read:   if request.auth != null &&
+                get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+}
+
+// ── v23: רשימת חסימה קבועה (DNC) ──
+// נדרשת קריאה לפני שליחת דיוור ובזמן הרשמה חוזרת.
+match /dnc/{emailKey} {
+  allow read:   if request.auth != null;
+  allow create: if request.auth != null;                       // הסרה עצמית של המשתמש
+  allow update, delete: if request.auth != null &&
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+}
+
+// ── v23: יומן פעולות דיוור (הסרות/החזרות/חסימות) ──
+match /mailingLogs/{logId} {
+  allow create: if request.auth != null;
+  allow read:   if request.auth != null &&
+                get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+}
+
+// הערה: הקולקציות users / settings / waitlist / invites / loginLogs
+// כבר מכוסות בחוקים הקיימים שלך — אין צורך לשנות אותם.
+// שדות חדשים במסמך users (referredBy, source, refRewardsGranted,
+// planCycle, planExpiresAt, planStatus, cancelAtPeriodEnd) נכתבים
+// על ידי המשתמש עצמו — ודא שהחוק הקיים של users מאפשר update לבעל המסמך.
