@@ -1,0 +1,137 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fayna Trading — Firestore Security Rules  (merged, v38)
+//
+// Base: the existing rules, kept as-is. Their isAdmin() reads the e-mail from
+// the auth token rather than from a document — that is both cheaper and safer,
+// so it stays.
+//
+// Added: the collections introduced by the referral system, the mailing/
+// unsubscribe system, billing and the visual builder. Without these the
+// default deny-all at the bottom silently blocks those features.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+             && request.auth.token.email == 'dorfeina123@gmail.com';
+    }
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    // ── users/{uid} : profile + trading data ──
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow create: if isOwner(uid)
+                    && (isAdmin() || request.resource.data.isAdmin == false);
+
+      // A user may edit their own document but never the privileged fields.
+      // One exception: an expired subscription may downgrade ITSELF to 'free'.
+      // Downgrading cannot be abused; upgrading still requires the admin.
+      allow update: if isAdmin()
+        || ( isOwner(uid)
+             && request.resource.data.isAdmin == resource.data.isAdmin
+             && request.resource.data.status  == resource.data.status
+             && request.resource.data.email   == resource.data.email
+             && ( request.resource.data.plan == resource.data.plan
+                  || request.resource.data.plan == 'free' ) );
+
+      allow delete: if isOwner(uid) || isAdmin();
+    }
+
+    // ── invites/{email} ──
+    match /invites/{email} {
+      allow read, delete: if isAdmin()
+                          || (isSignedIn() && request.auth.token.email == email);
+      allow create, update: if isAdmin();
+    }
+
+    // ── settings/{doc} ──
+    match /settings/{doc} {
+      allow read:  if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // ── loginLogs/{id} ──
+    match /loginLogs/{id} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── admin-only ──
+    match /adminNotes/{id} { allow read, write: if isAdmin(); }
+    match /adminLogs/{id}  { allow read, write: if isAdmin(); }
+
+    // ═══════════ added in v38 ═══════════
+
+    // Referrals — who invited whom
+    match /referrals/{refereeUid} {
+      allow create, update: if isOwner(refereeUid);
+      allow read: if isSignedIn()
+                  && ( resource.data.referrerUid == request.auth.uid
+                       || request.auth.uid == refereeUid
+                       || isAdmin() );
+      allow delete: if isOwner(refereeUid) || isAdmin();
+    }
+
+    // Short invite code → uid. Readable before sign-in, because the code has to
+    // be resolved during registration. It exposes nothing beyond a uid.
+    match /refCodes/{code} {
+      allow read: if true;
+      allow create, update: if isSignedIn()
+                            && request.resource.data.uid == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    // Anonymous click counter on an invite link
+    match /refClicks/{code} {
+      allow read: if isSignedIn();
+      allow create, update: if request.resource.data.keys().hasOnly(['count','last']);
+      allow delete: if isAdmin();
+    }
+
+    // Do-Not-Contact list — survives account deletion and re-registration
+    match /dnc/{emailKey} {
+      allow read:   if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Mailing audit trail — append only
+    match /mailingLogs/{id} {
+      allow create: if isSignedIn();
+      allow read:   if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Checkout / cancel / interest requests
+    match /billing_requests/{id} {
+      allow create: if true;          // also from the public pricing page
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Pro waitlist (feature-gate modal)
+    match /waitlist/{id} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Visual builder — published design is read by everyone, written by admin
+    match /site_design/{doc} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+    match /site_design_versions/{id} {
+      allow read:   if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── deny everything not explicitly allowed above ──
+    match /{document=**} { allow read, write: if false; }
+  }
+}
