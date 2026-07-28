@@ -1980,21 +1980,21 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
    flex `order` — no DOM nodes are moved and no existing render functions are
    touched, so desktop/tablet layout and all functionality stay unchanged. */
 @media(max-width:767px){
-  #tp-overview{display:flex;flex-direction:column}
-  #tp-overview>#daily-tip-wrap{order:1}
-  #tp-overview>#command-center{order:2}
-  #tp-overview>.focus-only{order:3}
-  #tp-overview>#overview-top-widgets{order:5}
-  #tp-overview>#acct-topbar{order:6}
-  #tp-overview>#ov-row3{order:7}   /* Recent trades row */
-  #tp-overview>#ov-row4{order:8}   /* Drawdown row */
-  #tp-overview>#mob-more-toggle{order:9;display:flex!important}
-  #tp-overview>.mob-secondary{order:10}
-  #tp-overview:not(.mob-expanded)>.mob-secondary{display:none!important}
+  #tp-overview.active{display:flex;flex-direction:column}
+  #tp-overview.active>#daily-tip-wrap{order:1}
+  #tp-overview.active>#command-center{order:2}
+  #tp-overview.active>.focus-only{order:3}
+  #tp-overview.active>#overview-top-widgets{order:5}
+  #tp-overview.active>#acct-topbar{order:6}
+  #tp-overview.active>#ov-row3{order:7}   /* Recent trades row */
+  #tp-overview.active>#ov-row4{order:8}   /* Drawdown row */
+  #tp-overview.active>#mob-more-toggle{order:9;display:flex!important}
+  #tp-overview.active>.mob-secondary{order:10}
+  #tp-overview.active:not(.mob-expanded)>.mob-secondary{display:none!important}
 
   #mob-more-toggle{width:100%;margin-bottom:12px;padding:11px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border2);color:var(--t1);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;justify-content:center;align-items:center;gap:6px;min-height:44px}
   #mob-more-toggle:active{background:var(--bg3)}
-  body.focus-mode #tp-overview>#mob-more-toggle{display:none!important}
+  body.focus-mode #tp-overview.active>#mob-more-toggle{display:none!important}
 }
 
 /* Small phones (iPhone SE/mini, compact Androids) */
@@ -2173,21 +2173,21 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .ov-sec-arrow{font-size:10px;transition:transform .15s}
 @media(min-width:768px){
   #tp-overview.active{display:flex;flex-direction:column;align-items:stretch}
-  #tp-overview>#daily-tip-wrap{order:1}
-  #tp-overview>#trader-status-today{order:2}
-  #tp-overview>.focus-only{order:3}
-  #tp-overview>#overview-top-widgets{order:4}
-  #tp-overview>#acct-topbar{order:5}
-  #tp-overview>#ov-sec-main-hd{order:6}
-  #tp-overview>#ov-gauges{order:7}
-  #tp-overview>#ov-row2{order:8}
-  #tp-overview>#ov-row3{order:9}
-  #tp-overview>#ov-sec-adv-hd{order:10}
-  #tp-overview>#ai-insight-card{order:11}
-  #tp-overview>#daily-checklist-card{order:12}
-  #tp-overview>.last-import{order:13}
-  #tp-overview>#ov-row4{order:14}
-  #tp-overview>#ov-row5{order:15}
+  #tp-overview.active>#daily-tip-wrap{order:1}
+  #tp-overview.active>#trader-status-today{order:2}
+  #tp-overview.active>.focus-only{order:3}
+  #tp-overview.active>#overview-top-widgets{order:4}
+  #tp-overview.active>#acct-topbar{order:5}
+  #tp-overview.active>#ov-sec-main-hd{order:6}
+  #tp-overview.active>#ov-gauges{order:7}
+  #tp-overview.active>#ov-row2{order:8}
+  #tp-overview.active>#ov-row3{order:9}
+  #tp-overview.active>#ov-sec-adv-hd{order:10}
+  #tp-overview.active>#ai-insight-card{order:11}
+  #tp-overview.active>#daily-checklist-card{order:12}
+  #tp-overview.active>.last-import{order:13}
+  #tp-overview.active>#ov-row4{order:14}
+  #tp-overview.active>#ov-row5{order:15}
   #tp-overview.ov-main-closed>#ov-gauges,
   #tp-overview.ov-main-closed>#ov-row2,
   #tp-overview.ov-main-closed>#ov-row3{display:none!important}
