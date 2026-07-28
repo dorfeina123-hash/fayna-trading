@@ -12,6 +12,37 @@
 <meta name="color-scheme" content="dark light">
 <meta name="format-detection" content="telephone=no">
 <meta name="description" content="Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ: תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים ומאמן AI.">
+<!-- v41 — social sharing + structured data (agent: SEO / growth) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fayna Trading">
+<meta property="og:locale" content="he_IL">
+<meta property="og:title" content="Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ">
+<meta property="og:description" content="תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים בזמן אמת ומאמן AI. הכל במקום אחד.">
+<meta property="og:image" content="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg">
+<meta property="og:url" content="https://dorfeina123-hash.github.io/fayna-trading/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fayna Trading — יומן מסחר מקצועי">
+<meta name="twitter:description" content="תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים ומאמן AI לסוחרי פרופ.">
+<meta name="twitter:image" content="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg">
+<link rel="canonical" href="https://dorfeina123-hash.github.io/fayna-trading/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Fayna Trading",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "inLanguage": "he",
+  "url": "https://dorfeina123-hash.github.io/fayna-trading/",
+  "description": "יומן מסחר מקצועי לסוחרי פרופ: תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים בזמן אמת ומאמן AI.",
+  "offers": [
+    { "@type": "Offer", "name": "Free",    "price": "0",  "priceCurrency": "USD" },
+    { "@type": "Offer", "name": "Basic",   "price": "9",  "priceCurrency": "USD" },
+    { "@type": "Offer", "name": "Pro",     "price": "29", "priceCurrency": "USD" },
+    { "@type": "Offer", "name": "Premium", "price": "49", "priceCurrency": "USD" }
+  ]
+}
+</script>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/jpeg" href="fayna_logo.jpg">
 <link rel="apple-touch-icon" href="fayna_logo.jpg">
@@ -6015,6 +6046,20 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <div style="font-size:11px;color:var(--t3);margin-bottom:10px">
       כל סוכן אחראי לתחום אחד, מתעורר לפי תזמון או אירוע, ומדווח כאן. סוכן שנכשל שוב ושוב מבודד אוטומטית והמפקח מנסה לשקם אותו.
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;
+                background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:9px;padding:11px 13px">
+      <span style="font-size:12px;font-weight:600;color:var(--gr)">📧 סיכום יומי למייל</span>
+      <label style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:6px">
+        שעת שליחה
+        <select onchange="setDigestHour(this.value)" id="digest-hour"
+                style="padding:5px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--t1);font-family:inherit;font-size:11px">
+          <option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option>
+          <option value="21" selected>21:00</option><option value="22">22:00</option><option value="23">23:00</option>
+        </select>
+      </label>
+      <button class="fb" onclick="sendDigestNow()" style="padding:6px 13px;font-size:11px">שלח עכשיו לבדיקה</button>
+      <span style="font-size:10.5px;color:var(--t3);margin-right:auto">נשלח אל dorfeina123@gmail.com</span>
     </div>
     <div id="agent-board"><div style="font-size:11px;color:var(--t3);padding:8px">טוען…</div></div>
   </div>
@@ -22799,7 +22844,19 @@ function renderMySub() {
    Every outbound email passes through canEmail() first.
    ══════════════════════════════════════════════════════════════════ */
 
-const UNSUB_WORDS = ['הסר','הסירו','להסיר','remove','unsubscribe','stop','אנסאב'];
+/* v42 — every phrasing a Hebrew or English speaker actually uses when they
+   want out. Matching is substring-based, so 'הסר אותי מהרשימה' matches 'הסר'. */
+const UNSUB_WORDS = [
+  'הסר','הסירו','להסיר','תסיר','תסירו','הסירני',
+  'אל תשלח','אל תשלחו','לא לשלוח','תפסיק','הפסק','הפסיקו','עצור','די',
+  'לא מעוניין','לא מעוניינת','לא רוצה לקבל','מבקש להסיר','מבקשת להסיר',
+  'אנסאב','הורד אותי','תוריד אותי',
+  'unsubscribe','remove me','remove','stop','opt out','optout','take me off',
+];
+function looksLikeUnsubRequest(text) {
+  const t = String(text || '').toLowerCase();
+  return UNSUB_WORDS.some(w => t.includes(w.toLowerCase()));
+}
 function _emailKey(email) { return (email||'').trim().toLowerCase().replace(/[^a-z0-9@._+-]/g,''); }
 
 /* ── consent state of a single user object ── */
@@ -22866,11 +22923,74 @@ async function _logMailing(action, email, details, auto) {
   } catch(e) { console.warn('_logMailing:', e); }
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   v42 — a single place that tells the admin an unsubscribe happened.
+   Previously only the e-mail-link path notified anyone, so removals made
+   from a reply or from the admin panel left no trace on screen.
+   ══════════════════════════════════════════════════════════════════════ */
+const UNSUB_SOURCE_LABEL = {
+  link: 'לחיצה על קישור במייל',
+  reply: 'תשובה למייל',
+  manual: 'הסרה ידנית על ידי מנהל',
+  manual_dnc: 'חסימה ידנית',
+  dnc_carryover: 'הרשמה חוזרת של כתובת חסומה',
+  account_deleted: 'מחיקת חשבון',
+  backfill: 'השלמת נתונים ותיקים',
+};
+
+function _notifyAdminUnsub(info) {
+  const when = new Date().toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' });
+  const src  = UNSUB_SOURCE_LABEL[info.source] || info.source || '—';
+
+  /* 1 — in-app notification, visible in the bell */
+  try {
+    addNotification('system',
+      (info.duplicate ? '🔁 בקשת הסרה חוזרת' : '🔕 משתמש הוסר מרשימת התפוצה'),
+      (info.name ? info.name + ' · ' : '') + info.email + ' · ' + src);
+    renderNotifBell();
+  } catch (e) {}
+
+  /* 2 — e-mail to the admin. Fire-and-forget: the unsubscribe itself already
+         succeeded and must never be rolled back because a notice failed. */
+  try {
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: '8ef4276d-2519-4d4f-8a84-b84cd6f46419',
+        subject: (info.duplicate ? '🔁 בקשת הסרה חוזרת: ' : '🔕 הסרה מרשימת תפוצה: ') + info.email,
+        from_name: 'Fayna Trading — Unsubscribe',
+        html: `<div dir="rtl" style="font-family:Arial,sans-serif;padding:20px;max-width:520px">
+          <h3 style="color:#c75f5f;margin:0 0 14px">${info.duplicate ? '🔁 בקשת הסרה חוזרת' : '🔕 משתמש הוסר מרשימת התפוצה'}</h3>
+          <table style="width:100%;border-collapse:collapse;font-size:14px">
+            <tr><td style="padding:8px;color:#666;width:110px">שם</td><td style="padding:8px;font-weight:600">${escHtml(info.name || '—')}</td></tr>
+            <tr><td style="padding:8px;color:#666">אימייל</td><td style="padding:8px">${escHtml(info.email || '—')}</td></tr>
+            <tr><td style="padding:8px;color:#666">מועד הבקשה</td><td style="padding:8px">${when}</td></tr>
+            <tr><td style="padding:8px;color:#666">אופן הבקשה</td><td style="padding:8px">${escHtml(src)}</td></tr>
+            <tr><td style="padding:8px;color:#666">סטטוס</td><td style="padding:8px;font-weight:700;color:#3d9970">${escHtml(info.status)}</td></tr>
+          </table>
+          <p style="font-size:11px;color:#999;margin-top:16px">
+            הכתובת נוספה לרשימת החסימה הקבועה ולא תקבל דיוור גם אם תירשם מחדש.
+          </p></div>`,
+      }),
+    }).catch(() => {});
+  } catch (e) {}
+}
+
 /* ── THE GATE — every send path calls this ── */
-async function canEmail(user) {
+/* v42 — consent applies to MARKETING mail only.
+   CAN-SPAM and GDPR both require transactional mail to keep flowing: a
+   password reset, a receipt or an expiry warning is not something a user can
+   unsubscribe from, and withholding it would be the actual violation.
+   kind: 'marketing' (default, requires consent) | 'transactional' (always allowed) */
+const TRANSACTIONAL_KINDS = new Set(['password_reset','receipt','invoice','security','account','expiry']);
+
+async function canEmail(user, kind) {
   if (!user || !user.email) return false;
-  if (_isUnsubscribed(user)) return false;
   if (user.status === 'blocked' || user.status === 'suspended') return false;
+  if (kind && TRANSACTIONAL_KINDS.has(kind)) return true;      // transactional — always
+  if (_isUnsubscribed(user)) return false;
   if (await isDNC(user.email)) return false;
   return true;
 }
@@ -22889,6 +23009,14 @@ async function filterEmailable(users) {
 
 /* ── core state changes ── */
 async function unsubscribeUser(uid, email, source, auto) {
+  /* v42 — idempotent. A second click on the same link, or a duplicate reply,
+     must not write again or create a second audit entry. */
+  const already = await isDNC(email);
+  if (already) {
+    await _logMailing('unsubscribe_duplicate', email, 'כבר היה מוסר — לא בוצעה פעולה', auto);
+    _notifyAdminUnsub({ email, name: '', source, status: 'כבר היה מוסר', duplicate: true });
+    return 'already';
+  }
   const payload = {
     emailSubscriptionStatus: 'unsubscribed',
     emailOptOut: true,                                   // legacy mirror
@@ -22908,6 +23036,7 @@ async function unsubscribeUser(uid, email, source, auto) {
   } catch(e) { console.warn('unsubscribeUser:', e); }
   await addToDNC(email, source || 'manual', { name, uid });
   await _logMailing('unsubscribe', email, 'מקור: ' + (source||'manual'), auto);
+  _notifyAdminUnsub({ email, name, source, status: 'הוסר בהצלחה', duplicate: false });
   const idx = _adminUsersCache.findIndex(u => u.uid === uid || _emailKey(u.email) === _emailKey(email));
   if (idx >= 0) Object.assign(_adminUsersCache[idx], { emailSubscriptionStatus:'unsubscribed', emailOptOut:true, unsubscribeSource:source||'manual' });
   return true;
@@ -23002,7 +23131,7 @@ async function renderMailingAdmin() {
     body.innerHTML = rows.slice(0,300).map(u => {
       const off = _isUnsubscribed(u), inDnc = dnc.has(_emailKey(u.email));
       const d = u.unsubscribeDate?.toDate ? u.unsubscribeDate.toDate().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}) : '—';
-      const srcMap = { link:'קישור במייל', reply:'תשובת מייל', manual:'ידני (מנהל)', dnc_carryover:'DNC — הרשמה חוזרת' };
+      const srcMap = (typeof UNSUB_SOURCE_LABEL !== 'undefined') ? UNSUB_SOURCE_LABEL : {};
       const badge = off
         ? '<span style="background:rgba(239,68,68,.14);color:var(--re);border:1px solid rgba(239,68,68,.28);border-radius:4px;padding:1px 7px;font-size:10px">הוסר</span>'
         : '<span style="background:rgba(34,197,94,.12);color:var(--gr);border:1px solid rgba(34,197,94,.25);border-radius:4px;padding:1px 7px;font-size:10px">פעיל</span>';
@@ -23033,9 +23162,24 @@ async function adminMailUnsub(uid, email) {
   renderMailingAdmin(); _renderUsersTable();
 }
 async function adminMailResub(uid, email) {
-  if (!await customConfirm(`להחזיר את ${email} לרשימת התפוצה?\nהמייל יוסר גם מרשימת החסימה.`)) return;
+  /* v42 — a user who asked to be removed may only be put back with their own
+     explicit consent, and the record of that consent has to be stored.
+     Re-adding someone without it is precisely what the regulations forbid. */
+  if (!await customConfirm(
+      `להחזיר את ${email} לרשימת התפוצה?\n\n` +
+      `החזרה מותרת אך ורק אם המשתמש ביקש זאת במפורש.\n` +
+      `הפעולה תתועד עם שמך ועם מקור ההסכמה.`)) return;
+
+  const proof = await customPrompt(
+    'כיצד התקבלה ההסכמה? (למשל: "מייל מהמשתמש 29/07", "בקשה טלפונית")', '');
+  if (!proof || proof.trim().length < 4) {
+    showToast('נדרש תיעוד הסכמה — הפעולה בוטלה', 'error');
+    return;
+  }
+
   await resubscribeUser(uid || null, email);
-  await _logAdminAction('החזרה לתפוצה', email);
+  await _logMailing('resubscribe_consent', email, 'הסכמה: ' + proof.trim(), false);
+  await _logAdminAction('החזרה לתפוצה', email + ' · הסכמה: ' + proof.trim());
   showToast('המשתמש הוחזר לרשימת התפוצה ✅','success');
   renderMailingAdmin(); _renderUsersTable();
 }
@@ -23048,8 +23192,7 @@ async function adminUnsubByReply() {
   const m = raw.match(/[\w.+-]+@[\w.-]+\.\w+/);
   if (!m) { showToast('לא זוהתה כתובת מייל תקינה','error'); return; }
   /* If the whole reply was pasted, confirm it really contains an opt-out word */
-  const low = raw.toLowerCase();
-  const hasWord = UNSUB_WORDS.some(w => low.includes(w.toLowerCase()));
+  const hasWord = looksLikeUnsubRequest(raw);
   if (raw.length > 40 && !hasWord &&
       !await customConfirm('לא זוהתה מילת הסרה ("הסר" / REMOVE / UNSUBSCRIBE) בטקסט.\nלהסיר בכל זאת?')) return;
   const email = _emailKey(m[0]);
@@ -24278,6 +24421,180 @@ Agents.register({
   },
 });
 
+
+/* ── 8. DAILY DIGEST — the report that arrives on its own ──
+   composeDigest() is deliberately pure: it reads state and returns
+   { subject, html, text } without touching the network. The same function can
+   therefore be called from a Cloud Function later without a single change —
+   only the transport below would be swapped. */
+async function composeDigest() {
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('he-IL', { weekday:'long', day:'numeric', month:'long' });
+
+  /* ── trading ── */
+  const s = _computeTodayStats();
+  const wk = (typeof _ccWeekStats === 'function') ? _ccWeekStats() : { net:0, count:0, winPct:0 };
+  let risk = null; try { risk = _computeRiskDashboard(); } catch (e) {}
+  let ai = null;   try { ai = _aiAnalyze(); } catch (e) {}
+
+  /* ── system (admin only) ── */
+  let sys = null;
+  if (currentUser?.isAdmin && typeof db !== 'undefined') {
+    try {
+      const users = await _getUsers();
+      const now = Date.now();
+      const reg = u => u.registeredAt?.toDate ? u.registeredAt.toDate().getTime() : 0;
+      const seen = u => (u.lastSeen || u.lastLogin)?.toDate ? (u.lastSeen || u.lastLogin).toDate().getTime() : 0;
+      sys = {
+        total:   users.length,
+        new24:   users.filter(u => now - reg(u) < 864e5).length,
+        active24:users.filter(u => now - seen(u) < 864e5).length,
+        paid:    users.filter(u => _normPlan(u.plan) !== 'free' && !u.isAdmin).length,
+        unsub:   users.filter(u => _isUnsubscribed(u)).length,
+        viaRef:  users.filter(u => u.source === 'referral').length,
+      };
+    } catch (e) {}
+  }
+
+  /* ── agent health ── */
+  const agents = (typeof Agents !== 'undefined') ? Agents.list() : [];
+  const down   = agents.filter(a => a.state.quarantined);
+  const errs   = (typeof Agents !== 'undefined')
+    ? Agents.logs().filter(l => l.level === 'error' && Date.now() - l.t < 864e5) : [];
+
+  const money = v => (v < 0 ? '-' : '') + '$' + Math.abs(v).toFixed(0);
+  const row = (label, value, colour) =>
+    `<tr><td style="padding:9px 0;border-bottom:1px solid #1e293b;color:#94a3b8;font-size:13px">${label}</td>
+         <td style="padding:9px 0;border-bottom:1px solid #1e293b;text-align:left;font-weight:700;font-size:14px;color:${colour || '#e2e8f0'}">${value}</td></tr>`;
+
+  const pnlColour = s.netPnl > 0 ? '#22c55e' : s.netPnl < 0 ? '#f56565' : '#e2e8f0';
+
+  let html = `<div dir="rtl" style="font-family:Arial,'Arial Hebrew',sans-serif;background:#0f172a;color:#e2e8f0;padding:0;margin:0">
+  <div style="max-width:560px;margin:0 auto;background:#0f172a">
+    <div style="background:linear-gradient(135deg,#0b1220,#1b2540);padding:26px 28px;border-bottom:2px solid #22c55e">
+      <div style="font-size:20px;font-weight:800;color:#22c55e">Fayna Trading</div>
+      <div style="font-size:13px;color:#94a3b8;margin-top:3px">סיכום יומי · ${dateStr}</div>
+    </div>
+    <div style="padding:24px 28px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:10px">📊 המסחר היום</div>
+      <table style="width:100%;border-collapse:collapse">
+        ${row('P&L נטו', (s.netPnl >= 0 ? '+' : '') + money(s.netPnl), pnlColour)}
+        ${row('עסקאות', s.tradeCount)}
+        ${row('אחוז הצלחה', Math.round(s.winPct) + '%')}
+        ${risk?.today?.limit ? row('ניצול סיכון יומי', risk.today.pct + '%',
+            risk.today.pct >= 80 ? '#f56565' : '#22c55e') : ''}
+        ${s.consecLosses >= 2 ? row('הפסדים ברצף', s.consecLosses, '#eab308') : ''}
+      </table>
+
+      <div style="font-size:15px;font-weight:700;margin:22px 0 10px">📈 השבוע</div>
+      <table style="width:100%;border-collapse:collapse">
+        ${row('P&L שבועי', (wk.net >= 0 ? '+' : '') + money(wk.net), wk.net >= 0 ? '#22c55e' : '#f56565')}
+        ${row('עסקאות השבוע', wk.count)}
+        ${row('אחוז הצלחה', wk.winPct + '%')}
+      </table>`;
+
+  if (ai && ai.findings.length) {
+    html += `<div style="font-size:15px;font-weight:700;margin:22px 0 10px">🤖 מה ה-AI זיהה</div>
+      <div style="background:#1b2540;border-right:3px solid #eab308;border-radius:0 8px 8px 0;padding:12px 14px">
+        ${ai.findings.slice(0,4).map(f =>
+          `<div style="font-size:13px;color:#cbd5e1;padding:4px 0">${f.icon} ${escHtml(f.txt)}</div>`).join('')}
+      </div>`;
+  }
+
+  if (sys) {
+    html += `<div style="font-size:15px;font-weight:700;margin:22px 0 10px">👥 המערכת</div>
+      <table style="width:100%;border-collapse:collapse">
+        ${row('סה"כ משתמשים', sys.total)}
+        ${row('נרשמו ב-24 שעות', '+' + sys.new24, sys.new24 ? '#22c55e' : null)}
+        ${row('פעילים ב-24 שעות', sys.active24)}
+        ${row('מנויים בתשלום', sys.paid, '#22c55e')}
+        ${row('הגיעו דרך הפניות', sys.viaRef)}
+        ${row('הוסרו מדיוור', sys.unsub, sys.unsub ? '#eab308' : null)}
+      </table>`;
+  }
+
+  html += `<div style="font-size:15px;font-weight:700;margin:22px 0 10px">🤖 מצב הסוכנים</div>
+    <div style="background:#1b2540;border-radius:8px;padding:12px 14px;font-size:13px;color:#cbd5e1">
+      ${down.length
+        ? '⚠️ דורשים טיפול: ' + down.map(a => escHtml(a.label)).join(', ')
+        : '✅ כל ' + agents.length + ' הסוכנים תקינים'}
+      ${errs.length ? '<div style="margin-top:6px;color:#eab308">' + errs.length + ' שגיאות ב-24 שעות</div>' : ''}
+    </div>
+
+    <div style="margin-top:24px;padding-top:14px;border-top:1px solid #1e293b;text-align:center">
+      <a href="${typeof PUBLIC_SITE_URL !== 'undefined' ? PUBLIC_SITE_URL : '#'}"
+         style="display:inline-block;padding:11px 28px;background:#22c55e;color:#04170c;
+                text-decoration:none;border-radius:8px;font-weight:700;font-size:14px">פתח את המערכת</a>
+      <p style="font-size:11px;color:#64748b;margin:14px 0 0">
+        הפסקת קבלת הסיכום היומי — פאנל ניהול ← סוכנים ← השבת "סוכן דוח יומי"
+      </p>
+    </div>
+  </div></div></div>`;
+
+  const text = `סיכום ${dateStr}
+P&L היום: ${(s.netPnl >= 0 ? '+' : '') + money(s.netPnl)} · ${s.tradeCount} עסקאות · ${Math.round(s.winPct)}% הצלחה
+שבועי: ${(wk.net >= 0 ? '+' : '') + money(wk.net)} · ${wk.count} עסקאות`;
+
+  return { subject: `📊 סיכום יומי — ${(s.netPnl >= 0 ? '+' : '') + money(s.netPnl)} · ${s.tradeCount} עסקאות`, html, text };
+}
+
+Agents.register({
+  id: 'digest',
+  label: 'סוכן דוח יומי',
+  desc: 'מרכיב ושולח סיכום יומי למייל בסוף יום המסחר',
+  caps: ['data:read', 'notify'],
+  every: 30 * 60_000,
+  runWhenHidden: true,
+  async run(ctx) {
+    if (!ctx.user) return;
+
+    const hour = parseInt(localStorage.getItem('fx_digest_hour') || '21', 10);
+    const key  = 'fx_digest_' + new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(key)) return { summary: 'נשלח כבר היום' };
+    if (new Date().getHours() < hour) return { summary: 'ממתין לשעה ' + hour + ':00' };
+
+    const digest = await composeDigest();
+
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: '8ef4276d-2519-4d4f-8a84-b84cd6f46419',
+        subject: digest.subject,
+        from_name: 'Fayna Trading — סיכום יומי',
+        html: digest.html,
+      }),
+    });
+    if (!res.ok) throw new Error('שליחה נכשלה: ' + res.status);   // the runtime will retry
+
+    localStorage.setItem(key, '1');
+    ctx.notify('system', '📧 הסיכום היומי נשלח', digest.subject);
+    return { summary: 'נשלח למייל' };
+  },
+});
+
+/* manual trigger — used by the admin panel button */
+async function sendDigestNow() {
+  try {
+    const d = await composeDigest();
+    const r = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: '8ef4276d-2519-4d4f-8a84-b84cd6f46419',
+        subject: '[בדיקה] ' + d.subject,
+        from_name: 'Fayna Trading — סיכום יומי',
+        html: d.html,
+      }),
+    });
+    showToast(r.ok ? 'הסיכום נשלח למייל ✅' : 'השליחה נכשלה ❌', r.ok ? 'success' : 'error');
+  } catch (e) { showToast('שגיאה: ' + e.message, 'error'); }
+}
+function setDigestHour(h) {
+  localStorage.setItem('fx_digest_hour', String(h));
+  showToast('הסיכום יישלח מ-' + h + ':00', 'success');
+}
+
 /* ── wiring: turn existing app events into agent triggers ── */
 (function _wireAgentEvents() {
   /* a trade edit should wake the risk and integrity agents immediately */
@@ -24298,6 +24615,8 @@ Agents.register({
         Agents.start();
         Agents.publish('user:login', {});
         Agents.renderBoard();
+        const dh = document.getElementById('digest-hour');
+        if (dh) dh.value = localStorage.getItem('fx_digest_hour') || '21';
       } catch (e) { console.warn('agents start:', e); }
     }, 4000);
   });
