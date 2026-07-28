@@ -328,7 +328,7 @@ body{background:var(--bg0);color:var(--t1);font-family:'Heebo',-apple-system,Bli
 /* grab handle so the drawer reads as swipeable */
 .mob-nav-drawer::before{content:'';position:absolute;top:50%;right:5px;width:4px;height:44px;
   border-radius:3px;background:var(--border2);transform:translateY(-50%);pointer-events:none}
-body.drawer-open{overflow:hidden;touch-action:none}
+body.drawer-open{overflow:hidden;overscroll-behavior:contain}
 .mob-nav-title{padding:12px 16px 8px;font-size:13px;font-weight:700;color:var(--t1);border-bottom:1px solid var(--border);margin-bottom:8px}
 .mob-nt{display:block;width:100%;text-align:right;padding:11px 18px;border:none;background:transparent;color:var(--t2);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s}
 .mob-nt:hover,.mob-nt.active{background:var(--bg3);color:var(--t1)}
@@ -2080,7 +2080,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
           <svg id="remember-check" width="11" height="11" viewBox="0 0 11 11" style="display:none"><polyline points="1.5,5.5 4.5,8.5 9.5,2.5" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         </div>
         <input type="checkbox" id="remember-me" class="sr-only" onchange="_updateRememberLabel()">
-        <span id="remember-label" style="font-size:12px;color:var(--t2);user-select:none">זכור את האימייל שלי</span>
+        <span id="remember-label" style="font-size:12px;color:var(--t2);user-select:none">השאר אותי מחובר</span>
       </label>
       <button class="auth-submit" type="submit" id="login-btn">כניסה למערכת</button>
       </form>
@@ -13472,6 +13472,14 @@ function sw(name,btn){
   if(btn) btn.classList.add('active');
   _updateNavLabel(name);
   _updateSidenavActive(name);
+  /* v33: always leave mobile navigation in a clean state after a tab switch —
+     a drawer left open froze the page because of body.drawer-open. */
+  try { mobNavClose(); } catch(e){}
+  try { closeNavMenu(); } catch(e){}
+  try { closeSidePanel(); } catch(e){}
+  try { document.getElementById('hdr-more')?.classList.remove('open'); } catch(e){}
+  try { document.body.classList.remove('drawer-open'); } catch(e){}
+  try { _syncBottomNav(name); } catch(e){}
   // Reset side panel button active states when switching to a main-nav tab
   if (typeof _sidePanelTabs !== 'undefined') {
     _sidePanelTabs.forEach(t => { const b=document.getElementById('sp-btn-'+t); if(b) b.classList.remove('active'); });
@@ -14951,9 +14959,16 @@ try {
   firebase.initializeApp(FB_CONFIG);
   auth = firebase.auth();
   db   = firebase.firestore();
-  /* v26: session-scoped auth. The token is held in sessionStorage only, so closing
-     the browser ends the session and nobody is signed in automatically on return. */
-  auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(()=>{});
+  /* v34: honour the user's "remember me" choice from the previous visit.
+     Remembered → LOCAL (auto sign-in on return); otherwise SESSION. */
+  try {
+    const _stay = localStorage.getItem('ft_stay_signed_in') === '1';
+    auth.setPersistence(_stay
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION).catch(()=>{});
+  } catch(e) {
+    auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(()=>{});
+  }
 } catch (_fbInitErr) {
   console.warn('⚠️ Firebase unavailable — running in local-only mode (login/cloud-sync disabled):', _fbInitErr.message);
   window.firebase = window.firebase || { firestore: { FieldValue: { serverTimestamp: () => null } } };
@@ -15140,8 +15155,8 @@ function initAuth() {
             await db.collection('users').doc(fbUser.uid).set(adminData); _invalidateUsersCache();
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
-            if (_manualLogin) { _manualLogin = false; showApp(); }
-            else { _showWelcomeBack(); }
+            /* v33: a restored session means a page reload — go straight in. */
+            _manualLogin = false; showApp();
             return;
           }
           await auth.signOut();
@@ -15155,8 +15170,8 @@ function initAuth() {
           return;
         }
         loadSettingsFromFirestore().catch(()=>{});
-        if (_manualLogin) { _manualLogin = false; showApp(); }
-        else { _showWelcomeBack(); }
+        /* v33: a restored session means a page reload — go straight in. */
+        _manualLogin = false; showApp();
       } catch(e) {
         clearTimeout(_fsTimer);
         console.error('Auth state error:', e);
@@ -15308,7 +15323,7 @@ async function doRegister() {
 function _updateRememberLabel() {
   const c   = document.getElementById('remember-me');
   /* unchecking it should immediately drop the stored address */
-  try { if (c && !c.checked) localStorage.removeItem(REMEMBER_KEY); } catch(e){}
+  try { if (c && !c.checked) { localStorage.removeItem(REMEMBER_KEY); localStorage.removeItem('ft_stay_signed_in'); } } catch(e){}
   const box = document.getElementById('remember-box');
   const chk = document.getElementById('remember-check');
   if (!c || !box || !chk) return;
@@ -15356,6 +15371,7 @@ function _initRememberMe() {
 /* Removes every trace of an authenticated session from this device. */
 async function _purgeAuthState() {
   try { sessionStorage.clear(); } catch(e){}
+  try { localStorage.removeItem('ft_stay_signed_in'); } catch(e){}
   try {
     Object.keys(localStorage)
       .filter(k => k.startsWith('firebase:auth') || k.startsWith('firebaseLocalStorage'))
@@ -15384,14 +15400,22 @@ async function doLogin(ev) {
   }, 10000);
 
   try {
-    /* Always SESSION: the token lives only as long as the browser session,
-       so returning users are never signed in automatically. */
-    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    /* v34: the checkbox decides how long the session lives.
+       checked  → LOCAL   : stays signed in after the browser is closed
+       unchecked→ SESSION : ends with the browser */
+    await auth.setPersistence(remember
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION);
     _manualLogin = true; // user pressed login → skip welcome screen
     await auth.signInWithEmailAndPassword(email, pass);
     clearTimeout(_loginTimer);
-    if (remember) localStorage.setItem(REMEMBER_KEY, email);
-    else          localStorage.removeItem(REMEMBER_KEY);
+    if (remember) {
+      localStorage.setItem(REMEMBER_KEY, email);
+      localStorage.setItem('ft_stay_signed_in', '1');
+    } else {
+      localStorage.removeItem(REMEMBER_KEY);
+      localStorage.removeItem('ft_stay_signed_in');
+    }
     // onAuthStateChanged handles the rest
   } catch(e) {
     clearTimeout(_loginTimer);
@@ -20429,7 +20453,14 @@ function _togglePwd(inputId, btnId) {
 // ════════════════════════════════════════════════════
 async function doGoogleAuth() {
   _manualLogin = true; // Google login is explicit → skip welcome screen
-  try { await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION); } catch(e){}
+  try {
+    const _stay = document.getElementById('remember-me')?.checked
+               || localStorage.getItem('ft_stay_signed_in') === '1';
+    if (_stay) localStorage.setItem('ft_stay_signed_in', '1');
+    await auth.setPersistence(_stay
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION);
+  } catch(e){}
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
   const loginMsg = document.getElementById('login-msg');
