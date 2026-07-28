@@ -2490,8 +2490,9 @@ body.a11y-noanim,body.a11y-noanim *{animation:none!important;transition:none!imp
 *,*::before,*::after{min-width:0}                 /* stops flex/grid children forcing overflow */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
 html,body{max-width:100%;overflow-x:clip}
-img,canvas,svg,video,iframe{max-width:100%;height:auto}
-canvas{height:auto!important}
+img,svg,video,iframe{max-width:100%;height:auto}
+/* Chart.js owns canvas dimensions — only cap it, never override its height */
+canvas{max-width:100%!important}
 table{max-width:100%}
 pre,code{white-space:pre-wrap;word-break:break-word}
 /* long unbroken strings (emails, symbols, URLs) must never widen the page */
@@ -2696,6 +2697,53 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   .cc-chart-wrap{height:140px!important}
   .mob-bottom-nav{height:calc(48px + env(safe-area-inset-bottom,0px))}
   .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))!important}
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   v28 — MOBILE CONTAINMENT
+   Nothing inside the app shell may exceed the viewport. Scoped strictly to
+   ≤767px, so the desktop layout is byte-for-byte unchanged.
+   ══════════════════════════════════════════════════════════════════════ */
+@media(max-width:767px){
+  /* the shell itself */
+  .app-layout{width:100%;max-width:100%;overflow-x:hidden}
+  .app-layout>.main{overflow-x:hidden;max-width:100%;width:100%}
+  .tp{max-width:100%}
+  .tp.active{width:100%;max-width:100%}
+
+  /* every grid/flex child must be allowed to shrink */
+  .cc-top>*,.cc-mid>*,.cc-bot>*,.cc-side>*,.mrow>*,.zm-row>*,
+  .zg-2>*,.zg-3>*,.zg-3r>*,.g2>*,.g3>*,.ch>*,.gz-row>*,.pa-layout>*{min-width:0;max-width:100%}
+  .zcl,.card,.mc,.cc-kpi,.cc-mini,.pa-card,.admin-section,.price-card,.ach{
+    min-width:0;max-width:100%;box-sizing:border-box}
+
+  /* charts: the wrapper defines the size, the canvas fills it */
+  .cc-chart-wrap,.chart-h2,.radar-wrap,.adm-chart-wrap{width:100%;max-width:100%;overflow:hidden}
+  .cc-chart-wrap>canvas,.chart-h2>canvas,.radar-wrap>canvas,.adm-chart-wrap>canvas,
+  .zcl canvas,.card canvas{width:100%!important;max-width:100%!important;display:block}
+
+  /* the ticker strip never widens the page */
+  #index-banner{max-width:100vw;overflow:hidden}
+  #index-banner iframe{max-width:100vw!important}
+
+  /* header icon buttons stay compact — the 44px rule is for content buttons */
+  .topnav button,.topnav a{min-height:34px!important;min-width:34px!important}
+  .topnav #notif-bell-btn,.topnav #nav-save-btn,.topnav #nav-undo-btn,
+  .topnav .hdr-more-btn,.topnav .mob-menu-btn{width:32px!important;height:32px!important;
+    min-width:32px!important;min-height:32px!important;padding:0!important;font-size:14px!important}
+  .topnav #ref-chip{height:30px!important;min-height:30px!important;padding:0 8px!important;font-size:11px!important}
+  .nav-user-badge{max-width:86px;padding:2px 6px}
+  .nav-avatar{width:24px!important;height:24px!important}
+  .logo-icon,.logo-icon img{width:30px!important;height:30px!important}
+  .topnav{gap:4px!important;overflow:hidden}
+
+  /* long text must wrap rather than push */
+  .cc-kpi-l,.cc-kpi-s,.cc-mini-t,.cc-mini-s,.mc-l,.zcl-title{
+    white-space:normal;overflow-wrap:anywhere}
+  .cc-kpi-v,.mc-v,.zm-val{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* daily tip / banners */
+  #daily-tip-wrap,#daily-tip-wrap>*{max-width:100%;box-sizing:border-box}
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -3282,12 +3330,8 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div id="heatmap-grid"></div>
     </div>
 
-    <!-- Daily cumulative P&L -->
-    <div class="zcl anim-up-3">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>P&L נטו מצטבר</div></div>
-      <div style="height:240px;position:relative"><canvas id="equityOvChart" aria-label="P&L מצטבר"></canvas></div>
-      <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:4px">גלגלת עכבר להגדלה · גרירה לתזוזה</div>
-    </div>
+        <!-- v29: duplicate Equity chart removed — Command Center owns this view -->
+
   </div>
 
   <!-- ROW 3: Daily bars + Recent trades + Account balance -->
@@ -3298,11 +3342,8 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div style="height:180px;position:relative"><canvas id="dailyOvChart" aria-label="P&L יומי"></canvas></div>
     </div>
 
-    <!-- Recent trades -->
-    <div class="zcl anim-up-2">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>עסקאות אחרונות</div></div>
-      <div id="ov-recent"></div>
-    </div>
+        <!-- v29: duplicate recent-trades card removed — Command Center owns this view -->
+
 
     <!-- Account balance / expense breakdown -->
     <div class="zcl anim-up-3">
@@ -10272,11 +10313,11 @@ function renderOV() {
     heatmap.innerHTML = hmHtml;
   }
 
-  // ── EQUITY CURVE ──
-  const chrono = [...tl].sort((a,b)=>(a.date+a.btime).localeCompare(b.date+b.btime));
-  let cum=0; const eq=chrono.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
-  if(equityOvCh) equityOvCh.destroy();
+  // ── EQUITY CURVE — card removed in v29 (Command Center owns it); skip the work ──
   const eCtx = document.getElementById('equityOvChart');
+  const chrono = eCtx ? [...tl].sort((a,b)=>(a.date+a.btime).localeCompare(b.date+b.btime)) : [];
+  let cum=0; const eq=chrono.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
+  if(eCtx && equityOvCh) equityOvCh.destroy();
   if(eCtx) equityOvCh = _safeChart(eCtx,{type:'line',data:{labels:chrono.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#22c55e',backgroundColor:(ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(34,197,94,.35)');g.addColorStop(1,'rgba(34,197,94,.01)');return g;}),borderWidth:2,fill:true,pointRadius:0,pointHoverRadius:4,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>' $'+c.raw.toFixed(2)}},zoom:_zoomOpts()},scales:{x:{display:false},y:{ticks:{color:'#94a3b8',font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.06)'},border:{display:false}}},animation:{duration:1000,easing:'easeInOutQuart'}}});
 
   // ── DAILY BARS ──
@@ -10287,9 +10328,9 @@ function renderOV() {
   const dCtx = document.getElementById('dailyOvChart');
   if(dCtx) dailyOvCh = _safeChart(dCtx,{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dv,backgroundColor:dv.map(v=>v>=0?'rgba(61,153,112,.65)':'rgba(199,95,95,.65)'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toFixed(2)}}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'−$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},animation:{duration:900,easing:'easeOutBounce'}}});
 
-  // ── RECENT TRADES ──
-  const recent = [...tl].sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime)).slice(0,8);
+  // ── RECENT TRADES — card removed in v29; skip the sort when absent ──
   const rtEl = document.getElementById('ov-recent');
+  const recent = rtEl ? [...tl].sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime)).slice(0,8) : [];
   if(rtEl) rtEl.innerHTML = recent.map(t=>{
     const net = tradeNet(t);
     return `<div class="zt-row">
@@ -10864,7 +10905,8 @@ function _coachInAppNudge(title, body, type) {
 let _coachReminderInterval = null;
 function _startCoachReminders() {
   if (_coachReminderInterval) return;
-  _coachReminderInterval = setInterval(_checkCoachReminders, 60000);
+  clearInterval(_coachReminderInterval);
+  _coachReminderInterval = setInterval(() => { if (!document.hidden) _checkCoachReminders(); }, 60000);
 }
 function _checkCoachReminders() {
   const now  = new Date();
@@ -11580,9 +11622,7 @@ function exportExpensesCSV() {
   showToast(`✅ יוצאו ${records.length} רשומות`, 'success');
 }
 
-async function clearTrades() {
-  if(await customConfirm('למחוק את כל ' + tradesList.length + ' העסקאות?')) { tradesList = []; renderAll(); }
-}
+/* v29: clearTrades() removed — dead code, zero references */
 
 // ──────────────────────────────────────────────────────────────
 //  P&L REPORT GENERATOR
@@ -13158,7 +13198,7 @@ async function tvConnect(env){
     tvWS.onclose=()=>{logSync('WebSocket סגור');setSync('disconnected');tvWS=null;document.getElementById('tv-disc-btn').style.display='none';};
   }catch(e){logSync('❌ '+e.message);setSync('disconnected');}
 }
-function tvDisconnect(){if(tvWS){tvWS.close();tvWS=null;}tvToken=null;setSync('disconnected');logSync('נותק ידנית');}
+/* v29: tvDisconnect() removed — dead code, zero references */
 
 // MODAL
 let editI=-1,mType='הוצאה';
@@ -13871,7 +13911,7 @@ function _cloudSave() {
         td_tradingRules: (typeof tradingRules !== 'undefined') ? tradingRules : [],
         td_coachDailyLossLimit: (typeof coachDailyLossLimit !== 'undefined') ? coachDailyLossLimit : null,
         td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }, { merge: true });
+      }, { merge: true }); _invalidateUsersCache();
       _updateSyncDot('synced');
     } catch(e) {
       console.warn('Cloud save failed:', e);
@@ -13966,39 +14006,7 @@ async function _cloudLoad() {
     } catch(_) {}
   }
 }
-async function loadData() {
-  try {
-    const r = localStorage.getItem('dor_records');
-    const t = localStorage.getItem('dor_trades');
-    const c = localStorage.getItem('dor_custom');
-    const p = localStorage.getItem('dor_pnlOn');
-    const cm = localStorage.getItem('dor_comm');
-    const rc = localStorage.getItem('dor_recurring');
-    const sy = localStorage.getItem('dor_symbols');
-    const saved = localStorage.getItem('dor_saved');
-    if(!r && !t) { showToast('אין נתונים שמורים','info'); return; }
-    if(!await customConfirm('לטעון נתונים שנשמרו ב: ' + (saved||'לא ידוע') + '?')) return;
-    if(r) records = JSON.parse(r);
-    if(t) tradesList = JSON.parse(t);
-    if(c) customExpenses = JSON.parse(c);
-    if(p) Object.assign(pnlOn, JSON.parse(p));
-    if(cm) Object.assign(commSettings, JSON.parse(cm));
-    if(rc) recurringTemplates = JSON.parse(rc);
-    if(sy) { try { customSymbols = JSON.parse(sy)||[]; } catch(_){} }
-    renderSymbolManager(); _refreshSymDatalist();
-    // Fix legacy $0.50 rate → verified $0.25
-    if (commSettings.ratePerContract === 0.50) commSettings.ratePerContract = 0.25;
-    applyRecurring();
-    renderAll();
-    const crEl2 = document.getElementById('comm-rate');
-    if (crEl2) crEl2.value = commSettings.ratePerContract;
-    const crElF2 = document.getElementById('comm-rate-full');
-    if (crElF2) crElF2.value = commSettings.ratePerContractFull || 3.98;
-    const commChk2 = document.getElementById('comm-enabled');
-    if (commChk2) commChk2.checked = commSettings.enabled;
-    document.getElementById('save-status').textContent = '✅ נטען בהצלחה';
-  } catch(e) { showToast('שגיאה בטעינה: ' + e.message, 'error'); }
-}
+/* v29: loadData() removed — dead code, zero references */
 function exportAll() {
   if (!canUse('backup')) { showUpgradeModal('backup'); return; }
   const data = { records, tradesList, customExpenses, pnlOn, commSettings, customSymbols, recurringTemplates, exported: new Date().toISOString() };
@@ -14116,17 +14124,7 @@ function getAdminSettings() {
   return JSON.parse(localStorage.getItem('dor_admin_settings')||'{}');
 }
 // saveAdminSettings: see async version below
-function loadAdminSettingsUI() {
-  const s = getAdminSettings();
-  if(document.getElementById('st-pro-link'))     document.getElementById('st-pro-link').value     = s.stripeProLink||'';
-  if(document.getElementById('st-life-link'))    document.getElementById('st-life-link').value    = s.stripeLifeLink||'';
-  if(document.getElementById('bit-pro-link'))    document.getElementById('bit-pro-link').value    = s.bitProLink||'';
-  if(document.getElementById('bit-life-link'))   document.getElementById('bit-life-link').value   = s.bitLifeLink||'';
-  if(document.getElementById('paybox-pro-link')) document.getElementById('paybox-pro-link').value = s.payboxProLink||'';
-  if(document.getElementById('paybox-life-link'))document.getElementById('paybox-life-link').value= s.payboxLifeLink||'';
-  if(document.getElementById('at-key'))          document.getElementById('at-key').value          = s.airtableKey||'';
-  if(document.getElementById('at-base'))         document.getElementById('at-base').value         = s.airtableBase||'';
-}
+/* v29: loadAdminSettingsUI() removed — dead code, zero references */
 
 // PAYMENT FLOW
 let currentPlan = '';
@@ -14280,37 +14278,9 @@ function renderDM() {
 
 
 // BIT & PAYBOX PAYMENT
-function payBit(plan) {
-  const s = getAdminSettings();
-  const link = (plan==='pro'||plan==='basic') ? (s.bitProLink||'') : (s.bitLifeLink||'');
-  if (!link) {
-    showToast('קישור ביט לא הוגדר — הגדר בפאנל הניהול: Ctrl+Shift+A', 'error');
-    return;
-  }
-  // Collect user info first
-  currentPlan = plan;
-  document.getElementById('reg-plan').value = (plan==='pro'?'Pro':'Lifetime') + ' — ביט';
-  document.getElementById('reg-form-wrap').style.display = 'block';
-  document.getElementById('reg-form-wrap').scrollIntoView({behavior:'smooth'});
-  // Override save to go to Bit
-  window._pendingPayLink = link;
-  window._pendingPayMethod = 'bit';
-}
+/* v29: payBit() removed — dead code, zero references */
 
-function payPaybox(plan) {
-  const s = getAdminSettings();
-  const link = (plan==='pro'||plan==='basic') ? (s.payboxProLink||'') : (s.payboxLifeLink||'');
-  if (!link) {
-    showToast('קישור פייבוקס לא הוגדר — הגדר בפאנל הניהול: Ctrl+Shift+A', 'error');
-    return;
-  }
-  currentPlan = plan;
-  document.getElementById('reg-plan').value = (plan==='pro'?'Pro':'Lifetime') + ' — פייבוקס';
-  document.getElementById('reg-form-wrap').style.display = 'block';
-  document.getElementById('reg-form-wrap').scrollIntoView({behavior:'smooth'});
-  window._pendingPayLink = link;
-  window._pendingPayMethod = 'paybox';
-}
+/* v29: payPaybox() removed — dead code, zero references */
 
 // Override submitReg to handle Bit/Paybox
 const _origSubmitReg = submitReg;
@@ -15149,7 +15119,7 @@ function initAuth() {
           if (fbUser.email === ADMIN_EMAIL) {
             const adminData = { name:'Admin', email:fbUser.email, phone:'', plan:'lifetime', status:'active', isAdmin:true,
               registeredAt:firebase.firestore.FieldValue.serverTimestamp(), lastLogin:firebase.firestore.FieldValue.serverTimestamp(), loginCount:1 };
-            await db.collection('users').doc(fbUser.uid).set(adminData);
+            await db.collection('users').doc(fbUser.uid).set(adminData); _invalidateUsersCache();
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
             if (_manualLogin) { _manualLogin = false; showApp(); }
@@ -15251,7 +15221,7 @@ async function doRegister() {
       ..._consentDefaults(),
       ..._refPayload(uid),
     };
-    await db.collection('users').doc(uid).set(userData);
+    await db.collection('users').doc(uid).set(userData); _invalidateUsersCache();
     _applyConsentOnRegister(uid, email);
     _recordReferral(uid, email, name, userData.referredByCode);
     _registering = false; // Firestore doc written — safe to continue
@@ -15283,7 +15253,7 @@ async function doRegister() {
             registeredAt:firebase.firestore.FieldValue.serverTimestamp(),
             lastLogin:firebase.firestore.FieldValue.serverTimestamp(), loginCount:1, welcomeSent:false,
             ..._consentDefaults(), ..._refPayload(cred2.user.uid) };
-          await db.collection('users').doc(cred2.user.uid).set(userData);
+          await db.collection('users').doc(cred2.user.uid).set(userData); _invalidateUsersCache();
           _applyConsentOnRegister(cred2.user.uid, email);
           _recordReferral(cred2.user.uid, email, name, userData.referredByCode);
           _registering = false;
@@ -15447,11 +15417,7 @@ async function doLogout() {
 }
 
 /* Unchecking "remember me" while logged in must erase the stored address too */
-function forgetSavedEmail() {
-  localStorage.removeItem(REMEMBER_KEY);
-  const cb = document.getElementById('remember-me'); if (cb) cb.checked = false;
-  _updateRememberLabel();
-}
+/* v29: forgetSavedEmail() removed — dead code, zero references */
 
 // ──────────────────────────────────────────────────────────────
 //  SHOW APP
@@ -15742,10 +15708,14 @@ function showApp() {
     /* v20 SaaS hooks: subscription expiry check + referral activity/rewards */
     setTimeout(()=>{ try{_subCheck();}catch(e){} try{_refLoginHooks();}catch(e){} try{_initRefBanner();}catch(e){} try{_maybeShowOnboarding();}catch(e){} try{checkAchievements();}catch(e){} }, 1500);
     if (!currentUser.isAdmin) {
-      setInterval(() => {
+      /* v29: heartbeat now pauses while the tab is hidden — it used to keep
+         writing to Firestore every 3 minutes forever, on every open tab. */
+      clearInterval(window._seenTimer);
+      window._seenTimer = setInterval(() => {
+        if (document.hidden) return;
         db.collection('users').doc(currentUser.uid)
           .update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
-      }, 3 * 60 * 1000);
+      }, 5 * 60 * 1000);
     }
     // ── LOAD TRADING DATA FROM CLOUD ──
     setTimeout(() => _cloudLoad(), 300);
@@ -15813,7 +15783,22 @@ async function _saveSettings(field, value) {
 // ──────────────────────────────────────────────────────────────
 //  ADMIN — Users
 // ──────────────────────────────────────────────────────────────
-async function _getUsers() {
+/* v29 — the single most expensive call in the app.
+   It was invoked from 12 places, each time reading the ENTIRE users collection.
+   With 1,000 users an admin page-load cost several thousand document reads.
+   A short-lived cache collapses a burst of calls into one read, and in-flight
+   de-duplication stops parallel callers from each firing their own query.
+   Pass true to force a fresh read after a write. */
+let _usersCache = null, _usersCacheAt = 0, _usersInflight = null;
+const _USERS_TTL = 60000;
+async function _getUsers(force) {
+  if (!force && _usersCache && Date.now() - _usersCacheAt < _USERS_TTL) return _usersCache;
+  if (_usersInflight) return _usersInflight;
+  _usersInflight = _fetchUsers().finally(() => { _usersInflight = null; });
+  return _usersInflight;
+}
+function _invalidateUsersCache() { _usersCache = null; _usersCacheAt = 0; }
+async function _fetchUsers() {
   // Always fetch all docs unordered and sort client-side.
   // Using orderBy('registeredAt') silently excludes docs that lack the field,
   // causing partial results with no error — so we avoid it entirely.
@@ -15825,6 +15810,7 @@ async function _getUsers() {
       const tb = b.registeredAt?.toDate ? b.registeredAt.toDate().getTime() : new Date(b.registeredAt || 0).getTime();
       return tb - ta;
     });
+    _usersCache = users; _usersCacheAt = Date.now();
     return users;
   } catch(e) {
     console.error('_getUsers failed:', e);
@@ -15899,7 +15885,7 @@ async function sendWelcomeWA(users) {
   window._waSentIdx = async (i) => {
     sent.add(i);
     // mark in Firestore
-    try { await db.collection('users').doc(users[i].uid).update({ welcomeSent: true }); } catch(e){}
+    try { await db.collection('users').doc(users[i].uid).update({ welcomeSent: true }); _invalidateUsersCache(); } catch(e){}
     render();
     if (sent.size === users.length) {
       const b = document.getElementById('_welcome-auto-btn');
@@ -15931,7 +15917,7 @@ async function sendWelcomeWA(users) {
       ri++;
     };
     next();
-    window._welcomeTimer = setInterval(next, 3500);
+    clearInterval(window._welcomeTimer); window._welcomeTimer = setInterval(()=>{ if(!document.hidden) next(); }, 3500);
   };
 
   document.body.appendChild(m);
@@ -16145,7 +16131,7 @@ async function udpSavePerms() {
     // 'inherit' → don't set (removed from overrides)
   });
   try {
-    await db.collection('users').doc(_udpCurrentUid).update({ featureOverrides: overrides });
+    await db.collection('users').doc(_udpCurrentUid).update({ featureOverrides: overrides }); _invalidateUsersCache();
     if (_udpCurrentUser) _udpCurrentUser.featureOverrides = overrides;
     const idx = _adminUsersCache.findIndex(u=>u.uid===_udpCurrentUid);
     if (idx>=0) _adminUsersCache[idx].featureOverrides = overrides;
@@ -16159,7 +16145,7 @@ async function udpSavePerms() {
 async function udpClearPerms() {
   if (!_udpCurrentUid || !await customConfirm('לאפס את כל ההרשאות האישיות של המשתמש לברירת מחדל החבילה?')) return;
   try {
-    await db.collection('users').doc(_udpCurrentUid).update({ featureOverrides: {} });
+    await db.collection('users').doc(_udpCurrentUid).update({ featureOverrides: {} }); _invalidateUsersCache();
     if (_udpCurrentUser) _udpCurrentUser.featureOverrides = {};
     const idx = _adminUsersCache.findIndex(u=>u.uid===_udpCurrentUid);
     if (idx>=0) _adminUsersCache[idx].featureOverrides = {};
@@ -16206,6 +16192,7 @@ let _udpCurrentUid   = null;
 let _udpCurrentUser  = null;
 
 async function refreshAdminUsers() {
+  _invalidateUsersCache();
   // Reset filters on every refresh
   _adminUserFilter = 'all';
   _adminUserSearch = '';
@@ -16506,7 +16493,7 @@ function udpShowTab(tab) {
 async function udpSavePlan() {
   if (!_udpCurrentUid) return;
   const plan = document.getElementById('udp-plan-sel')?.value || 'pro';
-  await db.collection('users').doc(_udpCurrentUid).update({ plan });
+  await db.collection('users').doc(_udpCurrentUid).update({ plan }); _invalidateUsersCache();
   _logAdminAction('שינוי חבילה', `${_udpCurrentUser?.email||_udpCurrentUid} → ${plan}`);
   _udpCurrentUser.plan = plan;
   const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
@@ -16535,7 +16522,7 @@ async function adminQuickPlan(uid, plan, selectEl) {
     upd.subscriptionPlan   = _normPlan(plan);
     upd.subscriptionStatus = plan === 'free' ? 'active' : 'active';
     upd.paymentStatus      = plan === 'free' ? 'not_paid' : 'paid';
-    await db.collection('users').doc(uid).update(upd);
+    await db.collection('users').doc(uid).update(upd); _invalidateUsersCache();
     const idx = _adminUsersCache.findIndex(u => u.uid === uid);
     const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
     if (idx >= 0) Object.assign(_adminUsersCache[idx], upd, { planExpiresAt: upd.planExpiresAt });
@@ -16606,7 +16593,7 @@ async function udpToggleBlock() {
 async function udpApprovePending() {
   if (!_udpCurrentUid || !_udpCurrentUser) return;
   if (!await customConfirm(`לאשר את ${_udpCurrentUser.name} כמשתמש פעיל?`)) return;
-  await db.collection('users').doc(_udpCurrentUid).update({ status:'active' });
+  await db.collection('users').doc(_udpCurrentUid).update({ status:'active' }); _invalidateUsersCache();
   _logAdminAction('אישור משתמש', _udpCurrentUser?.email||_udpCurrentUid);
   _udpCurrentUser.status = 'active';
   const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
@@ -16630,7 +16617,7 @@ async function udpDeleteUser() {
   if (!_udpCurrentUid || !_udpCurrentUser) return;
   if (!await customConfirm(`מחק את ${_udpCurrentUser.name} (${_udpCurrentUser.email})?\nהנתונים יימחקו לצמיתות.`)) return;
   const deletedEmail = _udpCurrentUser.email;
-  await db.collection('users').doc(_udpCurrentUid).delete();
+  await db.collection('users').doc(_udpCurrentUid).delete(); _invalidateUsersCache();
   _logAdminAction('מחיקת משתמש', deletedEmail);
   _adminUsersCache = _adminUsersCache.filter(u => u.uid !== _udpCurrentUid);
   closeUserDetail();
@@ -16650,7 +16637,7 @@ async function udpSaveNote() {
 
 async function adminResubscribe(uid) {
   if (!await customConfirm('להחזיר משתמש זה לרשימת התפוצה?')) return;
-  await db.collection('users').doc(uid).update({ emailOptOut: false });
+  await db.collection('users').doc(uid).update({ emailOptOut: false }); _invalidateUsersCache();
   const idx = _adminUsersCache.findIndex(u => u.uid === uid);
   const uname = idx >= 0 ? _adminUsersCache[idx].email : uid;
   if (idx >= 0) _adminUsersCache[idx].emailOptOut = false;
@@ -16678,30 +16665,13 @@ async function adminQuickBlock(uid, currentStatus) {
   showToast(newStatus === 'blocked' ? '🚫 משתמש נחסם' : '✅ חסימה בוטלה', newStatus === 'blocked' ? 'error' : 'success');
 }
 
-async function adminChangePlan(uid, plan) {
-  await db.collection('users').doc(uid).update({ plan });
-  showToast(`חבילה עודכנה ל-${plan} ✅`); renderAdminMetrics();
-}
+/* v29: adminChangePlan() removed — dead code, zero references */
 
-async function adminToggleBlock(uid, currentStatus) {
-  const ns = currentStatus==='blocked'?'active':'blocked';
-  await db.collection('users').doc(uid).update({ status:ns });
-  showToast(ns==='blocked'?'🚫 משתמש נחסם':'✅ חסימה בוטלה', ns==='blocked'?'error':'success');
-  renderAdminUsers(); renderAdminMetrics();
-}
+/* v29: adminToggleBlock() removed — dead code, zero references */
 
-async function adminDeleteUser(uid, email) {
-  if (!await customConfirm(`מחק את המשתמש ${email}?\nהנתונים יימחקו לצמיתות.`)) return;
-  await db.collection('users').doc(uid).delete();
-  showToast('משתמש נמחק 🗑','info'); renderAdminUsers(); renderAdminMetrics();
-}
+/* v29: adminDeleteUser() removed — dead code, zero references */
 
-async function adminResetPassword(email) {
-  if (!await customConfirm(`שלח מייל איפוס סיסמה אל:\n${email}?`)) return;
-  auth.sendPasswordResetEmail(email)
-    .then(()=>showToast('מייל איפוס נשלח ✅','success'))
-    .catch(e=>showToast('❌ שגיאה: '+e.message,'error'));
-}
+/* v29: adminResetPassword() removed — dead code, zero references */
 
 async function adminInviteUser() {
   const name  = (document.getElementById('inv-name')?.value||'').trim();
@@ -17041,7 +17011,7 @@ async function sendNotifWhatsApp(msg) {
       qi++;
     };
     next();
-    _waBroadcastTimer = setInterval(next, 3500);
+    clearInterval(_waBroadcastTimer); _waBroadcastTimer = setInterval(()=>{ if(!document.hidden) next(); }, 3500);
   };
 
   document.body.appendChild(m);
@@ -17110,9 +17080,9 @@ async function changeAdminCredentials() {
 }
 
 // compat stubs
-function getAdminCreds()         { return { email:ADMIN_EMAIL, password:'' }; }
-function getAdminEmailForLogin() { return ADMIN_EMAIL; }
-function getAdminPassForLogin()  { return ''; }
+/* v29: getAdminCreds() removed — dead code, zero references */
+/* v29: getAdminEmailForLogin() removed — dead code, zero references */
+/* v29: getAdminPassForLogin() removed — dead code, zero references */
 
 // ──────────────────────────────────────────────────────────────
 //  PRICES + BANNER
@@ -17755,7 +17725,7 @@ function initTips() {
 // ── INDEX TICKER BANNER — replaced by TradingView widget (see HTML) ──
 // All fetch/build/apply functions removed; TradingView handles live data natively.
 async function fetchIndices() {}   // no-op — kept for any remaining callers
-function _applyTickerHTML() {}     // no-op
+/* v29: _applyTickerHTML() removed — dead code, zero references */     // no-op
 
 // ── TRADE ANNOTATION ──
 let _taIdx = -1;
@@ -19401,7 +19371,7 @@ function _loginCelebration() {
 
 // ── REAL-TIME TICKER ENGINE — replaced by TradingView widget ──
 let _tickerTimers = [];
-function _stopTicker() { _tickerTimers.forEach(clearInterval); _tickerTimers = []; }
+/* v29: _stopTicker() removed — dead code, zero references */
 function _startTicker() {} // no-op — TradingView widget handles live refresh
 
 // Resume on tab focus
@@ -19494,15 +19464,7 @@ function drvSave() {
   localStorage.setItem(DRV_KEY, JSON.stringify(drvItems));
 }
 
-function drvSwitch(cat, btn) {
-  _drvCat = cat;
-  document.querySelectorAll('.drv-tab').forEach(t => t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.querySelectorAll('.drv-panel').forEach(p => p.classList.remove('active'));
-  const panel = document.getElementById('drvp-' + cat);
-  if (panel) panel.classList.add('active');
-  drvRender(cat);
-}
+/* v29: drvSwitch() removed — dead code, zero references */
 
 function drvRender(cat) {
   const container = document.getElementById('drv-list-' + cat);
@@ -19904,7 +19866,21 @@ function updateWorldClocks() {
 }
 
 updateWorldClocks();
-setInterval(updateWorldClocks, 1000);
+/* v29: the clock ticked every second even with the tab in the background and
+   the clocks hidden on mobile. It now runs only while visible and on screen. */
+(function _clockTicker(){
+  let iv = null;
+  const on  = () => { if (!iv) { updateWorldClocks(); iv = setInterval(updateWorldClocks, 1000); } };
+  const off = () => { clearInterval(iv); iv = null; };
+  const sync = () => {
+    const visible = !document.hidden &&
+      getComputedStyle(document.getElementById('world-clocks') || document.body).display !== 'none';
+    visible ? on() : off();
+  };
+  document.addEventListener('visibilitychange', sync);
+  window.addEventListener('resize', sync);
+  sync();
+})();
 
 // ════════════════════════════════════════════════════
 //  TICKER SETTINGS
@@ -20031,11 +20007,7 @@ function _rebuildTickerWidget() {
 // ── SIDE PANEL ──
 const _sidePanelTabs = ['software','firms','news','ecal','billing','help','admin'];
 
-function toggleSidePanel() {
-  const panel = document.getElementById('side-panel');
-  if (panel?.classList.contains('open')) closeSidePanel();
-  else openSidePanel();
-}
+/* v29: toggleSidePanel() removed — dead code, zero references */
 
 function openSidePanel() {
   document.getElementById('side-panel')?.classList.add('open');
@@ -20136,7 +20108,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(reg => {
       // Poll for updates every 60 seconds
-      setInterval(() => reg.update(), 60000);
+      setInterval(() => { if (!document.hidden) reg.update(); }, 30 * 60 * 1000);
 
       // When a new SW is found, tell it to skip waiting once installed
       reg.addEventListener('updatefound', () => {
@@ -20472,7 +20444,7 @@ function cycleTheme() {
   if (typeof showToast === 'function') showToast((THEME_INFO[next]||{}).label || next, 'info', 1200);
 }
 // Kept for backward compatibility with any older callers.
-function toggleTheme() { cycleTheme(); }
+/* v29: toggleTheme() removed — dead code, zero references */
 
 // ════════════════════════════════════════════════════
 //  NAV AVATAR
@@ -21076,12 +21048,7 @@ function _renderAvatarColorPicker() {
   ).join('');
 }
 
-function _cycleAvatarColor() {
-  const cur = currentUser.avatarColor || '#3d9970';
-  const idx = _avatarColors.indexOf(cur);
-  const next = _avatarColors[(idx + 1) % _avatarColors.length];
-  selectAvatarColor(next);
-}
+/* v29: _cycleAvatarColor() removed — dead code, zero references */
 
 function selectAvatarColor(color) {
   currentUser.avatarColor = color;
@@ -21100,7 +21067,7 @@ async function saveProfile() {
   const updates  = { name: nameVal, phone: phoneVal, bio: bioVal, avatarColor: color };
   if (_profPhotoData) updates.photoData = _profPhotoData;
   try {
-    await db.collection('users').doc(currentUser.uid).update(updates);
+    await db.collection('users').doc(currentUser.uid).update(updates); _invalidateUsersCache();
     currentUser.name  = nameVal;
     currentUser.phone = phoneVal;
     currentUser.bio   = bioVal;
@@ -22137,7 +22104,7 @@ async function requestAccountDeletion() {
     await _logMailing('account_deleted', email, 'החשבון נמחק על ידי המשתמש', false);
 
     /* wipe the user's own documents */
-    await db.collection('users').doc(uid).delete().catch(()=>{});
+    await db.collection('users').doc(uid).delete().catch(()=>{}); _invalidateUsersCache();
     await db.collection('referrals').doc(uid).delete().catch(()=>{});
 
     /* clear this device */
@@ -22170,6 +22137,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p?.classList.contains('open') && !p.contains(e.target) && e.target.id !== 'a11y-btn') a11yClose();
   });
 });
+/* ── v28: charts that initialised before the mobile CSS settled get one
+       corrective resize, so none of them can leave the layout too wide ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const nudge = () => { try { window.dispatchEvent(new Event('resize')); } catch(e){} };
+  [1200, 2600].forEach(t => setTimeout(nudge, t));
+  let rt = null;
+  window.addEventListener('orientationchange', () => { clearTimeout(rt); rt = setTimeout(nudge, 350); });
+});
+
 /* ── v25: PWA shortcut deep-links (?tab=trades etc.) ── */
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -22269,12 +22245,12 @@ async function _recordReferral(uid, email, name, code) {
       status: 'registered',
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
-    await db.collection('users').doc(uid).update({ referredBy: referrerUid }).catch(()=>{});
+    await db.collection('users').doc(uid).update({ referredBy: referrerUid }).catch(()=>{}); _invalidateUsersCache();
     /* v23: keep an at-a-glance counter + list on the referrer's own document */
     await db.collection('users').doc(referrerUid).update({
       referralCount: firebase.firestore.FieldValue.increment(1),
       referredUsers: firebase.firestore.FieldValue.arrayUnion(uid),
-    }).catch(()=>{});
+    }).catch(()=>{}); _invalidateUsersCache();
     localStorage.removeItem('fx_ref');
   } catch(e){ console.warn('_recordReferral:', e); }
 }
@@ -22387,10 +22363,7 @@ function openReferralPanel() {
   setTimeout(()=>{ paTab('referral', document.getElementById('pasnav-referral')); renderReferral(); }, 120);
 }
 
-function dismissRefBanner() {
-  try { localStorage.setItem('fx_refbanner_hide','1'); } catch(e){}
-  const b = document.getElementById('ref-banner'); if (b) b.style.display='none';
-}
+/* v29: dismissRefBanner() removed — dead code, zero references */
 function _initRefBanner() {
   try {
     if (localStorage.getItem('fx_refbanner_hide')==='1') return;
@@ -22427,7 +22400,7 @@ async function _refLoginHooks() {
       upd.planExpiresAt = firebase.firestore.Timestamp.fromDate(new Date(base + addDays*864e5));
       upd.planStatus = 'active';
     }
-    await db.collection('users').doc(currentUser.uid).update(upd);
+    await db.collection('users').doc(currentUser.uid).update(upd); _invalidateUsersCache();
     Object.assign(currentUser, upd);
     updateNavBadge();
     addNotification('reward','🎁 קיבלת תגמול הפניות!',`${addDays} ימי Pro נוספו לחשבונך על הזמנת חברים`);
@@ -22480,7 +22453,7 @@ async function cancelSubscription() {
   if (!currentUser?.uid) return;
   if (!await customConfirm('לבטל את המנוי? הגישה תישמר עד סוף התקופה הנוכחית ואז החשבון יעבור ל-Free.')) return;
   try {
-    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:true, planStatus:'cancelled', subscriptionStatus:'cancelled' });
+    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:true, planStatus:'cancelled', subscriptionStatus:'cancelled' }); _invalidateUsersCache();
     Object.assign(currentUser, { cancelAtPeriodEnd:true, planStatus:'cancelled', subscriptionStatus:'cancelled' });
     _logBillingRequest('cancel', currentUser.plan, currentUser.planCycle);
     addNotification('billing','המנוי בוטל','הגישה תישמר עד סוף התקופה. אפשר לחדש בכל רגע.');
@@ -22492,7 +22465,7 @@ async function cancelSubscription() {
 async function resumeSubscription() {
   if (!currentUser?.uid) return;
   try {
-    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:false, planStatus:'active', subscriptionStatus:'active' });
+    await db.collection('users').doc(currentUser.uid).update({ cancelAtPeriodEnd:false, planStatus:'active', subscriptionStatus:'active' }); _invalidateUsersCache();
     Object.assign(currentUser, { cancelAtPeriodEnd:false, planStatus:'active', subscriptionStatus:'active' });
     _logBillingRequest('resume', currentUser.plan, currentUser.planCycle);
     renderMySub();
@@ -22706,7 +22679,7 @@ async function unsubscribeUser(uid, email, source, auto) {
     if (uid) {
       const s = await db.collection('users').doc(uid).get();
       if (s.exists) { name = s.data().name || ''; email = email || s.data().email; }
-      await db.collection('users').doc(uid).update(payload);
+      await db.collection('users').doc(uid).update(payload); _invalidateUsersCache();
     } else if (email) {
       const q = await db.collection('users').where('email','==',_emailKey(email)).limit(5).get();
       for (const d of q.docs) { name = name || d.data().name || ''; await d.ref.update(payload); }
@@ -22730,7 +22703,7 @@ async function resubscribeUser(uid, email) {
     if (uid) {
       const s = await db.collection('users').doc(uid).get();
       if (s.exists) email = email || s.data().email;
-      await db.collection('users').doc(uid).update(payload);
+      await db.collection('users').doc(uid).update(payload); _invalidateUsersCache();
     } else if (email) {
       const q = await db.collection('users').where('email','==',_emailKey(email)).limit(5).get();
       for (const d of q.docs) await d.ref.update(payload);
@@ -22770,7 +22743,7 @@ async function _applyConsentOnRegister(uid, email) {
       });
       await _logMailing('dnc_block_register', email, 'נרשם מחדש — נשאר חסום לדיוור', true);
     }
-    await db.collection('users').doc(uid).update(upd);
+    await db.collection('users').doc(uid).update(upd); _invalidateUsersCache();
   } catch(e) { console.warn('_applyConsentOnRegister:', e); }
 }
 
@@ -22928,7 +22901,7 @@ async function adminBackfillConsent() {
       if (u.referralCode === undefined) upd.referralCode = _refCode(u.uid);
       if (u.referralCount === undefined) upd.referralCount = 0;
       if (!Object.keys(upd).length) continue;
-      await db.collection('users').doc(u.uid).update(upd);
+      await db.collection('users').doc(u.uid).update(upd); _invalidateUsersCache();
       /* an already-opted-out veteran belongs on the permanent block list too */
       if (upd.emailSubscriptionStatus === 'unsubscribed' && u.email)
         await addToDNC(u.email, 'backfill', { name:u.name, uid:u.uid });
