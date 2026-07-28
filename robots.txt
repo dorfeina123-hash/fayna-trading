@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /index_previous_backup.html
+Disallow: /email_preview.html
+
+Sitemap: https://dorfeina123-hash.github.io/fayna-trading/sitemap.xml
