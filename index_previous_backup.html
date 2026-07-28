@@ -5268,6 +5268,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <script>
+/* v30 — pop-up reminders are off; they are delivered through the bell instead. */
+window._coachQuiet = true;
+
 // ── COURSE PROGRESS ──
 function _courseDone() {
   try { return JSON.parse(localStorage.getItem('dor_course_done')||'[]'); } catch(_) { return []; }
@@ -8931,7 +8934,8 @@ function renderPersonalGoals() {
 let notifications = JSON.parse(localStorage.getItem('dor_notifications') || 'null') || [];
 const NOTIF_TYPE_ICON = {
   system:'⚙️', new_user:'👤', goal_achieved:'🎯', trading_alert:'🚨',
-  ai_insight:'🧠', reminder:'⏰', task_incomplete:'📋'
+  ai_insight:'🧠', reminder:'⏰', task_incomplete:'📋',
+  /* v30 */ ecal:'📅', coach:'🧠', achievement:'🏆', billing:'💳', reward:'🎁'
 };
 
 function saveNotifications() {
@@ -10878,6 +10882,11 @@ function _showDesktopNotif(title, body, onClickType) {
 }
 
 function _coachInAppNudge(title, body, type) {
+  /* v30: quiet mode — the reminder is recorded in the bell and nothing pops up. */
+  if (window._coachQuiet !== false) {
+    try { addNotification('coach', '🧠 ' + (title||'תזכורת מאמן'), body || '', { type: type||null }); renderNotifBell(); } catch(e){}
+    return;
+  }
   const existing = document.getElementById('coach-nudge');
   if(existing) existing.remove();
   const el = document.createElement('div');
@@ -11312,6 +11321,7 @@ function _coachRenderHome() {
 
 // ── Coach gentle nudge (once per day if no check-in done) ──
 function _coachNudge() {
+  if (window._coachQuiet !== false) return;   // v30: pop-up disabled
   const today = new Date().toISOString().slice(0,10);
   const already = coachSessions.some(s => s.date===today && s.type==='daily');
   if (already) return; // already done today
@@ -15541,6 +15551,44 @@ function _scheduleTodayAlerts() {
   return todayEvents;
 }
 
+/* v30 — bell integration for economic events.
+   Two problems are solved here:
+     1. alerts only ever rendered a floating bar, never a bell entry;
+     2. they were pure setTimeout, so an event at 17:00 produced nothing at all
+        if the tab happened to be closed at 17:00.
+   Every event is now written to the bell once (deduped per event per day),
+   and on load we back-fill anything that already happened today. */
+function _ecalNotifyKey(title, evDate) {
+  return 'ecal_' + evDate.toISOString().slice(0,10) + '_' + title.slice(0,40);
+}
+function _ecalNotify(title, evDate, minsLeft) {
+  const key = _ecalNotifyKey(title, evDate);
+  let seen = {};
+  try { seen = JSON.parse(localStorage.getItem('fayna_ecal_notified') || '{}'); } catch(e){}
+  if (seen[key]) return;
+  const t = evDate.toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' });
+  const past = evDate.getTime() <= Date.now();
+  addNotification('ecal',
+    '📅 ' + (past ? 'הודעה כלכלית' : 'בעוד ' + minsLeft + ' דקות') + ' — ' + title,
+    '⭐⭐⭐ ארה"ב · ' + t,
+    { time: evDate.toISOString() });
+  seen[key] = Date.now();
+  /* keep only the last 7 days of keys */
+  const cutoff = Date.now() - 7*864e5;
+  Object.keys(seen).forEach(k => { if (seen[k] < cutoff) delete seen[k]; });
+  try { localStorage.setItem('fayna_ecal_notified', JSON.stringify(seen)); } catch(e){}
+  try { renderNotifBell(); } catch(e){}
+}
+function _ecalBackfillToday(todayEvents) {
+  const now = Date.now();
+  (todayEvents || []).forEach(ev => {
+    const d = new Date(ev._parsedDate || ev.date);
+    if (d.getTime() <= now) {
+      try { _ecalNotify(ev.title, d, 0); } catch(e){}
+    }
+  });
+}
+
 function _showTodayEcalBriefing(todayEvents) {
   const future = todayEvents.filter(ev => new Date(ev._parsedDate||ev.date) > new Date());
   if (!future.length) return;
@@ -15598,6 +15646,11 @@ function _showEcalAlertBar(title, country, evDate, minsLeft) {
     </div>
   </div>`;
   document.body.appendChild(bar);
+  /* v30: the alert also goes into the notification bell, so it is still there
+     when the user returns to the tab later. */
+  try {
+    _ecalNotify(title, evDate, minsLeft);
+  } catch(e) {}
   // Auto-remove only when the event time is reached
   const msUntilEvent = evDate.getTime() - Date.now();
   if (msUntilEvent > 0 && msUntilEvent < 3600000) setTimeout(() => { document.getElementById('_ecal-alert-bar')?.remove(); }, msUntilEvent);
@@ -15632,6 +15685,7 @@ async function _startEcalAlerts() {
   const ok = await _fetchEcalEvents();
   if (!ok) { setTimeout(_startEcalAlerts, 60_000); return; } // retry in 1 min if failed
   const todayEvents = _scheduleTodayAlerts();
+  _ecalBackfillToday(todayEvents);          // v30: events already past today still reach the bell
   renderNextEventsWidget?.(); // update widget now that data is loaded
   _showTodayEcalBriefing(todayEvents);
   _scheduleMidnightRefresh();
@@ -15647,7 +15701,7 @@ function _scheduleHourlyRefresh() {
   _ecalHourlyTimer = setInterval(async () => {
     // Force-refresh every hour (new events/times may have been added)
     const ok = await _fetchEcalEvents(true);
-    if (ok) { _scheduleTodayAlerts(); renderNextEventsWidget?.(); }
+    if (ok) { _ecalBackfillToday(_scheduleTodayAlerts()); renderNextEventsWidget?.(); }
   }, 60 * 60 * 1000);
 }
 
@@ -15694,8 +15748,9 @@ function showApp() {
     setTimeout(renderAdminPanel,400);
   }
   applyAdminPrices(); showAdminBanner(); loadPlanVisibility(); loadContactSettings(); _initSidenav();
-  setTimeout(_coachNudge, 3500);
-  _startCoachReminders(); // start reminder interval
+  /* v30: the mental-coach pop-up was disabled at the user's request.
+     Reminders still fire, but they go to the notification bell instead. */
+  _startCoachReminders();
   setTimeout(updateNavBadge, 800); // refresh badge after plan loads from Firestore
   setTimeout(applyNavGating, 300);
   if (currentUser.uid) {
@@ -20735,7 +20790,9 @@ function _initStreakAndRetention() {
   // Streak is still tracked (used by the streak widget and by achievements) —
   // v21 removed the small 🔥 badge from the top bar to keep the header clean.
   _updateStreak();
-  setTimeout(()=>{_showReturnToast();_checkMobileInstall();},1800);
+  /* v30: the "X days in a row" pop-up was disabled at the user's request.
+     The streak itself is still tracked and shown in the dashboard widget. */
+  setTimeout(()=>{_checkMobileInstall();},1800);
 }
 
 
@@ -20770,6 +20827,21 @@ function tjRowMark(ti, checked) {
   const row = document.getElementById('tj-row-' + ti);
   if (row) row.style.background = checked ? 'rgba(74,143,168,.12)' : '';
   _tjRefreshDelBtn();
+}
+
+
+/* v31 — compatibility shim.
+   The legacy text-editor was replaced by the visual builder in v27, but two
+   call sites for _applyEdTexts() remained and threw during login. The builder's
+   applyAll() performs the same job (re-applying saved content and styles). */
+function _applyEdTexts() {
+  try { if (typeof FB !== 'undefined' && FB.applyAll) FB.applyAll(); } catch (e) {}
+}
+
+/* v31 — the bulk-select checkbox in the trades table called _tjSync(), which was
+   never defined; every click threw. The real implementation is _tjRefreshDelBtn(). */
+function _tjSync() {
+  try { _tjRefreshDelBtn(); } catch (e) {}
 }
 
 function tjSelAll(checked) {
