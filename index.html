@@ -370,7 +370,7 @@ body.drawer-open{overflow:hidden;touch-action:none}
   .mc{padding:10px 12px}
   .mc-v{font-size:18px}
   /* Chat */
-  .chat-fab{bottom:74px;right:14px}
+
   .chat-window{bottom:136px;right:6px;left:6px;width:auto}
   /* Bottom nav */
   /* Auth screens */
@@ -2012,7 +2012,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   .crs-body{padding:2px 10px 12px}
   .crs-tbl{font-size:10px}
   .crs-tbl th,.crs-tbl td{padding:4px 5px}
-  .chat-fab{width:48px;height:48px;font-size:19px;bottom:70px;right:10px}
+
   .chat-window{bottom:126px}
   .mob-bnav-btn{font-size:9px}
   .mbn-icon{font-size:16px}
@@ -2598,7 +2598,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   /* ── Panels and popovers fit the screen ── */
   .side-panel{width:min(300px,86vw)}
   .chat-window{right:var(--sp-2);left:var(--sp-2);width:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px))}
-  .chat-fab{bottom:calc(74px + env(safe-area-inset-bottom,0px));right:var(--sp-3)}
+  .chat-fab{bottom:calc(72px + env(safe-area-inset-bottom,0px));right:var(--sp-2);
+    width:44px;height:44px;font-size:18px;opacity:.9}
+  .chat-window{bottom:calc(124px + env(safe-area-inset-bottom,0px))}
   .hdr-more-menu,.act-dd-menu{max-width:calc(100vw - 24px)}
   #a11y-btn{bottom:calc(72px + env(safe-area-inset-bottom,0px));left:var(--sp-2);width:46px;height:46px;font-size:22px}
   #a11y-panel{bottom:calc(126px + env(safe-area-inset-bottom,0px));left:var(--sp-2);width:min(300px,calc(100vw - 24px))}
@@ -2735,7 +2737,13 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   .nav-user-badge{max-width:86px;padding:2px 6px}
   .nav-avatar{width:24px!important;height:24px!important}
   .logo-icon,.logo-icon img{width:30px!important;height:30px!important}
-  .topnav{gap:4px!important;overflow:hidden}
+  .topnav{gap:4px!important}
+  /* header menus are lifted out of the header's box so nothing can clip them */
+  .hdr-more-menu{position:fixed!important;top:calc(52px + env(safe-area-inset-top,0px))!important;
+    left:8px!important;right:auto!important;width:min(260px,calc(100vw - 16px));max-height:70dvh;overflow-y:auto}
+  #notif-panel{width:min(340px,calc(100vw - 16px))!important;max-height:70dvh!important;
+    left:8px!important;right:auto!important}
+  .acct-menu{max-width:calc(100vw - 16px)}
 
   /* long text must wrap rather than push */
   .cc-kpi-l,.cc-kpi-s,.cc-mini-t,.cc-mini-s,.mc-l,.zcl-title{
