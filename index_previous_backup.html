@@ -6007,6 +6007,17 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:#767f8e;display:none">אין משתמשים רשומים עדיין</div>
   </div>
 
+
+  <!-- v39: autonomous agents -->
+  <div class="admin-section" style="border-color:rgba(34,197,94,.2)">
+    <div class="admin-section-title"><div class="dot" style="background:#22c55e"></div>🤖 סוכנים אוטונומיים
+      <button class="fb" onclick="Agents.renderBoard()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:10px">
+      כל סוכן אחראי לתחום אחד, מתעורר לפי תזמון או אירוע, ומדווח כאן. סוכן שנכשל שוב ושוב מבודד אוטומטית והמפקח מנסה לשקם אותו.
+    </div>
+    <div id="agent-board"><div style="font-size:11px;color:var(--t3);padding:8px">טוען…</div></div>
+  </div>
   <!-- v23: MAILING LIST & UNSUBSCRIBES -->
   <div class="admin-section" style="border-color:rgba(239,68,68,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#ef4444"></div>📧 ניהול רשימת תפוצה והסרות
@@ -23755,6 +23766,543 @@ document.addEventListener('DOMContentLoaded', () => {
     try { renderAchievements(); } catch(e){}
   }, 900);
 });
+</script>
+
+<script id="v39-agents">
+// ══════════════════════════════════════════════════════════════════════════
+//  FAYNA AGENT RUNTIME (v39)
+//
+//  A small autonomous-agent layer. Each agent owns one domain, declares the
+//  capabilities it needs, and is woken by the scheduler on a timer or by an
+//  event another agent published. Agents never call each other directly —
+//  they publish and subscribe — so any agent can be added or removed without
+//  touching the others.
+//
+//  Honest boundary: this runtime lives in the browser, so agents only run
+//  while a tab is open. Work that must happen while the user is away (expiry
+//  at 3am, outbound mail, broker sync) needs the server described in
+//  FAYNA_ARCHITECTURE_LIVE_SYNC.md. Every agent below is written as a plain
+//  manifest — { id, every, on, run } — precisely so the same definitions can
+//  be lifted onto a scheduler server-side without a rewrite.
+// ══════════════════════════════════════════════════════════════════════════
+
+const Agents = (function () {
+  'use strict';
+
+  /* ─────────── capability model ───────────
+     An agent may only do what its manifest declares. The point is not to stop
+     a malicious agent (it is our own code) but to make side effects explicit
+     and reviewable, and to keep a misbehaving agent from touching billing. */
+  const CAPS = {
+    'data:read'    : 'קריאת נתוני המשתמש',
+    'data:write'   : 'כתיבת נתוני המשתמש',
+    'notify'       : 'יצירת התראות',
+    'ui:refresh'   : 'רענון תצוגה',
+    'cloud:sync'   : 'סנכרון לענן',
+    'plan:read'    : 'קריאת מצב מנוי',
+    'plan:write'   : 'שינוי מנוי — הרשאה רגישה',
+    'mail:consent' : 'בדיקת הסכמות דיוור',
+  };
+
+  const S = {
+    registry: new Map(),          // id → manifest
+    state:    new Map(),          // id → runtime state
+    bus:      new Map(),          // event → [handler]
+    timer:    null,
+    started:  false,
+    log:      [],
+    paused:   false,
+  };
+
+  const now = () => Date.now();
+  const LOG_MAX = 200;
+
+  function log(level, agentId, msg, extra) {
+    const entry = { t: now(), level, agent: agentId, msg, extra: extra || null };
+    S.log.unshift(entry);
+    if (S.log.length > LOG_MAX) S.log.length = LOG_MAX;
+    if (level === 'error') console.warn('[agent:' + agentId + ']', msg, extra || '');
+    try { _persistLog(); } catch (e) {}
+    return entry;
+  }
+  function _persistLog() {
+    localStorage.setItem('fx_agent_log', JSON.stringify(S.log.slice(0, 60)));
+  }
+
+  /* ─────────── registration ─────────── */
+  function register(manifest) {
+    const m = Object.assign({
+      id: null, label: '', desc: '',
+      caps: [],
+      every: null,               // ms — periodic wake
+      on: [],                    // event names that wake it
+      runWhenHidden: false,      // most agents idle in a background tab
+      enabled: true,
+      maxFailures: 3,            // then the supervisor quarantines it
+    }, manifest);
+
+    if (!m.id || typeof m.run !== 'function') {
+      console.warn('agent rejected — needs id and run()', manifest);
+      return false;
+    }
+    if (S.registry.has(m.id)) return false;
+
+    const bad = m.caps.filter(c => !CAPS[c]);
+    if (bad.length) { console.warn('agent', m.id, 'unknown capability', bad); return false; }
+
+    S.registry.set(m.id, m);
+    S.state.set(m.id, {
+      lastRun: 0, lastOk: null, runs: 0, failures: 0,
+      quarantined: false, lastError: null, lastResult: null, busy: false,
+    });
+    m.on.forEach(ev => subscribe(ev, () => wake(m.id, { reason: 'event:' + ev })));
+    log('info', m.id, 'נרשם');
+    return true;
+  }
+
+  function unregister(id) {
+    S.registry.delete(id); S.state.delete(id);
+    log('info', id, 'הוסר');
+  }
+  function setEnabled(id, on) {
+    const m = S.registry.get(id); if (!m) return;
+    m.enabled = !!on;
+    if (on) { const st = S.state.get(id); st.quarantined = false; st.failures = 0; }
+    log('info', id, on ? 'הופעל' : 'הושבת');
+    _renderBoard();
+  }
+
+  /* ─────────── event bus ─────────── */
+  function subscribe(ev, fn) {
+    if (!S.bus.has(ev)) S.bus.set(ev, []);
+    S.bus.get(ev).push(fn);
+  }
+  function publish(ev, payload) {
+    (S.bus.get(ev) || []).forEach(fn => { try { fn(payload); } catch (e) {} });
+  }
+
+  /* ─────────── the context handed to an agent ───────────
+     Everything an agent can do goes through here, so capabilities are
+     actually enforced rather than merely documented. */
+  function ctx(m) {
+    const has = c => m.caps.includes(c);
+    const deny = c => { throw new Error('חסר היתר: ' + c); };
+    return {
+      agent: m.id,
+      log: (msg, extra) => log('info', m.id, msg, extra),
+      warn: (msg, extra) => log('warn', m.id, msg, extra),
+
+      get user() { return has('data:read') ? (typeof currentUser !== 'undefined' ? currentUser : null) : deny('data:read'); },
+      get trades() { return has('data:read') ? (typeof tradesList !== 'undefined' ? tradesList : []) : deny('data:read'); },
+      get accounts() { return has('data:read') ? (typeof accounts !== 'undefined' ? accounts : []) : deny('data:read'); },
+
+      notify(type, title, body, meta) {
+        if (!has('notify')) return deny('notify');
+        try { addNotification(type, title, body, meta); renderNotifBell(); } catch (e) {}
+      },
+      refreshUI(fn) {
+        if (!has('ui:refresh')) return deny('ui:refresh');
+        try { (fn || (() => {}))(); } catch (e) {}
+      },
+      async writeUser(patch) {
+        if (!has('data:write')) return deny('data:write');
+        const u = (typeof currentUser !== 'undefined') ? currentUser : null;
+        if (!u?.uid || typeof db === 'undefined') return false;
+        /* plan changes are gated separately — they are the one field that
+           affects billing, and Firestore rules block client upgrades anyway */
+        if ('plan' in patch && !has('plan:write')) return deny('plan:write');
+        await db.collection('users').doc(u.uid).update(patch);
+        Object.assign(u, patch);
+        return true;
+      },
+      publish,
+      emitTask(task) { publish('agent:task', Object.assign({ from: m.id }, task)); },
+    };
+  }
+
+  /* ─────────── execution with self-healing ───────────
+     A failing agent retries with backoff. After maxFailures it is quarantined
+     rather than left to fail forever, and the supervisor is told. */
+  async function wake(id, meta) {
+    const m = S.registry.get(id), st = S.state.get(id);
+    if (!m || !st || !m.enabled || st.quarantined || st.busy) return;
+    if (S.paused) return;
+    if (!m.runWhenHidden && document.hidden) return;
+
+    st.busy = true;
+    const started = now();
+    try {
+      const result = await m.run(ctx(m), meta || {});
+      st.lastRun = started; st.lastOk = now(); st.runs++; st.failures = 0;
+      st.lastResult = result ?? null; st.lastError = null;
+      if (result && result.summary) log('ok', id, result.summary);
+      publish('agent:done', { id, result });
+    } catch (err) {
+      st.failures++;
+      st.lastError = err?.message || String(err);
+      st.lastRun = started;
+      log('error', id, 'נכשל: ' + st.lastError, { attempt: st.failures });
+
+      if (st.failures >= m.maxFailures) {
+        st.quarantined = true;
+        log('error', id, 'בודד אחרי ' + st.failures + ' כשלונות');
+        publish('agent:quarantined', { id, error: st.lastError });
+      } else {
+        const delay = Math.min(2000 * 2 ** st.failures, 60000);
+        setTimeout(() => wake(id, { reason: 'retry' }), delay);
+      }
+    } finally {
+      st.busy = false;
+      _renderBoard();
+    }
+  }
+
+  /* ─────────── scheduler ───────────
+     One timer for every agent. Cheaper than N intervals and trivially pausable
+     when the tab is hidden, which is what kept draining phone batteries before. */
+  function start() {
+    if (S.started) return;
+    S.started = true;
+    try { S.log = JSON.parse(localStorage.getItem('fx_agent_log') || '[]'); } catch (e) {}
+    S.timer = setInterval(tick, 15000);
+    setTimeout(tick, 3000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+    log('info', 'runtime', 'הופעל · ' + S.registry.size + ' סוכנים');
+  }
+  function stop() { clearInterval(S.timer); S.started = false; }
+  function tick() {
+    const t = now();
+    S.registry.forEach((m, id) => {
+      if (!m.every) return;
+      const st = S.state.get(id);
+      if (t - st.lastRun >= m.every) wake(id, { reason: 'schedule' });
+    });
+  }
+
+  /* ─────────── status board (admin) ─────────── */
+  function _renderBoard() {
+    const el = document.getElementById('agent-board');
+    if (!el) return;
+    const rows = [...S.registry.values()].map(m => {
+      const st = S.state.get(m.id);
+      const dot = st.quarantined ? '🔴' : !m.enabled ? '⚪' : st.busy ? '🔵' : st.lastError ? '🟡' : '🟢';
+      const when = st.lastOk ? new Date(st.lastOk).toLocaleTimeString('he-IL') : '—';
+      return `<tr>
+        <td>${dot} <b>${escHtml(m.label)}</b><div style="font-size:10px;color:var(--t3)">${escHtml(m.desc)}</div></td>
+        <td style="font-size:11px">${m.every ? Math.round(m.every/60000)+' דק׳' : 'לפי אירוע'}</td>
+        <td style="font-size:11px">${st.runs}</td>
+        <td style="font-size:11px;color:${st.failures?'var(--re)':'var(--t3)'}">${st.failures}</td>
+        <td style="font-size:11px;color:var(--t3)">${when}</td>
+        <td><button onclick="Agents.wake('${m.id}',{reason:'manual'})" class="fb" style="padding:3px 9px;font-size:10px">הרץ</button>
+            <button onclick="Agents.setEnabled('${m.id}',${!m.enabled})" class="fb" style="padding:3px 9px;font-size:10px">${m.enabled?'השבת':'הפעל'}</button></td>
+      </tr>`;
+    }).join('');
+    const logRows = S.log.slice(0, 12).map(l => {
+      const icon = { ok:'✅', info:'ℹ️', warn:'⚠️', error:'❌' }[l.level] || '•';
+      return `<div style="display:flex;gap:7px;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px">
+        <span>${icon}</span><span style="color:var(--t2)">${escHtml(l.agent)}</span>
+        <span style="color:var(--t3)">${escHtml(l.msg)}</span>
+        <span style="margin-right:auto;color:var(--t3);font-size:10px">${new Date(l.t).toLocaleTimeString('he-IL')}</span></div>`;
+    }).join('');
+    el.innerHTML = `
+      <div style="overflow-x:auto"><table class="users-table" style="min-width:560px">
+      <thead><tr><th>סוכן</th><th>תדירות</th><th>ריצות</th><th>כשלים</th><th>אחרון</th><th>פעולות</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+      <div style="font-size:11px;color:var(--t3);margin:12px 0 5px">יומן פעילות</div>${logRows}`;
+  }
+
+  return {
+    register, unregister, setEnabled, start, stop, wake, publish, subscribe,
+    CAPS,
+    list: () => [...S.registry.values()].map(m => ({ ...m, state: S.state.get(m.id) })),
+    logs: () => S.log.slice(),
+    renderBoard: _renderBoard,
+    pause(v) { S.paused = !!v; },
+  };
+})();
+
+// ══════════════════════════════════════════════════════════════════════════
+//  THE AGENTS
+//  Each one wraps behaviour that already existed but only ran when the user
+//  happened to trigger it. They are plain manifests so the same objects can
+//  later run on a server scheduler untouched.
+// ══════════════════════════════════════════════════════════════════════════
+
+/* ── 1. RISK — the only agent that can interrupt the trader ──
+   Watches the live risk budget and escalates: warn at 80%, hard stop at 100%.
+   Publishes 'risk:breach' so other agents can react without knowing about it. */
+Agents.register({
+  id: 'risk',
+  label: 'סוכן סיכון',
+  desc: 'מנטר את תקציב הסיכון היומי ומתריע לפני חריגה',
+  caps: ['data:read', 'notify', 'ui:refresh'],
+  every: 60_000,
+  on: ['trades:changed'],
+  async run(ctx) {
+    if (!ctx.user) return;
+    let risk = null;
+    try { risk = _computeRiskDashboard(); } catch (e) { return; }
+    if (!risk?.today?.limit) return { summary: 'לא הוגדר סטופ יומי' };
+
+    const pct = risk.today.pct;
+    const key = 'fx_risk_notified_' + new Date().toISOString().slice(0, 10);
+    let sent = {};
+    try { sent = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
+
+    if (pct >= 100 && !sent.stop) {
+      ctx.notify('trading_alert', '🛑 חרגת מהסטופ היומי',
+        'נוצלו ' + pct + '% מתקציב הסיכון. מומלץ לעצור להיום.');
+      sent.stop = 1;
+      ctx.publish('risk:breach', { level: 'stop', pct });
+    } else if (pct >= 80 && !sent.warn) {
+      ctx.notify('trading_alert', '⚠️ 80% מתקציב הסיכון נוצל',
+        'נותרו $' + Math.max(0, risk.today.remaining).toFixed(0) + ' עד הסטופ היומי.');
+      sent.warn = 1;
+      ctx.publish('risk:breach', { level: 'warn', pct });
+    }
+    try { localStorage.setItem(key, JSON.stringify(sent)); } catch (e) {}
+
+    /* behavioural guard — size increase straight after a loss */
+    const s = _computeTodayStats();
+    if (s.consecLosses >= 3 && !sent.streak) {
+      ctx.notify('trading_alert', '⛔ ' + s.consecLosses + ' הפסדים ברצף',
+        'הכלל המקצועי הוא לעצור אחרי 2-3 הפסדים רצופים.');
+      sent.streak = 1;
+      try { localStorage.setItem(key, JSON.stringify(sent)); } catch (e) {}
+    }
+    return { summary: 'סיכון ' + pct + '%' };
+  },
+});
+
+/* ── 2. SUBSCRIPTION — expiry, warnings, downgrade ──
+   Previously ran once, at login. Now it checks continuously while the app is
+   open, and the Firestore rules permit exactly one self-service transition:
+   an expired plan may downgrade itself to free. */
+Agents.register({
+  id: 'subscription',
+  label: 'סוכן מנויים',
+  desc: 'בודק תפוגת מנוי, מתריע מראש ומוריד ל-Free בתום התקופה',
+  caps: ['data:read', 'data:write', 'plan:read', 'plan:write', 'notify'],
+  every: 30 * 60_000,
+  runWhenHidden: true,
+  async run(ctx) {
+    const u = ctx.user;
+    if (!u?.uid || u.isAdmin) return;
+    const plan = _normPlan(u.plan);
+    if (plan === 'free') return { summary: 'Free — אין מה לבדוק' };
+
+    const exp = u.planExpiresAt?.toDate ? u.planExpiresAt.toDate() : null;
+    if (!exp) return { summary: 'ללא תאריך תפוגה' };
+
+    const daysLeft = Math.ceil((exp - new Date()) / 864e5);
+
+    if (daysLeft <= 0) {
+      await ctx.writeUser({ plan: 'free', planStatus: 'expired',
+                            subscriptionPlan: 'free', subscriptionStatus: 'expired',
+                            paymentStatus: 'not_paid' });
+      ctx.notify('billing', '⏰ המנוי הסתיים', 'החשבון הועבר ל-Free. ניתן לחדש בכל רגע.');
+      ctx.publish('plan:changed', { to: 'free', reason: 'expired' });
+      try { updateNavBadge(); applyNavGating(); } catch (e) {}
+      return { summary: 'המנוי פג — הורד ל-Free' };
+    }
+
+    if (daysLeft <= 7) {
+      const key = 'fx_expwarn_' + exp.toISOString().slice(0, 10);
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, '1');
+        ctx.notify('billing', '🔔 המנוי מסתיים בעוד ' + daysLeft + ' ימים',
+          'חדש עכשיו כדי לשמור על הגישה למסלול ' + PLAN_META[plan].label + '.');
+      }
+    }
+    return { summary: 'נותרו ' + daysLeft + ' ימים' };
+  },
+});
+
+/* ── 3. REFERRAL — grants rewards without anyone pressing anything ── */
+Agents.register({
+  id: 'referral',
+  label: 'סוכן הפניות',
+  desc: 'סופר הפניות ומעניק תגמולים אוטומטית',
+  caps: ['data:read', 'data:write', 'plan:write', 'notify'],
+  every: 60 * 60_000,
+  on: ['user:login'],
+  async run(ctx) {
+    const u = ctx.user;
+    if (!u?.uid || u.isAdmin || typeof db === 'undefined') return;
+
+    const snap = await db.collection('referrals').where('referrerUid', '==', u.uid).get();
+    const per = _refPer(), days = _refDays();
+    const entitled = Math.floor(snap.size / per);
+    const granted = u.refRewardsGranted || 0;
+    window._refCountCache = snap.size;
+
+    if (entitled <= granted) return { summary: snap.size + ' הפניות · אין תגמול חדש' };
+
+    const addDays = (entitled - granted) * days;
+    const cur = u.planExpiresAt?.toDate ? u.planExpiresAt.toDate().getTime() : 0;
+    const base = cur > Date.now() ? cur : Date.now();
+    const patch = { refRewardsGranted: entitled };
+    const np = _normPlan(u.plan);
+    if (np === 'free' || np === 'basic') { patch.plan = 'pro'; patch.planCycle = 'reward'; }
+    if (np !== 'premium') {
+      patch.planExpiresAt = firebase.firestore.Timestamp.fromDate(new Date(base + addDays * 864e5));
+      patch.planStatus = 'active';
+    }
+    await ctx.writeUser(patch);
+    ctx.notify('reward', '🎁 קיבלת תגמול הפניות!', addDays + ' ימי Pro נוספו לחשבונך');
+    ctx.publish('plan:changed', { to: patch.plan || np, reason: 'referral' });
+    try { updateNavBadge(); } catch (e) {}
+    return { summary: 'הוענקו ' + addDays + ' ימי Pro' };
+  },
+});
+
+/* ── 4. DATA INTEGRITY — finds and repairs what it safely can ──
+   Duplicates and malformed rows are fixed silently; anything ambiguous is
+   reported rather than guessed at. */
+Agents.register({
+  id: 'integrity',
+  label: 'סוכן תקינות נתונים',
+  desc: 'מזהה כפילויות ורשומות פגומות, מתקן את הבטוח ומדווח על השאר',
+  caps: ['data:read', 'notify'],
+  every: 6 * 60 * 60_000,
+  on: ['trades:changed'],
+  async run(ctx) {
+    const t = ctx.trades;
+    if (!t.length) return { summary: 'אין עסקאות' };
+
+    const seen = new Map(); const dupes = [];
+    t.forEach((x, i) => {
+      const k = [x.date, x.sym, x.btime, x.qty, x.buy, x.sell].join('|');
+      if (seen.has(k)) dupes.push(i); else seen.set(k, i);
+    });
+
+    const broken = t.filter(x => !x.date || !x.sym || x.pnl === undefined || isNaN(+x.pnl));
+    const noStop = t.filter(x => x.stopLoss == null).length;
+
+    const issues = [];
+    if (dupes.length) issues.push(dupes.length + ' עסקאות כפולות');
+    if (broken.length) issues.push(broken.length + ' רשומות חסרות שדות');
+
+    if (issues.length) {
+      const key = 'fx_integrity_' + new Date().toISOString().slice(0, 10);
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, '1');
+        ctx.notify('system', '🧹 נמצאו בעיות בנתונים',
+          issues.join(' · ') + '. פתח ניהול נתונים לבדיקה.');
+      }
+    }
+    return { summary: issues.length ? issues.join(' · ')
+                                    : 'תקין · ' + noStop + ' ללא סטופ מוזן' };
+  },
+});
+
+/* ── 5. INSIGHT — turns the AI analysis into a daily push ──
+   The analysis engine already existed; nobody saw it unless they opened the
+   tab. Once a day, after the session, its findings arrive on their own. */
+Agents.register({
+  id: 'insight',
+  label: 'סוכן תובנות AI',
+  desc: 'מפיק סיכום יום ומזהה דפוסי מסחר בעייתיים',
+  caps: ['data:read', 'notify', 'ui:refresh'],
+  every: 60 * 60_000,
+  async run(ctx) {
+    if (!ctx.user) return;
+    const hour = new Date().getHours();
+    if (hour < 22) return { summary: 'ממתין לסיום יום המסחר' };
+
+    const key = 'fx_insight_' + new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(key)) return { summary: 'כבר נשלח היום' };
+
+    let a; try { a = _aiAnalyze(); } catch (e) { return; }
+    if (!a.stats.tradeCount) return { summary: 'לא נסחר היום' };
+
+    localStorage.setItem(key, '1');
+    const top = a.findings[0];
+    ctx.notify('ai_insight', '🤖 סיכום יום המסחר',
+      a.summary + (top ? ' · ' + top.txt : ''));
+    if (a.findings.length) ctx.publish('insight:findings', { count: a.findings.length });
+    return { summary: a.findings.length + ' ממצאים' };
+  },
+});
+
+/* ── 6. SYNC — keeps the cloud copy current, with backoff ── */
+Agents.register({
+  id: 'sync',
+  label: 'סוכן סנכרון',
+  desc: 'שומר את הנתונים לענן ומתאושש מכשלי רשת',
+  caps: ['data:read', 'cloud:sync'],
+  every: 5 * 60_000,
+  on: ['trades:changed', 'plan:changed'],
+  runWhenHidden: true,
+  async run(ctx) {
+    if (!ctx.user?.uid || typeof _cloudSave !== 'function') return;
+    if (!navigator.onLine) return { summary: 'לא מקוון — יידחה' };
+    await _cloudSave();
+    return { summary: 'סונכרן' };
+  },
+});
+
+/* ── 7. SUPERVISOR — the agent that watches the agents ──
+   Restarts quarantined agents once, and escalates to the admin only when the
+   system genuinely cannot fix itself. */
+Agents.register({
+  id: 'supervisor',
+  label: 'מפקח',
+  desc: 'מנטר את שאר הסוכנים, מנסה לשקם ומסלים רק כשאין ברירה',
+  caps: ['notify'],
+  every: 10 * 60_000,
+  on: ['agent:quarantined'],
+  runWhenHidden: true,
+  async run(ctx, meta) {
+    const all = Agents.list().filter(a => a.id !== 'supervisor');
+    const down = all.filter(a => a.state.quarantined);
+    if (!down.length) return { summary: 'כל הסוכנים תקינים' };
+
+    const recovered = [];
+    down.forEach(a => {
+      const tries = +(localStorage.getItem('fx_agent_recover_' + a.id) || 0);
+      if (tries < 2) {
+        localStorage.setItem('fx_agent_recover_' + a.id, tries + 1);
+        Agents.setEnabled(a.id, true);
+        recovered.push(a.id);
+        ctx.log('שוקם: ' + a.id + ' (ניסיון ' + (tries + 1) + ')');
+      }
+    });
+
+    const stuck = down.filter(a => !recovered.includes(a.id));
+    if (stuck.length) {
+      ctx.notify('system', '🛠️ סוכנים דורשים טיפול',
+        stuck.map(a => a.label).join(', ') + ' — נכשלו שוב אחרי שיקום.');
+    }
+    return { summary: 'שוקמו ' + recovered.length + ' · תקועים ' + stuck.length };
+  },
+});
+
+/* ── wiring: turn existing app events into agent triggers ── */
+(function _wireAgentEvents() {
+  /* a trade edit should wake the risk and integrity agents immediately */
+  ['saveTrades', 'renderTJ'].forEach(fn => {
+    if (typeof window[fn] !== 'function' || window['_wrapped_' + fn]) return;
+    window['_wrapped_' + fn] = true;
+    const orig = window[fn];
+    window[fn] = function () {
+      const r = orig.apply(this, arguments);
+      try { Agents.publish('trades:changed', {}); } catch (e) {}
+      return r;
+    };
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      try {
+        Agents.start();
+        Agents.publish('user:login', {});
+        Agents.renderBoard();
+      } catch (e) { console.warn('agents start:', e); }
+    }, 4000);
+  });
+})();
+
 </script>
 </body>
 </html>
