@@ -1491,6 +1491,22 @@ body.a11y-contrast #index-banner { background:#000 !important; border-bottom-col
 /* v24: the free-edit toggle moved out of the bottom-left corner (it collided with the
    accessibility button) and into the header ⋯ menu. Same function, no floating circle. */
 #edit-mode-btn.active { background:rgba(192,132,252,.18); color:var(--pu); }
+body.edit-mode [data-ed]:hover {
+  outline:1.5px dashed rgba(144,137,189,.6) !important;
+  border-radius:3px; cursor:text !important;
+}
+body.edit-mode [data-ed]:focus {
+  outline:1.5px solid #9089bd !important;
+  border-radius:3px;
+}
+#edit-mode-bar {
+  display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
+  z-index:8001; background:rgba(144,137,189,.12); border:1px solid rgba(144,137,189,.3);
+  border-radius:10px; padding:6px 16px; font-size:11px; color:#9089bd;
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); pointer-events:none;
+  white-space:nowrap;
+}
+body.edit-mode #edit-mode-bar { display:block; }
 
 /* ── RIPPLE ── */
 .ripple-host { position:relative; overflow:hidden; }
@@ -2276,102 +2292,6 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .ob-fields{display:flex;flex-direction:column;gap:11px;text-align:right;margin-bottom:6px}
 .ob-fields label{font-size:12px;color:var(--t2);display:flex;flex-direction:column;gap:5px}
 .ob-fields input{padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--t1);font-size:14px;font-family:inherit}
-
-/* ══════════════════════════════════════════════════════════════
-   v27 — VISUAL BUILDER (admin only; nothing here affects normal users
-   because the .fb-on class is only ever set for an admin session)
-   ══════════════════════════════════════════════════════════════ */
-#fb-bar,#fb-panel,#fb-outline{display:none}
-body.fb-on #fb-bar,body.fb-on #fb-panel{display:flex}
-
-#fb-bar{position:fixed;top:0;left:0;right:0;height:46px;z-index:12000;background:#0b1220;
-  border-bottom:1px solid rgba(255,255,255,.14);align-items:center;justify-content:space-between;
-  padding:0 12px;gap:12px;box-shadow:0 3px 18px rgba(0,0,0,.5);direction:rtl}
-body.fb-on{padding-top:46px}
-body.fb-on .topnav{top:46px}
-.fb-bar-l,.fb-bar-r{display:flex;align-items:center;gap:6px}
-.fb-logo{font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
-#fb-bar button{height:32px;min-width:32px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);color:#cbd5e1;font-size:12px;font-family:inherit;cursor:pointer;
-  display:inline-flex;align-items:center;gap:5px}
-#fb-bar button:hover{background:rgba(255,255,255,.13);color:#fff}
-#fb-bar button:disabled{opacity:.35;cursor:not-allowed}
-#fb-bar button.on{background:var(--ac);border-color:var(--ac);color:#fff}
-#fb-bar .fb-pub{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
-#fb-bar .fb-pub:hover{background:#15803d}
-.fb-bp{display:flex;gap:2px;background:rgba(255,255,255,.05);border-radius:8px;padding:2px}
-#fb-status{font-size:11px;color:#94a3b8}
-
-#fb-outline{position:absolute;z-index:11990;pointer-events:none;border:2px solid #38bdf8;
-  border-radius:3px;box-shadow:0 0 0 9999px rgba(0,0,0,.02)}
-#fb-outline .fb-tag{position:absolute;top:-20px;right:0;background:#38bdf8;color:#04121c;
-  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px 4px 0 0;white-space:nowrap;direction:ltr}
-
-#fb-panel{position:fixed;top:46px;left:0;bottom:0;width:320px;max-width:88vw;z-index:11995;
-  background:#0f172a;border-left:1px solid rgba(255,255,255,.12);flex-direction:column;
-  box-shadow:6px 0 28px rgba(0,0,0,.45);direction:rtl}
-.fb-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
-.fb-head button{background:none;border:none;color:#94a3b8;font-size:15px;cursor:pointer;margin-right:auto}
-.fb-crumb{font-size:11px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left}
-.fb-crumb i{margin:0 4px;color:#475569}
-.fb-cr{cursor:pointer}.fb-cr:hover{color:#38bdf8}.fb-cr.on{color:#e2e8f0;font-weight:700}
-.fb-tabs{display:flex;gap:2px;padding:8px 10px 0;border-bottom:1px solid rgba(255,255,255,.1);flex-wrap:wrap}
-.fb-tabs button{flex:1;min-width:56px;padding:8px 6px;border:none;background:none;color:#94a3b8;
-  font-size:12px;font-family:inherit;cursor:pointer;border-bottom:2px solid transparent}
-.fb-tabs button.on{color:#fff;border-bottom-color:var(--ac)}
-.fb-body{flex:1;overflow-y:auto;padding:12px;color:#cbd5e1}
-.fb-sec-t{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;
-  margin:14px 0 7px;padding-top:10px;border-top:1px solid rgba(255,255,255,.07)}
-.fb-sec-t:first-child{margin-top:0;padding-top:0;border-top:none}
-.fb-f{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;font-size:11px;color:#94a3b8}
-.fb-f input,.fb-f select,.fb-f textarea{width:100%;padding:7px 9px;border-radius:6px;
-  border:1px solid rgba(255,255,255,.14);background:#1e293b;color:#e2e8f0;font-size:12px;font-family:inherit}
-.fb-f input[type=color]{padding:2px;height:30px;width:38px;flex-shrink:0}
-.fb-f input[type=range]{padding:0}
-.fb-color{display:flex;gap:5px;align-items:center}
-.fb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.fb-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.fb-mini span{font-size:9px}
-.fb-w{width:100%;padding:9px;margin-bottom:6px;border-radius:7px;border:1px solid rgba(255,255,255,.14);
-  background:#1e293b;color:#e2e8f0;font-size:12px;font-family:inherit;cursor:pointer}
-.fb-w:hover{background:#293548}
-.fb-grid2 .fb-w{margin-bottom:0}
-.fb-danger{border-color:rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1)}
-.fb-empty{text-align:center;color:#64748b;font-size:12px;padding:14px 4px}
-.fb-empty p{margin:8px 0}
-.fb-hint{font-size:10.5px;color:#475569}
-.fb-note{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:7px;
-  padding:9px 11px;font-size:11.5px;color:#7dd3fc;margin-bottom:10px}
-.fb-bp-note{background:rgba(255,255,255,.05);border-radius:6px;padding:7px 10px;font-size:11px;
-  color:#94a3b8;margin-bottom:10px}
-.fb-chk{display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 0;cursor:pointer}
-.fb-code{display:block;background:#1e293b;border-radius:6px;padding:7px 9px;font-size:10px;
-  color:#7dd3fc;direction:ltr;word-break:break-all;font-family:'IBM Plex Mono',monospace}
-.fb-ver{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);text-align:right}
-.fb-ver b{display:block;font-size:11.5px;color:#e2e8f0}
-.fb-ver small{font-size:10px;color:#64748b}
-.fb-ver button{margin-right:auto;padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.14);
-  background:#1e293b;color:#e2e8f0;font-size:11px;font-family:inherit;cursor:pointer}
-
-/* editing affordances on the canvas */
-body.fb-on:not(.fb-preview) *:hover:not(#fb-panel):not(#fb-bar):not(#fb-panel *):not(#fb-bar *){
-  outline:1px dashed rgba(56,189,248,.45);outline-offset:1px;cursor:crosshair}
-body.fb-on .fb-drop{outline:2px solid #22c55e!important}
-body.fb-preview #fb-panel{opacity:.25;pointer-events:none}
-
-/* breakpoint simulation inside the editor */
-body.fb-sim-tablet .app-layout,body.fb-sim-mobile .app-layout{margin-inline:auto;
-  border-inline:1px dashed rgba(255,255,255,.2);transition:max-width .25s}
-body.fb-sim-tablet .app-layout{max-width:1023px}
-body.fb-sim-mobile .app-layout{max-width:767px}
-
-@media(max-width:767px){
-  #fb-panel{width:100%;max-width:100%;top:auto;bottom:0;height:56dvh;border-left:none;
-    border-top:1px solid rgba(255,255,255,.14);border-radius:16px 16px 0 0}
-  #fb-bar{height:44px;padding:0 8px}
-  #fb-bar .fb-logo,#fb-status{display:none}
-  body.fb-on{padding-top:44px}
-}
 
 /* ══════════════════════════════════════════════════════════════
    v24 — ACCESSIBILITY · COOKIES · LEGAL  (restored)
@@ -7280,7 +7200,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
 <!-- EDIT MODE -->
 <!-- v24: #edit-mode-btn now lives inside the header ⋯ menu (admin only) -->
-
+<div id="edit-mode-bar">✏️ מצב עריכה פעיל — לחץ על כל טקסט כדי לערוך אותו</div>
 
 <!-- LIGHTBOX -->
 <div id="img-lightbox" onclick="this.classList.remove('open')">
@@ -18527,776 +18447,70 @@ async function importExpensesCSV(inp) {
   reader.readAsText(file, 'UTF-8');
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//  FAYNA VISUAL BUILDER (v27)
-//
-//  Architecture
-//  ────────────
-//  The app's DOM is hand-written and large parts of it are re-rendered at
-//  runtime, so the builder never mutates the DOM as its source of truth.
-//  Instead every edit is stored as a PATCH:
-//
-//      patch = { [stableSelector]: { text, styles:{desktop,tablet,mobile},
-//                                    hidden:{...}, order, attrs, cls } }
-//
-//  Patches live in Firestore (site_design/live | site_design/draft) and are
-//  replayed onto the DOM on load and again after any re-render, which is what
-//  makes the edits survive. Nothing about the builder loads for non-admins.
-//
-//  Extension points (future Theme / Form / Popup / Email builders):
-//      FB.registerModule({ id, label, icon, mount(panelEl), onSelect(el) })
-//  Modules are lazily imported and get their own tab in the inspector.
-// ══════════════════════════════════════════════════════════════════════════
+// ── EDIT MODE ──
+let _editMode = false;
+const _edSaved = JSON.parse(localStorage.getItem('dor_edit_texts')||'{}');
+const _edSel   = (el) => {
+  // Build a stable selector: tag + id or data-ed or nth-child path
+  if (el.id) return '#' + el.id;
+  let path = el.tagName.toLowerCase();
+  let p = el.parentElement;
+  if (p) {
+    const idx = [...p.children].indexOf(el);
+    path = (p.id ? '#'+p.id : p.tagName.toLowerCase()) + '>' + path + ':nth-child('+(idx+1)+')';
+  }
+  return path;
+};
 
-const FB = (function () {
-  'use strict';
+function _applyEdTexts() {
+  Object.entries(_edSaved).forEach(([sel, txt]) => {
+    try { const el = document.querySelector(sel); if (el) el.innerHTML = txt; } catch(_) {}
+  });
+}
 
-  /* ─────────────── state ─────────────── */
-  const S = {
-    active: false,
-    loaded: false,
-    bp: 'desktop',                 // desktop | tablet | mobile
-    sel: null,                     // currently selected element
-    patch: {},                     // working copy (draft)
-    published: {},                 // last published copy
-    history: [], hIdx: -1,
-    dirty: false,
-    modules: [],
-    observer: null,
-    autosaveTimer: null,
+function toggleEditMode() {
+  if (!currentUser?.isAdmin) { showToast('גישה לעורך מוגבלת לאדמין בלבד', 'error', 2500); return; }
+  _editMode = !_editMode;
+  document.body.classList.toggle('edit-mode', _editMode);
+  document.getElementById('edit-mode-btn').classList.toggle('active', _editMode);
+  if (_editMode) {
+    showToast('✏️ מצב עריכה פעיל — לחץ על כל טקסט לעריכה', 'info', 3000);
+    _activateEditListeners();
+  } else {
+    showToast('עריכה נשמרה', 'success', 1500);
+    _deactivateEditListeners();
+  }
+}
+
+let _edClickHandler = null;
+function _activateEditListeners() {
+  _edClickHandler = function(e) {
+    if (!_editMode) return;
+    const el = e.target;
+    // Only edit text-like elements, skip inputs/buttons/links with complex children
+    const editable = el.matches('h1,h2,h3,h4,h5,h6,label,th,td,.ct,div[style*="font-size:15px"],div[style*="font-weight:600"],.mc-l,.mc-v,.mc-s,.zm-label,.drv-name,.drv-desc');
+    if (!editable) return;
+    if (el.contentEditable === 'true') return;
+    el.contentEditable = 'true';
+    el.focus();
+    el.addEventListener('blur', function onBlur() {
+      el.contentEditable = 'false';
+      const sel = _edSel(el);
+      _edSaved[sel] = el.innerHTML;
+      localStorage.setItem('dor_edit_texts', JSON.stringify(_edSaved));
+      el.removeEventListener('blur', onBlur);
+    }, {once: true});
+    el.addEventListener('keydown', function(ke) {
+      if (ke.key === 'Enter' && !ke.shiftKey) { ke.preventDefault(); el.blur(); }
+      if (ke.key === 'Escape') { el.blur(); }
+    });
+    e.stopPropagation();
   };
-  const BPS = { desktop: 'מחשב', tablet: 'טאבלט', mobile: 'מובייל' };
-  const MEDIA = { tablet: '(max-width:1023px)', mobile: '(max-width:767px)' };
-
-  /* ─────────────── stable element identity ───────────────
-     Order of preference: explicit builder id → DOM id → structural path.
-     A structural path is recomputed the same way after a re-render, so a
-     patch keeps matching its element even when the markup is rebuilt. */
-  function selectorOf(el) {
-    if (!el || el === document.body) return 'body';
-    if (el.dataset.fbId) return '[data-fb-id="' + el.dataset.fbId + '"]';
-    if (el.id && !/^\d/.test(el.id) && !el.id.includes('${')) return '#' + CSS.escape(el.id);
-    const parts = [];
-    let node = el;
-    while (node && node !== document.body && parts.length < 6) {
-      const parent = node.parentElement;
-      if (!parent) break;
-      if (node.id && !/^\d/.test(node.id)) { parts.unshift('#' + CSS.escape(node.id)); break; }
-      const idx = Array.prototype.indexOf.call(parent.children, node) + 1;
-      parts.unshift(node.tagName.toLowerCase() + ':nth-child(' + idx + ')');
-      node = parent;
-    }
-    return parts.join('>') || el.tagName.toLowerCase();
-  }
-  function resolve(sel) {
-    try { return document.querySelector(sel); } catch (e) { return null; }
-  }
-
-  /* ─────────────── patch model ─────────────── */
-  function entry(sel) {
-    if (!S.patch[sel]) S.patch[sel] = { styles: { desktop: {}, tablet: {}, mobile: {} } };
-    const e = S.patch[sel];
-    e.styles = e.styles || { desktop: {}, tablet: {}, mobile: {} };
-    ['desktop', 'tablet', 'mobile'].forEach(b => { e.styles[b] = e.styles[b] || {}; });
-    return e;
-  }
-  function setStyle(sel, prop, val) {
-    const e = entry(sel);
-    if (val === '' || val == null) delete e.styles[S.bp][prop];
-    else e.styles[S.bp][prop] = val;
-    touch(); applyAll();
-  }
-  function setText(sel, html) { entry(sel).text = html; touch(); }
-  function setHidden(sel, on) {
-    const e = entry(sel);
-    e.hidden = e.hidden || {};
-    if (on) e.hidden[S.bp] = true; else delete e.hidden[S.bp];
-    touch(); applyAll();
-  }
-  function clearSelector(sel) { delete S.patch[sel]; touch(); location.reload(); }
-
-  /* ─────────────── rendering the patch ───────────────
-     Styles become a single stylesheet rather than inline styles: it survives
-     re-renders, keeps specificity predictable and costs one DOM node. */
-  function applyAll() {
-    let css = '';
-    const perBp = { desktop: '', tablet: '', mobile: '' };
-    Object.entries(S.patch).forEach(([sel, e]) => {
-      ['desktop', 'tablet', 'mobile'].forEach(bp => {
-        const decl = Object.entries(e.styles?.[bp] || {})
-          .map(([k, v]) => `${k}:${v} !important`).join(';');
-        if (decl) perBp[bp] += `${sel}{${decl}}\n`;
-        if (e.hidden?.[bp]) perBp[bp] += `${sel}{display:none !important}\n`;
-      });
-      if (e.order != null) perBp.desktop += `${sel}{order:${e.order}}\n`;
-    });
-    css += perBp.desktop;
-    if (perBp.tablet) css += `@media ${MEDIA.tablet}{\n${perBp.tablet}}\n`;
-    if (perBp.mobile) css += `@media ${MEDIA.mobile}{\n${perBp.mobile}}\n`;
-    let tag = document.getElementById('fb-style');
-    if (!tag) { tag = document.createElement('style'); tag.id = 'fb-style'; document.head.appendChild(tag); }
-    tag.textContent = css;
-    applyContent();
-  }
-  function applyContent() {
-    Object.entries(S.patch).forEach(([sel, e]) => {
-      if (e.text == null && !e.attrs) return;
-      const el = resolve(sel);
-      if (!el) return;
-      if (e.text != null && el.innerHTML !== e.text) el.innerHTML = e.text;
-      if (e.attrs) Object.entries(e.attrs).forEach(([k, v]) => {
-        if (el.getAttribute(k) !== v) el.setAttribute(k, v);
-      });
-    });
-  }
-  /* Re-renders wipe text patches; a debounced observer puts them back. */
-  function watch() {
-    if (S.observer) return;
-    let t = null;
-    S.observer = new MutationObserver(() => {
-      clearTimeout(t);
-      t = setTimeout(applyContent, 120);
-    });
-    S.observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-  /* ─────────────── history ─────────────── */
-  function snapshot() { return JSON.parse(JSON.stringify(S.patch)); }
-  function touch() {
-    S.dirty = true;
-    S.history = S.history.slice(0, S.hIdx + 1);
-    S.history.push(snapshot());
-    if (S.history.length > 60) S.history.shift();
-    S.hIdx = S.history.length - 1;
-    UI.syncHistoryButtons();
-    scheduleAutosave();
-  }
-  function undo() {
-    if (S.hIdx <= 0) return;
-    S.hIdx--; S.patch = JSON.parse(JSON.stringify(S.history[S.hIdx]));
-    applyAll(); UI.syncHistoryButtons(); toast('בוטל', 'info');
-  }
-  function redo() {
-    if (S.hIdx >= S.history.length - 1) return;
-    S.hIdx++; S.patch = JSON.parse(JSON.stringify(S.history[S.hIdx]));
-    applyAll(); UI.syncHistoryButtons(); toast('שוחזר', 'info');
-  }
-
-  /* ─────────────── persistence ─────────────── */
-  const DOC_LIVE = 'live', DOC_DRAFT = 'draft';
-  async function loadLive() {
-    try {
-      const d = await db.collection('site_design').doc(DOC_LIVE).get();
-      if (d.exists) { S.published = d.data().patch || {}; S.patch = JSON.parse(JSON.stringify(S.published)); }
-    } catch (e) { console.warn('FB load:', e); }
-    applyAll(); watch();
-  }
-  async function loadDraft() {
-    try {
-      const d = await db.collection('site_design').doc(DOC_DRAFT).get();
-      if (d.exists && d.data().patch) {
-        S.patch = d.data().patch;
-        applyAll();
-        toast('טיוטה נטענה', 'info');
-      }
-    } catch (e) {}
-  }
-  function scheduleAutosave() {
-    clearTimeout(S.autosaveTimer);
-    S.autosaveTimer = setTimeout(saveDraft, 2500);
-  }
-  async function saveDraft(silent) {
-    if (!isAdmin()) return;
-    try {
-      await db.collection('site_design').doc(DOC_DRAFT).set({
-        patch: S.patch,
-        savedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        savedBy: currentUser?.email || '',
-      });
-      UI.setStatus('נשמר כטיוטה');
-      if (!silent) {}
-    } catch (e) { UI.setStatus('שמירה נכשלה'); }
-  }
-  async function publish() {
-    if (!isAdmin()) return;
-    if (!await customConfirm('לפרסם את השינויים לכל המשתמשים?')) return;
-    try {
-      /* keep the outgoing version so it can be restored */
-      await db.collection('site_design_versions').add({
-        patch: S.published, replacedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        by: currentUser?.email || '', note: 'גרסה קודמת',
-      });
-      await db.collection('site_design').doc(DOC_LIVE).set({
-        patch: S.patch,
-        publishedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        publishedBy: currentUser?.email || '',
-      });
-      S.published = snapshot(); S.dirty = false;
-      audit('publish', Object.keys(S.patch).length + ' רכיבים');
-      UI.setStatus('פורסם ✓');
-      toast('השינויים פורסמו לכל המשתמשים ✅', 'success');
-    } catch (e) { toast('הפרסום נכשל', 'error'); }
-  }
-  async function discardDraft() {
-    if (!await customConfirm('לבטל את כל השינויים שלא פורסמו?')) return;
-    S.patch = JSON.parse(JSON.stringify(S.published));
-    applyAll(); await saveDraft(true);
-    toast('הטיוטה בוטלה', 'info');
-    setTimeout(() => location.reload(), 600);
-  }
-  async function versions() {
-    const box = document.getElementById('fb-versions');
-    if (!box) return;
-    box.innerHTML = '<div style="color:var(--t3);font-size:11px;padding:8px">טוען…</div>';
-    try {
-      const q = await db.collection('site_design_versions').orderBy('replacedAt', 'desc').limit(20).get();
-      if (q.empty) { box.innerHTML = '<div style="color:var(--t3);font-size:11px;padding:8px">אין גרסאות שמורות</div>'; return; }
-      box.innerHTML = q.docs.map(d => {
-        const v = d.data();
-        const t = v.replacedAt?.toDate ? v.replacedAt.toDate().toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' }) : '';
-        const n = Object.keys(v.patch || {}).length;
-        return `<div class="fb-ver">
-          <div><b>${t}</b><small>${n} רכיבים · ${escHtml(v.by || '')}</small></div>
-          <button onclick="FB.restore('${d.id}')">שחזר</button></div>`;
-      }).join('');
-    } catch (e) { box.innerHTML = '<div style="color:var(--re);font-size:11px;padding:8px">שגיאה בטעינה</div>'; }
-  }
-  async function restore(id) {
-    if (!await customConfirm('לשחזר את הגרסה הזו? השינויים הנוכחיים יוחלפו.')) return;
-    try {
-      const d = await db.collection('site_design_versions').doc(id).get();
-      if (!d.exists) return;
-      S.patch = d.data().patch || {};
-      applyAll(); await saveDraft(true);
-      audit('restore', id);
-      toast('הגרסה שוחזרה — לחץ פרסם כדי להחיל', 'success');
-    } catch (e) { toast('השחזור נכשל', 'error'); }
-  }
-  async function audit(action, details) {
-    try {
-      await db.collection('adminLogs').add({
-        uid: currentUser?.uid || '', email: currentUser?.email || '',
-        action: 'builder:' + action, details: details || '',
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    } catch (e) {}
-  }
-
-  /* ─────────────── helpers ─────────────── */
-  function isAdmin() { return !!(typeof currentUser !== 'undefined' && currentUser?.isAdmin); }
-  function toast(m, t) { try { showToast(m, t || 'info'); } catch (e) {} }
-  function computed(el, prop) { return el ? getComputedStyle(el).getPropertyValue(prop).trim() : ''; }
-  function px(v) { return /^-?\d+(\.\d+)?$/.test(String(v).trim()) ? v + 'px' : v; }
-
-  /* ─────────────── selection ─────────────── */
-  function selectable(el) {
-    if (!el || el === document.body || el === document.documentElement) return false;
-    if (el.closest('#fb-panel,#fb-bar,#fb-outline,.toast-wrap,#a11y-panel')) return false;
-    return true;
-  }
-  function select(el) {
-    if (!selectable(el)) return;
-    S.sel = el;
-    UI.drawOutline(el);
-    UI.renderInspector(el);
-  }
-  function deselect() { S.sel = null; UI.hideOutline(); UI.renderInspector(null); }
-
-  /* ─────────────── element operations ─────────────── */
-  function duplicate() {
-    const el = S.sel; if (!el || !el.parentElement) return;
-    const clone = el.cloneNode(true);
-    clone.removeAttribute('id');
-    clone.dataset.fbId = 'dup_' + Date.now().toString(36);
-    el.parentElement.insertBefore(clone, el.nextSibling);
-    entry(selectorOf(clone)).cloneOf = selectorOf(el);
-    touch(); toast('שוכפל', 'success');
-  }
-  function removeEl() {
-    const el = S.sel; if (!el) return;
-    setHidden(selectorOf(el), true);
-    deselect(); toast('הוסתר (ניתן להחזיר מ־Undo)', 'info');
-  }
-  function move(dir) {
-    const el = S.sel; if (!el || !el.parentElement) return;
-    const sibs = Array.from(el.parentElement.children);
-    const i = sibs.indexOf(el);
-    const j = dir < 0 ? i - 1 : i + 1;
-    if (j < 0 || j >= sibs.length) return;
-    /* order is expressed as flex/grid order so it survives a re-render */
-    const parent = el.parentElement;
-    const disp = computed(parent, 'display');
-    if (!/flex|grid/.test(disp)) parent.style.display = 'flex';
-    sibs.forEach((sib, k) => { entry(selectorOf(sib)).order = k * 10; });
-    entry(selectorOf(el)).order = j * 10 + (dir < 0 ? -5 : 5);
-    touch(); applyAll(); UI.drawOutline(el);
-  }
-
-  /* ─────────────── module registry (future builders) ─────────────── */
-  function registerModule(mod) {
-    if (!mod || !mod.id || S.modules.some(m => m.id === mod.id)) return;
-    S.modules.push(mod);
-    UI.renderModuleTabs();
-  }
-
-  /* ─────────────── activation ─────────────── */
-  async function toggle() {
-    if (!isAdmin()) { toast('גישה לעורך מוגבלת לאדמין בלבד', 'error'); return; }
-    if (!S.loaded) { await UI.mount(); S.loaded = true; await loadDraft(); }
-    S.active = !S.active;
-    document.body.classList.toggle('fb-on', S.active);
-    document.getElementById('edit-mode-btn')?.classList.toggle('active', S.active);
-    if (S.active) {
-      if (!S.history.length) { S.history = [snapshot()]; S.hIdx = 0; }
-      audit('open', '');
-      toast('🎨 עורך ויזואלי פעיל — לחץ על רכיב לעריכה', 'info');
-    } else { deselect(); saveDraft(true); }
-  }
-
-  return {
-    S, BPS, selectorOf, resolve, entry, setStyle, setText, setHidden, clearSelector,
-    applyAll, loadLive, saveDraft, publish, discardDraft, versions, restore,
-    undo, redo, select, deselect, duplicate, removeEl, move, toggle, registerModule,
-    isAdmin, computed, px, touch,
-    setBp(b) { S.bp = b; UI.syncBp(); if (S.sel) UI.renderInspector(S.sel); },
-  };
-})();
-
-// ══════════════════════════════════════════════════════════════════════════
-//  FAYNA VISUAL BUILDER — interface layer
-//  Toolbar · selection outline · inspector (content / layout / design /
-//  advanced) · component library · drag-to-reorder · version history.
-//  Everything here is created on first activation only (admin-only, lazy).
-// ══════════════════════════════════════════════════════════════════════════
-
-const UI = (function () {
-  'use strict';
-  let mounted = false, dragSrc = null;
-
-  /* ─────────────── chrome ─────────────── */
-  async function mount() {
-    if (mounted) return;
-    mounted = true;
-
-    const bar = document.createElement('div');
-    bar.id = 'fb-bar';
-    bar.innerHTML = `
-      <div class="fb-bar-l">
-        <span class="fb-logo">🎨 עורך</span>
-        <div class="fb-bp" role="group" aria-label="מצב תצוגה">
-          <button data-bp="desktop" class="on" onclick="FB.setBp('desktop')" title="מחשב">🖥️</button>
-          <button data-bp="tablet"  onclick="FB.setBp('tablet')"  title="טאבלט">📱</button>
-          <button data-bp="mobile"  onclick="FB.setBp('mobile')"  title="מובייל">📲</button>
-        </div>
-      </div>
-      <div class="fb-bar-c"><span id="fb-status">מוכן</span></div>
-      <div class="fb-bar-r">
-        <button id="fb-undo" onclick="FB.undo()" title="בטל (Ctrl+Z)">↶</button>
-        <button id="fb-redo" onclick="FB.redo()" title="בצע שוב (Ctrl+Y)">↷</button>
-        <button onclick="UI.togglePreview()" id="fb-prev" title="תצוגה מקדימה">👁 תצוגה</button>
-        <button onclick="FB.saveDraft()" title="שמור טיוטה">💾 טיוטה</button>
-        <button class="fb-pub" onclick="FB.publish()">🚀 פרסם</button>
-        <button onclick="FB.toggle()" title="סגור עורך">✕</button>
-      </div>`;
-    document.body.appendChild(bar);
-
-    const outline = document.createElement('div');
-    outline.id = 'fb-outline';
-    outline.innerHTML = '<span class="fb-tag"></span>';
-    document.body.appendChild(outline);
-
-    const panel = document.createElement('aside');
-    panel.id = 'fb-panel';
-    panel.setAttribute('aria-label', 'מאפייני רכיב');
-    panel.innerHTML = `
-      <div class="fb-head">
-        <div id="fb-crumb" class="fb-crumb">לא נבחר רכיב</div>
-        <button onclick="FB.deselect()" title="בטל בחירה">✕</button>
-      </div>
-      <div class="fb-tabs" role="tablist">
-        <button class="on" data-tab="content" onclick="UI.tab('content')">תוכן</button>
-        <button data-tab="layout"  onclick="UI.tab('layout')">פריסה</button>
-        <button data-tab="design"  onclick="UI.tab('design')">עיצוב</button>
-        <button data-tab="adv"     onclick="UI.tab('adv')">מתקדם</button>
-        <span id="fb-mod-tabs"></span>
-      </div>
-      <div class="fb-body" id="fb-body"></div>`;
-    document.body.appendChild(panel);
-
-    document.addEventListener('click', onPick, true);
-    document.addEventListener('keydown', onKey);
-    enableDrag();
-    syncBp();
-  }
-
-  /* ─────────────── selection ─────────────── */
-  function onPick(e) {
-    if (!FB.S.active) return;
-    if (e.target.closest('#fb-panel,#fb-bar,#fb-outline,.toast-wrap')) return;
-    e.preventDefault(); e.stopPropagation();
-    FB.select(e.target);
-  }
-  function onKey(e) {
-    if (!FB.S.active) return;
-    const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) ||
-                   document.activeElement?.isContentEditable;
-    if (e.ctrlKey || e.metaKey) {
-      if (e.key === 'z') { e.preventDefault(); e.shiftKey ? FB.redo() : FB.undo(); }
-      if (e.key === 'y') { e.preventDefault(); FB.redo(); }
-      if (e.key === 's') { e.preventDefault(); FB.saveDraft(); }
-      return;
-    }
-    if (typing) return;
-    if (e.key === 'Escape') FB.deselect();
-    if (e.key === 'Delete') FB.removeEl();
-    if (e.key === 'ArrowUp')   { e.preventDefault(); FB.move(-1); }
-    if (e.key === 'ArrowDown') { e.preventDefault(); FB.move(1); }
-  }
-
-  function drawOutline(el) {
-    const o = document.getElementById('fb-outline');
-    if (!o || !el) return;
-    const r = el.getBoundingClientRect();
-    o.style.cssText = `display:block;top:${r.top + scrollY}px;right:${innerWidth - r.right}px;width:${r.width}px;height:${r.height}px`;
-    o.querySelector('.fb-tag').textContent =
-      el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') +
-      (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/)[0] : '');
-  }
-  function hideOutline() { const o = document.getElementById('fb-outline'); if (o) o.style.display = 'none'; }
-
-  /* ─────────────── inspector ─────────────── */
-  let curTab = 'content';
-  function tab(t) {
-    curTab = t;
-    document.querySelectorAll('#fb-panel .fb-tabs button').forEach(b =>
-      b.classList.toggle('on', b.dataset.tab === t));
-    renderInspector(FB.S.sel);
-  }
-
-  function renderInspector(el) {
-    const body = document.getElementById('fb-body');
-    const crumb = document.getElementById('fb-crumb');
-    if (!body) return;
-    if (!el) {
-      crumb.textContent = 'לא נבחר רכיב';
-      body.innerHTML = `<div class="fb-empty">
-        <div style="font-size:26px">👆</div>
-        <p>לחץ על כל רכיב בעמוד כדי לערוך אותו.</p>
-        <p class="fb-hint">חצים ↑↓ — שינוי סדר · Delete — הסתרה · Ctrl+Z — ביטול</p>
-        <div class="fb-sec-t">היסטוריית גרסאות</div>
-        <div id="fb-versions"></div>
-        <button class="fb-w" onclick="FB.versions()">טען גרסאות</button>
-        <button class="fb-w fb-danger" onclick="FB.discardDraft()">בטל טיוטה</button>
-      </div>`;
-      return;
-    }
-    crumb.innerHTML = breadcrumb(el);
-    const sel = FB.selectorOf(el);
-    body.innerHTML =
-      curTab === 'content' ? tabContent(el, sel) :
-      curTab === 'layout'  ? tabLayout(el, sel)  :
-      curTab === 'design'  ? tabDesign(el, sel)  :
-      curTab === 'adv'     ? tabAdvanced(el, sel) :
-      (FB.S.modules.find(m => m.id === curTab)?.render?.(el, sel) || '');
-    bindInputs(el, sel);
-  }
-
-  function breadcrumb(el) {
-    const chain = []; let n = el;
-    while (n && n !== document.body && chain.length < 4) { chain.unshift(n); n = n.parentElement; }
-    return chain.map((n, i) => {
-      const label = n.tagName.toLowerCase() + (n.id ? '#' + n.id : '');
-      const last = i === chain.length - 1;
-      return `<span class="fb-cr${last ? ' on' : ''}" onclick="UI.selectPath(${chain.length - 1 - i})">${label}</span>`;
-    }).join('<i>›</i>');
-  }
-  function selectPath(up) {
-    let n = FB.S.sel;
-    for (let i = 0; i < up && n?.parentElement; i++) n = n.parentElement;
-    FB.select(n);
-  }
-
-  /* ── tab: content ── */
-  function tabContent(el, sel) {
-    const isImg = el.tagName === 'IMG';
-    const isLink = el.tagName === 'A';
-    const leaf = !el.children.length || el.children.length < 3;
-    return `
-      ${leaf ? `<label class="fb-f"><span>טקסט</span>
-        <textarea data-act="text" rows="3">${escHtml(el.innerHTML.trim())}</textarea></label>
-        <button class="fb-w" data-act="applyText">שמור טקסט</button>` :
-        `<div class="fb-note">הרכיב מכיל רכיבי משנה — בחר רכיב פנימי כדי לערוך את הטקסט שלו.</div>`}
-      ${isImg ? `<label class="fb-f"><span>כתובת תמונה</span>
-        <input data-attr="src" value="${escHtml(el.getAttribute('src') || '')}" dir="ltr"></label>
-        <label class="fb-f"><span>טקסט חלופי (נגישות)</span>
-        <input data-attr="alt" value="${escHtml(el.getAttribute('alt') || '')}"></label>` : ''}
-      ${isLink ? `<label class="fb-f"><span>קישור</span>
-        <input data-attr="href" value="${escHtml(el.getAttribute('href') || '')}" dir="ltr"></label>` : ''}
-      <div class="fb-sec-t">פעולות</div>
-      <div class="fb-grid2">
-        <button class="fb-w" onclick="FB.duplicate()">⧉ שכפל</button>
-        <button class="fb-w" onclick="FB.removeEl()">🚫 הסתר</button>
-        <button class="fb-w" onclick="FB.move(-1)">↑ הקדם</button>
-        <button class="fb-w" onclick="FB.move(1)">↓ אחר</button>
-      </div>
-      <div class="fb-sec-t">ספריית רכיבים</div>
-      <div class="fb-grid2">
-        ${['כותרת', 'פסקה', 'כפתור', 'כרטיס', 'מפריד', 'מרווח'].map(c =>
-          `<button class="fb-w" onclick="UI.insert('${c}')">+ ${c}</button>`).join('')}
-      </div>`;
-  }
-
-  /* ── tab: layout ── */
-  function tabLayout(el, sel) {
-    const g = p => FB.computed(el, p);
-    return `
-      ${bpNotice()}
-      <div class="fb-sec-t">מרווח פנימי (Padding)</div>
-      ${box4('padding')}
-      <div class="fb-sec-t">מרווח חיצוני (Margin)</div>
-      ${box4('margin')}
-      <div class="fb-sec-t">גודל</div>
-      <div class="fb-grid2">
-        ${field('רוחב', 'width', g('width'))}
-        ${field('גובה', 'height', g('height'))}
-        ${field('רוחב מרבי', 'max-width', '')}
-        ${field('רוחב מזערי', 'min-width', '')}
-      </div>
-      <div class="fb-sec-t">פריסה</div>
-      ${select1('display', ['', 'block', 'flex', 'grid', 'inline-flex', 'inline-block', 'none'], g('display'))}
-      <div class="fb-grid2">
-        ${select1('flex-direction', ['', 'row', 'row-reverse', 'column', 'column-reverse'], g('flex-direction'))}
-        ${select1('flex-wrap', ['', 'nowrap', 'wrap'], g('flex-wrap'))}
-        ${select1('justify-content', ['', 'flex-start', 'center', 'flex-end', 'space-between', 'space-around'], g('justify-content'))}
-        ${select1('align-items', ['', 'stretch', 'flex-start', 'center', 'flex-end'], g('align-items'))}
-        ${field('מרווח בין (gap)', 'gap', g('gap'))}
-        ${field('עמודות Grid', 'grid-template-columns', '')}
-      </div>
-      <div class="fb-sec-t">יישור טקסט</div>
-      ${select1('text-align', ['', 'right', 'center', 'left', 'justify'], g('text-align'))}`;
-  }
-
-  /* ── tab: design ── */
-  function tabDesign(el, sel) {
-    const g = p => FB.computed(el, p);
-    return `
-      ${bpNotice()}
-      <div class="fb-sec-t">צבעים</div>
-      <div class="fb-grid2">
-        ${color('צבע טקסט', 'color', g('color'))}
-        ${color('רקע', 'background-color', g('background-color'))}
-      </div>
-      <div class="fb-sec-t">טיפוגרפיה</div>
-      <div class="fb-grid2">
-        ${field('גודל', 'font-size', g('font-size'))}
-        ${select1('font-weight', ['', '300', '400', '500', '600', '700', '800'], g('font-weight'))}
-        ${field('גובה שורה', 'line-height', g('line-height'))}
-        ${field('ריווח אותיות', 'letter-spacing', '')}
-      </div>
-      ${select1('font-family', ['', "'Heebo',sans-serif", "'IBM Plex Mono',monospace", 'Arial,sans-serif', 'Georgia,serif'], '')}
-      <div class="fb-sec-t">גבול ופינות</div>
-      <div class="fb-grid2">
-        ${field('עובי גבול', 'border-width', '')}
-        ${color('צבע גבול', 'border-color', g('border-color'))}
-        ${select1('border-style', ['', 'none', 'solid', 'dashed', 'dotted'], '')}
-        ${field('עיגול פינות', 'border-radius', g('border-radius'))}
-      </div>
-      <div class="fb-sec-t">אפקטים</div>
-      ${field('צל (box-shadow)', 'box-shadow', '')}
-      <div class="fb-grid2">
-        ${range('שקיפות', 'opacity', 0, 1, 0.05, g('opacity'))}
-        ${field('מעבר (transition)', 'transition', '')}
-      </div>
-      <div class="fb-sec-t">אנימציה</div>
-      ${select1('animation', ['', 'fadeInUp .5s ease', 'slideUp .4s ease', 'pulse 2s infinite'], '')}`;
-  }
-
-  /* ── tab: advanced ── */
-  function tabAdvanced(el, sel) {
-    const e = FB.S.patch[sel] || {};
-    const n = Object.values(e.styles || {}).reduce((a, o) => a + Object.keys(o).length, 0);
-    return `
-      <div class="fb-sec-t">נראות לפי מסך</div>
-      ${['desktop', 'tablet', 'mobile'].map(b => `
-        <label class="fb-chk"><input type="checkbox" data-hide="${b}"
-          ${e.hidden?.[b] ? 'checked' : ''}> הסתר ב${FB.BPS[b]}</label>`).join('')}
-      <div class="fb-sec-t">מזהה הרכיב</div>
-      <code class="fb-code">${escHtml(sel)}</code>
-      <div class="fb-sec-t">CSS חופשי</div>
-      <textarea data-act="rawcss" rows="4" placeholder="color:#fff; font-size:14px;"></textarea>
-      <button class="fb-w" data-act="applyRaw">החל CSS</button>
-      <div class="fb-sec-t">איפוס</div>
-      <p class="fb-hint">${n} מאפיינים מותאמים לרכיב זה</p>
-      <button class="fb-w fb-danger" onclick="FB.clearSelector('${sel.replace(/'/g, "\\'")}')">מחק את כל השינויים לרכיב</button>`;
-  }
-
-  /* ─────────────── field builders ─────────────── */
-  const bpNotice = () => `<div class="fb-bp-note">עורך כעת: <b>${FB.BPS[FB.S.bp]}</b>${
-    FB.S.bp !== 'desktop' ? ' — השינוי יחול רק במסך זה' : ''}</div>`;
-  const field = (label, prop, ph) =>
-    `<label class="fb-f"><span>${label}</span><input data-prop="${prop}" placeholder="${escHtml(ph || '')}" dir="ltr"></label>`;
-  const color = (label, prop, cur) =>
-    `<label class="fb-f"><span>${label}</span><span class="fb-color">
-      <input type="color" data-prop="${prop}" data-color="1" value="${toHex(cur)}">
-      <input data-prop="${prop}" placeholder="${escHtml(cur || '')}" dir="ltr"></span></label>`;
-  const select1 = (prop, opts, cur) =>
-    `<label class="fb-f"><span>${prop}</span><select data-prop="${prop}">
-      ${opts.map(o => `<option value="${o}"${o === cur ? ' selected' : ''}>${o || '— ברירת מחדל —'}</option>`).join('')}
-    </select></label>`;
-  const range = (label, prop, min, max, step, cur) =>
-    `<label class="fb-f"><span>${label}</span>
-      <input type="range" data-prop="${prop}" min="${min}" max="${max}" step="${step}" value="${cur || 1}"></label>`;
-  const box4 = base => `<div class="fb-grid4">
-      ${['top', 'right', 'bottom', 'left'].map(side =>
-        `<label class="fb-f fb-mini"><span>${{ top: 'עליון', right: 'ימין', bottom: 'תחתון', left: 'שמאל' }[side]}</span>
-        <input data-prop="${base}-${side}" dir="ltr" placeholder="0"></label>`).join('')}</div>`;
-  function toHex(c) {
-    const m = String(c).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!m) return /^#/.test(c) ? c : '#000000';
-    return '#' + [1, 2, 3].map(i => (+m[i]).toString(16).padStart(2, '0')).join('');
-  }
-
-  /* ─────────────── wiring ─────────────── */
-  function bindInputs(el, sel) {
-    const body = document.getElementById('fb-body');
-    if (!body) return;
-
-    body.querySelectorAll('[data-prop]').forEach(inp => {
-      const prop = inp.dataset.prop;
-      const cur = FB.S.patch[sel]?.styles?.[FB.S.bp]?.[prop];
-      if (cur != null && inp.type !== 'color') inp.value = cur;
-      const ev = (inp.type === 'range' || inp.type === 'color') ? 'input' : 'change';
-      inp.addEventListener(ev, () => {
-        let v = inp.value;
-        if (/^(width|height|max-width|min-width|gap|font-size|border-radius|border-width|letter-spacing|padding|margin)/.test(prop)) v = FB.px(v);
-        FB.setStyle(sel, prop, v);
-        drawOutline(el);
-      });
-    });
-
-    body.querySelectorAll('[data-attr]').forEach(inp => {
-      inp.addEventListener('change', () => {
-        const e = FB.entry(sel); e.attrs = e.attrs || {};
-        e.attrs[inp.dataset.attr] = inp.value;
-        el.setAttribute(inp.dataset.attr, inp.value);
-        FB.touch();
-      });
-    });
-
-    body.querySelectorAll('[data-hide]').forEach(cb => {
-      cb.addEventListener('change', () => {
-        const prevBp = FB.S.bp;
-        FB.S.bp = cb.dataset.hide;
-        FB.setHidden(sel, cb.checked);
-        FB.S.bp = prevBp;
-      });
-    });
-
-    body.querySelector('[data-act="applyText"]')?.addEventListener('click', () => {
-      const ta = body.querySelector('[data-act="text"]');
-      if (!ta) return;
-      el.innerHTML = ta.value;
-      FB.setText(sel, ta.value);
-      toastOk('הטקסט נשמר');
-    });
-
-    body.querySelector('[data-act="applyRaw"]')?.addEventListener('click', () => {
-      const ta = body.querySelector('[data-act="rawcss"]');
-      if (!ta) return;
-      ta.value.split(';').forEach(pair => {
-        const [k, v] = pair.split(':');
-        if (k && v) FB.setStyle(sel, k.trim(), v.trim());
-      });
-      toastOk('ה-CSS הוחל');
-    });
-  }
-  function toastOk(m) { try { showToast(m, 'success'); } catch (e) {} }
-
-  /* ─────────────── component library ─────────────── */
-  const BLOCKS = {
-    'כותרת':  '<h3 style="font-size:16px;font-weight:600;color:var(--t1);margin:8px 0">כותרת חדשה</h3>',
-    'פסקה':   '<p style="font-size:13px;color:var(--t2);line-height:1.7">טקסט חדש — לחץ כדי לערוך.</p>',
-    'כפתור':  '<button class="btn-p" style="padding:9px 18px">כפתור</button>',
-    'כרטיס':  '<div class="zcl" style="padding:14px"><div class="zcl-title"><div class="zcl-title-left"><div class="dot"></div>כרטיס חדש</div></div><div style="font-size:13px;color:var(--t2)">תוכן הכרטיס</div></div>',
-    'מפריד':  '<hr style="border:none;border-top:1px solid var(--border);margin:14px 0">',
-    'מרווח':  '<div style="height:20px"></div>',
-  };
-  function insert(kind) {
-    const el = FB.S.sel; if (!el || !BLOCKS[kind]) return;
-    const wrap = document.createElement('div');
-    wrap.innerHTML = BLOCKS[kind];
-    const node = wrap.firstElementChild;
-    node.dataset.fbId = 'new_' + Date.now().toString(36);
-    el.parentElement.insertBefore(node, el.nextSibling);
-    const s = FB.selectorOf(node);
-    FB.entry(s).inserted = { kind, html: node.outerHTML, afterSel: FB.selectorOf(el) };
-    FB.touch(); FB.select(node);
-    toastOk(kind + ' נוסף');
-  }
-
-  /* ─────────────── drag to reorder ─────────────── */
-  function enableDrag() {
-    document.addEventListener('dragstart', e => {
-      if (!FB.S.active) return;
-      dragSrc = e.target;
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    document.addEventListener('dragover', e => {
-      if (!FB.S.active || !dragSrc) return;
-      if (e.target.parentElement === dragSrc.parentElement) { e.preventDefault(); e.target.classList.add('fb-drop'); }
-    });
-    document.addEventListener('dragleave', e => e.target.classList?.remove('fb-drop'));
-    document.addEventListener('drop', e => {
-      if (!FB.S.active || !dragSrc) return;
-      e.preventDefault(); e.target.classList.remove('fb-drop');
-      const parent = dragSrc.parentElement;
-      if (e.target.parentElement !== parent) return;
-      parent.insertBefore(dragSrc, e.target);
-      Array.from(parent.children).forEach((c, i) => { FB.entry(FB.selectorOf(c)).order = i * 10; });
-      FB.touch(); FB.applyAll();
-      dragSrc = null;
-    });
-  }
-
-  /* ─────────────── misc ─────────────── */
-  function togglePreview() {
-    const on = document.body.classList.toggle('fb-preview');
-    document.getElementById('fb-prev').classList.toggle('on', on);
-    if (on) FB.deselect();
-    try { showToast(on ? 'תצוגה מקדימה — לחיצות אינן עורכות' : 'חזרה לעריכה', 'info'); } catch (e) {}
-  }
-  function syncBp() {
-    document.querySelectorAll('#fb-bar .fb-bp button').forEach(b =>
-      b.classList.toggle('on', b.dataset.bp === FB.S.bp));
-    document.body.classList.remove('fb-sim-tablet', 'fb-sim-mobile');
-    if (FB.S.bp !== 'desktop') document.body.classList.add('fb-sim-' + FB.S.bp);
-  }
-  function syncHistoryButtons() {
-    const u = document.getElementById('fb-undo'), r = document.getElementById('fb-redo');
-    if (u) u.disabled = FB.S.hIdx <= 0;
-    if (r) r.disabled = FB.S.hIdx >= FB.S.history.length - 1;
-    setStatus(FB.S.dirty ? 'יש שינויים שלא פורסמו' : 'מסונכרן');
-  }
-  function setStatus(t) { const e = document.getElementById('fb-status'); if (e) e.textContent = t; }
-  function renderModuleTabs() {
-    const host = document.getElementById('fb-mod-tabs');
-    if (!host) return;
-    host.innerHTML = FB.S.modules.map(m =>
-      `<button data-tab="${m.id}" onclick="UI.tab('${m.id}')">${m.icon || ''} ${m.label}</button>`).join('');
-  }
-
-  return { mount, drawOutline, hideOutline, renderInspector, tab, selectPath, insert,
-           togglePreview, syncBp, syncHistoryButtons, setStatus, renderModuleTabs };
-})();
-
-/* Public entry point kept under the old name so the existing menu item works */
-function toggleEditMode() { FB.toggle(); }
-
-/* Published design is applied for EVERY user; the editor itself is admin-only. */
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => { try { FB.loadLive(); } catch (e) {} }, 1500);
-});
-
+  document.addEventListener('click', _edClickHandler, true);
+}
+function _deactivateEditListeners() {
+  if (_edClickHandler) document.removeEventListener('click', _edClickHandler, true);
+}
 
 // ── RIPPLE EFFECT ──
 function _addRipple(e) {
