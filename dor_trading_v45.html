@@ -9826,6 +9826,9 @@ document.addEventListener('keydown', (e) => {
    now inherit per-kind styling and the global "popups off" preference */
 function showToast(msg, type = 'success', duration = 2800) { Notify.toast(msg, type, duration); }
 
+let _bizViewDate = new Date();
+document.addEventListener('DOMContentLoaded', () => { try { Notify.render(); } catch (e) {} });
+
 
 // Note: withdrawals are NOT a business-event type — they live in a single place
 // (accounts[].withdrawals[], managed from the 🎯 per-account goals window) and the
