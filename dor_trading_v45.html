@@ -22702,10 +22702,17 @@ function _sessionWarning() {
 .nc-item:hover{background:var(--bg3)}
 .nc-item:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
 .nc-item.nc-unread{background:rgba(59,130,246,.07)}
-.nc-item.nc-unread::before{content:'';position:absolute;top:15px;inset-inline-start:2px;
-  width:5px;height:5px;border-radius:50%;background:var(--ac)}
-.nc-item.nc-high{box-shadow:inset 3px 0 0 var(--go)}
-.nc-item.nc-urgent{box-shadow:inset 3px 0 0 var(--re)}
+/* RTL: the priority bar belongs on the start edge (right in Hebrew), so it is
+   drawn as a pseudo-element with a logical offset — box-shadow has no logical
+   equivalent and would pin the bar to the physical left. The unread dot moves
+   to the end edge so the two never collide. */
+.nc-item.nc-unread::before{content:'';position:absolute;top:15px;inset-inline-end:6px;
+  width:6px;height:6px;border-radius:50%;background:var(--ac)}
+.nc-item.nc-high::after,.nc-item.nc-urgent::after{content:'';position:absolute;
+  inset-block:7px;inset-inline-start:0;width:3px;border-radius:0 3px 3px 0}
+.nc-item.nc-high::after{background:var(--go)}
+.nc-item.nc-urgent::after{background:var(--re)}
+.nc-item{padding-inline-start:13px}
 .nc-icon{font-size:17px;line-height:1.2;flex-shrink:0;margin-top:1px}
 .nc-body{flex:1;min-width:0}
 .nc-title{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.4;word-break:break-word}
