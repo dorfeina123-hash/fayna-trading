@@ -9394,17 +9394,48 @@ const Notify = (function () {
   }
 
   /* ─────────── panel ─────────── */
+  /* The panel is position:fixed with no offsets of its own, so it MUST be
+     placed explicitly or it lands at its static flow position — which is far
+     below the fold. Anchored under the bell, clamped inside the viewport. */
+  const isSheet = () => window.matchMedia('(max-width:600px)').matches;
+  function place(btn) {
+    const p = document.getElementById('notif-panel');
+    if (!p) return;
+    if (isSheet()) {                       // mobile: the CSS bottom sheet owns it
+      p.style.top = p.style.left = p.style.right = p.style.bottom = '';
+      return;
+    }
+    const b = (btn || document.getElementById('notif-bell-btn'))?.getBoundingClientRect();
+    const w = p.offsetWidth || 380, m = 10;
+    let top  = b ? b.bottom + 8 : 64;
+    let left = b ? (b.left + b.width / 2 - w / 2) : (window.innerWidth - w - m);
+    left = Math.max(m, Math.min(left, window.innerWidth - w - m));
+    top  = Math.max(m, Math.min(top, window.innerHeight - 140));
+    p.style.top = top + 'px';
+    p.style.left = left + 'px';
+    p.style.right = 'auto';
+    p.style.bottom = 'auto';
+  }
+
   function togglePanel(evt) {
     const p = document.getElementById('notif-panel');
     if (!p) return;
     if (p.classList.contains('open')) return closePanel();
+    const btn = evt?.currentTarget || document.getElementById('notif-bell-btn');
     p.classList.add('open');
     p.setAttribute('aria-hidden', 'false');
     document.getElementById('notif-bell-btn')?.setAttribute('aria-expanded', 'true');
     renderList();
+    place(btn);                            // after .open — offsetWidth needs a laid-out box
     setTimeout(() => document.getElementById('notif-search')?.focus(), 120);
     evt?.stopPropagation();
   }
+
+  /* keep it anchored if the window changes while it is open */
+  window.addEventListener('resize', () => {
+    const p = document.getElementById('notif-panel');
+    if (p && p.classList.contains('open')) place();
+  });
   function closePanel() {
     const p = document.getElementById('notif-panel');
     if (!p) return;
@@ -9487,7 +9518,7 @@ const Notify = (function () {
   return {
     registerType, type, TYPES,
     push, markRead, markAllRead, remove, clearAll, open, unreadCount,
-    render, renderList, renderSettings, togglePanel, closePanel,
+    render, renderList, renderSettings, togglePanel, closePanel, place,
     setFilter, setPref, setMaster, resetPrefs, toggleGlobal, toast,
     get items() { return items; },
     get prefs() { return prefs; },
@@ -22633,6 +22664,7 @@ function _sessionWarning() {
 /* ══ NOTIFICATION CENTRE (v45) ══════════════════════════════════════ */
 #notif-panel{
   position:fixed;z-index:1400;display:none;flex-direction:column;
+  top:64px;right:12px;   /* fallback anchor — JS re-places it under the bell */
   width:min(380px,calc(100vw - 20px));max-height:min(560px,calc(100vh - 90px));
   background:var(--bg1);border:1px solid var(--border2);border-radius:14px;
   box-shadow:0 18px 48px rgba(0,0,0,.5);overflow:hidden;
