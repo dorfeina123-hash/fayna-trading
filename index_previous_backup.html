@@ -2406,6 +2406,12 @@ body.fb-sim-mobile .app-layout{max-width:767px}
 
 
 
+
+/* v44 — economic-event rows: time · stars · title · clock */
+.next-event-item{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px}
+.next-event-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;color:var(--t2)}
+.next-event-time{flex-shrink:0;font-weight:600;min-width:62px}
+
 /* v37 — legibility floor: no text below 10px anywhere, 11px on phones.
    The smallest labels used to be 8-9px and sat directly under monetary
    figures, which is where a misread is most expensive. */
@@ -3139,6 +3145,10 @@ pre,code{white-space:pre-wrap;word-break:break-word}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
           הזמן חברים
         </button>
+        <button class="pa-snav-btn" id="pasnav-notif" onclick="paTab('notifications',this);Notify.renderSettings()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          התראות
+        </button>
         <button class="pa-snav-btn" id="pasnav-connections" onclick="paTab('connections',this)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           חיבורים
@@ -3148,6 +3158,23 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
     <!-- Main content -->
     <div class="pa-main">
+
+      <!-- התראות -->
+      <div class="pa-sub" id="pa-notifications">
+        <div class="pa-page-title">התראות</div>
+        <div class="pa-card">
+          <div class="pa-card-title">מה תרצה לקבל, ואיפה</div>
+          <div id="notif-settings"><div style="padding:14px;color:var(--t3);font-size:12px">טוען…</div></div>
+        </div>
+        <div class="pa-card">
+          <div class="pa-card-title">בדיקה</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="fb" onclick="Notify.push('system','התראת בדיקה','אם אתה רואה את זה — מרכז ההתראות עובד.',{priority:'normal'})">שלח התראת בדיקה</button>
+            <button class="fb" onclick="Sound.test()">🔊 השמע צליל כניסה</button>
+          </div>
+          <div class="pa-hint" style="margin-top:8px">התראות מערכת מופיעות גם כשהלשונית ברקע, כל עוד הדפדפן פתוח.</div>
+        </div>
+      </div>
 
       <!-- פרופיל -->
       <div class="pa-sub active" id="pa-profile">
@@ -5807,13 +5834,28 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 </div>
 
-<!-- NOTIFICATION CENTER PANEL (floating — works from any tab) -->
-<div id="notif-panel" style="position:fixed;z-index:900;background:var(--bg1);border:1px solid var(--border2);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none;width:340px;max-height:480px;overflow:hidden;flex-direction:column">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)">
-    <b style="font-size:13px">🔔 התראות</b>
-    <button onclick="notifMarkAllRead()" style="background:none;border:none;color:var(--ac);font-size:11px;cursor:pointer;font-family:inherit">סמן הכל כנקרא</button>
+<!-- NOTIFICATION CENTER (floating — reachable from every tab) -->
+<div id="notif-panel" role="dialog" aria-modal="false" aria-label="מרכז ההתראות" aria-hidden="true">
+  <div class="nc-head">
+    <b>🔔 התראות</b>
+    <div class="nc-head-actions">
+      <button onclick="Notify.markAllRead()" title="סמן הכל כנקרא" aria-label="סמן הכל כנקרא">✓ הכל</button>
+      <button onclick="Notify.clearAll()" title="נקה הכל" aria-label="מחק את כל ההתראות">🗑</button>
+      <button onclick="openNotifSettings()" title="הגדרות התראות" aria-label="הגדרות התראות">⚙️</button>
+      <button class="nc-close" onclick="Notify.closePanel()" aria-label="סגור">✕</button>
+    </div>
   </div>
-  <div id="notif-list" style="overflow-y:auto;flex:1;padding:4px"></div>
+  <div class="nc-tools">
+    <input id="notif-search" type="search" placeholder="חיפוש בהתראות…" aria-label="חיפוש בהתראות"
+           oninput="Notify.search(this.value)">
+    <div class="nc-status" role="group" aria-label="סינון לפי סטטוס">
+      <button class="on" onclick="ncStatus(this,'all')">הכל</button>
+      <button onclick="ncStatus(this,'unread')">לא נקראו</button>
+      <button onclick="ncStatus(this,'read')">נקראו</button>
+    </div>
+  </div>
+  <div id="notif-chips" class="nc-chips" role="group" aria-label="סינון לפי סוג"></div>
+  <div id="notif-list" role="feed" aria-busy="false"></div>
 </div>
 
 <!-- REPORT MENU POPUP -->
@@ -6063,6 +6105,43 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <div id="agent-board"><div style="font-size:11px;color:var(--t3);padding:8px">טוען…</div></div>
   </div>
+  <!-- v45: BROADCAST -->
+  <div class="admin-section" style="border-color:rgba(59,130,246,.22)">
+    <div class="admin-section-title"><div class="dot" style="background:#3b82f6"></div>📢 שליחת התראה למשתמשים</div>
+    <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px;line-height:1.6">
+      ההתראה נשמרת כמסמך ונמסרת לכל משתמש בפעם הבאה שהוא פותח את המערכת — פעם אחת בלבד.
+      תזמון עתידי פשוט אומר שההתראה לא נראית עד למועד שנבחר.
+    </div>
+    <div class="bc-form">
+      <label>כותרת<input id="bc-title" maxlength="80" placeholder="לדוגמה: תחזוקה מתוכננת"></label>
+      <label>תוכן<textarea id="bc-body" maxlength="300" rows="2" placeholder="פרטים נוספים…"></textarea></label>
+      <label>קהל יעד
+        <select id="bc-audience" onchange="bcAudienceChange()">
+          <option value="all">כל המשתמשים</option>
+          <option value="group">לפי מסלול מנוי</option>
+          <option value="user">משתמש בודד</option>
+        </select>
+      </label>
+      <label id="bc-plan-wrap" style="display:none">מסלול
+        <select id="bc-plan"><option value="free">Free</option><option value="basic">Basic</option><option value="pro">Pro</option><option value="premium">Premium</option></select>
+      </label>
+      <label id="bc-uid-wrap" style="display:none">UID של המשתמש<input id="bc-uid" dir="ltr" placeholder="uid"></label>
+      <label>סוג<select id="bc-type"></select></label>
+      <label>עדיפות
+        <select id="bc-priority"><option value="normal">רגילה</option><option value="high">חשובה</option><option value="urgent">דחופה</option></select>
+      </label>
+      <label>ערוץ
+        <select id="bc-channel"><option value="both">באתר + מערכת</option><option value="inapp">באתר בלבד</option><option value="push">מערכת בלבד</option></select>
+      </label>
+      <label>תזמון (ריק = מיידי)<input id="bc-sendat" type="datetime-local"></label>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="fb" onclick="bcSend()">📤 שלח</button>
+      <button class="fb" onclick="bcRefresh()">רענן היסטוריה</button>
+    </div>
+    <div id="bc-history" style="margin-top:14px"></div>
+  </div>
+
   <!-- v23: MAILING LIST & UNSUBSCRIBES -->
   <div class="admin-section" style="border-color:rgba(239,68,68,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#ef4444"></div>📧 ניהול רשימת תפוצה והסרות
@@ -9036,96 +9115,717 @@ function renderPersonalGoals() {
 
 // ── UNIFIED NOTIFICATION CENTER ──
 // type: 'system' | 'new_user' | 'goal_achieved' | 'trading_alert' | 'ai_insight' | 'reminder' | 'task_incomplete'
-let notifications = JSON.parse(localStorage.getItem('dor_notifications') || 'null') || [];
-const NOTIF_TYPE_ICON = {
-  system:'⚙️', new_user:'👤', goal_achieved:'🎯', trading_alert:'🚨',
-  ai_insight:'🧠', reminder:'⏰', task_incomplete:'📋',
-  /* v30 */ ecal:'📅', coach:'🧠', achievement:'🏆', billing:'💳', reward:'🎁'
-};
+// ══════════════════════════════════════════════════════════════════════════
+//  FAYNA NOTIFY (v45) — one notification system for the whole app
+//
+//  Everything that used to be scattered — the bell, toasts, the browser
+//  Notification API, per-type behaviour — now goes through one module.
+//
+//  The important design choice is the TYPE REGISTRY. A producer registers a
+//  type once with its label, icon, colour and default channels; the settings
+//  screen, the filter chips and the icon map all build themselves from that
+//  registry. Adding a notification type later needs no UI work at all, which
+//  is what the "future types appear automatically" requirement asks for.
+//
+//  Backward compatible: addNotification(), showToast(), notifMarkRead(),
+//  notifMarkAllRead() and renderNotifBell() keep their old signatures, so the
+//  222 existing call sites keep working untouched.
+// ══════════════════════════════════════════════════════════════════════════
 
-function saveNotifications() {
-  try { localStorage.setItem('dor_notifications', JSON.stringify(notifications)); } catch(e){}
-  if (typeof _cloudSave === 'function') _cloudSave();
-  renderNotifBell();
-}
+const Notify = (function () {
+  'use strict';
 
-// Central entry point for ALL future notification producers (signup, goals, trading alerts, AI insights, reminders...)
-function addNotification(type, title, body, meta) {
-  notifications.unshift({
-    id: 'ntf_' + Date.now() + '_' + Math.floor(Math.random()*1000),
-    type: type || 'system', title: title || '', body: body || '',
-    date: new Date().toISOString(), read: false, meta: meta || null
-  });
-  if (notifications.length > 500) notifications.length = 500;
-  saveNotifications();
-}
+  const LS_ITEMS = 'dor_notifications';        // kept: existing history survives
+  const LS_PREFS = 'fx_notify_prefs';
+  const CAP = 500;
 
-function renderNotifBell() {
-  const badge = document.getElementById('notif-badge');
-  if (!badge) return;
-  const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) { badge.style.display = ''; badge.textContent = unread > 99 ? '99+' : unread; }
-  else badge.style.display = 'none';
-  const listEl = document.getElementById('notif-list');
-  if (listEl && document.getElementById('notif-panel')?.style.display !== 'none') _notifRenderList();
-}
-
-function _notifRenderList() {
-  const listEl = document.getElementById('notif-list');
-  if (!listEl) return;
-  if (!notifications.length) { listEl.innerHTML = '<div style="padding:30px 16px;text-align:center;color:var(--t3);font-size:12px">אין התראות עדיין</div>'; return; }
-  listEl.innerHTML = notifications.slice(0,100).map(n => {
-    const icon = NOTIF_TYPE_ICON[n.type] || '🔔';
-    const d = new Date(n.date);
-    const dateTxt = isNaN(d) ? '' : d.toLocaleString('he-IL', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    return `<div onclick="notifMarkRead('${n.id}')" style="display:flex;gap:10px;padding:10px 10px;border-radius:8px;cursor:pointer;${n.read?'':'background:rgba(59,130,246,.08)'}" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(59,130,246,.08)'}'">
-      <div style="font-size:16px;flex-shrink:0">${icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:6px">
-          <b style="font-size:12px;color:var(--t1)">${escHtml(n.title)}</b>
-          ${n.read?'':'<span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>'}
-        </div>
-        <div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">${escHtml(n.body)}</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:4px">${dateTxt}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function notifMarkRead(id) {
-  const n = notifications.find(x => x.id === id);
-  if (n && !n.read) { n.read = true; saveNotifications(); _notifRenderList(); }
-}
-function notifMarkAllRead() {
-  notifications.forEach(n => n.read = true);
-  saveNotifications();
-  _notifRenderList();
-}
-function toggleNotifPanel(evt) {
-  const panel = document.getElementById('notif-panel');
-  if (!panel) return;
-  const isOpen = panel.style.display !== 'none';
-  if (isOpen) { panel.style.display = 'none'; return; }
-  const btn = evt?.currentTarget || document.getElementById('notif-bell-btn');
-  if (btn && btn.getBoundingClientRect) {
-    const rect = btn.getBoundingClientRect();
-    panel.style.top = Math.min(rect.bottom + 8, window.innerHeight - 100) + 'px';
-    const rightGap = window.innerWidth - rect.right;
-    panel.style.right = Math.max(8, rightGap - 150) + 'px';
-    panel.style.left = 'auto';
+  /* ─────────── type registry ─────────── */
+  const TYPES = new Map();
+  function registerType(t) {
+    if (!t || !t.id) return;
+    TYPES.set(t.id, Object.assign({
+      label: t.id, icon: '🔔', color: 'var(--ac)',
+      channels: { inapp: true, push: false, toast: false, sound: false },
+      priority: 'normal',
+    }, t));
   }
-  panel.style.display = 'flex';
-  _notifRenderList();
-}
-document.addEventListener('click', (e) => {
-  const panel = document.getElementById('notif-panel');
-  const btn = document.getElementById('notif-bell-btn');
-  if (!panel || panel.style.display === 'none') return;
-  if (panel.contains(e.target) || (btn && btn.contains(e.target))) return;
-  panel.style.display = 'none';
+  function type(id) {
+    return TYPES.get(id) || { id, label: id, icon: '🔔', color: 'var(--ac)',
+      channels: { inapp: true, push: false, toast: false, sound: false }, priority: 'normal' };
+  }
+
+  /* The types the app produces today. Order here is the order in settings. */
+  [
+    { id:'trading_alert', label:'התראות מסחר',   icon:'🚨', color:'var(--re)', priority:'urgent',
+      channels:{ inapp:true, push:true,  toast:true,  sound:true  } },
+    { id:'ecal',          label:'הודעות כלכליות', icon:'📅', color:'var(--go)', priority:'high',
+      channels:{ inapp:true, push:true,  toast:true,  sound:true  } },
+    { id:'ai_insight',    label:'תובנות AI',      icon:'🤖', color:'var(--pu)',
+      channels:{ inapp:true, push:false, toast:false, sound:false } },
+    { id:'coach',         label:'מאמן מנטאלי',    icon:'🧠', color:'var(--pu)',
+      channels:{ inapp:true, push:false, toast:false, sound:false } },
+    { id:'achievement',   label:'הישגים',         icon:'🏆', color:'var(--go)',
+      channels:{ inapp:true, push:false, toast:true,  sound:true  } },
+    { id:'goal_achieved', label:'יעדים',          icon:'🎯', color:'var(--gr)',
+      channels:{ inapp:true, push:false, toast:true,  sound:true  } },
+    { id:'reward',        label:'תגמולים',        icon:'🎁', color:'var(--gr)',
+      channels:{ inapp:true, push:false, toast:true,  sound:true  } },
+    { id:'billing',       label:'מנוי ותשלומים',  icon:'💳', color:'var(--bl)', priority:'high',
+      channels:{ inapp:true, push:true,  toast:false, sound:false } },
+    { id:'reminder',      label:'תזכורות',        icon:'⏰', color:'var(--bl)',
+      channels:{ inapp:true, push:false, toast:false, sound:false } },
+    { id:'daily_digest',  label:'סיכום יומי',     icon:'📊', color:'var(--ac)',
+      channels:{ inapp:true, push:false, toast:false, sound:false } },
+    { id:'system',        label:'עדכוני מערכת',   icon:'⚙️', color:'var(--t2)',
+      channels:{ inapp:true, push:false, toast:false, sound:false } },
+    { id:'admin',         label:'הודעות מנהל',    icon:'📢', color:'var(--re)', priority:'high',
+      channels:{ inapp:true, push:true,  toast:true,  sound:true  } },
+  ].forEach(registerType);
+
+  /* ─────────── preferences ─────────── */
+  const DEFAULT_PREFS = { master:true, push:false, sound:true, toast:true, loginSound:true, types:{} };
+  let prefs = load();
+
+  function load() {
+    let p = JSON.parse(JSON.stringify(DEFAULT_PREFS));
+    try { Object.assign(p, JSON.parse(localStorage.getItem(LS_PREFS) || '{}')); } catch (e) {}
+    p.types = p.types || {};
+    return p;
+  }
+  function save() {
+    try { localStorage.setItem(LS_PREFS, JSON.stringify(prefs)); } catch (e) {}
+  }
+  /* A type the user has never seen falls back to its registered defaults —
+     this is what makes a newly added type work without a migration. */
+  function allowed(typeId, channel) {
+    if (!prefs.master) return false;
+    if (channel === 'push'  && !prefs.push)  return false;
+    if (channel === 'sound' && !prefs.sound) return false;
+    if (channel === 'toast' && !prefs.toast) return false;
+    const t = type(typeId);
+    const override = prefs.types[typeId];
+    if (override && override[channel] !== undefined) return !!override[channel];
+    return !!t.channels[channel];
+  }
+  function setPref(typeId, channel, on) {
+    if (typeId === '_global') { prefs[channel] = !!on; }
+    else {
+      prefs.types[typeId] = prefs.types[typeId] || {};
+      prefs.types[typeId][channel] = !!on;
+    }
+    save(); renderSettings();
+  }
+  function resetPrefs() {
+    prefs = JSON.parse(JSON.stringify(DEFAULT_PREFS));
+    save(); renderSettings(); render();
+    toast('הגדרות ההתראות אופסו', 'info');
+  }
+  function setMaster(on) {
+    prefs.master = !!on; save(); renderSettings();
+    toast(on ? 'ההתראות הופעלו' : 'כל ההתראות כובו', 'info');
+  }
+
+  /* ─────────── store ─────────── */
+  let items = [];
+  try { items = JSON.parse(localStorage.getItem(LS_ITEMS) || '[]'); } catch (e) { items = []; }
+  if (!Array.isArray(items)) items = [];
+
+  let cloudTimer = null;
+  function persist() {
+    try { localStorage.setItem(LS_ITEMS, JSON.stringify(items)); } catch (e) {}
+    /* localStorage is the source of truth; the cloud copy is a backup, so it
+       is debounced. Ten notifications in a burst cost one write, not ten. */
+    if (typeof _cloudSave === 'function') {
+      clearTimeout(cloudTimer);
+      cloudTimer = setTimeout(() => { try { _cloudSave(); } catch (e) {} }, 4000);
+    }
+    render();
+  }
+
+  /* Same type + title inside 60s is a duplicate, not a second event. */
+  function isDuplicate(typeId, title, dedupKey) {
+    const cut = Date.now() - 60000;
+    return items.some(n =>
+      (dedupKey ? n.dedupKey === dedupKey
+                : (n.type === typeId && n.title === title && new Date(n.date).getTime() > cut)));
+  }
+
+  function push(typeId, title, body, meta) {
+    typeId = typeId || 'system';
+    const t = type(typeId);
+    const dedupKey = meta && meta.dedupKey;
+    if (isDuplicate(typeId, title, dedupKey)) return null;
+    if (!prefs.master) return null;
+
+    const n = {
+      id: 'ntf_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
+      type: typeId, title: title || '', body: body || '',
+      date: new Date().toISOString(), read: false,
+      priority: (meta && meta.priority) || t.priority || 'normal',
+      link: (meta && meta.link) || null,
+      dedupKey: dedupKey || null,
+      meta: meta || null,
+    };
+    if (allowed(typeId, 'inapp')) {
+      items.unshift(n);
+      if (items.length > CAP) items.length = CAP;
+      persist();
+    }
+    if (allowed(typeId, 'toast')) toast(t.icon + ' ' + title, toastKind(n.priority), 3200, true);
+    if (allowed(typeId, 'sound')) Sound.ping(n.priority);
+    if (allowed(typeId, 'push'))  Push.show(n);
+    return n;
+  }
+  const toastKind = p => p === 'urgent' ? 'error' : p === 'high' ? 'info' : 'success';
+
+  function markRead(id) {
+    const n = items.find(x => x.id === id);
+    if (!n || n.read) return;
+    n.read = true; persist();
+    /* a broadcast carries its origin id, so the admin read-count is real */
+    if (n.dedupKey && n.dedupKey.startsWith('bcast_') && typeof db !== 'undefined') {
+      const bid = n.dedupKey.slice(6);
+      try {
+        db.collection('broadcasts').doc(bid)
+          .update({ read: firebase.firestore.FieldValue.increment(1) }).catch(() => {});
+      } catch (e) {}
+    }
+  }
+  function markAllRead() { items.forEach(n => n.read = true); persist(); toast('כל ההתראות סומנו כנקראו', 'info'); }
+  function remove(id)    { items = items.filter(n => n.id !== id); persist(); }
+  async function clearAll() {
+    if (typeof customConfirm === 'function' && !await customConfirm('למחוק את כל ההתראות?')) return;
+    items = []; persist(); toast('ההתראות נמחקו', 'info');
+  }
+  const unreadCount = () => items.filter(n => !n.read).length;
+
+  /* ─────────── view state ─────────── */
+  const view = { q: '', type: 'all', status: 'all' };
+  function setFilter(k, v) { view[k] = v; renderList(); }
+
+  function filtered() {
+    const q = view.q.toLowerCase();
+    return items.filter(n => {
+      if (view.status === 'unread' && n.read) return false;
+      if (view.status === 'read' && !n.read) return false;
+      if (view.type !== 'all' && n.type !== view.type) return false;
+      if (q && !((n.title + ' ' + n.body).toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }
+
+  /* ─────────── rendering ─────────── */
+  function render() {
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      const u = unreadCount();
+      badge.style.display = u ? '' : 'none';
+      badge.textContent = u > 99 ? '99+' : u;
+      badge.setAttribute('aria-label', u + ' התראות שלא נקראו');
+    }
+    const panel = document.getElementById('notif-panel');
+    if (panel && panel.classList.contains('open')) renderList();
+  }
+
+  function timeAgo(iso) {
+    const d = new Date(iso), diff = (Date.now() - d) / 1000;
+    if (diff < 60)    return 'כעת';
+    if (diff < 3600)  return 'לפני ' + Math.floor(diff / 60) + ' דק׳';
+    if (diff < 86400) return 'לפני ' + Math.floor(diff / 3600) + ' שע׳';
+    if (diff < 172800) return 'אתמול';
+    return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' });
+  }
+
+  function renderList() {
+    const el = document.getElementById('notif-list');
+    if (!el) return;
+    const rows = filtered();
+
+    const chips = ['all', ...[...TYPES.keys()].filter(id => items.some(n => n.type === id))];
+    const chipHtml = chips.map(id => {
+      const t = id === 'all' ? { icon: '🔔', label: 'הכל' } : type(id);
+      const on = view.type === id;
+      return `<button class="nc-chip${on ? ' on' : ''}" onclick="Notify.setFilter('type','${id}')">${t.icon} ${escHtml(t.label)}</button>`;
+    }).join('');
+
+    const head = document.getElementById('notif-chips');
+    if (head) head.innerHTML = chipHtml;
+
+    if (!rows.length) {
+      el.innerHTML = `<div class="nc-empty"><div style="font-size:30px">🔔</div>
+        <p>${items.length ? 'אין התראות שתואמות את הסינון' : 'אין התראות עדיין'}</p></div>`;
+      return;
+    }
+
+    el.innerHTML = rows.slice(0, 200).map(n => {
+      const t = type(n.type);
+      const d = new Date(n.date);
+      const full = isNaN(d) ? '' : d.toLocaleString('he-IL', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+      const pr = n.priority === 'urgent' ? 'nc-urgent' : n.priority === 'high' ? 'nc-high' : '';
+      return `<div class="nc-item${n.read ? '' : ' nc-unread'} ${pr}" data-id="${n.id}"
+                   onclick="Notify.open('${n.id}')" role="button" tabindex="0"
+                   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();Notify.open('${n.id}')}">
+        <span class="nc-icon" style="color:${t.color}" aria-hidden="true">${t.icon}</span>
+        <div class="nc-body">
+          <div class="nc-title">${escHtml(n.title)}</div>
+          ${n.body ? `<div class="nc-text">${escHtml(n.body)}</div>` : ''}
+          <div class="nc-meta"><span>${escHtml(t.label)}</span><span>·</span><time datetime="${n.date}" title="${full}">${timeAgo(n.date)}</time></div>
+        </div>
+        <button class="nc-del" title="מחק" aria-label="מחק התראה"
+                onclick="event.stopPropagation();Notify.remove('${n.id}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* clicking a notification marks it read and, when it carries a link, navigates */
+  function open(id) {
+    const n = items.find(x => x.id === id);
+    if (!n) return;
+    markRead(id);
+    if (n.link) {
+      try {
+        if (typeof n.link === 'string' && document.getElementById('tp-' + n.link)) {
+          sw(n.link, null);
+          closePanel();
+        }
+      } catch (e) {}
+    }
+    renderList();
+  }
+
+  /* ─────────── panel ─────────── */
+  function togglePanel(evt) {
+    const p = document.getElementById('notif-panel');
+    if (!p) return;
+    if (p.classList.contains('open')) return closePanel();
+    p.classList.add('open');
+    p.setAttribute('aria-hidden', 'false');
+    document.getElementById('notif-bell-btn')?.setAttribute('aria-expanded', 'true');
+    renderList();
+    setTimeout(() => document.getElementById('notif-search')?.focus(), 120);
+    evt?.stopPropagation();
+  }
+  function closePanel() {
+    const p = document.getElementById('notif-panel');
+    if (!p) return;
+    p.classList.remove('open');
+    p.setAttribute('aria-hidden', 'true');
+    document.getElementById('notif-bell-btn')?.setAttribute('aria-expanded', 'false');
+  }
+
+  /* ─────────── settings screen (built from the registry) ─────────── */
+  function renderSettings() {
+    const el = document.getElementById('notif-settings');
+    if (!el) return;
+    const g = (ch) => prefs[ch] ? 'on' : '';
+    const globals = [
+      ['push',  '🖥️', 'התראות מערכת (Windows / דפדפן)', Push.state()],
+      ['toast', '💬', 'חלונות קופצים באתר', ''],
+      ['sound', '🔊', 'צלילי התראה', ''],
+      ['loginSound', '🎵', 'צליל כניסה יומי', ''],
+    ].map(([k, icon, label, extra]) => `
+      <label class="ns-row">
+        <span class="ns-lbl">${icon} ${label}${extra ? `<small>${extra}</small>` : ''}</span>
+        <button class="ns-tog ${g(k)}" role="switch" aria-checked="${!!prefs[k]}"
+                aria-label="${escHtml(label)}"
+                onclick="Notify.toggleGlobal('${k}')"></button>
+      </label>`).join('');
+
+    const rows = [...TYPES.values()].map(t => {
+      const cell = (ch) => {
+        const on = allowed(t.id, ch);
+        return `<button class="ns-mini ${on ? 'on' : ''}" role="switch" aria-checked="${on}"
+                  aria-label="${escHtml(t.label)} — ${ch}"
+                  onclick="Notify.setPref('${t.id}','${ch}',${!on})">${on ? '✓' : ''}</button>`;
+      };
+      return `<tr>
+        <td><span style="color:${t.color}">${t.icon}</span> ${escHtml(t.label)}</td>
+        <td>${cell('inapp')}</td><td>${cell('push')}</td><td>${cell('toast')}</td><td>${cell('sound')}</td>
+      </tr>`;
+    }).join('');
+
+    el.innerHTML = `
+      <div class="ns-master">
+        <div>
+          <b>כל ההתראות</b>
+          <small>${prefs.master ? 'המערכת שולחת התראות כרגיל' : 'כל ההתראות מושבתות'}</small>
+        </div>
+        <button class="ns-tog ${prefs.master ? 'on' : ''}" role="switch" aria-checked="${prefs.master}"
+                aria-label="הפעלת כל ההתראות" onclick="Notify.setMaster(${!prefs.master})"></button>
+      </div>
+      <div class="ns-sec">ערוצים</div>
+      ${globals}
+      <div class="ns-sec">לפי סוג התראה</div>
+      <div class="ns-tblwrap">
+        <table class="ns-tbl">
+          <thead><tr><th>סוג</th><th>באתר</th><th>מערכת</th><th>קופץ</th><th>צליל</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <button class="fb ns-reset" onclick="Notify.resetPrefs()">↩ אפס להגדרות ברירת מחדל</button>`;
+  }
+
+  function toggleGlobal(k) {
+    if (k === 'push' && !prefs.push) return Push.request();
+    prefs[k] = !prefs[k]; save(); renderSettings();
+  }
+
+  /* ─────────── toast ─────────── */
+  function toast(msg, kind = 'success', duration = 2800, isNotification = false) {
+    if (isNotification && !prefs.toast) return;
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const icons = { success: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' };
+    const t = document.createElement('div');
+    t.className = 'toast ' + kind;
+    t.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+    t.innerHTML = `<span aria-hidden="true">${icons[kind] || '✅'}</span><span>${escHtml(msg)}</span>`;
+    c.appendChild(t);
+    setTimeout(() => { t.style.animation = 'toastOut .3s ease both'; setTimeout(() => t.remove(), 320); }, duration);
+  }
+
+  return {
+    registerType, type, TYPES,
+    push, markRead, markAllRead, remove, clearAll, open, unreadCount,
+    render, renderList, renderSettings, togglePanel, closePanel,
+    setFilter, setPref, setMaster, resetPrefs, toggleGlobal, toast,
+    get items() { return items; },
+    get prefs() { return prefs; },
+    search(v) { view.q = v; renderList(); },
+    setStatus(v) { view.status = v; renderList(); },
+    allowed,
+    setItems(v) { if (Array.isArray(v)) { items = v.slice(0, CAP); persist(); } },
+  };
+})();
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  PUSH — desktop / browser notifications
+//
+//  Honest scope: real Web Push (a notification that arrives with the tab
+//  closed) needs a push server holding VAPID keys. Fayna has no server yet,
+//  so this uses the Notification API through the service worker registration.
+//  That still delivers a true OS-level notification on Windows — it works
+//  while the tab is in the background, minimised, or behind other windows —
+//  it just stops once the browser itself is closed. The subscribe() path is
+//  written against the standard PushManager so that when the server exists,
+//  only the applicationServerKey has to be filled in.
+// ══════════════════════════════════════════════════════════════════════════
+
+const Push = (function () {
+  'use strict';
+
+  const supported = () => typeof Notification !== 'undefined' && 'serviceWorker' in navigator;
+  const perm = () => (supported() ? Notification.permission : 'unsupported');
+
+  function state() {
+    switch (perm()) {
+      case 'granted':     return 'מאושר';
+      case 'denied':      return 'נחסם בדפדפן';
+      case 'default':     return 'לא אושר עדיין';
+      default:            return 'לא נתמך בדפדפן זה';
+    }
+  }
+
+  /* Permission must be asked from a user gesture, so this is only ever called
+     from the settings toggle — never automatically on page load. */
+  async function request() {
+    if (!supported()) {
+      Notify.toast('הדפדפן הזה לא תומך בהתראות מערכת', 'warn');
+      return false;
+    }
+    if (Notification.permission === 'denied') {
+      Notify.toast('ההתראות חסומות בהגדרות הדפדפן. פתח את סמל הנעילה ליד הכתובת כדי לאפשר', 'warn', 5200);
+      Notify.renderSettings();
+      return false;
+    }
+    let res = Notification.permission;
+    if (res === 'default') {
+      try { res = await Notification.requestPermission(); } catch (e) { res = 'denied'; }
+    }
+    if (res === 'granted') {
+      Notify.prefs.push = true;
+      try { localStorage.setItem('fx_notify_prefs', JSON.stringify(Notify.prefs)); } catch (e) {}
+      Notify.toast('התראות מערכת הופעלו', 'success');
+      show({ id: 'welcome', type: 'system', title: 'Fayna Trading',
+             body: 'התראות המערכת פעילות. כך הן ייראו.', priority: 'normal' });
+    } else {
+      Notify.toast('ההרשאה לא ניתנה — ההתראות יופיעו באתר בלבד', 'info');
+    }
+    Notify.renderSettings();
+    return res === 'granted';
+  }
+
+  /* the OS de-dupes by tag, so a repeated alert replaces rather than stacks */
+  async function show(n) {
+    if (!supported() || Notification.permission !== 'granted') return;
+    const t = Notify.type(n.type);
+    const opts = {
+      body: n.body || '',
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      tag: n.dedupKey || (n.type + '|' + n.title),
+      renotify: n.priority === 'urgent',
+      requireInteraction: n.priority === 'urgent',
+      silent: !Notify.allowed(n.type, 'sound'),
+      dir: 'rtl',
+      lang: 'he',
+      timestamp: new Date(n.date || Date.now()).getTime(),
+      data: { id: n.id, link: n.link || null, type: n.type, url: location.origin + location.pathname },
+    };
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg && reg.showNotification) return reg.showNotification(t.icon + ' ' + n.title, opts);
+      new Notification(t.icon + ' ' + n.title, opts);   // fallback, no SW
+    } catch (e) { /* a failed notification must never break the caller */ }
+  }
+
+  /* Ready for the day a push server exists. Returns null until then. */
+  async function subscribe(vapidPublicKey) {
+    if (!supported() || !vapidPublicKey) return null;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: _b64ToUint8(vapidPublicKey),
+      });
+      if (typeof db !== 'undefined' && currentUser?.uid) {
+        await db.collection('users').doc(currentUser.uid)
+          .collection('pushSubs').doc('web').set(JSON.parse(JSON.stringify(sub)));
+      }
+      return sub;
+    } catch (e) { return null; }
+  }
+  function _b64ToUint8(b64) {
+    const pad = '='.repeat((4 - b64.length % 4) % 4);
+    const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+  }
+
+  return { supported, perm, state, request, show, subscribe };
+})();
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  SOUND — generated with WebAudio, so there is no audio file to download
+//
+//  Browsers block audio until the user has interacted with the page. Rather
+//  than let the daily login chime fail silently on a restored session, an
+//  unplayable chime is queued and fires on the first real interaction.
+// ══════════════════════════════════════════════════════════════════════════
+
+const Sound = (function () {
+  'use strict';
+
+  let actx = null, pending = null;
+
+  function ctx() {
+    if (actx) return actx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try { actx = new AC(); } catch (e) { return null; }
+    return actx;
+  }
+
+  function enabled() {
+    const p = Notify?.prefs;
+    return !!(p && p.master && p.sound);
+  }
+
+  /* one shaped sine tone — soft attack, exponential decay, no click */
+  function tone(freq, start, dur, gain) {
+    const a = ctx(); if (!a) return;
+    const osc = a.createOscillator(), g = a.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, a.currentTime + start);
+    g.gain.setValueAtTime(0.0001, a.currentTime + start);
+    g.gain.exponentialRampToValueAtTime(gain, a.currentTime + start + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + start + dur);
+    osc.connect(g); g.connect(a.destination);
+    osc.start(a.currentTime + start);
+    osc.stop(a.currentTime + start + dur + 0.05);
+  }
+
+  function play(notes, force) {
+    if (!force && !enabled()) return false;
+    const a = ctx();
+    if (!a) return false;
+    if (a.state === 'suspended') { a.resume().catch(() => {}); }
+    if (a.state === 'suspended') return false;      // still blocked — caller may queue
+    notes.forEach(n => tone(n[0], n[1], n[2], n[3]));
+    return true;
+  }
+
+  /* per-priority alert blips */
+  const PING = {
+    normal: [[880, 0, 0.12, 0.05]],
+    high:   [[784, 0, 0.10, 0.06], [1046, 0.09, 0.14, 0.06]],
+    urgent: [[988, 0, 0.09, 0.08], [988, 0.13, 0.09, 0.08], [1318, 0.26, 0.16, 0.08]],
+  };
+  const ping = (priority) => play(PING[priority] || PING.normal);
+
+  /* the login chime — a rising major triad, ~0.75s end to end */
+  const CHIME = [
+    [523.25, 0.00, 0.22, 0.055],   // C5
+    [659.25, 0.13, 0.24, 0.055],   // E5
+    [783.99, 0.26, 0.30, 0.060],   // G5
+    [1046.5, 0.39, 0.34, 0.045],   // C6
+  ];
+  function chime(force) {
+    if (!play(CHIME, force)) {
+      /* blocked by autoplay policy — retry on the first gesture */
+      if (pending) return;
+      pending = () => { play(CHIME, force); pending = null; };
+      const once = () => { if (pending) pending(); document.removeEventListener('pointerdown', once); document.removeEventListener('keydown', once); };
+      document.addEventListener('pointerdown', once, { once: true });
+      document.addEventListener('keydown', once, { once: true });
+    }
+  }
+
+  /* Fires once per calendar day, in the user's own timezone, per user.
+     Keyed by uid so two accounts on one machine each get their own chime. */
+  function dailyLogin(uid) {
+    const p = Notify?.prefs;
+    if (!p || !p.master || !p.loginSound) return false;
+    const key = 'fx_login_chime_' + (uid || 'anon');
+    const today = new Date().toLocaleDateString('en-CA');   // local YYYY-MM-DD
+    if (localStorage.getItem(key) === today) return false;
+    try { localStorage.setItem(key, today); } catch (e) {}
+    chime(true);     // force: the daily chime ignores the per-type sound switch
+    return true;
+  }
+
+  return { ping, chime, dailyLogin, play, enabled, test: () => chime(true) };
+})();
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  BROADCAST — admin → users
+//
+//  A broadcast is a document, not a message. Clients read the broadcasts that
+//  apply to them, materialise them as local notifications exactly once, and
+//  write back a receipt. That gives delivery and read tracking without a
+//  server, and it means a scheduled broadcast simply becomes visible when its
+//  sendAt passes rather than needing a cron job to fire it.
+// ══════════════════════════════════════════════════════════════════════════
+
+const Broadcast = (function () {
+  'use strict';
+
+  const COL = 'broadcasts';
+  const SEEN = 'fx_bcast_seen';
+
+  const seen = () => { try { return JSON.parse(localStorage.getItem(SEEN) || '[]'); } catch (e) { return []; } };
+  const markSeen = (id) => {
+    const s = seen(); if (s.includes(id)) return;
+    s.push(id); if (s.length > 300) s.shift();
+    try { localStorage.setItem(SEEN, JSON.stringify(s)); } catch (e) {}
+  };
+
+  /* ── admin side ── */
+  async function send(form) {
+    if (typeof db === 'undefined') throw new Error('אין חיבור למסד הנתונים');
+    const doc = {
+      title: (form.title || '').trim(),
+      body: (form.body || '').trim(),
+      type: form.type || 'admin',
+      priority: form.priority || 'normal',
+      channel: form.channel || 'both',              // inapp | push | both
+      audience: form.audience || 'all',             // all | user | group
+      targetUid: form.targetUid || null,
+      targetPlan: form.targetPlan || null,
+      link: form.link || null,
+      sendAt: form.sendAt ? new Date(form.sendAt).toISOString() : new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      createdBy: (typeof currentUser !== 'undefined' && currentUser?.email) || 'admin',
+      delivered: 0, read: 0, active: true,
+    };
+    if (!doc.title) throw new Error('נדרשת כותרת');
+    const ref = await db.collection(COL).add(doc);
+    return { id: ref.id, ...doc };
+  }
+
+  async function list(limit = 50) {
+    if (typeof db === 'undefined') return [];
+    const s = await db.collection(COL).orderBy('createdAt', 'desc').limit(limit).get();
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+  async function cancel(id) {
+    if (typeof db === 'undefined') return;
+    await db.collection(COL).doc(id).update({ active: false });
+  }
+
+  /* ── user side ── */
+  function applies(b, user) {
+    if (!b.active) return false;
+    if (new Date(b.sendAt).getTime() > Date.now()) return false;   // scheduled, not yet due
+    if (b.audience === 'user')  return b.targetUid === user?.uid;
+    if (b.audience === 'group') return (user?.plan || 'free') === b.targetPlan;
+    return true;
+  }
+
+  async function poll() {
+    if (typeof db === 'undefined' || typeof currentUser === 'undefined' || !currentUser?.uid) return 0;
+    let snap;
+    try {
+      snap = await db.collection(COL).where('active', '==', true)
+                     .orderBy('createdAt', 'desc').limit(30).get();
+    } catch (e) { return 0; }
+
+    const already = seen();
+    let n = 0;
+    for (const d of snap.docs) {
+      const b = { id: d.id, ...d.data() };
+      if (already.includes(b.id) || !applies(b, currentUser)) continue;
+      markSeen(b.id);
+      Notify.push(b.type || 'admin', b.title, b.body, {
+        priority: b.priority, link: b.link, dedupKey: 'bcast_' + b.id,
+        forcePush: b.channel === 'push' || b.channel === 'both',
+      });
+      n++;
+      try { await d.ref.update({ delivered: (b.delivered || 0) + 1 }); } catch (e) {}
+    }
+    return n;
+  }
+
+  return { send, list, cancel, poll, applies };
+})();
+
+
+/* ── backward compatibility ──────────────────────────────────────────────
+   `notifications` was a plain global that other modules read and the cloud
+   restore reassigned. It is now a live view onto the Notify store, so all
+   existing call sites keep working without being rewritten. */
+Object.defineProperty(window, 'notifications', {
+  configurable: true,
+  get() { return Notify.items; },
+  set(v) { Notify.setItems(v); },
 });
-document.addEventListener('DOMContentLoaded', () => { try{ renderNotifBell(); }catch(e){} });
-let _bizViewDate = new Date();
+const NOTIF_TYPE_ICON = new Proxy({}, { get: (_, k) => Notify.type(String(k)).icon });
+
+function addNotification(type, title, body, meta) { return Notify.push(type, title, body, meta); }
+function saveNotifications()   { Notify.render(); }
+function renderNotifBell()     { Notify.render(); }
+function _notifRenderList()    { Notify.renderList(); }
+function notifMarkRead(id)     { Notify.markRead(id); Notify.renderList(); }
+function notifMarkAllRead()    { Notify.markAllRead(); }
+function toggleNotifPanel(evt) { Notify.togglePanel(evt); }
+
+/* close on outside click / Escape */
+document.addEventListener('click', (e) => {
+  const p = document.getElementById('notif-panel');
+  if (!p || !p.classList.contains('open')) return;
+  if (p.contains(e.target) || document.getElementById('notif-bell-btn')?.contains(e.target)) return;
+  Notify.closePanel();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Notify.closePanel();
+});
+
+/* one shared toast implementation — the 222 existing showToast() call sites
+   now inherit per-kind styling and the global "popups off" preference */
+function showToast(msg, type = 'success', duration = 2800) { Notify.toast(msg, type, duration); }
+
 
 // Note: withdrawals are NOT a business-event type — they live in a single place
 // (accounts[].withdrawals[], managed from the 🎯 per-account goals window) and the
@@ -15680,8 +16380,70 @@ function _ffParseDate(dateStr) {
   return new Date(dateStr + offset);
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   v43 — economic-calendar filtering.
+
+   The old rule was `impact === 'High' && country === 'USD'`, which silently
+   dropped events traders actually watch. Crude Oil Inventories, for example,
+   is tagged "Low" by ForexFactory yet moves energy futures every Wednesday —
+   that is the 17:30 event that went missing.
+
+   Two changes:
+     1. the impact threshold is a user setting, defaulting to High+Medium;
+     2. a watchlist of titles is always included regardless of the rating.
+   ══════════════════════════════════════════════════════════════════════ */
+const ECAL_IMPACT_RANK = { High: 3, Medium: 2, Low: 1 };
+
+/* Rated low or medium by the feed, but market-moving for futures traders. */
+const ECAL_ALWAYS = [
+  'crude oil inventories',
+  'natural gas storage',
+  'unemployment claims',
+  'adp non-farm',
+  'ism manufacturing',
+  'ism services',
+  'trump speaks',
+  'fed chair',
+  'fomc member',
+  'treasury',
+];
+
+function ecalMinImpact() {
+  const v = localStorage.getItem('fx_ecal_min_impact');
+  return ECAL_IMPACT_RANK[v] ? v : 'Medium';       // default: High + Medium
+}
+function setEcalMinImpact(level) {
+  localStorage.setItem('fx_ecal_min_impact', level);
+  showToast('סינון הודעות עודכן — מרענן…', 'info');
+  ecalForceRefresh();
+}
+function ecalIsWatched(ev) {
+  const t = (ev.title || '').toLowerCase();
+  return ECAL_ALWAYS.some(w => t.includes(w));
+}
+function ecalPasses(ev) {
+  if (ev.country !== 'USD') return false;
+  if (ecalIsWatched(ev)) return true;
+  return (ECAL_IMPACT_RANK[ev.impact] || 0) >= (ECAL_IMPACT_RANK[ecalMinImpact()] || 2);
+}
+/* Providers disagree. ForexFactory tags Crude Oil Inventories "Low"; every
+   Hebrew calendar a trader here actually uses shows it as three stars. The
+   watchlist therefore also sets the effective rating, so the UI matches what
+   the user sees elsewhere instead of arguing with it. */
+function ecalEffectiveImpact(ev) {
+  if (!ev) return 'Medium';
+  return ecalIsWatched(ev) ? 'High' : (ev.impact || 'Medium');
+}
+function ecalStars(impactOrEvent) {
+  const imp = (typeof impactOrEvent === 'object' && impactOrEvent)
+    ? ecalEffectiveImpact(impactOrEvent)
+    : impactOrEvent;
+  return imp === 'High' ? '⭐⭐⭐' : imp === 'Medium' ? '⭐⭐' : '⭐';
+}
+
 async function _fetchEcalEvents(forceRefresh) {
-  const todayKey = new Date().toISOString().slice(0, 10); // e.g. "2026-06-02"
+  const todayKey = new Date().toISOString().slice(0, 10) + '_' + ecalMinImpact();  // v43: cache per filter level
   // Use localStorage cache — valid only for today
   if (!forceRefresh) {
     try {
@@ -15698,7 +16460,7 @@ async function _fetchEcalEvents(forceRefresh) {
   if (!all.length) return false;
   const seen = new Set();
   _ecalCache = all.filter(ev => {
-    if (ev.impact !== 'High' || ev.country !== 'USD') return false;
+    if (!ecalPasses(ev)) return false;                    // v43: configurable + watchlist
     const k = ev.date + ev.title;
     if (seen.has(k)) return false;
     seen.add(k); return true;
@@ -15730,7 +16492,8 @@ function _scheduleTodayAlerts() {
       const alertAt = new Date(ev._parsedDate||ev.date).getTime() - mins * 60 * 1000;
       const delay   = alertAt - Date.now();
       if (delay <= 0) continue; // already past this window
-      const t = setTimeout(() => _showEcalAlertBar(ev.title, ev.country, new Date(ev._parsedDate||ev.date), mins), delay);
+      const t = setTimeout(() => { window._ecalLastStars = ecalStars(ev);
+        _showEcalAlertBar(ev.title, ev.country, new Date(ev._parsedDate||ev.date), mins); }, delay);
       _ecalDayTimers.push(t);
     }
   }
@@ -15756,7 +16519,7 @@ function _ecalNotify(title, evDate, minsLeft) {
   const past = evDate.getTime() <= Date.now();
   addNotification('ecal',
     '📅 ' + (past ? 'הודעה כלכלית' : 'בעוד ' + minsLeft + ' דקות') + ' — ' + title,
-    '⭐⭐⭐ ארה"ב · ' + t,
+    (window._ecalLastStars || '⭐⭐') + ' ארה"ב · ' + t,
     { time: evDate.toISOString() });
   seen[key] = Date.now();
   /* keep only the last 7 days of keys */
@@ -15786,16 +16549,25 @@ function _showTodayEcalBriefing(todayEvents) {
     const t = new Date(ev._parsedDate||ev.date).toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
     return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <span style="font-size:10px;color:#bfa15e;font-family:monospace;flex-shrink:0;min-width:38px">${t}</span>
+      <span style="font-size:9px;flex-shrink:0">${ecalStars(ev)}</span>
       <span style="font-size:11px;color:#e8ecf4">${escHtml(ev.title)}</span>
     </div>`;
   }).join('');
   toast.innerHTML = `<div style="background:#13110a;border:1px solid rgba(191,161,94,.3);border-radius:10px;padding:12px 14px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
     <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
       <span style="font-size:14px">📅</span>
-      <span style="font-size:12px;font-weight:700;color:#bfa15e">הודעות ⭐⭐⭐ היום — ארה"ב</span>
+      <span style="font-size:12px;font-weight:700;color:#bfa15e">הודעות היום — ארה"ב</span>
       <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:#767f8e;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
     </div>
     ${rows}
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.06)">
+      <span style="font-size:9px;color:#767f8e">רמת סינון:</span>
+      <select onchange="setEcalMinImpact(this.value)" style="padding:2px 5px;font-size:9px;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:#1b2540;color:#e8ecf4;font-family:inherit">
+        <option value="High"${ecalMinImpact()==='High'?' selected':''}>⭐⭐⭐ בלבד</option>
+        <option value="Medium"${ecalMinImpact()==='Medium'?' selected':''}>⭐⭐ ומעלה</option>
+        <option value="Low"${ecalMinImpact()==='Low'?' selected':''}>הכל</option>
+      </select>
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
       <div style="font-size:10px;color:#767f8e">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
       <button onclick="ecalForceRefresh()" style="background:rgba(191,161,94,.12);border:1px solid rgba(191,161,94,.25);color:#bfa15e;border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
@@ -15827,7 +16599,7 @@ function _showEcalAlertBar(title, country, evDate, minsLeft) {
       <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#8892a4;cursor:pointer;font-size:16px;border-radius:8px;width:28px;height:28px;flex-shrink:0;font-family:inherit;line-height:1;padding:0">✕</button>
     </div>
     <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px">
-      <div style="font-size:13px;font-weight:700;color:#e8ecf4;margin-bottom:4px">⭐⭐⭐ &nbsp;${escHtml(title)}</div>
+      <div style="font-size:13px;font-weight:700;color:#e8ecf4;margin-bottom:4px">${window._ecalLastStars || '⭐⭐'} &nbsp;${escHtml(title)}</div>
       <div style="font-size:12px;color:#bfa15e;font-family:monospace;font-weight:600">🕐 ${timeStr} &nbsp;·&nbsp; 🇺🇸 ארה"ב</div>
     </div>
   </div>`;
@@ -15904,6 +16676,7 @@ async function ecalForceRefresh() {
 }
 
 function showApp() {
+  try { initNotifications(typeof currentUser !== 'undefined' ? currentUser : null); } catch (e) { console.warn('notify init', e); }
   document.getElementById('auth-screen').style.display='none';
   const wb = document.getElementById('welcome-back-screen');
   if (wb) wb.style.display = 'none';
@@ -20726,6 +21499,105 @@ const _avatarColors = ['#3d9970','#6c63ff','#f59e0b','#ef4444','#3b82f6','#ec489
 let _profPhotoData = null; // base64 of new photo, or null
 
 // ── PERSONAL AREA ──
+
+/* ── notification glue ─────────────────────────────────────────────── */
+function openNotifSettings() {
+  Notify.closePanel();
+  try { sw('personal', null); } catch (e) {}
+  paTab('notifications', document.getElementById('pasnav-notif'));
+  Notify.renderSettings();
+}
+function ncStatus(btn, v) {
+  btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  Notify.setStatus(v);
+}
+
+function bcAudienceChange() {
+  const v = document.getElementById('bc-audience').value;
+  document.getElementById('bc-plan-wrap').style.display = v === 'group' ? '' : 'none';
+  document.getElementById('bc-uid-wrap').style.display  = v === 'user'  ? '' : 'none';
+}
+function bcFillTypes() {
+  const sel = document.getElementById('bc-type');
+  if (!sel || sel.options.length) return;
+  [...Notify.TYPES.values()].forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.id; o.textContent = t.icon + ' ' + t.label;
+    sel.appendChild(o);
+  });
+  sel.value = 'admin';
+}
+async function bcSend() {
+  const g = id => document.getElementById(id)?.value || '';
+  try {
+    const b = await Broadcast.send({
+      title: g('bc-title'), body: g('bc-body'), type: g('bc-type'),
+      priority: g('bc-priority'), channel: g('bc-channel'),
+      audience: g('bc-audience'), targetPlan: g('bc-plan'), targetUid: g('bc-uid').trim(),
+      sendAt: g('bc-sendat'),
+    });
+    showToast('ההתראה נשלחה' + (new Date(b.sendAt) > new Date() ? ' (מתוזמנת)' : ''), 'success');
+    ['bc-title', 'bc-body', 'bc-uid', 'bc-sendat'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+    bcRefresh();
+  } catch (e) { showToast(e.message || 'השליחה נכשלה', 'error'); }
+}
+async function bcRefresh() {
+  const el = document.getElementById('bc-history');
+  if (!el) return;
+  el.innerHTML = '<div style="font-size:11px;color:var(--t3)">טוען…</div>';
+  try {
+    const rows = await Broadcast.list(25);
+    if (!rows.length) { el.innerHTML = '<div style="font-size:11px;color:var(--t3)">לא נשלחו התראות עדיין</div>'; return; }
+    el.innerHTML = '<div style="overflow-x:auto"><table class="users-table" style="min-width:520px"><thead><tr>' +
+      '<th>כותרת</th><th>קהל</th><th>מועד</th><th>נמסר</th><th>נקרא</th><th></th></tr></thead><tbody>' +
+      rows.map(b => {
+        const aud = b.audience === 'all' ? 'כולם' : b.audience === 'group' ? ('מסלול ' + b.targetPlan) : 'משתמש בודד';
+        const future = new Date(b.sendAt) > new Date();
+        return '<tr style="opacity:' + (b.active ? 1 : .45) + '">' +
+          '<td>' + (Notify.type(b.type).icon) + ' ' + escHtml(b.title) + '</td>' +
+          '<td style="font-size:11px">' + aud + '</td>' +
+          '<td style="font-size:11px">' + new Date(b.sendAt).toLocaleString('he-IL', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) +
+            (future ? ' <span style="color:var(--go)">⏳</span>' : '') + '</td>' +
+          '<td style="font-size:11px">' + (b.delivered || 0) + '</td>' +
+          '<td style="font-size:11px">' + (b.read || 0) + '</td>' +
+          '<td>' + (b.active ? '<button class="fb" style="padding:3px 9px;font-size:10px" onclick="bcCancel(\'' + b.id + '\')">בטל</button>' : '—') + '</td>' +
+        '</tr>';
+      }).join('') + '</tbody></table></div>';
+  } catch (e) { el.innerHTML = '<div style="font-size:11px;color:var(--re)">טעינת ההיסטוריה נכשלה</div>'; }
+}
+async function bcCancel(id) {
+  try { await Broadcast.cancel(id); showToast('ההתראה בוטלה', 'info'); bcRefresh(); }
+  catch (e) { showToast('הביטול נכשל', 'error'); }
+}
+
+/* clicking a system notification focuses the tab and opens the right screen */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type !== 'notification-click') return;
+    window.focus();
+    if (d.id) Notify.markRead(d.id);
+    if (d.link) { try { sw(d.link, null); } catch (err) {} }
+    Notify.render();
+  });
+}
+
+/* boot — called once the user is authenticated */
+function initNotifications(user) {
+  Notify.render();
+  Notify.renderSettings();
+  bcFillTypes();
+  Sound.dailyLogin(user && user.uid);
+  Broadcast.poll();
+  /* re-poll when the tab comes back, never on a timer in the background.
+     showApp() can fire again on re-login — bind once for the page's lifetime. */
+  if (!window._notifVisBound) {
+    window._notifVisBound = true;
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) Broadcast.poll(); });
+  }
+}
+
 function paTab(id, btn) {
   document.querySelectorAll('.pa-sub').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.pa-snav-btn').forEach(el => el.classList.remove('active'));
@@ -21440,13 +22312,20 @@ function renderNextEventsWidget() {
     el.innerHTML = `<div style="font-size:11px;color:var(--t3);padding:4px">אין אירועים קרובים היום ${refreshBtn}</div>`;
     return;
   }
-  el.innerHTML = `<div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:3px;display:flex;justify-content:space-between">🗓 הודעות ⭐⭐⭐ היום ${refreshBtn}</div>` +
+  el.innerHTML = `<div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:3px;display:flex;justify-content:space-between">🗓 הודעות היום ${refreshBtn}</div>` +
     evs.map(ev => {
       const mins = Math.round((new Date(ev._parsedDate||ev.date)-now)/60000);
       const h = Math.floor(mins/60), m = mins%60;
       const timeStr = mins < 0 ? 'כעת' : mins < 60 ? `עוד ${mins} דק'` : `עוד ${h}ש' ${m>0?m+"דק'":''}`;
       const clr = mins <= 10 ? '#c75f5f' : mins <= 30 ? '#bfa15e' : 'var(--t3)';
-      return `<div class="next-event-item"><span class="next-event-time" style="color:${clr}">${timeStr}</span><span class="next-event-title">${ev.title||''}</span></div>`;
+      const clock = new Date(ev._parsedDate||ev.date)
+        .toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="next-event-item">
+        <span class="next-event-time" style="color:${clr}">${timeStr}</span>
+        <span style="font-size:8px;flex-shrink:0">${ecalStars(ev)}</span>
+        <span class="next-event-title">${escHtml(ev.title||'')}</span>
+        <span style="font-size:9px;color:var(--t3);margin-inline-start:auto;font-family:'IBM Plex Mono',monospace">${clock}</span>
+      </div>`;
     }).join('');
 }
 
@@ -21747,6 +22626,125 @@ function _sessionWarning() {
 .calc-key.eq{background:var(--ac);color:#0e1116;grid-row:span 1}
 .calc-key.wide{grid-column:span 2}
 @media(max-width:479px){.calc-box{width:min(280px,calc(100vw - 24px))}}
+
+/* ══ NOTIFICATION CENTRE (v45) ══════════════════════════════════════ */
+#notif-panel{
+  position:fixed;z-index:1400;display:none;flex-direction:column;
+  width:min(380px,calc(100vw - 20px));max-height:min(560px,calc(100vh - 90px));
+  background:var(--bg1);border:1px solid var(--border2);border-radius:14px;
+  box-shadow:0 18px 48px rgba(0,0,0,.5);overflow:hidden;
+  transform-origin:top left;
+}
+#notif-panel.open{display:flex;animation:ncIn .18s cubic-bezier(.2,.9,.3,1) both}
+@keyframes ncIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:none}}
+.nc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.nc-head b{font-size:13.5px}
+.nc-head-actions{display:flex;gap:4px}
+.nc-head-actions button{background:none;border:1px solid transparent;color:var(--t3);
+  font:inherit;font-size:11px;padding:5px 8px;border-radius:7px;cursor:pointer;transition:.15s}
+.nc-head-actions button:hover{background:var(--bg3);color:var(--t1);border-color:var(--border2)}
+.nc-head-actions button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.nc-tools{display:flex;gap:8px;padding:10px 12px 8px;flex-shrink:0;align-items:center}
+#notif-search{flex:1;min-width:0;padding:7px 10px;border-radius:8px;font:inherit;font-size:12px;
+  background:var(--bg3);border:1px solid var(--border2);color:var(--t1)}
+#notif-search:focus{outline:none;border-color:var(--ac)}
+.nc-status{display:flex;background:var(--bg3);border-radius:8px;padding:2px;flex-shrink:0}
+.nc-status button{background:none;border:none;color:var(--t3);font:inherit;font-size:10.5px;
+  padding:5px 8px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.nc-status button.on{background:var(--bg1);color:var(--t1)}
+.nc-chips{display:flex;gap:6px;overflow-x:auto;padding:0 12px 10px;flex-shrink:0;
+  scrollbar-width:none}
+.nc-chips::-webkit-scrollbar{display:none}
+.nc-chip{background:var(--bg3);border:1px solid transparent;color:var(--t3);font:inherit;
+  font-size:10.5px;padding:5px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:.15s}
+.nc-chip:hover{color:var(--t1)}
+.nc-chip.on{background:var(--ac);color:#fff}
+#notif-list{overflow-y:auto;flex:1;padding:0 8px 8px;scroll-behavior:smooth}
+.nc-item{display:flex;gap:10px;align-items:flex-start;padding:11px 10px;border-radius:10px;
+  cursor:pointer;position:relative;transition:background .15s;animation:ncItem .22s ease both}
+@keyframes ncItem{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.nc-item:hover{background:var(--bg3)}
+.nc-item:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+.nc-item.nc-unread{background:rgba(59,130,246,.07)}
+.nc-item.nc-unread::before{content:'';position:absolute;top:15px;inset-inline-start:2px;
+  width:5px;height:5px;border-radius:50%;background:var(--ac)}
+.nc-item.nc-high{box-shadow:inset 3px 0 0 var(--go)}
+.nc-item.nc-urgent{box-shadow:inset 3px 0 0 var(--re)}
+.nc-icon{font-size:17px;line-height:1.2;flex-shrink:0;margin-top:1px}
+.nc-body{flex:1;min-width:0}
+.nc-title{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.4;word-break:break-word}
+.nc-text{font-size:11.5px;color:var(--t2);line-height:1.5;margin-top:2px;word-break:break-word}
+.nc-meta{display:flex;gap:5px;align-items:center;font-size:10px;color:var(--t3);margin-top:4px}
+.nc-del{background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:3px 5px;
+  border-radius:6px;opacity:0;transition:.15s;flex-shrink:0}
+.nc-item:hover .nc-del,.nc-del:focus-visible{opacity:1}
+.nc-del:hover{background:rgba(239,68,68,.15);color:var(--re)}
+.nc-empty{padding:40px 16px;text-align:center;color:var(--t3);font-size:12px}
+.nc-empty p{margin:8px 0 0}
+
+/* mobile: bottom sheet, big touch targets, always-visible delete */
+@media(max-width:600px){
+  #notif-panel{inset:auto 0 0 0!important;width:100%!important;max-width:none;
+    max-height:82vh;border-radius:18px 18px 0 0;border-bottom:none;
+    padding-bottom:env(safe-area-inset-bottom,0)}
+  #notif-panel.open{animation:ncSheet .24s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes ncSheet{from{transform:translateY(100%)}to{transform:none}}
+  .nc-head{padding:14px 16px}
+  .nc-head-actions button{min-height:36px;min-width:36px}
+  .nc-item{padding:13px 10px;min-height:56px}
+  .nc-del{opacity:1;min-width:36px;min-height:36px}
+  .nc-tools{flex-wrap:wrap}
+  .nc-status button{padding:8px 11px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  #notif-panel.open,.nc-item{animation:none!important}
+}
+
+/* ══ NOTIFICATION SETTINGS ══════════════════════════════════════════ */
+.ns-master{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 14px;background:var(--bg3);border-radius:10px;margin-bottom:14px}
+.ns-master b{font-size:13px;display:block}
+.ns-master small{font-size:11px;color:var(--t3);display:block;margin-top:2px}
+.ns-sec{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);
+  margin:16px 0 8px}
+.ns-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 2px;border-bottom:1px solid var(--border)}
+.ns-lbl{font-size:12.5px;color:var(--t1)}
+.ns-lbl small{display:block;font-size:10.5px;color:var(--t3);margin-top:2px}
+.ns-tog{width:42px;height:24px;border-radius:14px;border:none;background:var(--bg4);
+  position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;padding:0}
+.ns-tog::after{content:'';position:absolute;top:3px;inset-inline-end:3px;width:18px;height:18px;
+  border-radius:50%;background:var(--t3);transition:.18s}
+.ns-tog.on{background:var(--ac)}
+.ns-tog.on::after{inset-inline-end:21px;background:#fff}
+.ns-tog:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.ns-tblwrap{overflow-x:auto}
+.ns-tbl{width:100%;border-collapse:collapse;min-width:400px}
+.ns-tbl th{font-size:10px;color:var(--t3);font-weight:500;padding:6px 4px;text-align:center;
+  border-bottom:1px solid var(--border)}
+.ns-tbl th:first-child{text-align:start}
+.ns-tbl td{padding:8px 4px;font-size:12px;text-align:center;border-bottom:1px solid var(--border)}
+.ns-tbl td:first-child{text-align:start;white-space:nowrap}
+.ns-mini{width:26px;height:26px;border-radius:7px;border:1px solid var(--border2);
+  background:transparent;color:transparent;cursor:pointer;font-size:12px;transition:.15s;padding:0}
+.ns-mini:hover{border-color:var(--ac)}
+.ns-mini.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ns-mini:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.ns-reset{margin-top:16px}
+
+/* ══ ADMIN BROADCAST FORM ═══════════════════════════════════════════ */
+.bc-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.bc-form label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--t3)}
+.bc-form input,.bc-form select,.bc-form textarea{padding:8px 10px;border-radius:8px;font:inherit;
+  font-size:12px;background:var(--bg3);border:1px solid var(--border2);color:var(--t1)}
+.bc-form input:focus,.bc-form select:focus,.bc-form textarea:focus{outline:none;border-color:var(--ac)}
+.bc-form textarea{resize:vertical}
+
+/* toast: per-kind colour so the 222 existing calls read at a glance */
+.toast.warn{border-inline-start:3px solid var(--go)}
+.toast.info{border-inline-start:3px solid var(--ac)}
+
 </style>
 <div class="calc-overlay" id="calc-overlay" onclick="if(event.target===this)calcToggle()">
   <div class="calc-box">
@@ -22394,6 +23392,12 @@ async function requestAccountDeletion() {
 
 /* ── boot ── */
 document.addEventListener('DOMContentLoaded', () => {
+  /* v43: the calendar cache key changed shape — drop the old one once so the
+     new filter takes effect immediately instead of after midnight. */
+  try {
+    const c = JSON.parse(localStorage.getItem('fayna_ecal_cache') || '{}');
+    if (c.date && !c.date.includes('_')) localStorage.removeItem('fayna_ecal_cache');
+  } catch(e) {}
   a11yLoad();
   _legalFill();
   ckInit();
