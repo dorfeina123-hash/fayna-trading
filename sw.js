@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v25';
+const VERSION    = 'fayna-v45';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
@@ -105,3 +105,58 @@ function _put(cacheName, req, res) {
 self.addEventListener('message', e => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   NOTIFICATIONS (v45)
+
+   Two paths arrive here:
+     • showNotification() called by the page through this registration —
+       works while the browser is open, no server needed. This is what
+       Fayna uses today.
+     • A real 'push' event from a push server. Nothing sends these yet,
+       but the handler is in place so adding the server later is a
+       server-only change.
+   ═══════════════════════════════════════════════════════════════ */
+
+self.addEventListener('push', event => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { title: event.data && event.data.text() }; }
+
+  const title = d.title || 'Fayna Trading';
+  const opts = {
+    body:  d.body || '',
+    icon:  './icon-192.png',
+    badge: './icon-192.png',
+    tag:   d.tag || d.type || 'fayna',
+    renotify: d.priority === 'urgent',
+    requireInteraction: d.priority === 'urgent',
+    dir: 'rtl',
+    lang: 'he',
+    data: { id: d.id || null, link: d.link || null, type: d.type || null, url: d.url || './index.html' },
+  };
+  event.waitUntil(self.registration.showNotification(title, opts));
+});
+
+/* Focus an existing tab rather than opening a duplicate, and tell the page
+   which notification was clicked so it can mark it read and navigate. */
+self.addEventListener('notificationclick', event => {
+  const data = event.notification.data || {};
+  event.notification.close();
+
+  event.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const msg = { type: 'notification-click', id: data.id || null, link: data.link || null };
+
+    for (const c of all) {
+      if (c.url.includes(self.registration.scope) || c.url.includes(location.origin)) {
+        c.postMessage(msg);
+        if ('focus' in c) return c.focus();
+      }
+    }
+    /* no tab open — launch one and hand the payload over once it is ready */
+    const w = await self.clients.openWindow(data.url || './index.html');
+    if (w) setTimeout(() => { try { w.postMessage(msg); } catch (e) {} }, 2500);
+  })());
+});
+
+self.addEventListener('notificationclose', () => { /* reserved for delivery metrics */ });

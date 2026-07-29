@@ -131,6 +131,28 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ── v45: broadcasts (admin → users) ──
+    // Any signed-in user may read a broadcast, because the client decides
+    // locally whether it applies to them. Only the admin may create, cancel,
+    // or change the content. Users are allowed exactly one thing: bumping the
+    // delivered/read counters — and the rule below pins every other field so
+    // that a counter update cannot smuggle in a content change.
+    match /broadcasts/{id} {
+      allow read:   if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+                    || (isSignedIn()
+                        && request.resource.data.diff(resource.data)
+                             .affectedKeys().hasOnly(['delivered', 'read'])
+                        && request.resource.data.delivered >= resource.data.delivered
+                        && request.resource.data.read      >= resource.data.read);
+    }
+
+    // Web Push subscriptions live under the user document and never leave it
+    match /users/{uid}/pushSubs/{doc} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
     // ── deny everything not explicitly allowed above ──
     match /{document=**} { allow read, write: if false; }
   }
