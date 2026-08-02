@@ -15,6 +15,13 @@ const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
 
+/* Deliberately does NOT include the on-demand modules (fayna-metrics.js,
+   fayna-merge.js). Precaching them would fetch them for every visitor on
+   load, which is exactly what loading them on demand is meant to avoid.
+   They fall under the same-origin asset rule below — cache-first with a
+   background refresh — and the activate handler drops every cache whose
+   name does not start with the current VERSION, so bumping VERSION on each
+   deploy is what keeps them from going stale. */
 const PRECACHE = [
   './',
   './index.html',
