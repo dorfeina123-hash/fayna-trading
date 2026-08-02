@@ -19,11 +19,13 @@
 <meta property="og:title" content="Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ">
 <meta property="og:description" content="תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים בזמן אמת ומאמן AI. הכל במקום אחד.">
 <meta property="og:image" content="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg">
+<meta property="og:image:alt" content="לוגו Fayna Trading">
 <meta property="og:url" content="https://dorfeina123-hash.github.io/fayna-trading/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Fayna Trading — יומן מסחר מקצועי">
 <meta name="twitter:description" content="תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים ומאמן AI לסוחרי פרופ.">
 <meta name="twitter:image" content="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg">
+<meta name="twitter:image:alt" content="לוגו Fayna Trading">
 <link rel="canonical" href="https://dorfeina123-hash.github.io/fayna-trading/">
 <script type="application/ld+json">
 {
@@ -7852,7 +7854,7 @@ function renderSymbolManager() {
   const rows = customSymbols.map((cs,i)=>`
     <tr>
       <td class="mono" style="font-weight:700" dir="ltr">${cs.sym}</td>
-      <td>${cs.name||'—'}</td>
+      <td>${cs.name?escHtml(cs.name):'—'}</td>
       <td class="mono">$${cs.mult}/נק׳</td>
       <td>${cs.micro?'מיקרו':'מלא'}</td>
       <td class="mono">${cs.comm!=null?'$'+cs.comm:'לפי הגדרות'}</td>
@@ -11400,7 +11402,7 @@ function renderExp(){
       <td><span class="dh">⠿</span></td>
       <td><input type="checkbox" class="chk" ${r.done?'checked':''} onchange="records[${ri}].done=this.checked;renderExp()"></td>
       <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(r.date)}</td>
-      <td style="color:#8892a4;white-space:nowrap">${r.company||'—'}</td>
+      <td style="color:#8892a4;white-space:nowrap">${r.company?escHtml(r.company):'—'}</td>
       <td><span class="cat ${catCls(r.cat)}" onclick="openCatP(${ri},event)">${r.cat||'—'} ▾</span></td>
       <td class="mono" style="color:var(--re);font-weight:600">$${r.amount.toFixed(2)}</td>
       <td style="color:#767f8e;font-size:11px">${fmtILS(r.amount*r.rate)}</td>
@@ -11431,7 +11433,7 @@ function renderWD(){
     const ri=records.indexOf(r);
     return `<tr>
       <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(r.date)}</td>
-      <td style="color:#8892a4">${r.company||'—'}</td>
+      <td style="color:#8892a4">${r.company?escHtml(r.company):'—'}</td>
       <td class="mono cy">$${(r.wdGross||r.amount).toFixed(2)}</td>
       <td style="color:#8892a4">${r.wdPct||0}%</td>
       <td class="mono cp" style="font-weight:700">$${(r.wdNet||r.amount).toFixed(2)}</td>
@@ -11523,7 +11525,7 @@ function renderPNL(){
             <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px 4px 2px;border-radius:5px;transition:background .12s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
               <div style="display:flex;gap:8px;align-items:center;min-width:0">
                 <span style="font-size:10px;color:var(--t3);white-space:nowrap">${fmtD(it.date||'')}</span>
-                <span style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px" title="${it.company||''}">${it.company||'—'}</span>
+                <span style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px" title="${escHtml(it.company||'')}">${it.company?escHtml(it.company):'—'}</span>
               </div>
               <div style="text-align:left;flex-shrink:0;margin-right:4px">
                 <span style="font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:${it.sign>0?'var(--gr)':'var(--re)'}">${it.sign>0?'+':'−'}$${Math.abs(it.amount||0).toFixed(2)}</span>
@@ -14414,7 +14416,7 @@ function renderCX() {
         <td class="mono cr">${fmt(c.amount)}</td>
         <td><span class="rate-tag">${c.rate}</span></td>
         <td style="color:#767f8e;font-size:11px">${fmtILS(c.amount*c.rate)}</td>
-        <td style="color:#767f8e;font-size:11px">${c.note||'—'}</td>
+        <td style="color:#767f8e;font-size:11px">${c.note?escHtml(c.note):'—'}</td>
         <td><button class="act ed" onclick="openCX(${ci})">✏️</button><button class="act" onclick="cxAskDel(${ci})">🗑</button></td>
       </tr>`;
     }).join('') : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#767f8e">אין הוצאות עדיין</td></tr>`;
@@ -14569,8 +14571,8 @@ function renderRecurringManager() {
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
                   <div style="flex:1;min-width:0">
                     <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${tmpl.toolName||tmpl.company}">${tmpl.toolName||tmpl.company}</div>
-                    <div style="font-size:10px;color:var(--t3)">${tmpl.company} · כל ${tmpl.recurDay} לחודש</div>
-                    ${tmpl.note ? `<div style="font-size:10px;color:var(--t3);margin-top:2px">${tmpl.note}</div>` : ''}
+                    <div style="font-size:10px;color:var(--t3)">${escHtml(tmpl.company)} · כל ${tmpl.recurDay} לחודש</div>
+                    ${tmpl.note ? `<div style="font-size:10px;color:var(--t3);margin-top:2px">${escHtml(tmpl.note)}</div>` : ''}
                   </div>
                   <div style="text-align:left;flex-shrink:0">
                     <div style="font-size:13px;font-weight:700;color:#c97272">$${tmpl.amount.toFixed(0)}</div>
@@ -17436,9 +17438,9 @@ async function refreshLoginLogs() {
           <span style="flex-shrink:0">${icons[l.action]||'•'}</span>
           <span style="color:#e8ecf4;min-width:110px;flex-shrink:0;display:flex;align-items:center;gap:5px">
             ${isOnline&&l.action==='login'?'<span style="width:5px;height:5px;border-radius:50%;background:#3d9970;flex-shrink:0"></span>':''}
-            ${l.name||'—'}
+            ${l.name?escHtml(l.name):'—'}
           </span>
-          <span style="color:#7295b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.email}</span>
+          <span style="color:#7295b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(l.email)}</span>
           <span style="color:#767f8e;min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
           <span style="color:#767f8e;min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
         </div>`;
@@ -21412,9 +21414,75 @@ function _togglePwd(inputId, btnId) {
 
 // ════════════════════════════════════════════════════
 //  GOOGLE SIGN-IN (login + register unified)
+//
+//  v46 — popup + automatic redirect fallback.
+//
+//  The previous version only ever called signInWithPopup(). A popup is the
+//  nicer flow, but it is flatly impossible in several very common situations,
+//  and in every one of them the user was left with a raw English Firebase
+//  error and no way in:
+//    • the app installed as a PWA / standalone (iOS cannot deliver the popup
+//      result back to the installed window at all)
+//    • in-app browsers — Instagram, Facebook, WhatsApp, LinkedIn, Gmail
+//    • Safari / Brave / Firefox with third-party storage partitioned or
+//      blocked (the popup flow needs storage on firebaseapp.com)
+//    • any browser with a popup blocker, which is the default on mobile
+//  So: detect those up front and use signInWithRedirect there, and also fall
+//  back to redirect whenever a popup attempt fails for a popup-shaped reason.
+//  getRedirectResult() below finishes the job when the browser comes back.
 // ════════════════════════════════════════════════════
-async function doGoogleAuth() {
-  _manualLogin = true; // Google login is explicit → skip welcome screen
+
+const _GAUTH_ERRS = {
+  'auth/popup-closed-by-user':    'החלון נסגר לפני סיום ההתחברות — נסה שוב',
+  'auth/cancelled-popup-request': '',
+  'auth/user-cancelled':          '',
+  'auth/popup-blocked':           'הדפדפן חסם את חלון ההתחברות — מעביר אותך לגוגל…',
+  'auth/unauthorized-domain':     'הכתובת הזו לא מאושרת בהגדרות ההתחברות — פנה לתמיכה',
+  'auth/operation-not-allowed':   'התחברות עם Google אינה מופעלת בשרת — פנה לתמיכה',
+  'auth/network-request-failed':  'אין חיבור לאינטרנט — בדוק את הרשת ונסה שוב',
+  'auth/too-many-requests':       'יותר מדי ניסיונות — המתן דקה ונסה שוב',
+  'auth/user-disabled':           'החשבון הזה חסום — פנה לתמיכה',
+  'auth/web-storage-unsupported': 'הדפדפן חוסם אחסון (גלישה פרטית או חסימת עוגיות צד-שלישי). בטל את החסימה או נסה בדפדפן אחר.',
+  'auth/account-exists-with-different-credential':
+    'כבר קיים חשבון עם המייל הזה שנפתח עם סיסמה. התחבר עם אימייל וסיסמה (או אפס סיסמה), ואז אפשר לחבר את Google.',
+};
+
+/* Put the error where the user is actually looking: the register pane if that
+   tab is the active one, otherwise the login pane. The old code always used
+   #login-msg, so a failure during registration was invisible. */
+function _gaMsgEl() {
+  const regTab = document.getElementById('tab-register');
+  const onReg  = regTab && regTab.classList.contains('active');
+  return (onReg ? document.getElementById('reg-msg') : null)
+      || document.getElementById('login-msg')
+      || document.getElementById('reg-msg');
+}
+
+function _gaShowErr(e) {
+  e = e || {};
+  const known = Object.prototype.hasOwnProperty.call(_GAUTH_ERRS, e.code);
+  const msg = known ? _GAUTH_ERRS[e.code] : (e.message || 'ההתחברות נכשלה — נסה שוב');
+  const el  = _gaMsgEl();
+  if (msg && el && typeof showMsg === 'function') showMsg(el, 'err', msg);
+  else if (msg && typeof showToast === 'function') showToast(msg, 'err', 6000);
+  if (e.code) console.warn('[google-auth]', e.code, e.message || '');
+}
+
+/* Environments where a popup provably cannot work → go straight to redirect. */
+function _gaNeedsRedirect() {
+  try {
+    const ua = navigator.userAgent || '';
+    if (window.matchMedia && matchMedia('(display-mode: standalone)').matches) return true;
+    if (window.navigator.standalone === true) return true;                 // iOS home-screen app
+    if (window.top !== window.self) return true;                           // embedded in an iframe
+    if (/FBAN|FBAV|FB_IAB|Instagram|Line\/|WhatsApp|Twitter|LinkedInApp|MicroMessenger|GSA\/|OKHttp/i.test(ua)) return true;
+    if (/Android/i.test(ua) && /;\s*wv\)/i.test(ua)) return true;          // Android WebView
+  } catch (e) {}
+  return false;
+}
+
+/* Honour the "remember me" choice. Called before both flows. */
+async function _gaPersistence() {
   try {
     const _stay = document.getElementById('remember-me')?.checked
                || localStorage.getItem('ft_stay_signed_in') === '1';
@@ -21422,53 +21490,110 @@ async function doGoogleAuth() {
     await auth.setPersistence(_stay
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION);
-  } catch(e){}
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
-  const loginMsg = document.getElementById('login-msg');
-  const regMsg   = document.getElementById('reg-msg');
-  const msgEl    = loginMsg || regMsg;
+  } catch (e) {}
+}
+
+/* Creates the user document on the first Google sign-in, or bumps the login
+   counters on every later one. Shared by the popup and the redirect path so
+   the two can never drift apart. */
+async function _gaProvision(user) {
+  const docRef = db.collection('users').doc(user.uid);
+  const snap   = await docRef.get();
+  if (!snap.exists) {
+    const isAdm = (user.email === ADMIN_EMAIL);
+    await docRef.set({
+      email: user.email,
+      name:  user.displayName || '',
+      phone: '',
+      plan:  isAdm ? 'lifetime' : 'pro',
+      status: 'active',
+      isAdmin: isAdm,
+      photoURL: user.photoURL || '',
+      registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastLogin:    firebase.firestore.FieldValue.serverTimestamp(),
+      loginCount:   1,
+      welcomeSent:  false,
+    });
+  } else {
+    await docRef.update({
+      lastLogin:  firebase.firestore.FieldValue.serverTimestamp(),
+      lastSeen:   firebase.firestore.FieldValue.serverTimestamp(),
+      loginCount: firebase.firestore.FieldValue.increment(1),
+    });
+  }
+  // onAuthStateChanged handles showApp
+}
+
+async function _gaRedirect(provider) {
+  try { sessionStorage.setItem('ft_g_redirect', '1'); } catch (e) {}
   try {
-    const result = await auth.signInWithPopup(provider);
-    const user   = result.user;
-    const uid    = user.uid;
-    // Check if user doc exists
-    const docRef = db.collection('users').doc(uid);
-    const snap   = await docRef.get();
-    if (!snap.exists) {
-      // New Google user — create doc with PRO plan
-      const isAdm = (user.email === ADMIN_EMAIL);
-      await docRef.set({
-        email: user.email,
-        name:  user.displayName || '',
-        phone: '',
-        plan:  isAdm ? 'lifetime' : 'pro',
-        status: 'active',
-        isAdmin: isAdm,
-        photoURL: user.photoURL || '',
-        registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
-        lastLogin:    firebase.firestore.FieldValue.serverTimestamp(),
-        loginCount:   1,
-        welcomeSent:  false,
-      });
-    } else {
-      await docRef.update({
-        lastLogin:  firebase.firestore.FieldValue.serverTimestamp(),
-        lastSeen:   firebase.firestore.FieldValue.serverTimestamp(),
-        loginCount: firebase.firestore.FieldValue.increment(1),
-      });
-    }
-    // onAuthStateChanged will handle showApp
-  } catch(e) {
-    const errs = {
-      'auth/popup-closed-by-user': 'החלון נסגר — נסה שוב',
-      'auth/cancelled-popup-request': '',
-      'auth/popup-blocked': 'הדפדפן חסם את הקופאפ — אפשר popups ונסה שוב',
-    };
-    const msg = errs[e.code] || e.message;
-    if (msg && msgEl) showMsg(msgEl, 'err', msg);
+    await auth.signInWithRedirect(provider);
+  } catch (e) {
+    try { sessionStorage.removeItem('ft_g_redirect'); } catch (_) {}
+    _gaShowErr(e);
   }
 }
+
+async function doGoogleAuth() {
+  _manualLogin = true; // Google login is explicit → skip welcome screen
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    _gaShowErr({ code: 'auth/network-request-failed' });
+    return;
+  }
+  await _gaPersistence();
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  provider.addScope('profile');
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  if (_gaNeedsRedirect()) { await _gaRedirect(provider); return; }
+
+  try {
+    const result = await auth.signInWithPopup(provider);
+    await _gaProvision(result.user);
+  } catch (e) {
+    /* A popup that never had a chance — retry the whole thing as a redirect
+       instead of showing the user a dead end. */
+    const POPUP_FAILED = ['auth/popup-blocked',
+                          'auth/operation-not-supported-in-this-environment',
+                          'auth/web-storage-unsupported',
+                          'auth/internal-error',
+                          'auth/timeout'];
+    if (POPUP_FAILED.includes(e.code)) {
+      _gaShowErr({ code: 'auth/popup-blocked' });
+      await _gaRedirect(provider);
+      return;
+    }
+    _gaShowErr(e);
+  }
+}
+
+/* Finishes a redirect-based sign-in after the browser returns from Google.
+   Resolves to {user:null} on a normal load, so it is safe to run every time.
+   Deferred to DOMContentLoaded because it touches state declared further down
+   this same script block. */
+(function _gaInstallRedirectHandler() {
+  const finish = async () => {
+    try {
+      if (!auth || typeof auth.getRedirectResult !== 'function') return;
+      const res = await auth.getRedirectResult();
+      if (res && res.user) {
+        _manualLogin = true;
+        await _gaProvision(res.user);
+      }
+    } catch (e) {
+      if (e && e.code) _gaShowErr(e);
+    } finally {
+      try { sessionStorage.removeItem('ft_g_redirect'); } catch (_) {}
+    }
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(finish, 0), { once: true });
+  } else {
+    setTimeout(finish, 0);
+  }
+})();
 
 // ════════════════════════════════════════════════════
 //  THEME SWITCHER (Dark Professional / Light / High Contrast)
