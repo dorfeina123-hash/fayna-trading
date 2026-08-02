@@ -21495,33 +21495,67 @@ async function _gaPersistence() {
 
 /* Creates the user document on the first Google sign-in, or bumps the login
    counters on every later one. Shared by the popup and the redirect path so
-   the two can never drift apart. */
+   the two can never drift apart.
+
+   MUST be called with _registering === true. See the note on doGoogleAuth:
+   onAuthStateChanged fires the instant Firebase signs the user in, which is
+   before this function has had a chance to write the document.
+
+   This now mirrors doRegister() field for field. The old version wrote a bare
+   document with none of _consentDefaults()/_refPayload(), never checked the
+   invites collection for a pre-assigned plan, never recorded the referral,
+   never logged the event and never sent the welcome mail — so a Google user
+   who did get in ended up with a half-built profile. */
 async function _gaProvision(user) {
-  const docRef = db.collection('users').doc(user.uid);
+  const uid    = user.uid;
+  const email  = (user.email || '').trim().toLowerCase();
+  const docRef = db.collection('users').doc(uid);
   const snap   = await docRef.get();
-  if (!snap.exists) {
-    const isAdm = (user.email === ADMIN_EMAIL);
-    await docRef.set({
-      email: user.email,
-      name:  user.displayName || '',
-      phone: '',
-      plan:  isAdm ? 'lifetime' : 'pro',
-      status: 'active',
-      isAdmin: isAdm,
-      photoURL: user.photoURL || '',
-      registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
-      lastLogin:    firebase.firestore.FieldValue.serverTimestamp(),
-      loginCount:   1,
-      welcomeSent:  false,
-    });
-  } else {
+
+  if (snap.exists) {
+    const data = snap.data();
+    if (data.status === 'blocked') {
+      await auth.signOut();
+      const e = new Error('blocked'); e.code = 'ft/blocked'; throw e;
+    }
     await docRef.update({
       lastLogin:  firebase.firestore.FieldValue.serverTimestamp(),
       lastSeen:   firebase.firestore.FieldValue.serverTimestamp(),
       loginCount: firebase.firestore.FieldValue.increment(1),
     });
+    currentUser = { ...data, uid };
+    _logEvent(uid, email, data.name || '', 'login').catch(() => {});
+    return { isNew: false };
   }
-  // onAuthStateChanged handles showApp
+
+  // ── first Google sign-in → this IS the registration ──
+  const isAdm = (email === ADMIN_EMAIL);
+  const name  = user.displayName || email.split('@')[0] || '';
+  let plan = 'pro', status = 'active';
+  try {
+    const inv = await db.collection('invites').doc(email).get();
+    if (inv.exists) { plan = inv.data().plan || 'pro'; await db.collection('invites').doc(email).delete(); }
+  } catch (e) {}
+  if (isAdm) plan = 'lifetime';
+
+  const userData = {
+    email, name, phone: '', plan, status, isAdmin: isAdm,
+    photoURL: user.photoURL || '',
+    registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+    lastLogin:    firebase.firestore.FieldValue.serverTimestamp(),
+    loginCount:   1,
+    welcomeSent:  false,
+    ..._consentDefaults(),
+    ..._refPayload(uid),
+  };
+  await docRef.set(userData);
+  _invalidateUsersCache();
+  _applyConsentOnRegister(uid, email);
+  _recordReferral(uid, email, name, userData.referredByCode);
+  currentUser = { ...userData, uid, isAdmin: isAdm };
+  _logEvent(uid, email, name, 'register').catch(() => {});
+  try { sendRegistrationEmail({ name, email, phone: '', plan }); } catch (e) {}
+  return { isNew: true };
 }
 
 async function _gaRedirect(provider) {
@@ -21532,6 +21566,36 @@ async function _gaRedirect(provider) {
     try { sessionStorage.removeItem('ft_g_redirect'); } catch (_) {}
     _gaShowErr(e);
   }
+}
+
+/* ── THE BUG THAT ACTUALLY BLOCKED REGISTRATION ────────────────────────────
+   onAuthStateChanged (initAuth, above) fires the moment Firebase signs someone
+   in. For a brand-new Google user that happens while _gaProvision is still
+   between its get() and its set(), so the listener reads users/{uid}, finds
+   nothing, and runs its "profile missing" branch:
+
+       await auth.signOut();
+       _showAuthScreen('ההרשמה לא הושלמה — נרשם שוב.');
+
+   The user is signed out mid-write, every single time, and retrying loses the
+   same race again. doRegister() has always guarded against exactly this with
+   the _registering flag — doGoogleAuth simply never set it.
+
+   It worked for the admin because the listener special-cases ADMIN_EMAIL and
+   writes the document itself. That is why registration failed for everyone
+   except the owner.
+
+   Fix: hold _registering across the whole Google flow, exactly as doRegister
+   does, and drive showApp() ourselves once the document is committed. */
+async function _gaFinish(user) {
+  const res = await _gaProvision(user);
+  _registering = false;                 // document committed — listener may run
+  _manualLogin = true;                  // explicit login → skip welcome screen
+  /* The onAuthStateChanged branch we deliberately skipped does this too. */
+  try { loadSettingsFromFirestore().catch(() => {}); } catch (e) {}
+  const el = _gaMsgEl();
+  if (res.isNew && el && typeof showMsg === 'function') showMsg(el, 'ok', '✅ נרשמת בהצלחה! ברוך הבא');
+  setTimeout(() => showApp(), res.isNew ? 800 : 0);
 }
 
 async function doGoogleAuth() {
@@ -21547,12 +21611,16 @@ async function doGoogleAuth() {
   provider.addScope('profile');
   provider.setCustomParameters({ prompt: 'select_account' });
 
+  /* Must be set BEFORE the sign-in resolves, not after. */
+  _registering = true;
+
   if (_gaNeedsRedirect()) { await _gaRedirect(provider); return; }
 
   try {
     const result = await auth.signInWithPopup(provider);
-    await _gaProvision(result.user);
+    await _gaFinish(result.user);
   } catch (e) {
+    _registering = false;
     /* A popup that never had a chance — retry the whole thing as a redirect
        instead of showing the user a dead end. */
     const POPUP_FAILED = ['auth/popup-blocked',
@@ -21562,28 +21630,36 @@ async function doGoogleAuth() {
                           'auth/timeout'];
     if (POPUP_FAILED.includes(e.code)) {
       _gaShowErr({ code: 'auth/popup-blocked' });
+      _registering = true;
       await _gaRedirect(provider);
       return;
     }
+    if (e.code === 'ft/blocked') { _gaShowErr({ code: 'auth/user-disabled' }); return; }
     _gaShowErr(e);
   }
 }
 
+/* Coming back from Google via redirect, the flag has to be re-armed during
+   plain script evaluation — initAuth() registers onAuthStateChanged on
+   DOMContentLoaded, which is earlier than any handler we could add here. */
+try { if (sessionStorage.getItem('ft_g_redirect') === '1') _registering = true; } catch (e) {}
+
 /* Finishes a redirect-based sign-in after the browser returns from Google.
-   Resolves to {user:null} on a normal load, so it is safe to run every time.
-   Deferred to DOMContentLoaded because it touches state declared further down
-   this same script block. */
+   getRedirectResult() resolves to {user:null} on a normal load, so this is
+   safe to run on every page view. */
 (function _gaInstallRedirectHandler() {
   const finish = async () => {
+    let pending = false;
+    try { pending = sessionStorage.getItem('ft_g_redirect') === '1'; } catch (_) {}
     try {
-      if (!auth || typeof auth.getRedirectResult !== 'function') return;
+      if (!auth || typeof auth.getRedirectResult !== 'function') { _registering = false; return; }
       const res = await auth.getRedirectResult();
-      if (res && res.user) {
-        _manualLogin = true;
-        await _gaProvision(res.user);
-      }
+      if (res && res.user) await _gaFinish(res.user);
+      else if (pending) _registering = false;   // came back without a user
     } catch (e) {
-      if (e && e.code) _gaShowErr(e);
+      _registering = false;
+      if (e && e.code === 'ft/blocked') _gaShowErr({ code: 'auth/user-disabled' });
+      else if (e && e.code) _gaShowErr(e);
     } finally {
       try { sessionStorage.removeItem('ft_g_redirect'); } catch (_) {}
     }
