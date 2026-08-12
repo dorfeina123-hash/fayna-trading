@@ -1,12 +1,22 @@
 rules_version = '2';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Fayna Trading — Firestore Security Rules
+//  Fayna Trading — Firestore Security Rules  (v52)
 //
 //  THIS is the real security boundary. The Firebase API key in the HTML is public
 //  by design; nothing that runs in the browser can be trusted. These server-side
 //  rules are what actually stop a user from reading other people's data or making
 //  themselves an admin.
+//
+//  v50: users CREATE is hardened — email must match the auth token (this was the
+//  stored-XSS *source* fixed twice downstream in v46/v48, now blocked at origin),
+//  name must be a short string, isAdmin stays non-self-assignable. THIS STAYS.
+//
+//  v52: the Guard (מלאך שומר) freeze was removed together with the feature.
+//  Leaving it in would have been worse than useless: any user whose document
+//  still carries a td_guard.lockedUntil in the future would have had every
+//  update rejected by a rule enforcing a feature that no longer exists.
+//  Leftover td_guard fields are now inert data and are simply ignored.
 //
 //  Deploy:  Firebase Console → Firestore Database → Rules → paste → Publish
 //  (or:  firebase deploy --only firestore:rules)
@@ -24,13 +34,29 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
 
+    // v50: the registration paths (doRegister / _gaProvision) always write the
+    // lowercased auth email — enforce that so a user cannot be born with an
+    // email field containing HTML or someone else's address.
+    function createEmailOk() {
+      return request.resource.data.email is string
+          && request.resource.data.email.lower() == request.auth.token.email.lower();
+    }
+    function createNameOk() {
+      return !('name' in request.resource.data)
+          || (request.resource.data.name is string
+              && request.resource.data.name.size() <= 120);
+    }
+
     // ── users/{uid} : profile + trading data (td_* fields) ──
     match /users/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
 
-      // A user may create ONLY their own doc, and may NOT self-assign admin.
+      // A user may create ONLY their own doc, may NOT self-assign admin,
+      // and (v50) the email field must match the token; name must be sane.
       allow create: if isOwner(uid)
-                    && (isAdmin() || request.resource.data.isAdmin == false);
+                    && (isAdmin() || request.resource.data.isAdmin == false)
+                    && createEmailOk()
+                    && createNameOk();
 
       // A user may update their own doc but may NOT change the privileged fields
       // (isAdmin / plan / status / email). Only the admin can change those.

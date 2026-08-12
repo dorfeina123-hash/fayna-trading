@@ -2873,6 +2873,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <button class="nt"        id="nt-personal"    onclick="sw('personal',this)"></button>
       <button class="nt"        id="nt-lr"          onclick="sw('lr',this)"></button>
       <button class="nt"        id="nt-goals"       onclick="sw('goals',this)"></button>
+      <button class="nt"        id="nt-guard"       onclick="sw('guard',this)"></button>
       <button class="nt"        id="nt-import"      onclick="sw('import',this)"></button>
     </div>
   </div>
@@ -2935,6 +2936,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div class="nav-menu-item" id="nm-merge"       onclick="swNav('merge')">🧬 איחוד סטטיסטיקות</div>
     <div class="nav-menu-item" id="nm-ai"          onclick="swNav('ai')">🤖 AI Assistant</div>
     <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
+    <div class="nav-menu-item" id="nm-guard"       onclick="swNav('guard')">😇 מלאך שומר</div>
     <div class="nav-menu-item" id="nm-import"      onclick="swNav('import')">📥 ייבוא עסקאות</div>
     <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
     <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
@@ -3094,6 +3096,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="sn-grp">AI</div>
   <div class="sn-item" id="sni-ai"          onclick="swNav('ai')"          title="AI Assistant"><span class="sn-icon">🤖</span><span class="sn-lbl">AI Assistant</span></div>
   <div class="sn-item" id="sni-coach"       onclick="swNav('coach')"       title="מאמן מנטאלי"><span class="sn-icon">🧠</span><span class="sn-lbl">מאמן מנטאלי</span></div>
+  <div class="sn-item" id="sni-guard"       onclick="swNav('guard')"       title="מלאך שומר"><span class="sn-icon">😇</span><span class="sn-lbl">מלאך שומר</span></div>
 
   <div class="sn-grp">חשבונות</div>
   <div class="sn-item" id="sni-biz"         onclick="swNav('biz');renderBiz()" title="ניהול עסקי"><span class="sn-icon">🏢</span><span class="sn-lbl">ניהול עסקי</span></div>
@@ -4305,6 +4308,59 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <!-- PERSONAL GOALS (יעדים אישיים) -->
+<!-- ══════════════ v50: GUARD — מלאך שומר (Self Protection) ══════════════ -->
+<div class="tp" id="tp-guard">
+  <div style="font-size:15px;font-weight:600;margin-bottom:4px">😇 מלאך שומר — הגנה עצמית</div>
+  <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px">חוקי משמעת שנאכפים בנקודת רישום העסקה. כשהמערכת נעולה — ההגדרות קפואות גם בשרת (Firestore) עד סוף היום.</div>
+
+  <div id="guard-lock-banner" style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(199,95,95,.45);background:rgba(199,95,95,.10);font-size:13px;font-weight:600;color:var(--re)"></div>
+
+  <div class="zcl" style="margin-bottom:10px">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>מצב היום</div></div>
+    <div id="guard-status-body" style="display:flex;gap:22px;flex-wrap:wrap;padding:6px 0"></div>
+  </div>
+
+  <div class="zcl" style="margin-bottom:10px">
+    <div class="zcl-title" style="justify-content:space-between">
+      <div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>מפסקי זרם פיננסיים</div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);cursor:pointer"><input type="checkbox" id="gd-enabled" onchange="Guard.markDirty()"> מופעל</label>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;padding:6px 0">
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">הפסד יומי מרבי ($, נטו)</label><input type="number" id="gd-maxloss" min="0" step="10" placeholder="למשל 500" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="decimal"><div style="font-size:10px;color:var(--t3);margin-top:3px">בהגעה — נעילת רישום עד סוף היום</div></div>
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">יעד רווח יומי ($, נטו) — אופציונלי</label><input type="number" id="gd-maxprofit" min="0" step="10" placeholder="למשל 1500" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="decimal"><div style="font-size:10px;color:var(--t3);margin-top:3px">שמור על הרווח — נעילה אחרי היעד</div></div>
+    </div>
+  </div>
+
+  <div class="zcl" style="margin-bottom:10px">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:#bfa15e"></div>מגבלות התנהגות</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;padding:6px 0">
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">עסקאות מרביות ליום</label><input type="number" id="gd-maxtrades" min="0" step="1" placeholder="למשל 5" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="numeric"></div>
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">הפסדים רצופים מרביים</label><input type="number" id="gd-maxconsec" min="0" step="1" placeholder="למשל 3" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="numeric"><div style="font-size:10px;color:var(--t3);margin-top:3px">בהגעה — נעילה עד סוף היום</div></div>
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">המתנה אחרי הפסד (דקות)</label><input type="number" id="gd-cooldown" min="0" step="1" placeholder="למשל 10" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="numeric"></div>
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">שעות מסחר מותרות</label><div style="display:flex;gap:6px;align-items:center"><input type="time" id="gd-hstart" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:6px 8px" onchange="Guard.markDirty()"><span style="color:var(--t3)">—</span><input type="time" id="gd-hend" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:6px 8px" onchange="Guard.markDirty()"></div><div style="font-size:10px;color:var(--t3);margin-top:3px">ריק = ללא מגבלה</div></div>
+    </div>
+  </div>
+
+  <div class="zcl" style="margin-bottom:10px">
+    <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>זיהוי Revenge Trading</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;padding:6px 0">
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">חלון זמן אחרי הפסד (דקות)</label><input type="number" id="gd-revwin" min="0" step="1" value="5" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="numeric"></div>
+      <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">מכפיל גודל מול העסקה הקודמת</label><input type="number" id="gd-revmult" min="1" step="0.1" value="1.5" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);padding:7px 10px" onchange="Guard.markDirty()" inputmode="decimal"><div style="font-size:10px;color:var(--t3);margin-top:3px">שני התנאים יחד — אחרת יותר מדי התראות שווא</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <button class="btn-p" onclick="Guard.saveSettings()">💾 שמור חוקים</button>
+    <button class="btn-p" onclick="Guard.emergencyLock()" style="background:var(--re)">🚨 נעילת חירום עד סוף היום</button>
+  </div>
+
+  <div class="zcl" style="border-color:rgba(191,161,94,.4)">
+    <div style="font-size:11.5px;color:var(--t3);line-height:1.7">
+      ⚠️ <b>גבול היכולת — חשוב שתדע:</b> מלאך שומר חוסם רישום עסקאות ביומן ומקפיא את החוקים בענן. הוא <b>אינו יכול</b> לחסום שליחת פקודה בפלטפורמת הברוקר עצמה — חסימה כזו דורשת שרת שמחובר לחשבון הברוקר (שלב עתידי). זהו כלי משמעת, לא מנעול על החשבון.
+    </div>
+  </div>
+</div>
+
 <div class="tp" id="tp-import">
   <div style="font-size:15px;font-weight:600;margin-bottom:4px">📥 ייבוא עסקאות</div>
   <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px">
@@ -14397,6 +14453,7 @@ function _updateSidenavActive(name) {
 
 // ── NAV DROPDOWN ──
 const _NAV_LABELS = {
+  guard:'😇 מלאך שומר',
   import:'📥 ייבוא עסקאות',
   merge:'🧬 איחוד סטטיסטיקות',
   overview:'🏠 סקירה', ai:'🤖 AI Assistant', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
@@ -14532,6 +14589,7 @@ function sw(name,btn){
   _updateNavLabel(name);
   _updateSidenavActive(name);
   if (name === 'merge') { try { _openMerge(); } catch(e){} }
+  if (name === 'guard') { try { Guard.render(); } catch(e){} }
   if (name === 'import') { try { _openImport(); } catch(e){} }
   /* v33: always leave mobile navigation in a clean state after a tab switch —
      a drawer left open froze the page because of body.drawer-open. */
@@ -15043,6 +15101,9 @@ async function _cloudLoad() {
       if (d.td_personalGoals?.length && typeof personalGoals !== 'undefined') { personalGoals = d.td_personalGoals; localStorage.setItem('dor_personalGoals', JSON.stringify(personalGoals)); }
       if (d.td_tradingRules?.length && typeof tradingRules !== 'undefined') { tradingRules = d.td_tradingRules; localStorage.setItem('dor_tradingRules', JSON.stringify(tradingRules)); }
       if (d.td_coachDailyLossLimit !== undefined && d.td_coachDailyLossLimit !== null && typeof coachDailyLossLimit !== 'undefined') { coachDailyLossLimit = d.td_coachDailyLossLimit; localStorage.setItem('coach_daily_loss_limit', String(coachDailyLossLimit)); }
+      /* v50: Guard (מלאך שומר) — the cloud copy is authoritative: the Firestore
+         rules freeze td_guard while locked, so clearing localStorage cannot ease a rule. */
+      if (d.td_guard && typeof window.Guard !== 'undefined') { try { Guard.adoptCloud(d.td_guard); } catch(e) { console.warn('guard adopt:', e); } }
       if (typeof renderLR === 'function') renderLR();
       if (typeof renderPersonalGoals === 'function') renderPersonalGoals();
       if (typeof renderTradingRules === 'function') renderTradingRules();
@@ -26129,6 +26190,257 @@ function setDigestHour(h) {
   });
 })();
 
+</script>
+<script id="v50-guard">
+/* ══════════════════════════════════════════════════════════════════════
+   v50 — GUARD · מלאך שומר (Self Protection)
+
+   נקודת בדיקה אחת: Guard.gate(intent) לפני כל רישום עסקה חי
+   (saveAddTrade / saveManualEntry). ייבוא קבצים הוא backfill היסטורי
+   ובמכוון אינו נחסם.
+
+   הנעילה כנה: בזמן נעילה חוקי ה-Firestore מקפיאים את td_guard בצד השרת,
+   כך שניקוי localStorage או רענון אינם מקילים אף חוק. המגבלה ההפוכה
+   מוצהרת במסך: זהו חסם על רישום ביומן — לא על שליחת פקודות אצל הברוקר.
+   ══════════════════════════════════════════════════════════════════════ */
+window.Guard = (function () {
+  const LS_KEY = 'dor_guard';
+  const DEF = {
+    enabled: false,
+    maxDailyLoss: null, maxDailyProfit: null,
+    maxTradesPerDay: null, maxConsecLosses: null, cooldownMin: null,
+    hoursStart: '', hoursEnd: '',
+    revengeWinMin: 5, revengeSizeMult: 1.5,
+    lockedUntil: null, lockReason: '',
+  };
+  let S = { ...DEF };
+  try { Object.assign(S, JSON.parse(localStorage.getItem(LS_KEY) || '{}')); } catch (e) {}
+
+  /* the app's existing convention for "today" (openAddTrade uses the same) */
+  const _todayStr = () => new Date().toISOString().slice(0, 10);
+  const _num = v => { const n = parseFloat(v); return isNaN(n) || n <= 0 ? null : n; };
+  const _fmtT = ms => { try { return new Date(ms).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+  const _endOfDay = () => { const d = new Date(); d.setHours(23, 59, 59, 0); return d.getTime(); };
+  const _netOf = t => { try { return +(t.pnl - (typeof tradeComm === 'function' ? tradeComm(t) : 0)); } catch (e) { return +t.pnl || 0; } };
+  const _minsOf = hhmm => { const m = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+
+  function _todayState() {
+    const d = _todayStr();
+    const list = (typeof tradesList !== 'undefined' ? tradesList : [])
+      .filter(t => t && t.date === d)
+      .slice()
+      .sort((a, b) => (a.btime || '').localeCompare(b.btime || ''));
+    let net = 0, consec = 0;
+    list.forEach(t => { const n = _netOf(t); net += n; consec = n < 0 ? consec + 1 : 0; });
+    return { date: d, count: list.length, net: +net.toFixed(2), consec, last: list[list.length - 1] || null };
+  }
+
+  function locked() { return typeof S.lockedUntil === 'number' && Date.now() < S.lockedUntil; }
+
+  function _persistLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+
+  function _cloudShape() {
+    return {
+      enabled: !!S.enabled,
+      maxDailyLoss: S.maxDailyLoss, maxDailyProfit: S.maxDailyProfit,
+      maxTradesPerDay: S.maxTradesPerDay, maxConsecLosses: S.maxConsecLosses,
+      cooldownMin: S.cooldownMin, hoursStart: S.hoursStart || '', hoursEnd: S.hoursEnd || '',
+      revengeWinMin: S.revengeWinMin, revengeSizeMult: S.revengeSizeMult,
+      lockedUntil: S.lockedUntil, lockReason: S.lockReason || '',
+      updatedAt: Date.now(),
+    };
+  }
+
+  /* own write, isolated from the big debounced _cloudSave: a rules rejection
+     here (locked + attempted change) must not poison the whole data sync */
+  async function _persistCloud(showErr) {
+    try {
+      if (typeof db === 'undefined' || !window.currentUser?.uid) return;
+      await db.collection('users').doc(currentUser.uid).set({ td_guard: _cloudShape() }, { merge: true });
+    } catch (e) {
+      console.warn('guard cloud save:', e);
+      if (showErr) { try { showToast('שמירת החוקים בענן נדחתה — ' + (e.code === 'permission-denied' ? 'החוקים נעולים עד סוף היום' : e.message), 'error', 5000); } catch (e2) {} }
+    }
+  }
+
+  /* cloud copy is authoritative (rules freeze it while locked) */
+  function adoptCloud(g) {
+    if (!g || typeof g !== 'object') return;
+    S = { ...DEF };
+    Object.keys(DEF).forEach(k => { if (g[k] !== undefined) S[k] = g[k]; });
+    _persistLocal();
+    try { if (document.getElementById('tp-guard')?.classList.contains('active')) render(); } catch (e) {}
+  }
+
+  function _lock(reason) {
+    S.lockedUntil = _endOfDay();
+    S.lockReason = reason;
+    _persistLocal(); _persistCloud(false);
+    try { showToast('😇 מלאך שומר: ' + reason + ' · הרישום נעול עד סוף היום', 'error', 7000); } catch (e) {}
+    try { render(); } catch (e) {}
+  }
+
+  /* ── the single decision point ─────────────────────────────────────── */
+  function check(intent) {
+    if (!S.enabled) return { allowed: true };
+    if (locked()) return { allowed: false, reason: 'נעול עד ' + _fmtT(S.lockedUntil) + ' — ' + (S.lockReason || 'חוק הופר') };
+
+    const st = _todayState();
+
+    if (S.maxDailyLoss && st.net <= -S.maxDailyLoss)
+      return { allowed: false, lock: 'ההפסד היומי הגיע ל-' + st.net.toFixed(2) + '$ (מגבלה: ' + S.maxDailyLoss + '$)' };
+
+    if (S.maxDailyProfit && st.net >= S.maxDailyProfit)
+      return { allowed: false, lock: 'יעד הרווח היומי הושג (+' + st.net.toFixed(2) + '$) — שמור עליו' };
+
+    if (S.maxConsecLosses && st.consec >= S.maxConsecLosses)
+      return { allowed: false, lock: st.consec + ' הפסדים רצופים (מגבלה: ' + S.maxConsecLosses + ')' };
+
+    if (S.maxTradesPerDay && st.count >= S.maxTradesPerDay)
+      return { allowed: false, reason: 'הגעת ל-' + st.count + ' עסקאות היום (מגבלה: ' + S.maxTradesPerDay + ')' };
+
+    const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+    const hs = _minsOf(S.hoursStart), he = _minsOf(S.hoursEnd);
+    if (hs !== null && he !== null && hs !== he) {
+      const inWin = hs < he ? (nowM >= hs && nowM <= he) : (nowM >= hs || nowM <= he);
+      if (!inWin) return { allowed: false, reason: 'מחוץ לשעות המסחר שהגדרת (' + S.hoursStart + '–' + S.hoursEnd + ')' };
+    }
+
+    if (st.last && _netOf(st.last) < 0) {
+      const lastM = _minsOf(st.last.btime);
+      const elapsed = lastM === null ? null : nowM - lastM;
+      if (elapsed !== null && elapsed >= 0) {
+        if (S.cooldownMin && elapsed < S.cooldownMin)
+          return { allowed: false, reason: 'המתנה אחרי הפסד: נותרו ' + Math.ceil(S.cooldownMin - elapsed) + ' דק\'' };
+        if (S.revengeWinMin && S.revengeSizeMult && st.last.qty > 0 && intent && intent.qty &&
+            elapsed < S.revengeWinMin && intent.qty >= st.last.qty * S.revengeSizeMult)
+          return { allowed: true, confirm: 'זה נראה כמו Revenge Trading — ' + intent.qty + ' חוזים תוך ' + Math.max(1, Math.round(elapsed)) + ' דק\' אחרי הפסד (הקודמת: ' + st.last.qty + '). בטוח?' };
+      }
+    }
+    return { allowed: true };
+  }
+
+  /* gate: called by the save wrappers. Never breaks saving on internal error. */
+  async function gate(intent) {
+    try {
+      if (intent && intent.date && intent.date !== _todayStr()) return true; /* backfill of a past day */
+      const c = check(intent || {});
+      if (c.lock) { _lock(c.lock); return false; }
+      if (!c.allowed) { try { showToast('😇 מלאך שומר: ' + c.reason, 'error', 6000); } catch (e) {} return false; }
+      if (c.confirm) {
+        if (typeof customConfirm === 'function') return await customConfirm('😇 מלאך שומר: ' + c.confirm, { okText: 'רשום בכל זאת', danger: true });
+        return true;
+      }
+      return true;
+    } catch (e) { console.warn('guard gate:', e); return true; }
+  }
+
+  /* after a trade was saved: proactively lock if it breached a stop rule */
+  function postTradeSweep() {
+    try {
+      if (!S.enabled || locked()) return;
+      const st = _todayState();
+      if (S.maxDailyLoss && st.net <= -S.maxDailyLoss) return _lock('ההפסד היומי הגיע ל-' + st.net.toFixed(2) + '$');
+      if (S.maxDailyProfit && st.net >= S.maxDailyProfit) return _lock('יעד הרווח היומי הושג (+' + st.net.toFixed(2) + '$)');
+      if (S.maxConsecLosses && st.consec >= S.maxConsecLosses) return _lock(st.consec + ' הפסדים רצופים');
+    } catch (e) { console.warn('guard sweep:', e); }
+  }
+
+  /* ── screen ────────────────────────────────────────────────────────── */
+  const _g = id => document.getElementById(id);
+
+  function render() {
+    const st = _todayState();
+    const isLocked = locked();
+
+    const banner = _g('guard-lock-banner');
+    if (banner) {
+      banner.style.display = isLocked ? 'block' : 'none';
+      if (isLocked) banner.textContent = '🔒 נעול עד ' + _fmtT(S.lockedUntil) + ' — ' + (S.lockReason || '') + ' · החוקים קפואים גם בענן עד אז';
+    }
+
+    const body = _g('guard-status-body');
+    if (body) {
+      const stat = (lbl, val, col) =>
+        '<div style="text-align:center;min-width:86px"><div style="font-size:22px;font-weight:700;font-family:\'IBM Plex Mono\',monospace;color:' + (col || 'var(--t1)') + '">' + val + '</div><div style="font-size:10px;color:var(--t3);margin-top:2px">' + lbl + '</div></div>';
+      body.innerHTML =
+        stat('P&L נטו היום', (st.net >= 0 ? '+' : '') + '$' + st.net.toFixed(2), st.net >= 0 ? 'var(--gr)' : 'var(--re)') +
+        stat('עסקאות היום', st.count + (S.maxTradesPerDay ? ' / ' + S.maxTradesPerDay : ''), null) +
+        stat('הפסדים רצופים', st.consec + (S.maxConsecLosses ? ' / ' + S.maxConsecLosses : ''), st.consec > 0 ? 'var(--re)' : null) +
+        stat('סטטוס', S.enabled ? (isLocked ? '🔒 נעול' : '🟢 פעיל') : '⚪ כבוי', null);
+    }
+
+    const set = (id, v) => { const el = _g(id); if (el) el.value = (v === null || v === undefined) ? '' : v; };
+    const en = _g('gd-enabled'); if (en) en.checked = !!S.enabled;
+    set('gd-maxloss', S.maxDailyLoss); set('gd-maxprofit', S.maxDailyProfit);
+    set('gd-maxtrades', S.maxTradesPerDay); set('gd-maxconsec', S.maxConsecLosses);
+    set('gd-cooldown', S.cooldownMin);
+    set('gd-hstart', S.hoursStart || ''); set('gd-hend', S.hoursEnd || '');
+    set('gd-revwin', S.revengeWinMin); set('gd-revmult', S.revengeSizeMult);
+
+    ['gd-enabled','gd-maxloss','gd-maxprofit','gd-maxtrades','gd-maxconsec','gd-cooldown','gd-hstart','gd-hend','gd-revwin','gd-revmult']
+      .forEach(id => { const el = _g(id); if (el) el.disabled = isLocked; });
+  }
+
+  function markDirty() { /* reserved: live validation hook */ }
+
+  function saveSettings() {
+    if (locked()) { try { showToast('החוקים נעולים עד ' + _fmtT(S.lockedUntil) + ' — אי אפשר לשנות אותם עכשיו', 'error', 5000); } catch (e) {} render(); return; }
+    S.enabled = !!_g('gd-enabled')?.checked;
+    S.maxDailyLoss = _num(_g('gd-maxloss')?.value);
+    S.maxDailyProfit = _num(_g('gd-maxprofit')?.value);
+    S.maxTradesPerDay = _num(_g('gd-maxtrades')?.value);
+    S.maxConsecLosses = _num(_g('gd-maxconsec')?.value);
+    S.cooldownMin = _num(_g('gd-cooldown')?.value);
+    S.hoursStart = _g('gd-hstart')?.value || '';
+    S.hoursEnd = _g('gd-hend')?.value || '';
+    S.revengeWinMin = _num(_g('gd-revwin')?.value);
+    S.revengeSizeMult = _num(_g('gd-revmult')?.value);
+    _persistLocal(); _persistCloud(true);
+    try { showToast('😇 חוקי מלאך שומר נשמרו' + (S.enabled ? ' ופעילים' : ' (כבוי)'), 'success'); } catch (e) {}
+    render();
+  }
+
+  async function emergencyLock() {
+    let ok = true;
+    if (typeof customConfirm === 'function') ok = await customConfirm('לנעול את רישום העסקאות עד סוף היום? לא ניתן לבטל עד חצות.', { okText: 'נעל עכשיו', danger: true });
+    if (!ok) return;
+    if (!S.enabled) { S.enabled = true; }
+    _lock('נעילת חירום ידנית');
+  }
+
+  return { check, gate, postTradeSweep, render, saveSettings, emergencyLock, markDirty, adoptCloud, locked };
+})();
+
+/* ── wiring: wrap the two live trade-entry paths ─────────────────────── */
+(function _guardWire() {
+  if (window._guardWired) return; window._guardWired = true;
+
+  const _origAdd = window.saveAddTrade;
+  if (typeof _origAdd === 'function') {
+    window.saveAddTrade = async function () {
+      const intent = {
+        qty: Math.max(1, parseInt(document.getElementById('at-qty')?.value) || 1),
+        date: document.getElementById('at-date')?.value || '',
+      };
+      if (!(await Guard.gate(intent))) return;
+      const r = _origAdd.apply(this, arguments);
+      try { Guard.postTradeSweep(); } catch (e) {}
+      return r;
+    };
+  }
+
+  const _origManual = window.saveManualEntry;
+  if (typeof _origManual === 'function') {
+    window.saveManualEntry = async function () {
+      const intent = { qty: 0, date: document.getElementById('me-date')?.value || '' };
+      if (!(await Guard.gate(intent))) return;
+      const r = _origManual.apply(this, arguments);
+      try { Guard.postTradeSweep(); } catch (e) {}
+      return r;
+    };
+  }
+})();
 </script>
 </body>
 </html>

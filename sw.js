@@ -10,13 +10,13 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v47';
+const VERSION    = 'fayna-v51';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
 
 /* Deliberately does NOT include the on-demand modules (fayna-metrics.js,
-   fayna-merge.js). Precaching them would fetch them for every visitor on
+   fayna-merge.js, fayna-import.js). Precaching them would fetch them for every visitor on
    load, which is exactly what loading them on demand is meant to avoid.
    They fall under the same-origin asset rule below — cache-first with a
    background refresh — and the activate handler drops every cache whose
