@@ -26,6 +26,7 @@
 <meta name="twitter:description" content="תיעוד עסקאות, ניתוח סטטיסטי, ניהול סיכונים ומאמן AI לסוחרי פרופ.">
 <meta name="twitter:image" content="https://dorfeina123-hash.github.io/fayna-trading/fayna_logo.jpg">
 <meta name="twitter:image:alt" content="לוגו Fayna Trading">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="https://dorfeina123-hash.github.io/fayna-trading/">
 <script type="application/ld+json">
 {
@@ -2068,6 +2069,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 </head>
 <body>
+<h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
 <div id="toast-container"></div>
 
 <!-- ═══════════════════════════════════════════
@@ -2871,6 +2873,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <button class="nt"        id="nt-personal"    onclick="sw('personal',this)"></button>
       <button class="nt"        id="nt-lr"          onclick="sw('lr',this)"></button>
       <button class="nt"        id="nt-goals"       onclick="sw('goals',this)"></button>
+      <button class="nt"        id="nt-import"      onclick="sw('import',this)"></button>
     </div>
   </div>
   <!-- WORLD CLOCKS — always visible (desktop) -->
@@ -2932,6 +2935,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div class="nav-menu-item" id="nm-merge"       onclick="swNav('merge')">🧬 איחוד סטטיסטיקות</div>
     <div class="nav-menu-item" id="nm-ai"          onclick="swNav('ai')">🤖 AI Assistant</div>
     <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
+    <div class="nav-menu-item" id="nm-import"      onclick="swNav('import')">📥 ייבוא עסקאות</div>
     <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
     <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
     <div class="nav-menu-item" id="nm-biz"         onclick="swNav('biz');renderBiz()">🏢 ניהול עסקי</div>
@@ -3100,6 +3104,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
   <div class="sn-sep"></div>
   <div class="sn-grp">הגדרות</div>
+  <div class="sn-item" id="sni-import"      onclick="swNav('import')"      title="ייבוא עסקאות"><span class="sn-icon">📥</span><span class="sn-lbl">ייבוא עסקאות</span></div>
   <div class="sn-item" id="sni-datamgr"     onclick="swNav('datamgr')"     title="ניהול נתונים"><span class="sn-icon">⚙️</span><span class="sn-lbl">ניהול נתונים</span></div>
   <div class="sn-item" id="sni-personal"    onclick="swNav('personal')"    title="אזור אישי"><span class="sn-icon">👤</span><span class="sn-lbl">אזור אישי</span></div>
 
@@ -4300,6 +4305,22 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <!-- PERSONAL GOALS (יעדים אישיים) -->
+<div class="tp" id="tp-import">
+  <div style="font-size:15px;font-weight:600;margin-bottom:4px">📥 ייבוא עסקאות</div>
+  <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px">
+    TopstepX · NinjaTrader 8 · MetaTrader 4/5 · Interactive Brokers (Flex) · Tradovate · Binance · CSV כללי.
+    כפילויות מזוהות אוטומטית — אפשר להריץ את אותו קובץ פעמיים בלי לזהם את הנתונים.
+  </div>
+  <div id="imp-out"></div>
+  <div class="zcl" style="margin-top:10px;border-color:rgba(191,161,94,.4)">
+    <div style="font-size:11.5px;color:var(--t3);line-height:1.7">
+      ℹ️ <b>למה ייבוא ולא חיבור ישיר:</b> חיבור חי לחשבון הברוקר מחייב שרת שמחזיק את הסודות —
+      מפתחות API אינם יכולים לשבת בדפדפן. עד שהשרת קיים, ייבוא הקובץ נותן את אותם נתונים בדיוק
+      (עסקאות, זמנים, מחירים, עמלות, P&amp;L) בלי לחשוף את החשבון שלך.
+    </div>
+  </div>
+</div>
+
 <div class="tp" id="tp-goals">
   <div style="font-size:15px;font-weight:600;margin-bottom:12px">🎯 יעדי מסחר ומשמעת</div>
   <!-- v21: achievements strip -->
@@ -4531,6 +4552,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
           <button class="act-mi" onclick="showReportMenu('trades',this)">📊 דוח P&amp;L</button>
           <button class="act-mi" onclick="exportCSV()">📤 ייצא CSV</button>
           <button class="act-mi" onclick="exportToExcel()">📊 ייצא Excel</button>
+          <div class="act-mi" onclick="swNav('import')">📥 אשף ייבוא (עם תצוגה מקדימה)</div>
           <label class="act-mi">📂 ייבוא CSV / Excel <input type="file" accept=".csv,.xlsx" multiple style="display:none" onchange="importCSV(this)"></label>
         </div>
       </div>
@@ -4699,6 +4721,59 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <!-- KEEP old drivers tab for backward compat (hidden) -->
 <!-- ═══════════════════════ COURSE TAB — קורס מסחר בחוזים עתידיים ═══════════════════════ -->
 <style>
+/* ── v51 · אשף הייבוא. משתמש אך ורק במשתני ה-CSS הקיימים של הערכה,
+      כדי שהמסך יישאר עקבי אם הפלטה משתנה. ── */
+.imp-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+.imp-step{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--t1);margin-bottom:12px}
+.imp-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);font-size:11px;color:var(--t2);flex:none}
+.imp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.imp-fmt{text-align:right;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;cursor:pointer;transition:border-color .15s,background .15s;font-family:inherit}
+.imp-fmt:hover{border-color:var(--gr)}
+.imp-fmt.sel{border-color:var(--gr);background:rgba(107,163,138,.10)}
+.imp-fmt-t{font-size:12.5px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.imp-fmt-s{font-size:10.5px;color:var(--t3);line-height:1.5}
+.imp-drop{display:block;border:2px dashed var(--border2);border-radius:12px;padding:26px 18px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.imp-drop:hover,.imp-drop.over{border-color:var(--gr);background:rgba(107,163,138,.06)}
+.imp-drop-i{font-size:26px;color:var(--t3);margin-bottom:6px}
+.imp-drop-t{font-size:13px;color:var(--t2)}
+.imp-drop-s{font-size:10.5px;color:var(--t3);margin-top:5px}
+.imp-lnk{color:var(--gr);text-decoration:underline}
+.imp-files{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.imp-file{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--t2)}
+.imp-file span{color:var(--t3);font-size:10px;margin-inline-start:6px}
+.imp-sel{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--t1);padding:8px 10px;font-size:12.5px;font-family:inherit}
+.imp-sel.sm{padding:5px 8px;font-size:11.5px}
+.imp-note{font-size:11px;color:var(--t3);line-height:1.6;margin-top:7px}
+.imp-warn{font-size:11.5px;color:var(--yl,#bfa15e);background:rgba(191,161,94,.09);border:1px solid rgba(191,161,94,.30);border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.6}
+.imp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.imp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.imp-kpi{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:9px 11px}
+.imp-kpi-l{font-size:10.5px;color:var(--t3);margin-bottom:3px}
+.imp-kpi-v{font-size:16px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.imp-kpi-v.sm{font-size:11.5px;font-weight:600}
+.imp-kpi-v.pos{color:var(--gr)}.imp-kpi-v.neg{color:var(--re)}.imp-kpi-v.warn{color:var(--yl,#bfa15e)}
+.imp-tbl-wrap{overflow-x:auto;border:1px solid var(--border2);border-radius:9px}
+.imp-tbl{width:100%;border-collapse:collapse;font-size:11.5px;white-space:nowrap}
+.imp-tbl th{background:var(--bg3);color:var(--t3);font-weight:600;text-align:right;padding:7px 10px;border-bottom:1px solid var(--border2);font-size:10.5px}
+.imp-tbl td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--t2)}
+.imp-tbl tr:last-child td{border-bottom:none}
+.imp-mono{font-variant-numeric:tabular-nums}
+.imp-tbl .pos{color:var(--gr)}.imp-tbl .neg{color:var(--re)}
+.imp-sym{font-weight:600;color:var(--t1)}
+.imp-dir{display:inline-block;margin-inline-start:5px;font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(107,163,138,.15);color:var(--gr)}
+.imp-dir.short{background:rgba(199,95,95,.15);color:var(--re)}
+.imp-details summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--t2);user-select:none}
+.imp-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin:12px 0}
+.imp-map-row{display:flex;flex-direction:column;gap:4px}
+.imp-map-row span{font-size:11px;color:var(--t3)}
+.imp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.imp-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--t1);padding:9px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s,opacity .15s}
+.imp-btn:hover{border-color:var(--gr)}
+.imp-btn.primary{background:var(--gr);border-color:var(--gr);color:#0b1220}
+.imp-btn.ghost{background:transparent}
+.imp-btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:600px){.imp-card{padding:13px 14px}.imp-grid{grid-template-columns:1fr 1fr}}
+
 .crs-hero{background:linear-gradient(135deg,rgba(144,137,189,.12),rgba(114,149,184,.07));border:1px solid rgba(144,137,189,.25);border-radius:14px;padding:22px 24px;margin-bottom:14px}
 .crs-hero h2{margin:0 0 4px;font-size:20px;color:var(--t1)}
 .crs-hero .crs-sub{font-size:12px;color:var(--t3);margin-bottom:14px}
@@ -5660,6 +5735,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             <div class="dm-action-title">ייבוא עסקאות CSV</div>
             <div class="dm-action-sub">מ-Tradovate Performance.csv</div>
           </div>
+          <button class="dm-btn primary" type="button" onclick="swNav('import')">📥 אשף ייבוא</button>
           <label class="dm-btn primary" style="cursor:pointer">📂 ייבא CSV / Excel <input type="file" accept=".csv,.xlsx" multiple style="display:none" onchange="importCSV(this)"></label>
         </div>
         <div class="dm-action">
@@ -7873,7 +7949,7 @@ function _refreshSymDatalist() {
   if (!dl) return;
   const opts = _DEFAULT_SYM_OPTIONS.map(([v,l])=>`<option value="${v}">${l}</option>`);
   customSymbols.forEach(cs => {
-    opts.push(`<option value="${cs.sym}">${cs.sym} — ${cs.name||'סימבול מותאם'}</option>`);
+    opts.push(`<option value="${escHtml(cs.sym)}">${escHtml(cs.sym)} — ${escHtml(cs.name||'סימבול מותאם')}</option>`);
   });
   dl.innerHTML = opts.join('');
 }
@@ -10125,6 +10201,16 @@ const safeParse = s => { if (!s) return new Date(NaN); const p = String(s).repla
 // ── XSS-safe output helpers ──
 // escHtml: for text placed inside element content (name, notes, symbols, etc.)
 function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* v48 — scheme allow-list for any URL that reaches an href.
+   Blocks javascript:/data:/vbscript: coming from stored or imported data.
+   Relative links and anchors are left alone; anything unparseable → '#'. */
+function _safeUrl(u){
+  const v = String(u == null ? '' : u).trim();
+  if (!v) return '#';
+  if (/^(?:https?:|mailto:|tel:)/i.test(v)) return v;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return '#';   // any other scheme → blocked
+  return v;                                          // relative / #anchor
+}
 // escJs: for a value placed inside a single-quoted JS string within an HTML on* attribute
 function escJs(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'\\x3c').replace(/[\r\n]/g,''); }
 const uid    = ()=>nextId++;
@@ -14311,6 +14397,7 @@ function _updateSidenavActive(name) {
 
 // ── NAV DROPDOWN ──
 const _NAV_LABELS = {
+  import:'📥 ייבוא עסקאות',
   merge:'🧬 איחוד סטטיסטיקות',
   overview:'🏠 סקירה', ai:'🤖 AI Assistant', expenses:'📋 יומן הוצאות', withdrawals:'💸 משיכות',
   pnl:'📈 P&L', custom:'💳 הוצאות חופשיות', calendar:'📅 לוח שנה',
@@ -14410,6 +14497,20 @@ async function _openMerge() {
   }
 }
 
+/* v51 — אשף הייבוא נטען רק בכניסה ללשונית, כמו מודול האיחוד.
+   הפרסרים של שישה ברוקרים אינם צריכים להיות בטעינה הראשונה של כל משתמש. */
+async function _openImport() {
+  const box = document.getElementById('imp-out');
+  try {
+    if (typeof Import === 'undefined') await _loadModule('fayna-import.js');
+    Import.open();
+  } catch (e) {
+    console.warn('import module', e);
+    if (box) box.innerHTML = '<div class="imp-card"><div class="imp-note">' +
+      'טעינת מודול הייבוא נכשלה. בדוק חיבור לרשת ונסה שוב.</div></div>';
+  }
+}
+
 function sw(name,btn){
   // Feature gate for plan-restricted tabs
   const _navGates = { calendar:'calendar', stats:'stats_advanced' };
@@ -14431,6 +14532,7 @@ function sw(name,btn){
   _updateNavLabel(name);
   _updateSidenavActive(name);
   if (name === 'merge') { try { _openMerge(); } catch(e){} }
+  if (name === 'import') { try { _openImport(); } catch(e){} }
   /* v33: always leave mobile navigation in a clean state after a tab switch —
      a drawer left open froze the page because of body.drawer-open. */
   try { mobNavClose(); } catch(e){}
@@ -14480,8 +14582,8 @@ function renderCX() {
       const ci = customExpenses.indexOf(c);
       return `<tr>
         <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(c.date)}</td>
-        <td><span class="cat cm">${c.category}</span></td>
-        <td style="color:#8892a4">${c.desc}</td>
+        <td><span class="cat cm">${escHtml(c.category)}</span></td>
+        <td style="color:#8892a4">${escHtml(c.desc)}</td>
         <td class="mono cr">${fmt(c.amount)}</td>
         <td><span class="rate-tag">${c.rate}</span></td>
         <td style="color:#767f8e;font-size:11px">${fmtILS(c.amount*c.rate)}</td>
@@ -14639,7 +14741,7 @@ function renderRecurringManager() {
               return `<div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border:1px solid var(--border);position:relative">
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
                   <div style="flex:1;min-width:0">
-                    <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${tmpl.toolName||tmpl.company}">${tmpl.toolName||tmpl.company}</div>
+                    <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(tmpl.toolName||tmpl.company)}">${escHtml(tmpl.toolName||tmpl.company)}</div>
                     <div style="font-size:10px;color:var(--t3)">${escHtml(tmpl.company)} · כל ${tmpl.recurDay} לחודש</div>
                     ${tmpl.note ? `<div style="font-size:10px;color:var(--t3);margin-top:2px">${escHtml(tmpl.note)}</div>` : ''}
                   </div>
@@ -18031,7 +18133,7 @@ function _showEmailBroadcastModal(msg, targets) {
     const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.email)}</div></div>
-      <a href="${ml}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:#7295b8;border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
+      <a href="${escHtml(ml)}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:#7295b8;border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
     </div>`;
   }).join('');
   let m = document.getElementById('_email-bc-modal'); if(m) m.remove();
@@ -20596,13 +20698,13 @@ function drvRender(cat) {
   }
   container.innerHTML = items.map((item, i) => `
     <div class="drv-wrap">
-      <a class="drv-card" href="${item.url||'#'}" target="_blank" rel="noopener noreferrer">
-        <div class="drv-icon" style="background:${item.color||'rgba(255,255,255,.08)'}">
-          <span style="font-size:20px">${item.icon||'🔗'}</span>
+      <a class="drv-card" href="${escHtml(_safeUrl(item.url))}" target="_blank" rel="noopener noreferrer">
+        <div class="drv-icon" style="background:${escHtml(item.color||'rgba(255,255,255,.08)')}">
+          <span style="font-size:20px">${escHtml(item.icon||'🔗')}</span>
         </div>
         <div class="drv-info">
-          <div class="drv-name">${item.name}</div>
-          <div class="drv-desc">${item.desc||''}</div>
+          <div class="drv-name">${escHtml(item.name)}</div>
+          <div class="drv-desc">${escHtml(item.desc||'')}</div>
           ${item.dl ? '<div style="font-size:9px;color:var(--gr);margin-top:3px;font-weight:600">⬇️ הורדה</div>' : ''}
         </div>
         <div class="drv-arrow">↗</div>
@@ -21046,7 +21148,7 @@ function openTickerSettings() {
       const isCustom = _tickerCustom.some(c => c.proName === s.proName);
       return `<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg3);border-radius:7px;cursor:pointer;font-size:12px;color:var(--t1);${isCustom?'border:1px solid rgba(144,137,189,.2)':''}">
         <input type="checkbox" class="chk" data-sym="${s.proName}" ${_tickerHidden.has(s.proName)?'':'checked'} style="width:14px;height:14px;accent-color:var(--ac)">
-        <span style="flex:1">${s.title} <span style="font-size:9px;color:var(--t3);font-family:monospace" dir="ltr">${s.proName}</span></span>
+        <span style="flex:1">${escHtml(s.title)} <span style="font-size:9px;color:var(--t3);font-family:monospace" dir="ltr">${escHtml(s.proName)}</span></span>
         ${isCustom?`<span onclick="tickerRemoveCustom('${s.proName}',event)" title="הסר" style="color:var(--re);cursor:pointer;font-size:13px;padding:0 3px;flex-shrink:0">✕</span>`:''}
       </label>`;
     }).join('')
@@ -22763,14 +22865,14 @@ async function renderAdminLogs() {
         const x = d.data(), ts = x.timestamp?.toDate?.()?.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})||'—';
         return `<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px">
           <span>${adminIcons[x.action]||'⚙️'}</span>
-          <span style="color:var(--t1);flex:1">${x.action||''}</span>
-          <span style="color:var(--t3);font-size:10px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.details||''}">${x.details||''}</span>
+          <span style="color:var(--t1);flex:1">${escHtml(x.action||'')}</span>
+          <span style="color:var(--t3);font-size:10px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(x.details||'')}">${escHtml(x.details||'')}</span>
           <span style="color:var(--t3);font-size:10px;white-space:nowrap;padding-right:4px">${ts}</span>
         </div>`;
       }).join('');
     }
   } catch(e) {
-    el.innerHTML = `<div style="font-size:11px;color:var(--re);padding:8px">שגיאה: ${e.message}</div>`;
+    el.innerHTML = `<div style="font-size:11px;color:var(--re);padding:8px">שגיאה: ${escHtml(e.message)}</div>`;
   }
 }
 
