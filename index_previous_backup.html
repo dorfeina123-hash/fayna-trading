@@ -2061,6 +2061,25 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
   .coach-hero{padding:14px 12px 10px}
   .coach-hero-icon{font-size:34px}
 }
+/* v53 compact navigation */
+button.sn-item,button.nav-menu-item{width:100%;font:inherit;text-align:start;background:transparent;color:var(--t2);border:0;cursor:pointer}
+button.sn-item.active,button[aria-current="page"]{color:var(--t1);background:var(--bg3)}
+.simple-section-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.simple-section-nav[hidden]{display:none}
+.simple-section-nav button,.simple-expense-type select{font:inherit;color:var(--t2);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-height:44px;cursor:pointer}
+.simple-section-nav button[aria-current="page"]{color:var(--t1);border-color:var(--bl);background:var(--bg3)}
+.simple-details{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.simple-details>summary{cursor:pointer;min-height:32px;font-weight:600;color:var(--t2)}
+.simple-details[open]>summary{margin-bottom:12px}
+.simple-expense-type{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+#tp-stats:not(.simple-all-metrics) #ts-m>.mc:nth-child(n+5){display:none}
+#simple-metrics-toggle{margin-bottom:12px}
+#tp-overview.active>#simple-overview-details{order:20}
+#tp-overview.active>.simple-trading-goal{order:6}
+#ov-sec-main-hd,#ov-sec-adv-hd,#mob-more-toggle{display:none!important}
+.simple-section-nav button:focus-visible,.simple-details>summary:focus-visible,button.sn-item:focus-visible{outline:2px solid var(--bl);outline-offset:3px}
+@media(max-width:600px){.simple-section-nav{gap:6px}.simple-section-nav button{padding:8px 10px;font-size:12px}.mob-bnav-btn{font-size:9px}.simple-details{padding:10px}}
+
 </style>
 <!-- ═══ FIREBASE SDK ═══ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -2919,38 +2938,13 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <!-- NAV DROPDOWN MENU -->
 <div id="nav-menu-dd" class="nav-menu-dd" onclick="if(event.target===this)closeNavMenu()">
   <div class="nav-menu-grid" id="nav-menu-grid">
-    <div class="nav-menu-section">כללי</div>
-    <div class="nav-menu-item" id="nm-overview"    onclick="swNav('overview')">🏠 סקירה</div>
-
-    <div class="nav-menu-section">הוצאות</div>
-    <div class="nav-menu-item" id="nm-expenses"    onclick="swNav('expenses')">📋 יומן הוצאות</div>
-    <div class="nav-menu-item" id="nm-withdrawals" onclick="swNav('withdrawals')">💸 משיכות</div>
-    <div class="nav-menu-item" id="nm-pnl"         onclick="swNav('pnl')">📈 P&amp;L</div>
-    <div class="nav-menu-item" id="nm-custom"      onclick="swNav('custom')">💳 הוצאות חופשיות</div>
-
-    <div class="nav-menu-section">מסחר</div>
-    <div class="nav-menu-item" id="nm-calendar"    onclick="swNav('calendar')">📅 לוח שנה</div>
-    <div class="nav-menu-item" id="nm-trades"      onclick="swNav('trades')">📓 יומן עסקאות</div>
-    <div class="nav-menu-item" id="nm-stats"       onclick="swNav('stats')">📊 סטטיסטיקות</div>
-    <div class="nav-menu-item" id="nm-merge"       onclick="swNav('merge')">🧬 איחוד סטטיסטיקות</div>
-    <div class="nav-menu-item" id="nm-ai"          onclick="swNav('ai')">🤖 AI Assistant</div>
-    <div class="nav-menu-item" id="nm-coach"       onclick="swNav('coach')">🧠 מאמן מנטאלי</div>
-    <div class="nav-menu-item" id="nm-import"      onclick="swNav('import')">📥 ייבוא עסקאות</div>
-    <div class="nav-menu-item" id="nm-course"      onclick="swNav('course')">🎓 קורס מסחר</div>
-    <div class="nav-menu-item" id="nm-calc"        onclick="swNav('calc')">🧮 מחשבונים</div>
-    <div class="nav-menu-item" id="nm-biz"         onclick="swNav('biz');renderBiz()">🏢 ניהול עסקי</div>
-
-    <div class="nav-menu-section">אישי</div>
-    <div class="nav-menu-item" id="nm-lr"          onclick="swNav('lr');renderLR()">📅 שגרת חיים</div>
-    <div class="nav-menu-item" id="nm-goals"       onclick="swNav('goals');renderPersonalGoals()">🏆 יעדים אישיים</div>
-
-    <div class="nav-menu-section">ניהול</div>
-    <div class="nav-menu-item" id="nm-datamgr"     onclick="swNav('datamgr')">⚙️ ניהול נתונים</div>
-    <div class="nav-menu-item" id="nm-personal"    onclick="swNav('personal')">👤 אזור אישי</div>
-    <div class="nav-menu-item"                     onclick="swSide('software');closeNavMenu()">📥 תוכנות מסחר</div>
-    <div class="nav-menu-item"                     onclick="swSide('firms');closeNavMenu()">🏆 חברות מימון</div>
-    <div class="nav-menu-item"                     onclick="swSide('ecal');closeNavMenu()">📅 יומן כלכלי</div>
-    <div class="nav-menu-item"                     onclick="swSide('help');closeNavMenu()">❓ עזרה</div>
+<button type="button" class="nav-menu-item" id="nm-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="nav-menu-item" id="nm-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
+<button type="button" class="nav-menu-item" id="nm-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
+<button type="button" class="nav-menu-item" id="nm-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="nav-menu-item" id="nm-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
+<button type="button" class="nav-menu-item" id="nm-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
+<button type="button" class="nav-menu-item" id="nm-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
   </div>
 </div>
 <div id="nav-dd-overlay" onclick="closeNavMenu()" style="display:none;position:fixed;inset:0;z-index:197;background:rgba(0,0,0,.25)"></div>
@@ -2962,73 +2956,32 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <span class="side-panel-title">תפריט</span>
     <button class="side-panel-close" onclick="closeSidePanel()">✕</button>
   </div>
-  <div class="side-panel-grp">כלים</div>
-  <button class="side-panel-btn" id="sp-btn-software" onclick="swSide('software')">📥 תוכנות מסחר</button>
-  <button class="side-panel-btn" id="sp-btn-firms"    onclick="swSide('firms')">🏆 מימון</button>
-  <button class="side-panel-btn" id="sp-btn-news"     onclick="swSide('news')">📰 חדשות</button>
-  <button class="side-panel-btn" id="sp-btn-ecal"     onclick="swSide('ecal')">📅 יומן כלכלי</button>
-  <div class="side-panel-sep"></div>
-  <div class="side-panel-grp">חשבון</div>
-  <button class="side-panel-btn" id="sp-btn-profile" onclick="openProfileModal();closeSidePanel()">👤 פרופיל אישי</button>
-  <button class="side-panel-btn" id="sp-btn-billing"  onclick="swSide('billing')">💳 תשלום</button>
-  <button class="side-panel-btn" id="sp-btn-help"     onclick="swSide('help')">❓ עזרה</button>
+  <button class="side-panel-btn" onclick="swNav('personal')">⚙️ הגדרות</button>
+  <button class="side-panel-btn" onclick="swNav('help')">❓ עזרה ומשאבים</button>
   <button class="side-panel-btn admin-only" id="sp-btn-admin" onclick="swSide('admin')" style="color:#9089bd;display:none">🛡️ ניהול</button>
 </div>
 
 <!-- Mobile nav drawer -->
 <div class="mob-nav-overlay" id="mob-nav-overlay" onclick="mobNavClose()"></div>
 <div class="mob-nav-drawer" id="mob-nav-drawer">
-  <div class="mob-nav-title">📊 Fayna Trading</div>
-  <button class="mob-nt" onclick="sw('overview',this)">🏠 סקירה</button>
-  <div class="mob-nav-sep"></div>
-  <div class="mob-nav-grp">הוצאות</div>
-  <button class="mob-nt" onclick="sw('expenses',this)">📋 יומן הוצאות</button>
-  <button class="mob-nt" onclick="sw('withdrawals',this)">💸 משיכות</button>
-  <button class="mob-nt" onclick="sw('pnl',this)">📈 P&L</button>
-  <button class="mob-nt" onclick="sw('custom',this)">💳 הוצאות חופשיות</button>
-  <div class="mob-nav-sep"></div>
-  <div class="mob-nav-grp">מסחר</div>
-  <button class="mob-nt" onclick="sw('calendar',this)">📅 לוח שנה</button>
-  <button class="mob-nt" onclick="sw('trades',this)">📓 יומן עסקאות</button>
-  <button class="mob-nt" onclick="sw('stats',this)">📊 סטטיסטיקות</button>
-  <button class="mob-nt" onclick="sw('ai',this)">🤖 AI Assistant</button>
-  <button class="mob-nt" onclick="sw('course',this)">🎓 קורס מסחר</button>
-  <button class="mob-nt" onclick="sw('datamgr',this)">⚙️ ניהול נתונים</button>
-  <div class="mob-nav-sep"></div>
-  <div class="mob-nav-grp">כלים</div>
-  <button class="mob-nt" onclick="sw('software',this)">📥 תוכנות מסחר</button>
-  <button class="mob-nt" onclick="sw('firms',this)">🏆 חברות מימון</button>
-  <button class="mob-nt" onclick="sw('news',this)">📰 חדשות וכלים</button>
-  <button class="mob-nt" onclick="sw('ecal',this)">📅 יומן כלכלי</button>
-  <div class="mob-nav-sep"></div>
-  <button class="mob-nt" onclick="sw('billing',this)">💳 תשלום</button>
-  <button class="mob-nt" onclick="sw('help',this)">❓ עזרה</button>
-  <div class="mob-nav-sep"></div>
-  <button class="mob-nt" onclick="mobNavClose()" style="color:var(--t3);font-size:12px">✕ סגור תפריט</button>
+  <div class="mob-nav-title">Fayna Trading</div>
+<button type="button" class="mob-nt" id="mobile-simple-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
+<button class="mob-nt" onclick="mobNavClose()">✕ סגור תפריט</button>
 </div>
 
 <!-- ══════════ MOBILE BOTTOM NAV BAR ══════════ -->
 <div class="mob-bottom-nav" id="mob-bottom-nav">
-  <button class="mob-bnav-btn active" id="mbn-overview" onclick="swMob('overview')">
-    <span class="mbn-icon">🏠</span>
-    <span>סקירה</span>
-  </button>
-  <button class="mob-bnav-btn" id="mbn-calendar" onclick="swMob('calendar')">
-    <span class="mbn-icon">📅</span>
-    <span>לוח שנה</span>
-  </button>
-  <button class="mob-bnav-btn" id="mbn-trades" onclick="swMob('trades')">
-    <span class="mbn-icon">📓</span>
-    <span>עסקאות</span>
-  </button>
-  <button class="mob-bnav-btn" id="mbn-ai" onclick="swMob('ai')">
-    <span class="mbn-icon">🤖</span>
-    <span>AI</span>
-  </button>
-  <button class="mob-bnav-btn" id="mbn-more" onclick="mobNavOpen()">
-    <span class="mbn-icon">☰</span>
-    <span>עוד</span>
-  </button>
+<button class="mob-bnav-btn" id="mbn-overview" onclick="swMob('overview')"><span class="mbn-icon">🏠</span><span>סקירה</span></button>
+<button class="mob-bnav-btn" id="mbn-trades" onclick="swMob('trades')"><span class="mbn-icon">📓</span><span>יומן מסחר</span></button>
+<button class="mob-bnav-btn" id="mbn-stats" onclick="swMob('stats')"><span class="mbn-icon">📊</span><span>ביצועים</span></button>
+<button class="mob-bnav-btn" id="mbn-biz" onclick="swMob('biz')"><span class="mbn-icon">💼</span><span>חשבונות וכספים</span></button>
+<button class="mob-bnav-btn" id="mbn-ai" onclick="swMob('ai')"><span class="mbn-icon">💡</span><span>תובנות</span></button>
 </div>
 
   <!-- save-status hidden span kept for JS compatibility -->
@@ -3076,44 +3029,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <button class="sn-toggle-btn" onclick="toggleSidenav()" id="sn-toggle-btn" title="הסתר/הצג תפריט">◀</button>
   </div>
 
-  <div class="sn-grp">Dashboard</div>
-  <div class="sn-item active" id="sni-overview"    onclick="swNav('overview')"    title="סקירה"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></div>
-
-  <div class="sn-grp">Analytics</div>
-  <div class="sn-item" id="sni-stats"       onclick="swNav('stats')"       title="סטטיסטיקות"><span class="sn-icon">📊</span><span class="sn-lbl">סטטיסטיקות</span></div>
-  <div class="sn-item" id="sni-merge"       onclick="swNav('merge')"       title="איחוד סטטיסטיקות"><span class="sn-icon">🧬</span><span class="sn-lbl">איחוד סטטיסטיקות</span></div>
-  <div class="sn-item" id="sni-calendar"    onclick="swNav('calendar')"    title="לוח שנה"><span class="sn-icon">📅</span><span class="sn-lbl">לוח שנה</span></div>
-  <div class="sn-item" id="sni-pnl"         onclick="swNav('pnl')"         title="P&L"><span class="sn-icon">📈</span><span class="sn-lbl">P&amp;L</span></div>
-
-  <div class="sn-grp">Trades</div>
-  <div class="sn-item" id="sni-trades"      onclick="swNav('trades')"      title="יומן עסקאות"><span class="sn-icon">📓</span><span class="sn-lbl">יומן עסקאות</span></div>
-  <div class="sn-item" id="sni-expenses"    onclick="swNav('expenses')"    title="יומן הוצאות"><span class="sn-icon">📋</span><span class="sn-lbl">יומן הוצאות</span></div>
-  <div class="sn-item" id="sni-withdrawals" onclick="swNav('withdrawals')" title="משיכות"><span class="sn-icon">💸</span><span class="sn-lbl">משיכות</span></div>
-  <div class="sn-item" id="sni-custom"      onclick="swNav('custom')"      title="הוצאות חופשיות"><span class="sn-icon">💳</span><span class="sn-lbl">הוצאות חופשיות</span></div>
-
-  <div class="sn-grp">AI</div>
-  <div class="sn-item" id="sni-ai"          onclick="swNav('ai')"          title="AI Assistant"><span class="sn-icon">🤖</span><span class="sn-lbl">AI Assistant</span></div>
-  <div class="sn-item" id="sni-coach"       onclick="swNav('coach')"       title="מאמן מנטאלי"><span class="sn-icon">🧠</span><span class="sn-lbl">מאמן מנטאלי</span></div>
-
-  <div class="sn-grp">חשבונות</div>
-  <div class="sn-item" id="sni-biz"         onclick="swNav('biz');renderBiz()" title="ניהול עסקי"><span class="sn-icon">🏢</span><span class="sn-lbl">ניהול עסקי</span></div>
-  <div class="sn-item" id="sni-goals"       onclick="swNav('goals');renderPersonalGoals()" title="יעדים והישגים"><span class="sn-icon">🏆</span><span class="sn-lbl">יעדים והישגים</span></div>
-  <div class="sn-item" id="sni-lr"          onclick="swNav('lr');renderLR()" title="שגרת חיים"><span class="sn-icon">📅</span><span class="sn-lbl">שגרת חיים</span></div>
-  <div class="sn-item" id="sni-course"      onclick="swNav('course')"      title="קורס מסחר"><span class="sn-icon">🎓</span><span class="sn-lbl">קורס מסחר</span></div>
-  <div class="sn-item" id="sni-calc"        onclick="swNav('calc')"        title="מחשבונים"><span class="sn-icon">🧮</span><span class="sn-lbl">מחשבונים</span></div>
-
-  <div class="sn-sep"></div>
-  <div class="sn-grp">הגדרות</div>
-  <div class="sn-item" id="sni-import"      onclick="swNav('import')"      title="ייבוא עסקאות"><span class="sn-icon">📥</span><span class="sn-lbl">ייבוא עסקאות</span></div>
-  <div class="sn-item" id="sni-datamgr"     onclick="swNav('datamgr')"     title="ניהול נתונים"><span class="sn-icon">⚙️</span><span class="sn-lbl">ניהול נתונים</span></div>
-  <div class="sn-item" id="sni-personal"    onclick="swNav('personal')"    title="אזור אישי"><span class="sn-icon">👤</span><span class="sn-lbl">אזור אישי</span></div>
-
-  <div class="sn-sep"></div>
-  <div class="sn-grp">כלים</div>
-  <div class="sn-item" onclick="swSide('software')" title="תוכנות מסחר"><span class="sn-icon">📥</span><span class="sn-lbl">תוכנות מסחר</span></div>
-  <div class="sn-item" onclick="swSide('firms')"    title="חברות מימון"><span class="sn-icon">🏆</span><span class="sn-lbl">חברות מימון</span></div>
-  <div class="sn-item" onclick="swSide('ecal')"     title="יומן כלכלי"><span class="sn-icon">📅</span><span class="sn-lbl">יומן כלכלי</span></div>
-  <div class="sn-item" onclick="swSide('help')"     title="עזרה"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></div>
+<button type="button" class="sn-item" id="sni-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="sn-item" id="sni-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
+<button type="button" class="sn-item" id="sni-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
+<button type="button" class="sn-item" id="sni-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="sn-item" id="sni-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
+<div class="sn-sep"></div>
+<button type="button" class="sn-item" id="sni-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
+<button type="button" class="sn-item" id="sni-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
   <!-- Admin — hidden until admin login -->
   <div class="sn-sep" id="sn-admin-sep" style="display:none"></div>
   <div class="sn-item admin-only" id="admin-nav-btn" onclick="swSide('admin')" title="פאנל ניהול"
@@ -3123,6 +3046,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </aside>
 
 <main class="main" id="main-content" role="main" tabindex="-1">
+<nav id="simple-section-nav" class="simple-section-nav" aria-label="אפשרויות באזור הנוכחי"></nav>
 
 <!-- OVERVIEW -->
 <div class="tp" id="tp-personal">
@@ -3853,6 +3777,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </div>
     </div>
 
+    <details class="simple-details"><summary>התאמת עמלה</summary>
     <!-- Manual commission override -->
     <div class="fr" style="margin-bottom:10px">
       <label>💰 עמלה ידנית לעסקה (אופציונלי)</label>
@@ -3865,6 +3790,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </div>
     </div>
 
+    </details>
     <!-- Live P&L preview -->
     <div id="at-pnl-preview" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:12px 14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -3882,6 +3808,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div id="at-mult-info" style="font-size:10px;color:var(--t3);margin-top:6px;text-align:center"></div>
     </div>
 
+    <details class="simple-details" id="trade-extra-details"><summary>אסטרטגיה, משך והערות</summary>
     <!-- Extra details -->
     <div class="g2">
       <div class="fr">
@@ -3895,6 +3822,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </div>
     </div>
     <div class="fr"><label>הערה (אופציונלי)</label><textarea id="at-notes" placeholder="תיאור העסקה, תנאי שוק..."></textarea></div>
+    </details>
 
     <div class="fax">
       <button class="bn" onclick="closeAddTrade()">ביטול</button>
@@ -4540,7 +4468,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <!-- TRADES JOURNAL -->
 <div class="tp" id="tp-trades">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ייבוא ידני: יצא דוח מהפלטפורמה ← לחץ "ייבא CSV / Excel"</div></div>
+    <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">רישום עסקאות, ייבוא קבצים ותצוגת לוח שנה במקום אחד</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="openAddTrade()" class="btn-p" style="font-size:11px;padding:6px 13px">+ עסקה</button>
       <button onclick="openManualEntry()" style="padding:6px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t1);font-family:inherit;font-weight:600">✍️ יומן ידני</button>
@@ -4627,6 +4555,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div class="stat-group-sub">המספרים החשובים ביותר על הביצועים שלך</div>
   </div>
   <div class="mrow" id="ts-m"></div>
+<button class="bn" type="button" id="simple-metrics-toggle" aria-expanded="false" onclick="const panel=document.getElementById('tp-stats');const expanded=panel.classList.toggle('simple-all-metrics');this.setAttribute('aria-expanded',String(expanded));this.textContent=expanded?'פחות מדדים':'מדדים נוספים'">מדדים נוספים</button>
   <div class="ch">
     <div class="card"><div class="ct"><div class="dot"></div>עקומת הון מצטברת</div><div style="height:240px;position:relative"><canvas id="eqchart"></canvas></div></div>
     <div class="card"><div class="ct"><div class="dot"></div>P&L יומי</div><div style="height:240px;position:relative"><canvas id="dchart"></canvas></div></div>
@@ -8071,6 +8000,7 @@ window._atDir = 'long';
 
 function openAddTrade() {
   try {
+    document.querySelectorAll('#add-trade-modal details').forEach(d=>d.open=false);
     window._atDir = 'long';
     const today = new Date().toISOString().slice(0,10);
     const now   = new Date().toTimeString().slice(0,5);
@@ -14511,7 +14441,83 @@ async function _openImport() {
   }
 }
 
+/* v53: one navigation hierarchy, shared by desktop and mobile. */
+function _simpleGroup(name) {
+  const groups={overview:['overview','goals','lr'],trades:['trades','calendar','import','calc','ecal'],stats:['stats','merge'],biz:['biz','expenses','custom','withdrawals','pnl'],ai:['ai','coach'],personal:['personal','datamgr','billing'],help:['help','course','software','firms','news']};
+  return Object.keys(groups).find(key=>groups[key].includes(name))||name;
+}
+function _simpleSync(name) {
+  const group=_simpleGroup(name);
+  const titles={overview:'סקירה',trades:'יומן מסחר',stats:'ביצועים',biz:'חשבונות וכספים',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
+  const sections={
+    overview:[],
+    trades:[['trades','עסקאות'],['calendar','לוח שנה'],['import','ייבוא עסקאות'],['calc','מחשבונים'],['ecal','יומן כלכלי']],
+    stats:[['stats','סיכום ביצועים'],['merge','השוואה ואיחוד אסטרטגיות']],
+    biz:[['biz','סיכום חשבונות'],['expenses','הוצאות'],['withdrawals','משיכות'],['pnl','רווח והפסד']],
+    ai:[['ai','תובנות מהיומן'],['coach','אימון ומשמעת']],
+    personal:[['personal','חשבון והעדפות'],['datamgr','נתונים וגיבוי'],['billing','מנוי']],
+    help:[['help','עזרה'],['course','קורס מסחר'],['software','תוכנות'],['firms','חברות מימון'],['news','חדשות']]
+  };
+  _updateSidenavActive(group);
+  _updateNavLabel(group);
+  const label=document.getElementById('nav-active-name');
+  if(label&&titles[group])label.textContent=titles[group];
+  document.querySelectorAll('#sidenav .sn-item,#nav-menu-grid .nav-menu-item,#mob-nav-drawer .mob-nt').forEach(el=>{
+    const active=el.id.endsWith('-'+group);
+    if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');
+  });
+  const nav=document.getElementById('simple-section-nav');
+  if(!nav)return;
+  nav.replaceChildren();
+  for(const [target,title] of sections[group]||[]){
+    const b=document.createElement('button');b.type='button';b.textContent=title;
+    if(target===name||(target==='expenses'&&name==='custom'))b.setAttribute('aria-current','page');
+    b.addEventListener('click',()=>swNav(target));nav.appendChild(b);
+  }
+  nav.hidden=!nav.childElementCount;
+  if(name==='calc'&&window._simpleTradeDraft){
+    const back=document.createElement('button');back.type='button';back.textContent='חזרה לעסקה';
+    back.addEventListener('click',()=>{swNav('trades');document.getElementById('add-trade-modal').classList.add('open');window._simpleTradeDraft=false;});nav.appendChild(back);
+  }
+}
+function _simpleDisclosure(parent,nodes,title,id){
+  const list=nodes.filter(Boolean);if(!parent||!list.length||document.getElementById(id))return;
+  const d=document.createElement('details');d.className='simple-details';d.id=id;
+  const summary=document.createElement('summary');summary.textContent=title;d.appendChild(summary);
+  parent.insertBefore(d,list[0]);list.forEach(n=>d.appendChild(n));
+  d.addEventListener('toggle',()=>{if(d.open)requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));});
+}
+function _simpleInit(){
+  const g=id=>document.getElementById(id);
+  const stats=g('tp-stats');
+  if(stats){const first=stats.querySelector('.ch');const nodes=[];for(let n=first?.nextElementSibling;n;n=n.nextElementSibling)nodes.push(n);_simpleDisclosure(stats,nodes,'ניתוחים מפורטים ואסטרטגיות','simple-stats-details');}
+  const overview=g('tp-overview');
+  _simpleDisclosure(overview,['daily-tip-wrap','daily-checklist-card','ov-gauges','ov-row2','ov-row3','ov-row4','ov-row5'].map(g),'גרפים ופרטים נוספים','simple-overview-details');
+  if(overview&&g('simple-overview-details')){
+    overview.appendChild(g('simple-overview-details'));
+    g('simple-overview-details').querySelectorAll('.mob-secondary').forEach(el=>el.classList.remove('mob-secondary'));
+  }
+  // Move the existing trading-goal control, preserving its IDs, handlers and saved values.
+  const goal=g('focus-goal-gauge-body')?.closest('.zcl');
+  if(overview&&goal){goal.classList.add('simple-trading-goal');overview.insertBefore(goal,g('simple-overview-details'));}
+  // Expense type lives inside Expenses rather than occupying another main destination.
+  for(const id of ['expenses','custom']){
+    const panel=g('tp-'+id);if(!panel)continue;
+    const label=document.createElement('label');label.className='simple-expense-type';label.textContent='סוג הוצאה ';
+    const select=document.createElement('select');select.setAttribute('aria-label','סוג הוצאה');
+    for(const [value,text] of [['expenses','חשבונות מסחר'],['custom','הוצאות נוספות']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.appendChild(option);}
+    select.value=id;select.addEventListener('change',()=>{const target=select.value;select.value=id;swNav(target);});label.appendChild(select);panel.prepend(label);
+  }
+  // Calculator access remains next to trade entry and keeps the unfinished form intact.
+  const extra=g('trade-extra-details');
+  if(extra){const b=document.createElement('button');b.type='button';b.className='bn';b.textContent='פתח מחשבונים';b.addEventListener('click',()=>{window._simpleTradeDraft=true;closeAddTrade();swNav('calc');});extra.appendChild(b);}
+  _simpleSync(document.querySelector('.tp.active')?.id.replace('tp-','')||'overview');
+  _syncBottomNav(document.querySelector('.tp.active')?.id.replace('tp-','')||'overview');
+}
+document.addEventListener('DOMContentLoaded',_simpleInit);
+
 function sw(name,btn){
+  if(name==='lr'||name==='goals') name='overview';
   // Feature gate for plan-restricted tabs
   const _navGates = { calendar:'calendar', stats:'stats_advanced' };
   if (!currentUser?.isAdmin && _navGates[name] && !canUse(_navGates[name])) {
@@ -14529,8 +14535,7 @@ function sw(name,btn){
   });
   document.querySelectorAll('.nt').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  _updateNavLabel(name);
-  _updateSidenavActive(name);
+  _simpleSync(name);
   if (name === 'merge') { try { _openMerge(); } catch(e){} }
   if (name === 'import') { try { _openImport(); } catch(e){} }
   /* v33: always leave mobile navigation in a clean state after a tab switch —
@@ -14548,7 +14553,8 @@ function sw(name,btn){
   }
   const ab=document.getElementById('add-btn');
   if(ab) ab.style.display=(showAdd[name]??false)?'flex':'none';
-  if(name==='overview')setTimeout(renderOV,50);
+  if(name==='overview')setTimeout(()=>{renderOV();renderFocusPanel();},50);
+  if(name==='biz')setTimeout(renderBiz,50);
   if(name==='stats')setTimeout(renderStats,50);
   if(name==='calendar')setTimeout(renderCal,50);
   if(name==='trades')setTimeout(renderTJ,50);
@@ -21310,10 +21316,10 @@ window.addEventListener('popstate', mobNavClose);
 
 // ── MOBILE BOTTOM NAV ──
 // Map tab names to bottom nav button IDs
-const _mbnMap = { overview:'mbn-overview', calendar:'mbn-calendar', trades:'mbn-trades', ai:'mbn-ai' };
+const _mbnMap = { overview:'mbn-overview', trades:'mbn-trades', stats:'mbn-stats', biz:'mbn-biz', ai:'mbn-ai' };
 function _syncBottomNav(name) {
   document.querySelectorAll('.mob-bnav-btn').forEach(b=>b.classList.remove('active'));
-  const id = _mbnMap[name];
+  const id = _mbnMap[_simpleGroup(name)];
   if(id) document.getElementById(id)?.classList.add('active');
 }
 function swMob(name) {
@@ -26132,3 +26138,4 @@ function setDigestHour(h) {
 </script>
 </body>
 </html>
+
