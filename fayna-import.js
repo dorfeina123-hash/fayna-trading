@@ -727,8 +727,9 @@ function screenPick() {
       </button>`).join('');
 
   out().innerHTML = `
+    <ol class="ws-import-steps"><li aria-current="step">1 · בחירת קובץ</li><li>2 · בדיקת נתונים</li><li>3 · אישור ייבוא</li></ol>
     <div class="imp-card">
-      <div class="imp-step"><span class="imp-num">1</span> בחר פורמט</div>
+      <div class="imp-step">פורמט הקובץ</div>
       <div class="imp-grid">
         <button type="button" class="imp-fmt${UI.fmt === 'auto' ? ' sel' : ''}" data-fmt="auto">
           <div class="imp-fmt-t">זיהוי אוטומטי</div>
@@ -739,7 +740,7 @@ function screenPick() {
     </div>
 
     <div class="imp-card">
-      <div class="imp-step"><span class="imp-num">2</span> העלאת קובץ</div>
+      <div class="imp-step">העלאת קובץ</div>
       <label class="imp-drop" id="imp-drop">
         <input type="file" id="imp-file" accept=".csv,.tsv,.txt,.xml,.xlsx" multiple hidden>
         <div class="imp-drop-i">⬆</div>
@@ -750,7 +751,7 @@ function screenPick() {
     </div>
 
     <div class="imp-card">
-      <div class="imp-step"><span class="imp-num">3</span> חשבון יעד</div>
+      <div class="imp-step">חשבון יעד ביומן</div>
       <select id="imp-acct" class="imp-sel">
         <option value="">— ללא שיוך לחשבון —</option>
         ${accs.map(a => `<option value="${esc(a.id)}"${UI.acct === a.id ? ' selected' : ''}>${esc(a.name || a.id)}</option>`).join('')}
@@ -855,6 +856,7 @@ function screenPreview() {
     </label>`).join('');
 
   out().innerHTML = `
+    <ol class="ws-import-steps"><li>1 · בחירת קובץ</li><li aria-current="step">2 · בדיקת נתונים</li><li>3 · אישור ייבוא</li></ol>
     <div class="imp-card">
       <div class="imp-top">
         <div>
@@ -892,7 +894,7 @@ function screenPreview() {
 
     <div class="imp-actions">
       <button type="button" class="imp-btn primary" id="imp-commit" ${UI.fresh.length ? '' : 'disabled'}>
-        ✅ ייבא ${UI.fresh.length} עסקאות
+        אישור וייבוא ${UI.fresh.length} עסקאות
       </button>
       <button type="button" class="imp-btn ghost" id="imp-cancel">ביטול</button>
     </div>`;
