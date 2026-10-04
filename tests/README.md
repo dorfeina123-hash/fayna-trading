@@ -1,7 +1,16 @@
-# Navigation regression checks
+# UI regression checks
 
-Prerequisites: Node.js, Playwright (`npm install --no-save playwright`) and Microsoft Edge. Run `node tests/navigation.cjs` from the repository root.
+Prerequisites: Node.js, Playwright (`npm install --no-save playwright`) and Microsoft Edge.
 
-Checks JavaScript syntax, CSS brace balance, preservation of existing declarations, duplicate DOM IDs, identical v53/index files, desktop/mobile navigation, expense categories, subscription gating, import dispatch, expandable sections, and preservation of an unfinished trade when using calculators.
+From the repository root run:
 
-The browser fixture blocks all network requests and substitutes authentication, data renderers, and storage integrations. It tests actual navigation handlers and clicks, not Firebase authentication, live financial calculations or cloud persistence. The authentication overlay is hidden only inside this fixture. Screenshots are written to navigation-desktop.png and navigation-mobile.png.
+```
+node tests/navigation.cjs
+node tests/home.cjs
+```
+
+Navigation checks JavaScript syntax, CSS brace balance, preservation of declarations, duplicate DOM IDs, matching versioned/index files, desktop/mobile navigation, expense categories, subscription gates, import dispatch and calculator draft preservation.
+
+Home checks period boundaries, fees, losing trades, drawdown from zero, manual daily summaries, invalid amounts, empty data, account filtering, desktop/mobile layout, action buttons and escaping user-controlled text. Screenshots use synthetic data only.
+
+Browser fixtures block all network requests and substitute authentication and persistence integrations. They do not verify Firebase login or cloud saves. Authentication overlays are hidden only in the isolated fixtures. Screenshots are saved in the repository root for local inspection.
