@@ -4,11 +4,11 @@ const before=fs.readFileSync('dor_trading_v53.html','utf8'),after=fs.readFileSyn
 const scripts=s=>[...s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!m[1].includes('src=')&&!/application\/ld\+json/.test(m[1]));
 let checked=0;for(const m of scripts(after)){if(m[2].trim()){new vm.Script(m[2]);checked++;}}
 const styles=s=>[...s.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
-assert.equal(styles(before).length+1,styles(after).length);
+assert.equal(styles(before).length+2,styles(after).length);
 for(const m of styles(after))assert.equal((m[1].match(/{/g)||[]).length,(m[1].match(/}/g)||[]).length);
 const declarations=s=>new Set([...s.matchAll(/^(?:async )?(?:function|let|const|var)\s+(\w+)/gm)].map(m=>m[1]));
 assert.deepEqual([...declarations(before)].filter(n=>!declarations(after).has(n)),[]);
-assert.equal(after,fs.readFileSync('dor_trading_v55.html','utf8'));
+assert.equal(after,fs.readFileSync('dor_trading_v56.html','utf8'));
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});
@@ -37,11 +37,7 @@ assert.equal(after,fs.readFileSync('dor_trading_v55.html','utf8'));
  await page.locator('#simple-section-nav .workspace-more>summary').click();
  await page.locator('#simple-section-nav').getByRole('button',{name:'ייבוא עסקאות',exact:true}).click();
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-import');
- await page.locator('#sni-biz').click();await page.getByRole('button',{name:'הוצאות',exact:true}).click();
- await page.locator('#tp-expenses select[aria-label="סוג הוצאה"]').selectOption('custom');
- assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-custom');
- await page.locator('#tp-custom select[aria-label="סוג הוצאה"]').selectOption('expenses');
- assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-expenses');
+ // Finance routes and data independence are exercised in workspace.cjs.
  await page.locator('#sni-stats').click();
  assert.equal(await page.locator('#simple-stats-details').getAttribute('open'),null);
  await page.locator('#simple-stats-details>summary').click();assert(await page.locator('#simple-stats-details').evaluate(d=>d.open));
@@ -63,9 +59,7 @@ assert.equal(after,fs.readFileSync('dor_trading_v55.html','utf8'));
  await page.locator('#mbn-ai').click();assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-ai');
  await page.getByRole('button',{name:'אימון ומשמעת',exact:true}).click();assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-coach');
  await page.screenshot({path:'navigation-mobile.png'});
- assert(await page.evaluate(()=>renders.includes('renderBiz')&&renders.includes('_openImport')));
- console.log(JSON.stringify({scriptBlocksChecked:checked,styleBlocks:styles(after).length,newDuplicateIDs:0,removedDeclarations:0,navigation:'desktop and mobile passed',expenseSwitch:'passed',planGate:'passed',lazyImport:'passed',dataWrites:'none (isolated fixture)'}));
+ assert(await page.evaluate(()=>renders.includes('_openImport')));
+ console.log(JSON.stringify({scriptBlocksChecked:checked,styleBlocks:styles(after).length,newDuplicateIDs:0,removedDeclarations:0,navigation:'desktop and mobile passed',planGate:'passed',lazyImport:'passed',dataWrites:'none (isolated fixture)'}));
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1});
-
-

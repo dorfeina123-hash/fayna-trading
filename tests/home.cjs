@@ -14,7 +14,7 @@ assert.equal(ctx._homeModel([],'all',now,t=>t.pnl).winRate,null);
 assert.equal(ctx._homeModel([{date:'2026-10-01',pnl:2,fee:5}],'month',now,t=>t.pnl-t.fee).net,-3);
 assert(ctx._homeMoney(-10).startsWith('−$'));
 let n=0;for(const script of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){if(!script[1].includes('src=')&&!script[1].includes('ld+json')&&script[2].trim()){new vm.Script(script[2]);n++;}}
-assert.equal([...old.matchAll(/<style\b/g)].length+1,[...html.matchAll(/<style\b/g)].length);
+assert.equal([...old.matchAll(/<style\b/g)].length+2,[...html.matchAll(/<style\b/g)].length);
 for(const style of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi))assert.equal((style[1].match(/{/g)||[]).length,(style[1].match(/}/g)||[]).length);
 (async()=>{const browser=await chromium.launch({channel:'msedge',headless:true});try{
  const page=await browser.newPage({viewport:{width:1440,height:1050}});page.setDefaultTimeout(5000);await page.route('**/*',r=>r.abort());
@@ -39,5 +39,3 @@ for(const style of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi))assert.e
  await page.evaluate(()=>{accounts=[{id:'x',name:'<img src=x onerror=alert(1)>'}];tradesList=[{date:_homeDate(new Date()),pnl:-10,sym:'<img src=x onerror=alert(1)>',acct:'x'}];renderHome()});assert.equal(await page.locator('#home-dashboard img').count(),0);
  assert.deepEqual(errors,[]);console.log(JSON.stringify({scripts:n,styles:6,model:'date/fees/loss/drawdown/manual summaries/empty passed',ui:'desktop/mobile/account filter/actions/empty/XSS passed'}));
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});
-
-
