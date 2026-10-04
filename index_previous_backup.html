@@ -2201,6 +2201,26 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 @media(prefers-reduced-motion:reduce){html[data-fayna-theme] *,html[data-fayna-theme] *::before,html[data-fayna-theme] *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 </style>
+<style id="workspace-v56">
+/* v56: one quiet layout for all workspaces. */
+.app-layout>.main{min-width:0!important;padding:24px!important}.main>.tp,.main>.simple-section-nav{max-width:1240px;margin-inline:auto;width:100%}
+.ws-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:12px 0 24px}.ws-heading h1{font-size:clamp(23px,2.3vw,32px);font-weight:600;line-height:1.4;margin:4px 0 8px}.ws-heading p,.ws-muted{color:var(--t3);font-size:13px}.ws-eyebrow{color:var(--ac)!important;font-size:12px!important}
+.ws-toolbar,.ws-panel-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ws-toolbar{margin:16px 0}.ws-panel-title{justify-content:space-between;margin-bottom:18px}.ws-panel h2,.ws-panel-title h2{font-size:16px;font-weight:600;margin:0}
+.ws-toolbar label,.ws-form-grid label,.ws-search{display:flex;flex-direction:column;gap:6px;color:var(--t2);font-size:12px}.ws-toolbar input,.ws-toolbar select,.ws-search input,.ws-form-grid input,.ws-form-grid select{padding:10px 12px;min-height:42px;min-width:0;max-width:100%}.ws-search{flex:1;min-width:160px}.ws-search input{width:100%}
+.ws-segment{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:3px}.ws-segment button,.ws-period button{background:transparent;color:var(--t2);border:0;border-radius:6px;padding:8px 12px;font:inherit;font-size:13px;min-height:36px;cursor:pointer}.ws-segment button[aria-pressed=true]{background:var(--bd);color:var(--ac)}.ws-period{display:flex;align-items:center;gap:14px;margin-inline:auto}.ws-period strong{min-width:100px;text-align:center;font-size:14px}.ws-period button{background:var(--bg2)}.ws-period button:disabled{opacity:.3;cursor:default}
+.ws-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0}.ws-kpis section{padding:20px 22px;background:var(--bg1);border:1px solid var(--border);border-radius:var(--fy-radius)}.ws-kpis p{font-size:13px;color:var(--t2);margin-bottom:10px}.ws-kpis strong{display:block;text-align:start;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.ws-panel{padding:24px;background:var(--bg1);border:1px solid var(--border);border-radius:var(--fy-radius);margin:16px 0;min-width:0}.ws-panel>p{color:var(--t3);font-size:13px;margin:12px 0}.ws-empty{padding:42px 16px;text-align:center}.ws-empty h2{font-size:18px;margin-bottom:8px}.ws-empty p{font-size:13px;color:var(--t3);margin:8px 0 22px}.ws-empty .home-primary{margin-inline:auto}.ws-text-button{border:0;background:transparent;color:var(--ac);padding:8px 4px;font:inherit;font-size:13px;cursor:pointer}.ws-finance-link{display:block;margin-top:20px;margin-inline-start:auto}.ws-table-wrap{overflow-x:auto}.ws-table{width:100%;border-collapse:collapse;font-size:13px}.ws-table th{text-align:start;color:var(--t3);font-weight:500}.ws-table td,.ws-table th{padding:14px 10px;border-bottom:1px solid var(--border);vertical-align:middle}.ws-table td[dir=ltr]{text-align:start;white-space:nowrap;font-variant-numeric:tabular-nums}.ws-table small{display:block;color:var(--t3);font-size:11px;margin-top:4px}.ws-table tr:last-child td{border-bottom:0}.ws-category{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:13px}.ws-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.ws-table button,.ws-table td:first-child{white-space:nowrap}.ws-table td:nth-child(2){overflow-wrap:anywhere}.ws-direction{display:block;color:var(--t3);font-size:11px;margin-top:4px}html[data-fayna-theme="light"] #ecal-iframe{filter:none!important}.simple-section-nav{position:relative;z-index:1}
+.ws-import-steps{list-style:none;display:flex;gap:12px;flex-wrap:wrap;padding:0;margin:18px 0 24px;font-size:13px;color:var(--t3)}.ws-import-steps li{padding:10px 14px;border-bottom:2px solid var(--border)}.ws-import-steps li[aria-current=step]{color:var(--ac);border-color:var(--ac)}
+.ws-dialog{margin:auto;width:min(580px,calc(100vw - 24px));max-height:90vh;overflow:auto;background:var(--bg1);color:var(--t1);border:1px solid var(--border);border-radius:var(--fy-radius);padding:24px;font:inherit;direction:rtl}.ws-dialog::backdrop{background:#0008;backdrop-filter:blur(3px)}.ws-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.ws-trade-detail{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.ws-trade-detail dt{color:var(--t3);font-size:12px}.ws-trade-detail dd{font-size:14px;overflow-wrap:anywhere}.ws-theme-options{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.ws-theme-options button{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--t1);font:inherit;text-align:start}.ws-theme-options button[aria-pressed=true]{border-color:var(--ac)}.ws-theme-options small{color:var(--t3)}.ws-theme-dot{height:24px;width:48px;border-radius:6px}.ws-mint{background:linear-gradient(90deg,#111315 50%,#70dfbc 50%)}.ws-stone{background:linear-gradient(90deg,#f3f1ed 50%,#6b52b1 50%)}
+.ws-backups input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}.simple-details>p{font-size:13px;color:var(--t3);padding:12px}.simple-details textarea{width:100%;padding:12px;min-height:90px}.ws-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.clx-card{font:inherit;color:var(--t1)}
+#tj-table:not(.ws-expanded) :is(th,td):nth-child(3),#tj-table:not(.ws-expanded) :is(th,td):nth-child(6),#tj-table:not(.ws-expanded) :is(th,td):nth-child(7),#tj-table:not(.ws-expanded) :is(th,td):nth-child(8),#tj-table:not(.ws-expanded) :is(th,td):nth-child(9),#tj-table:not(.ws-expanded) :is(th,td):nth-child(11),#tj-table:not(.ws-expanded) :is(th,td):nth-child(12),#tj-table:not(.ws-expanded) :is(th,td):nth-child(13){display:none!important}
+#tj-body tr[id^=tj-row]{cursor:pointer}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
+#tp-stats:not(.simple-all-metrics) #ts-m>.mc:nth-child(n+5){display:none!important}#tp-stats>.ch{grid-template-columns:1fr!important}#tp-stats .stat-group-title{font-size:20px}.cal-day .dinfo:last-child{display:none}.cal-day .dinfo{font-size:11px!important}html[data-fayna-theme] .cal-day.win,html[data-fayna-theme] .cal-day.loss{background:var(--bg1)!important;border-color:var(--border)!important}.cal-day .dpnl{font-size:13px!important}.cal-day{min-height:85px}
+#pa-sidebar-stats,#pasnav-referral,#coach-streak-display,#coach-mentor-tasks{display:none!important}.pa-card{background:var(--bg1)!important;border-color:var(--border)!important;box-shadow:none!important}.pa-page-title{font-size:24px!important}#chat-fab{width:38px!important;height:38px!important;opacity:.8}.sn-icon,.mbn-icon{color:inherit}.home-shortcuts{gap:12px}.ws-insight{padding:18px 0;border-bottom:1px solid var(--border)}.ws-insight p{font-size:14px;color:var(--t1);margin-bottom:10px}.ws-insight small{display:block;color:var(--t3);font-size:12px}.ws-insight:last-child{border:0}
+@media(max-width:700px){.app-layout>.main{padding:16px 12px 90px!important}.ws-heading{align-items:flex-start;gap:12px}.ws-heading .home-primary{font-size:12px;padding:10px}.ws-kpis{gap:8px}.ws-kpis section{padding:14px 10px}.ws-kpis strong{font-size:20px}.ws-panel{padding:16px}.ws-period{margin-inline:0}.ws-toolbar{gap:10px}.ws-form-grid{grid-template-columns:1fr}.ws-table{font-size:12px}.ws-table :is(th,td):nth-child(3){display:none}.ws-table td,.ws-table th{padding:12px 6px}.ws-table td:first-child{font-size:11px}.ws-theme-options button{min-width:130px}.ws-dialog{padding:18px}.cal-day .dpnl{font-size:11px!important}.cal-day .dinfo{font-size:10px!important}.cal-day{min-height:65px}#tp-calc .clx-grid{grid-template-columns:1fr 1fr!important}#tp-trades .ws-toolbar{align-items:flex-end}}
+
+</style>
 </head>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
@@ -3057,7 +3077,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <button type="button" class="nav-menu-item" id="nm-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="nav-menu-item" id="nm-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="nav-menu-item" id="nm-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
-<button type="button" class="nav-menu-item" id="nm-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="nav-menu-item" id="nm-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">ניהול כספי</span></button>
 <button type="button" class="nav-menu-item" id="nm-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
 <button type="button" class="nav-menu-item" id="nm-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
 <button type="button" class="nav-menu-item" id="nm-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
@@ -3084,7 +3104,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <button type="button" class="mob-nt" id="mobile-simple-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
-<button type="button" class="mob-nt" id="mobile-simple-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">ניהול כספי</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
@@ -3096,7 +3116,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <button class="mob-bnav-btn" id="mbn-overview" onclick="swMob('overview')"><span class="mbn-icon">🏠</span><span>בית</span></button>
 <button class="mob-bnav-btn" id="mbn-trades" onclick="swMob('trades')"><span class="mbn-icon">📓</span><span>יומן מסחר</span></button>
 <button class="mob-bnav-btn" id="mbn-stats" onclick="swMob('stats')"><span class="mbn-icon">📊</span><span>ביצועים</span></button>
-<button class="mob-bnav-btn" id="mbn-biz" onclick="swMob('biz')"><span class="mbn-icon">💼</span><span>חשבונות וכספים</span></button>
+<button class="mob-bnav-btn" id="mbn-biz" onclick="swMob('biz')"><span class="mbn-icon">💼</span><span>ניהול כספי</span></button>
 <button class="mob-bnav-btn" id="mbn-ai" onclick="swMob('ai')"><span class="mbn-icon">💡</span><span>תובנות</span></button>
 </div>
 
@@ -3148,7 +3168,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <button type="button" class="sn-item" id="sni-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="sn-item" id="sni-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="sn-item" id="sni-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
-<button type="button" class="sn-item" id="sni-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
+<button type="button" class="sn-item" id="sni-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">ניהול כספי</span></button>
 <button type="button" class="sn-item" id="sni-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
 <div class="sn-sep"></div>
 <button type="button" class="sn-item" id="sni-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
@@ -5661,18 +5681,6 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(199,95,95,.15);color:#c97272;border:1px solid rgba(199,95,95,.25)">🔴 גבוה</span>
       <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(191,161,94,.12);color:#bfa15e;border:1px solid rgba(191,161,94,.25)">🟡 בינוני</span>
       <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(61,153,112,.12);color:var(--gr);border:1px solid rgba(61,153,112,.25)">🟢 נמוך</span>
-    </div>
-  </div>
-
-  <!-- Investing.com News Widget -->
-  <div class="card" style="padding:0;overflow:hidden;border-radius:10px;margin-bottom:10px">
-    <div style="padding:10px 14px 8px;display:flex;align-items:center;justify-content:space-between">
-      <div class="ct" style="margin:0"><div class="dot" style="background:#bd7f4c"></div>חדשות שוק ההון — Investing.com (בעברית)</div>
-      <a href="https://il.investing.com/news/" target="_blank" rel="noopener" style="font-size:10px;color:var(--bl);text-decoration:none">כל החדשות ←</a>
-    </div>
-    <div style="padding:0 14px 14px">
-      <div id="inv_news_ecal"></div>
-      <script>if(location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){const _s2=document.createElement('script');_s2.src='https://ssltools.investing.com/news_feed/js/newsFeedInstaller.js?forceLang=56&period=28800&highlights=true&name=inv_news_ecal&hl=12&type=0&theme=dark&cols=1&width=100%';_s2.charset='UTF-8';document.currentScript.parentNode.appendChild(_s2);}</script>
     </div>
   </div>
 
@@ -10058,7 +10066,7 @@ function _bizAggregate(list, dateMatchFn) {
   const sum = (t) => list.filter(e=>e.type===t).reduce((s,e)=>s+(+e.amount||0),0);
   const cnt = (t) => list.filter(e=>e.type===t).length;
   const income = sum('income'), expenses = sum('expense');
-  const wds = dateMatchFn ? _bizWithdrawalsInRange(dateMatchFn) : [];
+  const wds = []; // v56: finance totals never read trading accounts
   return {
     income, expenses, net: income - expenses,
     wdCount: wds.length, wdSum: wds.reduce((s,w)=>s+(+w.amount||0),0),
@@ -10086,48 +10094,8 @@ function _bizRenderList(elId, list, emptyHtml) {
   }).join('');
 }
 
-function renderBiz() {
-  const y = _bizViewDate.getFullYear(), m = _bizViewDate.getMonth();
-  const label = document.getElementById('biz-month-label');
-  if (label) label.textContent = BIZ_MONTH_NAMES[m] + ' ' + y;
-  const monthKey = _bizMonthKey(_bizViewDate);
-  const yearKey  = String(y);
-
-  const monthList = businessEvents.filter(e => (e.date||'').slice(0,7) === monthKey);
-  const yearList  = businessEvents.filter(e => (e.date||'').slice(0,4) === yearKey);
-
-  const mAgg = _bizAggregate(monthList, d => (d||'').slice(0,7) === monthKey);
-  const setTxt = (id, v) => { const el=document.getElementById(id); if (el) el.textContent = v; };
-  setTxt('biz-m-net', (mAgg.net>=0?'+':'')+'$'+mAgg.net.toFixed(0));
-  setTxt('biz-m-expenses', '$'+mAgg.expenses.toFixed(0));
-  setTxt('biz-m-income', '$'+mAgg.income.toFixed(0));
-  setTxt('biz-m-wdcount', mAgg.wdCount);
-  setTxt('biz-m-passed', mAgg.passed);
-  setTxt('biz-m-tests', mAgg.tests);
-  setTxt('biz-m-wdsum', '$'+mAgg.wdSum.toFixed(0));
-  setTxt('biz-m-burnlive', mAgg.burnLive);
-  setTxt('biz-m-burntest', mAgg.burnTest);
-  _bizRenderList('biz-month-list', monthList, '<div class="biz-list-empty">אין תנועות החודש<br>לחץ "+הוספה" כדי לרשום הכנסה או הוצאה</div>');
-
-  const yAgg = _bizAggregate(yearList, d => (d||'').slice(0,4) === yearKey);
-  const yTitle = document.getElementById('biz-year-title');
-  if (yTitle) yTitle.textContent = 'סיכום שנתי · ' + y;
-  setTxt('biz-y-net', (yAgg.net>=0?'+':'')+'$'+yAgg.net.toFixed(0));
-  setTxt('biz-y-expenses', '$'+yAgg.expenses.toFixed(0));
-  setTxt('biz-y-income', '$'+yAgg.income.toFixed(0));
-  setTxt('biz-y-wdcount', yAgg.wdCount);
-  setTxt('biz-y-passed', yAgg.passed);
-  setTxt('biz-y-tests', yAgg.tests);
-  setTxt('biz-y-wdsum', '$'+yAgg.wdSum.toFixed(0));
-  setTxt('biz-y-burnlive', yAgg.burnLive);
-  setTxt('biz-y-burntest', yAgg.burnTest);
-  _bizRenderList('biz-year-list', yearList, '<div class="biz-list-empty">אין נתונים השנה</div>');
-
-  const notesEl = document.getElementById('biz-notes');
-  if (notesEl) notesEl.value = businessNotes[monthKey] || '';
-}
-
-let _bizNotesTimer = null;
+function renderBiz() { if(typeof financeRender==='function')financeRender(); }
+let _bizNotesTimer=null;
 function bizSaveNotes() {
   const monthKey = _bizMonthKey(_bizViewDate);
   businessNotes[monthKey] = document.getElementById('biz-notes').value;
@@ -10142,17 +10110,7 @@ function _bizPopulateAcctSelect() {
   sel.innerHTML = '<option value="">— ללא שיוך —</option>' +
     list.map(a => `<option value="${a.id}">${escHtml(a.name)}</option>`).join('');
 }
-function bizOpenAdd() {
-  document.getElementById('biz-type').value = 'income';
-  document.getElementById('biz-date').value = new Date().toISOString().slice(0,10);
-  document.getElementById('biz-amount').value = '';
-  document.getElementById('biz-note').value = '';
-  _bizPopulateAcctSelect();
-  const acctSel = document.getElementById('biz-acct');
-  if (acctSel) acctSel.value = '';
-  bizTypeChange();
-  document.getElementById('biz-add-modal').classList.add('open');
-}
+function bizOpenAdd() { financeOpen(); }
 function bizCloseAdd() {
   document.getElementById('biz-add-modal')?.classList.remove('open');
 }
@@ -10169,35 +10127,7 @@ function bizTypeChange() {
     else hint.textContent = '';
   }
 }
-function bizSaveEvent() {
-  const type = document.getElementById('biz-type').value;
-  const date = document.getElementById('biz-date').value;
-  const info = BIZ_TYPE_INFO[type];
-  if (!date) { showToast('נא לבחור תאריך','error'); return; }
-  let amount = null;
-  if (info?.hasAmount) {
-    amount = parseFloat(document.getElementById('biz-amount').value);
-    if (isNaN(amount) || amount < 0) { showToast('נא להזין סכום תקין','error'); return; }
-  }
-  const note = (document.getElementById('biz-note').value||'').trim();
-  const acctSel = document.getElementById('biz-acct');
-  const acctId = (info?.showAcct && acctSel) ? acctSel.value : '';
-  businessEvents.push({ id:'biz_'+Date.now(), type, date, amount, note, acctId: acctId || null });
-
-  if (acctId && info?.statusOnSave) {
-    const acct = (typeof accounts !== 'undefined' ? accounts : []).find(a => a.id === acctId);
-    if (acct) {
-      acct.status = info.statusOnSave;
-      if (typeof saveAccounts === 'function') saveAccounts();
-      if (typeof renderAcctMenu === 'function') renderAcctMenu();
-    }
-  }
-
-  saveBizData();
-  bizCloseAdd();
-  renderBiz();
-  showToast('✅ התנועה נשמרה', 'success');
-}
+function bizSaveEvent() { bizCloseAdd();financeNavigate('transactions');financeOpen(); }
 async function bizDeleteEvent(id) {
   if (!await customConfirm('למחוק תנועה זו?')) return;
   businessEvents = businessEvents.filter(e => e.id !== id);
@@ -11171,7 +11101,8 @@ function renderHome(){
     <section class="home-card home-summary"><div class="home-card-head"><h2>המספרים החשובים</h2><span>${esc(periodTitle)}</span></div><div class="home-stat"><span>רשומות ביומן</span><strong>${model.count}</strong></div><div class="home-stat"><span>הצלחה בעסקאות מפורטות</span><strong>${model.winRate===null?'—':model.winRate.toFixed(0)+'%'}</strong></div><div class="home-stat"><span>ירידה מרבית מהשיא</span><strong dir="ltr">${model.count?_homeMoney(-model.drawdown):'—'}</strong></div><div class="home-stat"><span>עמלות מסחר</span><strong dir="ltr">$${Number.isFinite(fees)?fees.toFixed(2):'—'}</strong></div><button type="button" class="home-link" data-home-nav="stats">לניתוח הביצועים ←</button></section></div>
     <div class="home-lower-grid"><section class="home-card"><div class="home-card-head"><div><h2>פעילות אחרונה</h2><span>${esc(scopedTitle)}</span></div><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button></div>${recent.length?'<div class="home-trades">'+recent.map(t=>'<div class="home-trade"><span class="home-symbol">'+esc(t.sym||'עסקה')+'</span><span class="home-trade-date">'+esc(t.date)+'<small>'+esc((t.btime||'').slice(0,5))+'</small></span><strong class="'+tone(tradeNet(t))+'" dir="ltr">'+_homeMoney(tradeNet(t))+'</strong></div>').join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות בתקופה הזו</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}</section>
     <section class="home-card"><div class="home-card-head"><div><h2>החשבונות שלך</h2><span>סיכום מסחר · כל התקופה</span></div><button type="button" class="home-link" data-home-action="accounts">ניהול ←</button></div>${accountRows||'<div class="home-empty"><strong>הכל מתחיל בחשבון הראשון</strong><p>רכז את העסקאות לפי חשבון מסחר.</p><button type="button" class="home-link" data-home-action="accounts">הוסף חשבון ←</button></div>'}${shown.length>3?'<button type="button" class="home-link" data-home-action="accounts">לעוד '+(shown.length-3)+' חשבונות ←</button>':''}</section></div>
-    <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="expenses"><span class="home-shortcut-icon">₪</span><span><strong>הוצאות ומשיכות</strong><small>כל התנועות במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
+    <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="trades"><span class="home-shortcut-icon">↗</span><span><strong>יומן המסחר</strong><small>עסקאות ופרטים במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
+<button class="ws-text-button ws-finance-link" data-home-nav="biz">מעבר לניהול הכספי העצמאי ←</button>
     ${model.excluded?'<p class="home-muted" role="status">'+model.excluded+' עסקאות עם סכום לא תקין לא נכללו בסיכום. בדוק אותן ביומן.</p>':''}`;
   root.querySelectorAll('[data-home-nav]').forEach(b=>b.addEventListener('click',()=>swNav(b.dataset.homeNav)));
   root.querySelector('#home-account-select')?.addEventListener('change',e=>_homeSelectAccount(e.target.value));
@@ -12333,7 +12264,7 @@ function _coachRenderHome() {
   // 4 Session cards
   const cards = document.getElementById('coach-cards');
   if(cards){
-    const typeKeys = ['day_open','day_close','week_open','week_close'];
+    const typeKeys = ['day_open','day_close'];
     cards.innerHTML = typeKeys.map(type=>{
       const ti   = COACH_TYPES[type];
       const done = coachSessions.find(s=>s.date===today&&s.type===type);
@@ -14566,6 +14497,7 @@ function _hydrateTab(name) {
   _hydrated.add(name);
   /* run the initialiser that normally fires at load for this screen */
   try { if (name === 'course' && typeof _courseRefresh === 'function') _courseRefresh(); } catch (e) {}
+  try { if(name==='help'&&typeof workspaceHelpInit==='function')workspaceHelpInit(); }catch(e){}
   try { if (name === 'help' && typeof loadContactSettings === 'function') loadContactSettings(); } catch (e) {}
   try { if (name === 'help' && typeof _applyInstagramUrl === 'function' && window._instagramUrl) _applyInstagramUrl(window._instagramUrl); } catch (e) {}
   try { if (typeof a11yEnhance === 'function') a11yEnhance(); } catch (e) {}
@@ -14626,12 +14558,12 @@ function _simpleGroup(name) {
 }
 function _simpleSync(name) {
   const group=_simpleGroup(name);
-  const titles={overview:'בית',trades:'יומן מסחר',stats:'ביצועים',biz:'חשבונות וכספים',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
+  const titles={overview:'בית',trades:'יומן מסחר',stats:'ביצועים',biz:'ניהול כספי',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
   const sections={
     overview:[],
     trades:[['trades','עסקאות'],['calendar','לוח שנה'],['import','ייבוא עסקאות'],['calc','מחשבונים'],['ecal','יומן כלכלי']],
     stats:[['stats','סיכום ביצועים'],['merge','השוואה ואיחוד אסטרטגיות']],
-    biz:[['biz','סיכום חשבונות'],['expenses','הוצאות'],['withdrawals','משיכות'],['pnl','רווח והפסד']],
+    biz:[['biz','סיכום'],['expenses','תנועות'],['pnl','דוחות']],
     ai:[['ai','תובנות מהיומן'],['coach','אימון ומשמעת']],
     personal:[['personal','חשבון והעדפות'],['datamgr','נתונים וגיבוי'],['billing','מנוי']],
     help:[['help','עזרה'],['course','קורס מסחר'],['software','תוכנות'],['firms','חברות מימון'],['news','חדשות']]
@@ -14647,14 +14579,14 @@ function _simpleSync(name) {
   const nav=document.getElementById('simple-section-nav');
   if(!nav)return;
   nav.replaceChildren();
-  const secondary={trades:['import','calc','ecal'],biz:['pnl'],help:['news']}[group]||[];
+  const secondary={trades:['import','calc','ecal'],stats:['merge'],help:['course','software','firms','news']}[group]||[];
   let more=null;
   for(const [target,title] of sections[group]||[]){
     const b=document.createElement('button');b.type='button';b.textContent=title;
     if(target===name||(target==='expenses'&&name==='custom'))b.setAttribute('aria-current','page');
     b.addEventListener('click',()=>swNav(target));
     if(secondary.includes(target)){
-      if(!more){more=document.createElement('details');more.className='workspace-more';const summary=document.createElement('summary');summary.textContent='כלים נוספים';more.appendChild(summary);nav.appendChild(more);}
+      if(!more){more=document.createElement('details');more.className='workspace-more';const summary=document.createElement('summary');summary.textContent=group==='help'?'ספרייה':group==='stats'?'כלים מתקדמים':'כלים נוספים';more.appendChild(summary);nav.appendChild(more);}
       more.appendChild(b);if(target===name)more.open=true;
     }else nav.appendChild(b);
   }
@@ -14701,6 +14633,8 @@ function _simpleInit(){
 document.addEventListener('DOMContentLoaded',_simpleInit);
 
 function sw(name,btn){
+  if(['biz','expenses','custom','withdrawals','pnl'].includes(name)){financeNavigate(name==='biz'?'summary':name==='pnl'?'reports':'transactions');return;}
+  if(name==='billing')setTimeout(workspacePlan,60);
   if(name==='lr'||name==='goals') name='overview';
   // Feature gate for plan-restricted tabs
   const _navGates = { calendar:'calendar', stats:'stats_advanced' };
@@ -15213,7 +15147,7 @@ async function _cloudLoad() {
       if (d.td_customSymbols?.length)      customSymbols = d.td_customSymbols;
       if (d.td_recurringTemplates?.length) recurringTemplates = d.td_recurringTemplates;
       if (d.td_accounts?.length && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
-      if (d.td_bizEvents?.length && typeof businessEvents !== 'undefined') { businessEvents = d.td_bizEvents; localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents)); }
+      if (Array.isArray(d.td_bizEvents) && typeof businessEvents !== 'undefined') { businessEvents = d.td_bizEvents; localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents)); }
       if (d.td_bizNotes && typeof businessNotes !== 'undefined') { businessNotes = d.td_bizNotes; localStorage.setItem('dor_bizNotes', JSON.stringify(businessNotes)); }
       if (d.td_notifications?.length) { notifications = d.td_notifications; localStorage.setItem('dor_notifications', JSON.stringify(notifications)); }
       if (typeof renderNotifBell === 'function') renderNotifBell();
@@ -19693,12 +19627,12 @@ window.renderTJ = function renderTJ() {
     const qtyHtml = t.isManual ? (t.manualTradeCount!=null ? t.manualTradeCount : '—') : t.qty;
     const buyHtml = t.isManual ? '—' : t.buy.toFixed(2);
     const sellHtml= t.isManual ? '—' : t.sell.toFixed(2);
-    return `<tr id="tj-row-${ti}" ${noteTitle}>
+    return `<tr class="tj-row" id="tj-row-${ti}" ${noteTitle}>
       <td data-label="" id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
       <td data-label="תאריך" class="mono" style="font-size:11px;color:var(--t3)">${fmtD(t.date)}</td>
       <td data-label="שעה" style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td data-label="תיק">${acctCell}</td>
-      <td data-label="סימול" style="color:var(--t2)">${symHtml}</td>
+      <td data-label="סימול" style="color:var(--t2)">${symHtml}<small class="ws-direction">${t.dir==='long'?'קנייה':t.dir==='short'?'מכירה':''}</small></td>
       <td data-label="כמות" style="color:var(--t3)">${qtyHtml}</td>
       <td data-label="קנייה" class="mono" style="font-size:11px;color:var(--t3)">${buyHtml}</td>
       <td data-label="מכירה" class="mono" style="font-size:11px;color:var(--t3)">${sellHtml}</td>
@@ -19708,7 +19642,7 @@ window.renderTJ = function renderTJ() {
       <td data-label="⭐" style="white-space:nowrap">${starsHtml}</td>
       <td data-label="" style="text-align:center">${imgHtml}</td>
       <td data-label="">
-        <button class="act ed" onclick="openTradeAnnotate(${ti})" title="ערוך">✏️</button>
+        <button class="act" onclick="workspaceTradeDetails(${ti})" title="פרטי עסקה">פרטים</button><button class="act ed" onclick="openTradeAnnotate(${ti})" title="ערוך">עריכה</button>
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
     </tr>`;
@@ -25312,30 +25246,9 @@ function renderAiAssistant() {
     return;
   }
   const a = _aiAnalyze();
-  const sevC = { high:'var(--re)', mid:'var(--go)', low:'var(--t2)' };
-  el.innerHTML = `
-    <div class="zcl" style="margin-bottom:12px">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--pu)"></div>סיכום יום המסחר</div></div>
-      <div style="font-size:14px;color:var(--t1);line-height:1.7">${escHtml(a.summary)}</div>
-    </div>
-    <div class="zg-3" style="grid-template-columns:1fr 1fr">
-      <div class="zcl">
-        <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>ממצאים וטעויות</div></div>
-        ${a.findings.length ? a.findings.map(f=>`
-          <div class="cc-row"><span>${f.icon}</span><span style="color:${sevC[f.sev]};font-size:12.5px">${escHtml(f.txt)}</span></div>`).join('')
-          : '<div class="cc-empty" style="color:var(--gr)">✓ לא זוהו חריגות היום</div>'}
-      </div>
-      <div class="zcl">
-        <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--bl)"></div>הרגלי מסחר</div></div>
-        ${a.habits.length ? a.habits.map(h=>`
-          <div class="cc-row"><span>${h.icon}</span><span style="color:var(--t2);font-size:12.5px">${escHtml(h.txt)}</span></div>`).join('')
-          : '<div class="cc-empty">צריך יותר נתונים לזיהוי דפוסים (מינימום 5 עסקאות לקטגוריה)</div>'}
-      </div>
-    </div>
-    ${a.tips.length ? `<div class="zcl" style="margin-top:12px">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>המלצות לשיפור</div></div>
-      ${a.tips.map(t=>`<div class="cc-row"><span>💡</span><span style="color:var(--t2);font-size:12.5px">${escHtml(t)}</span></div>`).join('')}
-    </div>` : ''}`;
+  const notes=[...a.findings.map(f=>({...f,source:'נתוני היום',count:a.stats?.todayTrades?.length||0})),...a.habits.map(f=>({...f,source:'כל ההיסטוריה',count:tradesList.length}))].slice(0,3);
+  el.innerHTML='<section class="ws-panel"><h1>תובנות מהיומן</h1><p>'+escHtml(a.summary)+'</p><p class="ws-muted">מבוסס על הרשומות ביומן. דפוסים היסטוריים אינם תחזית.</p>'+ (notes.length?notes.map(f=>'<article class="ws-insight"><p>'+escHtml(f.txt)+'</p><small>מקור: '+f.source+' · '+f.count+' עסקאות</small><button class="ws-text-button" onclick="swNav(\'trades\')">לעיון בעסקאות ←</button></article>').join(''):'<div class="ws-empty">אין מספיק נתונים להצגת תובנות נוספות.</div>')+'</section>';
+
 }
 
 /* ── PLAN USAGE LIMITS ── */
@@ -26246,6 +26159,106 @@ function setDigestHour(h) {
     }, 4000);
   });
 })();
+
+</script>
+<dialog class="ws-dialog" id="finance-modal" aria-label="תנועה כספית"></dialog><dialog class="ws-dialog" id="workspace-trade-dialog" aria-label="פרטי עסקה"></dialog>
+<script id="workspace-v56-script">
+/* v56 — independent finance workspace and focused product surfaces. */
+const FINANCE_CATEGORIES=['כללי','תקבול ממשיכה','רכישת מבחן','דמי חשבון','תוכנה ומנויים','ציוד','לימודים','עמלות'];
+let financeView='summary',financeRange='month',financeDate=new Date(),financeType='all',financeQuery='',financeCurrency='USD',financeEditId=null;
+function financeMoney(n,currency=financeCurrency){return new Intl.NumberFormat('he-IL',{style:'currency',currency:['USD','ILS'].includes(currency)?currency:'USD',maximumFractionDigits:2}).format(n);}
+function financeRows(){return businessEvents.filter(e=>['income','expense'].includes(e.type)&&!e.archived);}
+function financePeriodRows(){const y=financeDate.getFullYear(),m=String(financeDate.getMonth()+1).padStart(2,'0');return financeRows().filter(e=>(e.currency||'USD')===financeCurrency&&(financeRange==='all'||String(e.date||'').startsWith(financeRange==='year'?String(y):`${y}-${m}`)));}
+function financeTotals(rows){const income=rows.filter(e=>e.type==='income').reduce((s,e)=>s+Number(e.amount||0),0),expense=rows.filter(e=>e.type==='expense').reduce((s,e)=>s+Number(e.amount||0),0);return {income,expense,net:income-expense};}
+function financeNavigate(view='summary'){
+  financeView=view;document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tp-biz').classList.add('active');_simpleSync('biz');
+  const nav=document.getElementById('simple-section-nav');nav.innerHTML=['summary','transactions','reports'].map((v,i)=>`<button type="button" onclick="financeNavigate('${v}')" ${view===v?'aria-current="page"':''}>${['סיכום','תנועות','דוחות'][i]}</button>`).join('');nav.hidden=false;
+  const add=document.getElementById('add-btn');if(add)add.style.display='none';
+  if(typeof mobNavClose==='function')mobNavClose();if(typeof closeNavMenu==='function')closeNavMenu();if(typeof closeSidePanel==='function')closeSidePanel();
+  document.getElementById('hdr-more')?.classList.remove('open');document.body.classList.remove('drawer-open');if(typeof _syncBottomNav==='function')_syncBottomNav('biz');
+  financeRender();window.scrollTo({top:0,behavior:'instant'});
+}
+function financeChangePeriod(delta){financeDate=new Date(financeDate.getFullYear()+(financeRange==='year'?delta:0),financeDate.getMonth()+(financeRange==='year'?0:delta),1);financeRender();}
+function financeTable(rows,limit){const sorted=[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit||rows.length);return sorted.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>תיאור</th><th>קטגוריה</th><th>סכום</th><th><span class="ws-sr">פעולות</span></th></tr></thead><tbody>${sorted.map(e=>`<tr><td>${escHtml(e.date)}</td><td>${escHtml(e.note|| (e.type==='income'?'תקבול':'הוצאה'))}<small>${e.type==='income'?'תקבול':'הוצאה'}</small></td><td>${escHtml(e.category||'כללי')}</td><td class="${e.type==='income'?'cg':'cr'}" dir="ltr">${e.type==='income'?'+':'−'}${financeMoney(+e.amount)}</td><td><button class="ws-text-button" data-finance-edit="${escHtml(String(e.id))}">פרטים</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="ws-empty"><h2>אין תנועות בתקופה הזו</h2><p>רשום תקבול או הוצאה כדי להתחיל את הסיכום הכספי.</p><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></div>';}
+function financeRender(){
+  const el=document.getElementById('finance-workspace');if(!el)return;
+  const rows=financePeriodRows(),total=financeTotals(rows),label=financeRange==='all'?'כל התקופות':financeDate.toLocaleDateString('he-IL',financeRange==='year'?{year:'numeric'}:{month:'long',year:'numeric'});
+  el.innerHTML=`<header class="ws-heading"><div><p class="ws-eyebrow">ניהול כספי</p><h1>${{summary:'התמונה הכספית שלך',transactions:'תקבולים והוצאות',reports:'דוחות כספיים'}[financeView]}</h1><p>רישום כספי עצמאי · ללא רווחי עסקאות או יעדי מסחר</p></div><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></header>
+  <div class="ws-toolbar"><div class="ws-segment" aria-label="תקופה">${[['month','חודש'],['year','שנה'],['all','הכל']].map(([v,t])=>`<button aria-pressed="${financeRange===v}" onclick="financeRange='${v}';financeRender()">${t}</button>`).join('')}</div><div class="ws-period"><button aria-label="תקופה קודמת" onclick="financeChangePeriod(-1)" ${financeRange==='all'?'disabled':''}>‹</button><strong>${label}</strong><button aria-label="תקופה הבאה" onclick="financeChangePeriod(1)" ${financeRange==='all'?'disabled':''}>›</button></div><label>מטבע <select aria-label="מטבע כספי" onchange="financeCurrency=this.value;financeRender()"><option ${financeCurrency==='USD'?'selected':''}>USD</option><option ${financeCurrency==='ILS'?'selected':''}>ILS</option></select></label></div>
+  ${rows.length?`<div class="ws-kpis">${[['תקבולים',total.income,'cg'],['הוצאות',total.expense,'cr'],['הפרש לתקופה',total.net,'']].map(([t,n,c])=>`<section><p>${t}</p><strong class="${c}" dir="ltr">${financeMoney(n)}</strong></section>`).join('')}</div>`:''}<div id="finance-content"></div>`;
+  const body=el.querySelector('#finance-content');
+  if(financeView==='summary')body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>תנועות אחרונות</h2><button class="ws-text-button" onclick="financeNavigate('transactions')">לכל התנועות ←</button></div>${financeTable(rows,5)}</section><details class="simple-details"><summary>הערות לתקופה</summary><label>הערה <textarea id="finance-note" oninput="financeSaveNote(this.value)">${escHtml(businessNotes[financeNoteKey()]||'')}</textarea></label></details>`;
+  if(financeView==='transactions'){body.innerHTML=`<section class="ws-panel"><div class="ws-toolbar"><label class="ws-search">חיפוש<input type="search" value="${escHtml(financeQuery)}" placeholder="תיאור או קטגוריה" oninput="financeQuery=this.value;financeRenderRows()"></label><label>סוג<select onchange="financeType=this.value;financeRenderRows()"><option value="all" ${financeType==='all'?'selected':''}>כל התנועות</option><option value="income" ${financeType==='income'?'selected':''}>תקבולים</option><option value="expense" ${financeType==='expense'?'selected':''}>הוצאות</option></select></label><button class="bn" onclick="financeExportCSV()">ייצוא לתקופה</button></div><div id="finance-rows"></div></section>`;financeRenderRows();}
+  if(financeView==='reports'){
+    const groups=new Map();rows.forEach(e=>{const k=e.date.slice(0,7);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(e);});
+    const cats=new Map();rows.filter(e=>e.type==='expense').forEach(e=>{const k=e.category||'כללי';cats.set(k,(cats.get(k)||0)+Number(e.amount));});
+    body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>סיכום לפי חודשים</h2><button class="bn" onclick="financeExportCSV()">ייצוא תנועות</button></div>${groups.size?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>חודש</th><th>תקבולים</th><th>הוצאות</th><th>הפרש</th></tr></thead><tbody>${[...groups].sort((a,b)=>b[0].localeCompare(a[0])).map(([key,list])=>{const t=financeTotals(list);return `<tr><td>${key}</td><td>${financeMoney(t.income)}</td><td>${financeMoney(t.expense)}</td><td>${financeMoney(t.net)}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="ws-empty">אין תנועות להצגה בתקופה הזו.</p>'}</section><section class="ws-panel"><h2>הוצאות לפי קטגוריה</h2>${cats.size?[...cats].sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`<div class="ws-category"><span>${escHtml(cat)}</span><strong>${financeMoney(n)}</strong></div>`).join(''):'<p>אין הוצאות בתקופה הזו.</p>'}</section><details class="simple-details"><summary>רשומות מהמערכת הקודמת</summary><p>נשמרו לעיון ולייצוא. אינן נכללות בדוחות החדשים ואינן משנות חשבון מסחר. לפני רישום תקבול מחדש, בדוק שלא קיים כבר בתנועות.</p><button class="bn" onclick="financeLegacy()">הצגת הרשומות</button><button class="bn" onclick="financeLegacyExport()">ייצוא הארכיון</button><div id="finance-legacy-list"></div></details>`;
+  }
+}
+function financeNoteKey(){return financeRange==='month'?`${financeDate.getFullYear()}-${String(financeDate.getMonth()+1).padStart(2,'0')}`:`finance-${financeRange}-${financeDate.getFullYear()}`;}
+function financeSaveNote(value){businessNotes[financeNoteKey()]=value;saveBizData();}
+function financeRenderRows(){const el=document.getElementById('finance-rows');if(el)el.innerHTML=financeTable(financePeriodRows().filter(e=>(financeType==='all'||e.type===financeType)&&`${e.note||''} ${e.category||''} ${e.date}`.toLowerCase().includes(financeQuery.toLowerCase())));}
+function financeOpen(id){
+  const existing=id?financeRows().find(e=>String(e.id)===String(id)):null;if(id&&!existing)return;financeEditId=existing?.id||null;
+  const box=document.getElementById('finance-modal');box.innerHTML=`<form class="ws-finance-form"><div class="ws-panel-title"><h2>${existing?'פרטי תנועה':'תנועה חדשה'}</h2><button type="button" class="bn" onclick="document.getElementById('finance-modal').close()">סגירה</button></div><div class="ws-form-grid"><label>סוג<select name="type"><option value="income">תקבול</option><option value="expense">הוצאה</option></select></label><label>תאריך<input name="date" type="date" required></label><label>סכום<input name="amount" type="number" min="0.01" max="999999999" step="0.01" required inputmode="decimal"></label><label>מטבע<select name="currency"><option>USD</option><option>ILS</option></select></label><label>קטגוריה<select name="category">${FINANCE_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select></label><label>תיאור<input name="note" maxlength="250" placeholder="תיאור קצר (אופציונלי)"></label></div><p class="ws-muted">משיכה שהתקבלה נרשמת פעם אחת, כתקבול בקטגוריה „תקבול ממשיכה”.</p><div class="ws-toolbar"><button class="home-primary" type="submit">שמירת תנועה</button>${existing?'<button type="button" class="bn" onclick="financeArchive()">העברה לארכיון</button>':''}</div><p role="status" id="finance-form-status"></p></form>`;
+  const form=box.querySelector('form');Object.entries({type:existing?.type||'income',date:existing?.date||_homeDate(new Date()),amount:existing?.amount||'',currency:existing?.currency||financeCurrency,category:existing?.category||'כללי',note:existing?.note||''}).forEach(([k,v])=>form.elements.namedItem(k).value=v);
+  form.onsubmit=e=>{e.preventDefault();financeSave(form);};box.showModal();
+}
+function financeSave(form){
+  const data=Object.fromEntries(new FormData(form)),amount=Number(data.amount);
+  if(!['income','expense'].includes(data.type)||!['USD','ILS'].includes(data.currency)||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Number.isFinite(amount)||amount<=0||amount>999999999){document.getElementById('finance-form-status').textContent='בדוק את התאריך והסכום';return;}
+  const row={id:financeEditId||'fin_'+crypto.randomUUID(),type:data.type,date:data.date,amount:Math.round(amount*100)/100,currency:data.currency,category:FINANCE_CATEGORIES.includes(data.category)?data.category:'כללי',note:String(data.note).slice(0,250)};
+  const next=businessEvents.slice(),i=next.findIndex(e=>e.id===financeEditId);if(financeEditId&&i<0)return;
+  if(i>=0)next[i]={...next[i],...row};else next.push(row);
+  if(!financeCommit(next))return;document.getElementById('finance-modal').close();financeRender();showToast('התנועה נשמרה','success');
+}
+function financeCommit(next){try{localStorage.setItem('dor_bizEvents',JSON.stringify(next));}catch(e){showToast('השמירה במכשיר נכשלה. נסה שוב לפני סגירת החלון.','error');return false;}businessEvents=next;if(typeof _cloudSave==='function')_cloudSave();return true;}
+function financeArchive(){const next=businessEvents.map(e=>e.id===financeEditId?{...e,archived:true}:e);if(financeCommit(next)){document.getElementById('finance-modal').close();financeRender();showToast('התנועה נשמרה בארכיון','info');}}
+function financeRestore(id){if(financeCommit(businessEvents.map(e=>String(e.id)===String(id)?{...e,archived:false}:e))){financeRender();financeLegacy();}}
+function financeLegacyData(){return {businessEvents:businessEvents.filter(e=>!['income','expense'].includes(e.type)||e.archived),records:typeof records==='undefined'?[]:records,customExpenses:typeof customExpenses==='undefined'?[]:customExpenses,accountWithdrawals:typeof accounts==='undefined'?[]:accounts.map(a=>({name:a.name,withdrawals:a.withdrawals||[]})).filter(a=>a.withdrawals.length)};}
+function financeLegacy(){const el=document.getElementById('finance-legacy-list');if(!el)return;const data=financeLegacyData(),flat=[...data.businessEvents.map(e=>({date:e.date,label:e.note||BIZ_TYPE_INFO[e.type]?.label||e.type,amount:e.amount,currency:e.currency||'USD',id:e.id,restore:e.archived})),...data.records.map(e=>({date:e.date,label:`${e.type||''} · ${e.company||e.desc||''}`,amount:e.amount,currency:'USD'})),...data.customExpenses.map(e=>({date:e.date,label:e.desc||e.category,amount:e.amount,currency:'USD'})),...data.accountWithdrawals.flatMap(a=>a.withdrawals.map(e=>({date:e.date,label:'משיכה · '+a.name,amount:e.amount,currency:'USD'})))];el.innerHTML=flat.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>רשומה</th><th>סכום</th><th></th></tr></thead><tbody>${flat.sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(e=>`<tr><td>${escHtml(e.date||'')}</td><td>${escHtml(e.label||'')}</td><td>${Number.isFinite(+e.amount)&&e.amount!==null?financeMoney(+e.amount,e.currency):'—'}</td><td>${e.restore?`<button class="bn" data-finance-restore="${escHtml(String(e.id))}">שחזור לתנועות</button>`:'לעיון'}</td></tr>`).join('')}</tbody></table></div>`:'<p>אין רשומות בארכיון.</p>';}
+function workspaceDownload(name,text,type='application/json'){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function financeLegacyExport(){workspaceDownload('fayna-finance-archive.json',JSON.stringify(financeLegacyData(),null,2));}
+function financeExportCSV(){if(!canUse('export_csv')){showUpgradeModal('export_csv');return;}const cell=v=>'"'+String(v??'').replace(/^[=+@\-]/,"'$&").replace(/"/g,'""')+'"';const rows=financePeriodRows().map(e=>[e.date,e.type==='income'?'תקבול':'הוצאה',e.category||'כללי',e.note,e.amount,e.currency||'USD']);workspaceDownload('fayna-finance.csv','\ufeff'+[['תאריך','סוג','קטגוריה','תיאור','סכום','מטבע'],...rows].map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
+function workspaceBackup(kind){if(!canUse('backup')){showUpgradeModal('backup');return;}const data=kind==='finance'?{kind:'fayna-finance',version:1,businessEvents,businessNotes}:{kind:'fayna-trading',version:1,tradesList,accounts,commSettings,customSymbols};workspaceDownload(kind+'-backup.json',JSON.stringify(data,null,2));}
+async function workspaceRestore(input,kind){
+  try{const file=input.files[0];if(!file)return;if(!canUse('backup')){showUpgradeModal('backup');return;}if(file.size>25*1024*1024)throw Error('הקובץ גדול מדי');const d=JSON.parse(await file.text());
+    if(d.kind!=='fayna-'+kind||d.version!==1)throw Error('זה אינו גיבוי מתאים לאזור שנבחר');
+    if(kind==='finance'){
+      if(!Array.isArray(d.businessEvents)||d.businessEvents.some(e=>!e||typeof e.id!=='string'||typeof e.type!=='string'||typeof e.date!=='string'||(['income','expense'].includes(e.type)&&(!Number.isFinite(e.amount)||e.amount<0))))throw Error('רשומות כספיות לא תקינות');
+      if(!await customConfirm('למזג את הגיבוי הכספי? רשומות קיימות עם אותו מזהה יישמרו. יומן המסחר לא ישתנה.'))return;
+      const ids=new Set(businessEvents.map(e=>e.id)),next=[...businessEvents];for(const row of d.businessEvents){if(!ids.has(row.id)){next.push(row);ids.add(row.id);}}if(!financeCommit(next))return;
+      businessNotes={...(d.businessNotes||{}),...businessNotes};saveBizData();financeRender();
+    }else{
+      if(!Array.isArray(d.tradesList)||!Array.isArray(d.accounts)||d.tradesList.some(e=>!e||typeof e.date!=='string'||!Number.isFinite(e.pnl)||typeof e.sym!=='string')||d.accounts.some(a=>!a||typeof a.id!=='string'||typeof a.name!=='string'))throw Error('גיבוי מסחר לא תקין');
+      if(!await customConfirm('לשחזר את עסקאות וחשבונות המסחר מהגיבוי? הנתונים הכספיים לא ישתנו. מומלץ לייצא גיבוי מסחר לפני המשך.'))return;
+      tradesList=d.tradesList;accounts=d.accounts;if(d.commSettings)Object.assign(commSettings,d.commSettings);if(Array.isArray(d.customSymbols))customSymbols=d.customSymbols;saveAccounts();saveData();renderAll();
+    }showToast('הגיבוי נטען','success');
+  }catch(e){showToast(e.message||'לא ניתן לקרוא את הגיבוי','error');}finally{input.value='';}
+}
+function workspaceTradeDetails(index){const t=tradesList[index];if(!t)return;const box=document.getElementById('workspace-trade-dialog');box.innerHTML=`<div class="ws-panel-title"><h2>${escHtml(t.sym)} · ${escHtml(t.date)}</h2><button class="bn" onclick="document.getElementById('workspace-trade-dialog').close()">סגירה</button></div><dl class="ws-trade-detail">${[['חשבון',accounts.find(a=>a.id===t.acct)?.name||'—'],['כיוון',t.dir||t.direction||'—'],['כמות',t.qty??'—'],['קנייה',t.buy??'—'],['מכירה',t.sell??'—'],['משך',t.dur||'—'],['אסטרטגיה',t.strategy||'—'],['עמלה',financeMoney(tradeComm(t),'USD')],['תוצאה נטו',financeMoney(tradeNet(t),'USD')],['הערות',t.notes||t.note||'—']].map(([k,v])=>`<div><dt>${k}</dt><dd>${escHtml(String(v))}</dd></div>`).join('')}</dl><button class="bn" onclick="document.getElementById('workspace-trade-dialog').close();openTradeChart(${index})">גרף העסקה</button><button class="bn" onclick="document.getElementById('workspace-trade-dialog').close();openTradeAnnotate(${index})">עריכה ותמונות</button>`;box.showModal();}
+function workspaceJournalSearch(value){document.querySelectorAll('#tj-body tr.tj-row').forEach(row=>row.hidden=!row.textContent.toLowerCase().includes(value.toLowerCase()));}
+function workspaceHelpSearch(value){const q=value.toLowerCase();document.querySelectorAll('#tp-help details').forEach(d=>d.hidden=!d.textContent.toLowerCase().includes(q));}
+function workspaceHelpInit(){const help=document.getElementById('tp-help');if(!help||help.querySelector('.ws-search'))return;const old=document.createElement('details');old.className='simple-details';old.innerHTML='<summary>מדריכים קודמים ויצירת קשר</summary>';while(help.firstChild)old.appendChild(help.firstChild);help.appendChild(old);const faq=document.createElement('section');faq.className='ws-panel';faq.innerHTML='<h1>איך אפשר לעזור?</h1><label class="ws-search">חיפוש בעזרה<input type="search" placeholder="מה תרצה לדעת?" oninput="workspaceHelpSearch(this.value)"></label>'+[['איפה מנהלים חשבונות מסחר?','ביומן המסחר, דרך ניהול חשבונות מסחר. שינוי חשבון אינו משנה את הדוחות הכספיים.'],['איך מוסיפים תקבול או הוצאה?','בניהול הכספי בוחרים הוספת תנועה. משיכה שהתקבלה נרשמת פעם אחת כתקבול.'],['איפה הנתונים הכספיים הקודמים?','ניהול כספי ← דוחות ← רשומות מהמערכת הקודמת. הם נשמרו לעיון ולייצוא ואינם נספרים אוטומטית בתנועות החדשות.'],['איך מייבאים עסקאות?','יומן מסחר ← כלים נוספים ← ייבוא עסקאות. בוחרים קובץ, בודקים תצוגה מקדימה וכפילויות ומאשרים.'],['איך משנים את מראה האתר?','בחר בהיר או כהה בסרגל העליון. אפשר לראות את שתי האפשרויות גם בהגדרות הפרופיל.'],['איך מגבים נתונים?','הגדרות ← נתונים וגיבוי. מסחר וכספים מיוצאים ומשוחזרים בנפרד.']].map(([q,a])=>`<details class="simple-details"><summary>${q}</summary><p>${a}</p></details>`).join('');help.prepend(faq);}
+function workspaceInit(){
+  const biz=document.getElementById('tp-biz');biz.innerHTML='<div id="finance-workspace"></div>';financeRender();
+  const stats=document.getElementById('tp-stats');const charts=stats.querySelector('.ch');if(charts?.children[1]){const extra=document.getElementById('simple-stats-details');if(extra)extra.appendChild(charts.children[1]);charts.style.gridTemplateColumns='1fr';}
+  const calc=document.getElementById('tp-calc'),grid=calc.querySelector('.clx-grid')||calc.querySelector('.clx-card')?.parentElement;
+  if(grid){const more=document.createElement('details');more.className='simple-details';more.innerHTML='<summary>מחשבונים מתקדמים</summary><div class="ws-tools"></div>';grid.after(more);[...grid.querySelectorAll('.clx-card')].forEach(card=>{const handler=card.getAttribute('onclick');const b=document.createElement('button');b.className='clx-card';b.type='button';b.setAttribute('onclick',handler);b.innerHTML=card.innerHTML;card.replaceWith(b);if(!/clxOpen\('(rr|contracts)'\)/.test(handler))more.lastElementChild.appendChild(b);});}
+  const journal=document.getElementById('tp-trades'),bar=document.createElement('div');bar.className='ws-toolbar';bar.innerHTML='<label class="ws-search">חיפוש ביומן<input type="search" placeholder="נכס, תאריך או חשבון" oninput="workspaceJournalSearch(this.value)"></label><button class="bn" onclick="openAcctGrid()">ניהול חשבונות מסחר</button><button class="bn" onclick="document.getElementById(\'tj-table\').classList.toggle(\'ws-expanded\');this.setAttribute(\'aria-pressed\',document.getElementById(\'tj-table\').classList.contains(\'ws-expanded\'))" aria-pressed="false">עמודות נוספות</button>';journal.prepend(bar);
+  const personal=document.getElementById('pa-profile');if(personal){const p=document.createElement('section');p.className='ws-panel';p.innerHTML='<h2>מראה סביבת העבודה</h2><div class="ws-theme-options"><button data-fayna-mode="dark" onclick="setFaynaTheme(\'dark\')"><span class="ws-theme-dot ws-mint"></span><strong>גרפיט ומנטה</strong><small>מצב כהה · Heebo</small></button><button data-fayna-mode="light" onclick="setFaynaTheme(\'light\')"><span class="ws-theme-dot ws-stone"></span><strong>אבן חמה</strong><small>מצב בהיר · Rubik</small></button></div>';personal.prepend(p);_initTheme();}
+  const dm=document.getElementById('tp-datamgr'),intro=document.createElement('div');intro.className='ws-backups';intro.innerHTML='<header class="ws-heading"><div><h1>נתונים וגיבוי</h1><p>כל אזור נשמר ומשוחזר בנפרד.</p></div></header>'+[['trading','מסחר','עסקאות, חשבונות מסחר והגדרות עמלות'],['finance','כספים','תנועות והערות כספיות עצמאיות']].map(([k,t,sub])=>`<section class="ws-panel"><h2>${t}</h2><p>${sub}</p><div class="ws-toolbar"><button class="bn" onclick="workspaceBackup('${k}')">ייצוא גיבוי</button><label class="bn">שחזור גיבוי<input type="file" accept=".json" onchange="workspaceRestore(this,'${k}')"></label></div></section>`).join('');const legacy=document.createElement('details');legacy.className='simple-details';legacy.innerHTML='<summary>כלים קודמים ופעולות מתקדמות</summary>';while(dm.firstChild)legacy.appendChild(dm.firstChild);dm.append(intro,legacy);
+  legacy.querySelectorAll('button[onclick^="openAdd"],button[onclick^="openCX"]').forEach(b=>b.onclick=()=>financeNavigate('transactions'));
+  workspaceHelpInit();
+  const billing=document.getElementById('tp-billing');if(billing){const options=document.createElement('details');options.className='simple-details';options.innerHTML='<summary>השוואת מסלולים ושדרוג</summary>';const children=[...billing.children];children.forEach(c=>options.appendChild(c));billing.appendChild(options);const h=document.createElement('div');h.className='ws-panel';h.id='workspace-plan-summary';billing.prepend(h);}
+  document.addEventListener('click',e=>{const edit=e.target.closest('[data-finance-edit]'),restore=e.target.closest('[data-finance-restore]');if(edit)financeOpen(edit.dataset.financeEdit);if(restore)financeRestore(restore.dataset.financeRestore);const row=e.target.closest('#tj-body tr.tj-row');if(row&&!e.target.closest('button,input,a,select,[onclick],img'))workspaceTradeDetails(Number(row.id.replace('tj-row-','')));});
+  for(const id of ['finance-modal','workspace-trade-dialog']){const dialog=document.getElementById(id);dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});}
+  workspaceIcons();
+}
+function workspacePlan(){const el=document.getElementById('workspace-plan-summary');if(!el)return;const plan=currentUser?.plan||'free',end=currentUser?.planExpiresAt?.toDate?.();el.innerHTML=`<h1>המנוי שלך</h1><p>מסלול נוכחי: <strong>${escHtml(plan)}</strong></p><p class="ws-muted">${end?'בתוקף עד '+end.toLocaleDateString('he-IL'):plan==='free'?'מסלול חינמי':currentUser?.planCycle==='lifetime'?'ללא תאריך תפוגה':'תאריך תוקף לא הוגדר'}</p><button class="bn" onclick="document.querySelector('#tp-billing>details').open=true">ניהול המנוי והמסלולים</button>`;}
+function workspaceIcons(){const paths={overview:'M3 10 12 3l9 7M5 9v12h14V9M9 21v-8h6v8',trades:'M4 3h16v18H4zM8 7h8M8 12h8M8 17h5',stats:'M4 20V12M10 20V4M16 20V8M22 20H2',biz:'M3 6h18v15H3zM3 10h18M15 15h3',ai:'m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z',personal:'M3 7h18M3 17h18M8 4v6M16 14v6',help:'M9 8a3 3 0 0 1 6 0c0 3-3 2-3 5M12 17v1'};document.querySelectorAll('.sn-item,.nav-menu-item,.mob-nt,.mob-bnav-btn').forEach(b=>{const k=b.id.split('-').pop(),icon=b.querySelector('.sn-icon,.mbn-icon');if(icon&&paths[k])icon.innerHTML=`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[k]}"/></svg>`;});}
+document.addEventListener('DOMContentLoaded',workspaceInit);
 
 </script>
 </body>
