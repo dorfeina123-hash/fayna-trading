@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
 const {chromium}=require('playwright');
-const before=fs.readFileSync('dor_trading_v52.html','utf8'),after=fs.readFileSync('index.html','utf8');
+const before=fs.readFileSync('dor_trading_v53.html','utf8'),after=fs.readFileSync('index.html','utf8');
 const scripts=s=>[...s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!m[1].includes('src=')&&!/application\/ld\+json/.test(m[1]));
 let checked=0;for(const m of scripts(after)){if(m[2].trim()){new vm.Script(m[2]);checked++;}}
 const styles=s=>[...s.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
@@ -8,7 +8,7 @@ assert.equal(styles(before).length,styles(after).length);
 for(const m of styles(after))assert.equal((m[1].match(/{/g)||[]).length,(m[1].match(/}/g)||[]).length);
 const declarations=s=>new Set([...s.matchAll(/^(?:async )?(?:function|let|const|var)\s+(\w+)/gm)].map(m=>m[1]));
 assert.deepEqual([...declarations(before)].filter(n=>!declarations(after).has(n)),[]);
-assert.equal(after,fs.readFileSync('dor_trading_v53.html','utf8'));
+assert.equal(after,fs.readFileSync('dor_trading_v54.html','utf8'));
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});
@@ -34,7 +34,8 @@ assert.equal(after,fs.readFileSync('dor_trading_v53.html','utf8'));
  await page.getByRole('button',{name:'לוח שנה',exact:true}).click();
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-calendar');
  assert.equal(await page.locator('#sni-trades').getAttribute('aria-current'),'page');
- await page.getByRole('button',{name:'ייבוא עסקאות',exact:true}).click();
+ await page.locator('#simple-section-nav .workspace-more>summary').click();
+ await page.locator('#simple-section-nav').getByRole('button',{name:'ייבוא עסקאות',exact:true}).click();
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-import');
  await page.locator('#sni-biz').click();await page.getByRole('button',{name:'הוצאות',exact:true}).click();
  await page.locator('#tp-expenses select[aria-label="סוג הוצאה"]').selectOption('custom');
@@ -49,9 +50,7 @@ assert.equal(after,fs.readFileSync('dor_trading_v53.html','utf8'));
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-trades');assert.equal(await page.evaluate(()=>gateHits),1);
  await page.evaluate(()=>swNav('lr'));assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-overview');
  assert.equal(await page.locator('#tp-overview #focus-goal-gauge-body').count(),1);
- await page.locator('#simple-overview-details>summary').click();
- assert(await page.locator('#ov-row3').isVisible());
- await page.locator('#simple-overview-details>summary').click();
+ assert.equal(await page.locator('#overview-top-widgets').isVisible(),false);
  await page.evaluate(()=>{document.getElementById('add-trade-modal').classList.add('open');document.getElementById('at-sym').value='MES';});
  await page.locator('#trade-extra-details>summary').click();await page.getByRole('button',{name:'פתח מחשבונים',exact:true}).click();
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-calc');
