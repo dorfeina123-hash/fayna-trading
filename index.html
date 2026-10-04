@@ -4071,6 +4071,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div class="fr" style="margin-bottom:0"><label style="font-size:10px">תאריך משיכה</label><input type="date" id="ag-wd-date"></div>
       <div class="fr" style="margin-bottom:0"><label style="font-size:10px">סכום ($)</label><input type="number" id="ag-wd-amount" step="1" placeholder="0" dir="ltr" inputmode="decimal"></div>
     </div>
+    <div class="fr"><label style="font-size:10px">עמלה ($) · אופציונלי, נספרת כהוצאה</label><input type="number" id="ag-wd-fee" step="0.01" min="0" placeholder="0" dir="ltr" inputmode="decimal"></div>
     <div class="fr"><input type="text" id="ag-wd-note" placeholder="הערה (אופציונלי)"></div>
     <button type="button" onclick="agAddWithdrawal()" style="margin-bottom:10px;padding:6px 12px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--gr);font-family:inherit;font-weight:600">+ הוסף משיכה</button>
 
@@ -7647,7 +7648,8 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <div id="wd-f" style="display:none">
       <div class="fr"><label>חברת נוסטרו (ממנה בוצעה המשיכה)</label><select id="f-wdco"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></div>
-      <div class="fr"><label>עמלת חברה (%)</label><input type="number" id="f-wp" step="1" value="20" oninput="cWd()" inputmode="decimal"></div>
+      <div class="fr"><label>עמלת חברה (%)</label><input type="number" id="f-wp" step="any" value="20" oninput="_wdFeeMode='pct';cWd()" inputmode="decimal"></div>
+      <div class="fr"><label>או עמלה בסכום (באותו מטבע)</label><input type="number" id="f-wf" step="0.01" min="0" placeholder="0" oninput="_wdFeeMode='abs';cWd()" inputmode="decimal" dir="ltr"></div>
       <div class="wc show" id="wc-box">
         <div class="wcr"><span>ברוטו</span><span id="wc-g">$0.00</span></div>
         <div class="wcr"><span>עמלה (<span id="wc-p">20</span>%)</span><span id="wc-f">-$0.00</span></div>
@@ -14242,6 +14244,7 @@ async function tvConnect(env){
 // MODAL
 let editI=-1,mType='הוצאה';
 let mCurrency = 'USD';
+let _wdFeeMode = 'pct'; // which of the two fee inputs (percent / amount) the user last edited
 function setCurrency(cur) {
   mCurrency = cur;
   document.getElementById('cur-usd').classList.toggle('active', cur==='USD');
@@ -14263,6 +14266,7 @@ function openAdd(ft){
   document.getElementById('f-rtool').value='';
   document.getElementById('recur-sub').style.display='none';
   setCurrency('USD');
+  _wdFeeMode='pct';{const fe=document.getElementById('f-wf');if(fe)fe.value='';}
   setMT(ft||'הוצאה');updateRateHint();
   document.getElementById('modal').classList.add('open');
 }
@@ -14284,7 +14288,8 @@ function openEdit(ri){
     document.getElementById('f-am').value=r.amount;
   }
   setMT(r.type);
-  if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;}
+  if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;
+    if(r.wdFeeAmt!=null){_wdFeeMode='abs';document.getElementById('f-wf').value=r.currency==='ILS'?+(r.wdFeeAmt*(r.rate||3.65)).toFixed(2):r.wdFeeAmt;}else{_wdFeeMode='pct';document.getElementById('f-wf').value='';}}
   else{document.getElementById('f-co').value=r.company||'BULENOX';_setFormCat(r.cat||'מבחן');document.getElementById('f-pv').value=String(r.portVal||0);}
   cWd();document.getElementById('modal').classList.add('open');
 }
@@ -14341,14 +14346,24 @@ function updateRateHint(){
   if(dt){const hr=histRate(dt);document.getElementById('rate-hint').textContent='היסטורי: '+hr;document.getElementById('f-rt').value=hr;}
 }
 document.addEventListener('DOMContentLoaded',()=>{const fd=document.getElementById('f-dt');if(fd)fd.addEventListener('change',updateRateHint);});
+function _wdFeeCalc(usd,rt){
+  if(_wdFeeMode==='abs'){
+    const fa=parseFloat(document.getElementById('f-wf')?.value)||0;
+    const fee=Math.min(usd,Math.max(0,+(mCurrency==='ILS'?fa/rt:fa).toFixed(2)));
+    return {fee,p:usd?+(fee/usd*100).toFixed(2):0};
+  }
+  const p=parseFloat(document.getElementById('f-wp')?.value)||0;
+  return {fee:+(usd*p/100).toFixed(2),p};
+}
 function cWd(){
   const raw=parseFloat(document.getElementById('f-am').value)||0;
   const rt=parseFloat(document.getElementById('f-rt')?.value)||3.65;
   const usd = mCurrency==='ILS' ? raw/rt : raw;
   const ils = mCurrency==='ILS' ? raw : raw*rt;
   // Withdrawal calc
-  const p=parseFloat(document.getElementById('f-wp')?.value)||0;
-  const fee=+(usd*p/100).toFixed(2);
+  const _fc=_wdFeeCalc(usd,rt),p=_fc.p,fee=_fc.fee;
+  {const pe=document.getElementById('f-wp'),fe=document.getElementById('f-wf');
+   if(_wdFeeMode==='abs'){if(pe)pe.value=p;}else if(fe){fe.value=fee?+(mCurrency==='ILS'?fee*rt:fee).toFixed(2):'';}}
   document.getElementById('wc-g').textContent='$'+usd.toFixed(2);
   document.getElementById('wc-p').textContent=p;
   document.getElementById('wc-f').textContent='-$'+fee.toFixed(2);
@@ -14391,7 +14406,7 @@ function saveRec(){
 
   let r={id:editI>=0?records[editI].id:uid(),date:dt,type:mType,amount:amUSD,rate:rt,done:true};
   if(mCurrency==='ILS'){ r.currency='ILS'; r.amountILS=rawAm; }
-  if(mType==='משיכה'){const p=parseFloat(document.getElementById('f-wp').value)||0;const f=+(amUSD*p/100).toFixed(2);r={...r,company:document.getElementById('f-wdco').value,portVal:0,cat:'משיכה',wdGross:amUSD,wdPct:p,wdFeeAmt:f,wdNet:+(amUSD-f).toFixed(2)};}
+  if(mType==='משיכה'){const _fc=_wdFeeCalc(amUSD,rt),p=_fc.p,f=_fc.fee;r={...r,company:document.getElementById('f-wdco').value,portVal:0,cat:'משיכה',wdGross:amUSD,wdPct:p,wdFeeAmt:f,wdNet:+(amUSD-f).toFixed(2)};}
   else{r.company=document.getElementById('f-co').value;r.cat=_getFormCat();r.portVal=parseInt(document.getElementById('f-pv').value)||0;r.note=document.getElementById('f-note').value;}
   if(editI>=0)records[editI]=r;else records.push(r);
   cModal();renderAll();
@@ -15308,7 +15323,7 @@ window.addEventListener('load', () => {
   } catch(e) { console.warn('Auto-load failed:', e); }
 });
 
-function renderAll(){renderOV();renderExp();renderWD();renderPNL();renderTJ();renderCal();renderCX();renderRecurringManager();_updateCommDisplay();}
+function renderAll(){renderOV();renderExp();renderWD();renderPNL();renderTJ();renderCal();renderCX();renderRecurringManager();_updateCommDisplay();try{if(typeof financeRender==='function'&&document.getElementById('tp-biz')?.classList.contains('active'))financeRender();}catch(_){}}
 
 // Observe cards for entrance animation
 const cardObserver = new IntersectionObserver(entries=>{
@@ -15950,7 +15965,7 @@ function _agRenderWithdrawals() {
     const i = a.withdrawals.indexOf(w);
     return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:4px;font-size:11px">
       <span class="mono" style="color:var(--t3);min-width:78px">${fmtD(w.date)}</span>
-      <span style="color:var(--gr);font-weight:700;min-width:70px">$${(+w.amount||0).toFixed(0)}</span>
+      <span style="color:var(--gr);font-weight:700;min-width:70px">$${(+w.amount||0).toFixed(0)}</span>${+w.fee>0?`<span style="color:var(--re);min-width:60px">עמלה $${(+w.fee).toFixed(2)}</span>`:''}
       <span style="flex:1;color:var(--t3)">${escHtml(w.note||'')}</span>
       <button type="button" onclick="agRemoveWithdrawal(${i})" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px">✕</button>
     </div>`;
@@ -15966,10 +15981,15 @@ function agAddWithdrawal() {
   const date   = document.getElementById('ag-wd-date').value;
   const amount = parseFloat(document.getElementById('ag-wd-amount').value);
   const note   = (document.getElementById('ag-wd-note').value||'').trim();
+  const fee    = parseFloat(document.getElementById('ag-wd-fee').value)||0;
   if (!date) { showToast('נא לבחור תאריך משיכה','error'); return; }
   if (isNaN(amount) || amount<=0) { showToast('נא להזין סכום משיכה תקין','error'); return; }
+  if (fee<0 || fee>amount) { showToast('העמלה לא יכולה להיות שלילית או גדולה מסכום המשיכה','error'); return; }
   a.withdrawals = a.withdrawals || [];
-  a.withdrawals.push({ id:'wd_'+Date.now(), date, amount:+amount.toFixed(2), note });
+  const wdRow = { id:'wd_'+Date.now(), date, amount:+amount.toFixed(2), note };
+  if (fee>0) wdRow.fee = +fee.toFixed(2); // optional; rows without it are read as fee 0
+  a.withdrawals.push(wdRow);
+  document.getElementById('ag-wd-fee').value = '';
   document.getElementById('ag-wd-amount').value = '';
   document.getElementById('ag-wd-note').value = '';
   saveAccounts();
@@ -26171,6 +26191,101 @@ function financeMoney(n,currency=financeCurrency){return new Intl.NumberFormat('
 function financeRows(){return businessEvents.filter(e=>['income','expense'].includes(e.type)&&!e.archived);}
 function financePeriodRows(){const y=financeDate.getFullYear(),m=String(financeDate.getMonth()+1).padStart(2,'0');return financeRows().filter(e=>(e.currency||'USD')===financeCurrency&&(financeRange==='all'||String(e.date||'').startsWith(financeRange==='year'?String(y):`${y}-${m}`)));}
 function financeTotals(rows){const income=rows.filter(e=>e.type==='income').reduce((s,e)=>s+Number(e.amount||0),0),expense=rows.filter(e=>e.type==='expense').reduce((s,e)=>s+Number(e.amount||0),0);return {income,expense,net:income-expense};}
+/* v58-finance-begin
+   Unified summary. The ledger (businessEvents) stays as is; the ORIGINAL expense log, free expenses and
+   withdrawals are read straight from their original arrays at render time. Nothing is copied, written
+   or migrated, so an old and a new record can never be counted twice from two stores. */
+function financeInPeriod(date){const y=financeDate.getFullYear(),m=String(financeDate.getMonth()+1).padStart(2,'0'),d=String(date||'');return financeRange==='all'||d.startsWith(financeRange==='year'?String(y):`${y}-${m}`);}
+function financeConvert(usd,rate,date,cur,ilsOriginal){
+  const u=Number(usd);if(!Number.isFinite(u))return NaN;
+  if(cur==='USD')return u;
+  const o=Number(ilsOriginal);if(ilsOriginal!=null&&Number.isFinite(o)&&o>0)return o;
+  const r=Number(rate)>0?Number(rate):histRate(String(date||''));
+  return u*r;
+}
+function financeLegacyRows(){
+  const cur=financeCurrency,out=[],okDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||''));
+  const add=o=>{const amt=Math.round(o.amount*100)/100;if(!Number.isFinite(amt)||amt<=0||!financeInPeriod(o.date))return;out.push({...o,amount:amt,currency:cur,legacy:true});};
+  const recs=typeof records!=='undefined'&&Array.isArray(records)?records:[];
+  recs.forEach((r,i)=>{
+    if(!r||!okDate(r.date))return;
+    const ilsGross=r.currency==='ILS'?r.amountILS:null;
+    if(r.type==='הוצאה'){
+      add({id:'rec:'+r.id,idx:i,src:'records',srcLabel:'יומן הוצאות',type:'expense',date:r.date,category:r.cat||'כללי',note:[r.company,r.note].filter(Boolean).join(' · '),amount:financeConvert(r.amount,r.rate,r.date,cur,ilsGross)});
+    }else if(r.type==='משיכה'){
+      const gUSD=Number(r.wdGross!=null?r.wdGross:r.amount);
+      let fUSD=Number(r.wdFeeAmt!=null?r.wdFeeAmt:(r.wdNet!=null?gUSD-Number(r.wdNet):0));if(!Number.isFinite(fUSD)||fUSD<0)fUSD=0;
+      const gross=financeConvert(gUSD,r.rate,r.date,cur,ilsGross),fee=fUSD>0?financeConvert(fUSD,r.rate,r.date,cur,null):0;
+      add({id:'rec:'+r.id,idx:i,src:'records',srcLabel:'משיכה',type:'income',wd:true,date:r.date,category:'תקבול ממשיכה',note:[r.company,'משיכה'].filter(Boolean).join(' · '),amount:gross,net:gross-fee});
+      if(fee>0)add({id:'recfee:'+r.id,idx:i,src:'records',srcLabel:'עמלת משיכה',type:'expense',wdFee:true,date:r.date,category:'עמלות',note:'עמלת משיכה · '+(r.company||''),amount:fee});
+    }
+  });
+  (typeof customExpenses!=='undefined'&&Array.isArray(customExpenses)?customExpenses:[]).forEach((c,i)=>{
+    if(!c||!okDate(c.date))return;
+    add({id:'cx:'+c.id,idx:i,src:'custom',srcLabel:'הוצאה חופשית',type:'expense',date:c.date,category:c.category||'כללי',note:c.desc||'',amount:financeConvert(c.amount,c.rate,c.date,cur,c.currency==='ILS'?c.amountILS:null)});
+  });
+  (typeof accounts!=='undefined'&&Array.isArray(accounts)?accounts:[]).forEach(a=>{
+    (a&&Array.isArray(a.withdrawals)?a.withdrawals:[]).forEach(w=>{
+      if(!w||!okDate(w.date))return;
+      const gUSD=Number(w.amount),fUSD=Math.max(0,Number(w.fee)||0);
+      const gross=financeConvert(gUSD,null,w.date,cur,null),fee=fUSD>0?financeConvert(fUSD,null,w.date,cur,null):0;
+      const lbl='משיכה · '+(a.name||'חשבון');
+      add({id:'aw:'+w.id,src:'acct',acctId:a.id,srcLabel:lbl,type:'income',wd:true,date:w.date,category:'תקבול ממשיכה',note:w.note||'',amount:gross,net:gross-fee});
+      if(fee>0)add({id:'awfee:'+w.id,src:'acct',acctId:a.id,srcLabel:'עמלת '+lbl,type:'expense',wdFee:true,date:w.date,category:'עמלות',note:'עמלת משיכה',amount:fee});
+    });
+  });
+  return out;
+}
+/* Same-day, same-amount withdrawals that live in two different places (e.g. one typed into the ledger as a
+   receipt AND one in the original withdrawals) are only FLAGGED, never removed: the user decides. */
+function financeSuspects(rows){
+  const wd=rows.filter(e=>e.type==='income'&&(e.wd||e.category==='תקבול ממשיכה')),pairs=[];
+  const place=e=>e.src||'ledger',near=(x,y,t)=>Math.abs(x-y)<=t;
+  for(let i=0;i<wd.length;i++)for(let j=i+1;j<wd.length;j++){
+    const a=wd[i],b=wd[j];if(a.date!==b.date||place(a)===place(b)&&place(a)!=='acct')continue;
+    if(place(a)===place(b))continue;
+    const t=Math.max(0.02,Math.min(a.amount,b.amount)*0.005),an=a.net!=null?a.net:a.amount,bn=b.net!=null?b.net:b.amount;
+    if(near(a.amount,b.amount,t)||near(a.amount,bn,t)||near(an,b.amount,t))pairs.push({date:a.date,a,b});
+  }
+  return pairs;
+}
+function financeCombinedRows(){
+  const rows=financePeriodRows().map(e=>({...e})).concat(financeLegacyRows());
+  financeSuspects(rows).forEach(p=>{p.a.suspect=true;p.b.suspect=true;});
+  return rows;
+}
+function financeBreakdown(rows){
+  const sum=f=>rows.filter(f).reduce((a,e)=>a+e.amount,0);
+  return {manual:sum(e=>!e.legacy&&e.type==='income'),manualOut:sum(e=>!e.legacy&&e.type==='expense'),log:sum(e=>e.src==='records'&&e.type==='expense'&&!e.wdFee),custom:sum(e=>e.src==='custom'),wd:sum(e=>e.wd),fee:sum(e=>e.wdFee)};
+}
+function financeOpenSource(src,ref){
+  try{
+    if(src==='records'){ref=Number(ref);if(records[ref]){openEdit(ref);return;}}
+    if(src==='custom'){ref=Number(ref);if(customExpenses[ref]){openCX(ref);return;}}
+    if(src==='acct'){openAcctGoals(ref);return;}
+  }catch(e){console.warn('financeOpenSource',e);}
+  showToast('לא נמצא המסך המקורי לרשומה הזו','error');
+}
+function financeToggleWd(form){
+  const wd=form.elements.type.value==='withdrawal';
+  form.querySelectorAll('[data-wd-only]').forEach(l=>{l.style.display=wd?'':'none';});
+  form.querySelectorAll('[data-wd-hide]').forEach(l=>{l.style.display=wd?'none':'';});
+}
+function financeSaveWithdrawal(data,amount){
+  const st=document.getElementById('finance-form-status'),fee=data.fee===''||data.fee==null?0:Number(data.fee);
+  if(!['USD','ILS'].includes(data.currency)||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Number.isFinite(amount)||amount<=0||amount>999999999||!Number.isFinite(fee)||fee<0||fee>amount){st.textContent='בדוק תאריך, סכום ועמלה (העמלה לא יכולה לעלות על הסכום)';return;}
+  const company=['BULENOX','APEX','TAKE P','MFFU','אחר'].includes(data.company)?data.company:'אחר';
+  const ils=data.currency==='ILS',rt=histRate(data.date);
+  const gross=ils?+(amount/rt).toFixed(2):Math.round(amount*100)/100,feeUSD=ils?+(fee/rt).toFixed(2):Math.round(fee*100)/100;
+  /* Same shape the original withdrawal form saves, so every existing screen/report keeps working. */
+  const rec={id:uid(),date:data.date,type:'משיכה',amount:gross,rate:rt,done:true,company,portVal:0,cat:'משיכה',wdGross:gross,wdPct:gross?+(feeUSD/gross*100).toFixed(2):0,wdFeeAmt:feeUSD,wdNet:+(gross-feeUSD).toFixed(2),note:String(data.note||'').slice(0,250)};
+  if(ils){rec.currency='ILS';rec.amountILS=Math.round(amount*100)/100;}
+  records.push(rec);
+  try{saveData();}catch(e){console.warn('saveData',e);}
+  document.getElementById('finance-modal').close();renderAll();
+  showToast('המשיכה נשמרה: הסכום נספר כתקבול והעמלה כהוצאה','success');
+}
+/* v58-finance-end */
 function financeNavigate(view='summary'){
   financeView=view;document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
   document.getElementById('tp-biz').classList.add('active');_simpleSync('biz');
@@ -26184,34 +26299,35 @@ function financeNavigate(view='summary'){
   }else financeRender();window.scrollTo({top:0,behavior:'instant'});
 }
 function financeChangePeriod(delta){financeDate=new Date(financeDate.getFullYear()+(financeRange==='year'?delta:0),financeDate.getMonth()+(financeRange==='year'?0:delta),1);financeRender();}
-function financeTable(rows,limit){const sorted=[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit||rows.length);return sorted.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>תיאור</th><th>קטגוריה</th><th>סכום</th><th><span class="ws-sr">פעולות</span></th></tr></thead><tbody>${sorted.map(e=>`<tr><td>${escHtml(e.date)}</td><td>${escHtml(e.note|| (e.type==='income'?'תקבול':'הוצאה'))}<small>${e.type==='income'?'תקבול':'הוצאה'}</small></td><td>${escHtml(e.category||'כללי')}</td><td class="${e.type==='income'?'cg':'cr'}" dir="ltr">${e.type==='income'?'+':'−'}${financeMoney(+e.amount)}</td><td><button class="ws-text-button" data-finance-edit="${escHtml(String(e.id))}">פרטים</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="ws-empty"><h2>אין תנועות בתקופה הזו</h2><p>רשום תקבול או הוצאה כדי להתחיל את הסיכום הכספי.</p><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></div>';}
+function financeTable(rows,limit){const sorted=[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit||rows.length);return sorted.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>תיאור</th><th>קטגוריה</th><th>סכום</th><th><span class="ws-sr">פעולות</span></th></tr></thead><tbody>${sorted.map(e=>`<tr><td>${escHtml(e.date)}</td><td>${escHtml(e.note|| (e.type==='income'?'תקבול':'הוצאה'))}<small>${e.legacy?escHtml(e.srcLabel):(e.type==='income'?'תקבול':'הוצאה')}${e.suspect?' · ⚠ ייתכנה כפילות':''}</small></td><td>${escHtml(e.category||'כללי')}</td><td class="${e.type==='income'?'cg':'cr'}" dir="ltr">${e.type==='income'?'+':'−'}${financeMoney(+e.amount)}</td><td>${e.legacy?`<button class="ws-text-button" onclick="financeOpenSource('${e.src}','${escHtml(String(e.src==='acct'?e.acctId:e.idx))}')">במסך המקור</button>`:`<button class="ws-text-button" data-finance-edit="${escHtml(String(e.id))}">פרטים</button>`}</td></tr>`).join('')}</tbody></table></div>`:'<div class="ws-empty"><h2>אין תנועות בתקופה הזו</h2><p>רשום תקבול או הוצאה כדי להתחיל את הסיכום הכספי.</p><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></div>';}
 function financeRender(){
   const el=document.getElementById('finance-workspace');if(!el)return;
-  const rows=financePeriodRows(),total=financeTotals(rows),label=financeRange==='all'?'כל התקופות':financeDate.toLocaleDateString('he-IL',financeRange==='year'?{year:'numeric'}:{month:'long',year:'numeric'});
+  const rows=financeCombinedRows(),total=financeTotals(rows),brk=financeBreakdown(rows),sus=financeSuspects(rows),label=financeRange==='all'?'כל התקופות':financeDate.toLocaleDateString('he-IL',financeRange==='year'?{year:'numeric'}:{month:'long',year:'numeric'});
   el.innerHTML=`<header class="ws-heading"><div><p class="ws-eyebrow">ניהול כספי</p><h1>${{summary:'התמונה הכספית שלך',transactions:'תקבולים והוצאות',reports:'דוחות כספיים'}[financeView]}</h1><p>רישום כספי עצמאי · ללא רווחי עסקאות או יעדי מסחר</p></div><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></header>
   <div class="ws-toolbar"><div class="ws-segment" aria-label="תקופה">${[['month','חודש'],['year','שנה'],['all','הכל']].map(([v,t])=>`<button aria-pressed="${financeRange===v}" onclick="financeRange='${v}';financeRender()">${t}</button>`).join('')}</div><div class="ws-period"><button aria-label="תקופה קודמת" onclick="financeChangePeriod(-1)" ${financeRange==='all'?'disabled':''}>‹</button><strong>${label}</strong><button aria-label="תקופה הבאה" onclick="financeChangePeriod(1)" ${financeRange==='all'?'disabled':''}>›</button></div><label>מטבע <select aria-label="מטבע כספי" onchange="financeCurrency=this.value;financeRender()"><option ${financeCurrency==='USD'?'selected':''}>USD</option><option ${financeCurrency==='ILS'?'selected':''}>ILS</option></select></label></div>
-  ${rows.length?`<div class="ws-kpis">${[['תקבולים',total.income,'cg'],['הוצאות',total.expense,'cr'],['הפרש לתקופה',total.net,'']].map(([t,n,c])=>`<section><p>${t}</p><strong class="${c}" dir="ltr">${financeMoney(n)}</strong></section>`).join('')}</div>`:''}<section class="ws-panel" id="restored-expenses"><h2>ההוצאות השמורות שלך</h2><p>יומן ההוצאות וההוצאות החופשיות זמינים במלואם, בנפרד מהתנועות החדשות.</p><div class="ws-toolbar"><button class="bn" onclick="financeNavigate('expenses')">יומן הוצאות (${records.filter(r=>r.type!=='משיכה').length})</button><button class="bn" onclick="financeNavigate('custom')">הוצאות חופשיות (${customExpenses.length})</button><button class="bn" onclick="financeOriginalBackup()">גיבוי ההוצאות המקוריות</button></div></section><div id="finance-content"></div>`;
+  ${rows.length?`<div class="ws-kpis">${[['תקבולים (כולל משיכות)',total.income,'cg'],['הוצאות (כולל עמלות משיכה)',total.expense,'cr'],['הפרש לתקופה',total.net,'']].map(([t,n,c])=>`<section><p>${t}</p><strong class="${c}" dir="ltr">${financeMoney(n)}</strong></section>`).join('')}</div><p class="ws-muted" id="finance-breakdown">מתוכם: משיכות ברוטו ${financeMoney(brk.wd)} · עמלות משיכה ${financeMoney(brk.fee)} · יומן הוצאות ${financeMoney(brk.log)} · הוצאות חופשיות ${financeMoney(brk.custom)} · תנועות ידניות: תקבולים ${financeMoney(brk.manual)}, הוצאות ${financeMoney(brk.manualOut)}</p>`:''}${sus.length?`<section class="ws-panel" role="status" id="finance-suspects"><h2>⚠ ייתכנו משיכות כפולות</h2><p>נמצאו ${sus.length} משיכות באותו יום ובאותו סכום ביותר ממקום אחד. הן נספרות בסיכום כמו שהן. אם זו כפילות, מחק או העבר לארכיון אחת מהן.</p><ul>${sus.slice(0,5).map(p=>`<li>${escHtml(p.date)} · ${financeMoney(p.a.amount)} — ${escHtml(p.a.srcLabel||'תנועה ידנית')} / ${escHtml(p.b.srcLabel||'תנועה ידנית')}</li>`).join('')}</ul></section>`:''}<section class="ws-panel" id="restored-expenses"><h2>ההוצאות השמורות שלך</h2><p>כל ההוצאות והמשיכות הקיימות נכללות בסיכום שלמעלה. הן נקראות ישירות מהנתונים המקוריים, בלי העתקה, ואפשר לערוך אותן במסכים שלהן.</p><div class="ws-toolbar"><button class="bn" onclick="financeNavigate('expenses')">יומן הוצאות (${records.filter(r=>r.type!=='משיכה').length})</button><button class="bn" onclick="financeNavigate('custom')">הוצאות חופשיות (${customExpenses.length})</button><button class="bn" onclick="financeOriginalBackup()">גיבוי ההוצאות המקוריות</button></div></section><div id="finance-content"></div>`;
   const body=el.querySelector('#finance-content');
   if(financeView==='summary')body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>תנועות אחרונות</h2><button class="ws-text-button" onclick="financeNavigate('transactions')">לכל התנועות ←</button></div>${financeTable(rows,5)}</section><details class="simple-details"><summary>הערות לתקופה</summary><label>הערה <textarea id="finance-note" oninput="financeSaveNote(this.value)">${escHtml(businessNotes[financeNoteKey()]||'')}</textarea></label></details>`;
   if(financeView==='transactions'){body.innerHTML=`<section class="ws-panel"><div class="ws-toolbar"><label class="ws-search">חיפוש<input type="search" value="${escHtml(financeQuery)}" placeholder="תיאור או קטגוריה" oninput="financeQuery=this.value;financeRenderRows()"></label><label>סוג<select onchange="financeType=this.value;financeRenderRows()"><option value="all" ${financeType==='all'?'selected':''}>כל התנועות</option><option value="income" ${financeType==='income'?'selected':''}>תקבולים</option><option value="expense" ${financeType==='expense'?'selected':''}>הוצאות</option></select></label><button class="bn" onclick="financeExportCSV()">ייצוא לתקופה</button></div><div id="finance-rows"></div></section>`;financeRenderRows();}
   if(financeView==='reports'){
     const groups=new Map();rows.forEach(e=>{const k=e.date.slice(0,7);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(e);});
     const cats=new Map();rows.filter(e=>e.type==='expense').forEach(e=>{const k=e.category||'כללי';cats.set(k,(cats.get(k)||0)+Number(e.amount));});
-    body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>סיכום לפי חודשים</h2><button class="bn" onclick="financeExportCSV()">ייצוא תנועות</button></div>${groups.size?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>חודש</th><th>תקבולים</th><th>הוצאות</th><th>הפרש</th></tr></thead><tbody>${[...groups].sort((a,b)=>b[0].localeCompare(a[0])).map(([key,list])=>{const t=financeTotals(list);return `<tr><td>${key}</td><td>${financeMoney(t.income)}</td><td>${financeMoney(t.expense)}</td><td>${financeMoney(t.net)}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="ws-empty">אין תנועות להצגה בתקופה הזו.</p>'}</section><section class="ws-panel"><h2>הוצאות לפי קטגוריה</h2>${cats.size?[...cats].sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`<div class="ws-category"><span>${escHtml(cat)}</span><strong>${financeMoney(n)}</strong></div>`).join(''):'<p>אין הוצאות בתקופה הזו.</p>'}</section><details class="simple-details"><summary>רשומות מהמערכת הקודמת</summary><p>נשמרו לעיון ולייצוא. אינן נכללות בדוחות החדשים ואינן משנות חשבון מסחר. לפני רישום תקבול מחדש, בדוק שלא קיים כבר בתנועות.</p><button class="bn" onclick="financeLegacy()">הצגת הרשומות</button><button class="bn" onclick="financeLegacyExport()">ייצוא הארכיון</button><div id="finance-legacy-list"></div></details>`;
+    body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>סיכום לפי חודשים</h2><button class="bn" onclick="financeExportCSV()">ייצוא תנועות</button></div>${groups.size?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>חודש</th><th>תקבולים</th><th>הוצאות</th><th>הפרש</th></tr></thead><tbody>${[...groups].sort((a,b)=>b[0].localeCompare(a[0])).map(([key,list])=>{const t=financeTotals(list);return `<tr><td>${key}</td><td>${financeMoney(t.income)}</td><td>${financeMoney(t.expense)}</td><td>${financeMoney(t.net)}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="ws-empty">אין תנועות להצגה בתקופה הזו.</p>'}</section><section class="ws-panel"><h2>הוצאות לפי קטגוריה</h2>${cats.size?[...cats].sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`<div class="ws-category"><span>${escHtml(cat)}</span><strong>${financeMoney(n)}</strong></div>`).join(''):'<p>אין הוצאות בתקופה הזו.</p>'}</section><details class="simple-details"><summary>רשומות מהמערכת הקודמת</summary><p>הרשומות המקוריות נכללות בסיכום ובדוחות. כאן אפשר לעיין בהן ולייצא אותן. אם רשמת בעבר משיכה ידנית כתקבול בתנועות, בדוק שהיא לא מופיעה פעמיים.</p><button class="bn" onclick="financeLegacy()">הצגת הרשומות</button><button class="bn" onclick="financeLegacyExport()">ייצוא הארכיון</button><div id="finance-legacy-list"></div></details>`;
   }
 }
 function financeOriginalBackup(){workspaceDownload('fayna-original-expenses.json',JSON.stringify({records,customExpenses,recurringTemplates:typeof recurringTemplates==='undefined'?[]:recurringTemplates,exported:new Date().toISOString()},null,2));}
 function financeNoteKey(){return financeRange==='month'?`${financeDate.getFullYear()}-${String(financeDate.getMonth()+1).padStart(2,'0')}`:`finance-${financeRange}-${financeDate.getFullYear()}`;}
 function financeSaveNote(value){businessNotes[financeNoteKey()]=value;saveBizData();}
-function financeRenderRows(){const el=document.getElementById('finance-rows');if(el)el.innerHTML=financeTable(financePeriodRows().filter(e=>(financeType==='all'||e.type===financeType)&&`${e.note||''} ${e.category||''} ${e.date}`.toLowerCase().includes(financeQuery.toLowerCase())));}
+function financeRenderRows(){const el=document.getElementById('finance-rows');if(el)el.innerHTML=financeTable(financeCombinedRows().filter(e=>(financeType==='all'||e.type===financeType)&&`${e.note||''} ${e.category||''} ${e.date}`.toLowerCase().includes(financeQuery.toLowerCase())));}
 function financeOpen(id){
   const existing=id?financeRows().find(e=>String(e.id)===String(id)):null;if(id&&!existing)return;financeEditId=existing?.id||null;
-  const box=document.getElementById('finance-modal');box.innerHTML=`<form class="ws-finance-form"><div class="ws-panel-title"><h2>${existing?'פרטי תנועה':'תנועה חדשה'}</h2><button type="button" class="bn" onclick="document.getElementById('finance-modal').close()">סגירה</button></div><div class="ws-form-grid"><label>סוג<select name="type"><option value="income">תקבול</option><option value="expense">הוצאה</option></select></label><label>תאריך<input name="date" type="date" required></label><label>סכום<input name="amount" type="number" min="0.01" max="999999999" step="0.01" required inputmode="decimal"></label><label>מטבע<select name="currency"><option>USD</option><option>ILS</option></select></label><label>קטגוריה<select name="category">${FINANCE_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select></label><label>תיאור<input name="note" maxlength="250" placeholder="תיאור קצר (אופציונלי)"></label></div><p class="ws-muted">משיכה שהתקבלה נרשמת פעם אחת, כתקבול בקטגוריה „תקבול ממשיכה”.</p><div class="ws-toolbar"><button class="home-primary" type="submit">שמירת תנועה</button>${existing?'<button type="button" class="bn" onclick="financeArchive()">העברה לארכיון</button>':''}</div><p role="status" id="finance-form-status"></p></form>`;
+  const box=document.getElementById('finance-modal');box.innerHTML=`<form class="ws-finance-form"><div class="ws-panel-title"><h2>${existing?'פרטי תנועה':'תנועה חדשה'}</h2><button type="button" class="bn" onclick="document.getElementById('finance-modal').close()">סגירה</button></div><div class="ws-form-grid"><label>סוג<select name="type" onchange="financeToggleWd(this.form)"><option value="income">תקבול</option><option value="expense">הוצאה</option>${existing?'':'<option value="withdrawal">משיכה (סכום + עמלה)</option>'}</select></label><label>תאריך<input name="date" type="date" required></label><label>סכום<input name="amount" type="number" min="0.01" max="999999999" step="0.01" required inputmode="decimal"></label><label>מטבע<select name="currency"><option>USD</option><option>ILS</option></select></label><label data-wd-only style="display:none">עמלה (באותו מטבע)<input name="fee" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" placeholder="0"></label><label data-wd-only style="display:none">חברה<select name="company"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></label><label data-wd-hide>קטגוריה<select name="category">${FINANCE_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select></label><label>תיאור<input name="note" maxlength="250" placeholder="תיאור קצר (אופציונלי)"></label></div><p class="ws-muted">משיכה נרשמת כאן פעם אחת: הסכום נספר כתקבול והעמלה כהוצאה. אין לרשום אותה גם כתקבול נפרד.</p><div class="ws-toolbar"><button class="home-primary" type="submit">שמירת תנועה</button>${existing?'<button type="button" class="bn" onclick="financeArchive()">העברה לארכיון</button>':''}</div><p role="status" id="finance-form-status"></p></form>`;
   const form=box.querySelector('form');Object.entries({type:existing?.type||'income',date:existing?.date||_homeDate(new Date()),amount:existing?.amount||'',currency:existing?.currency||financeCurrency,category:existing?.category||'כללי',note:existing?.note||''}).forEach(([k,v])=>form.elements.namedItem(k).value=v);
   form.onsubmit=e=>{e.preventDefault();financeSave(form);};box.showModal();
 }
 function financeSave(form){
   const data=Object.fromEntries(new FormData(form)),amount=Number(data.amount);
+  if(data.type==='withdrawal'&&!financeEditId){financeSaveWithdrawal(data,amount);return;}
   if(!['income','expense'].includes(data.type)||!['USD','ILS'].includes(data.currency)||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Number.isFinite(amount)||amount<=0||amount>999999999){document.getElementById('finance-form-status').textContent='בדוק את התאריך והסכום';return;}
   const row={id:financeEditId||'fin_'+crypto.randomUUID(),type:data.type,date:data.date,amount:Math.round(amount*100)/100,currency:data.currency,category:FINANCE_CATEGORIES.includes(data.category)?data.category:'כללי',note:String(data.note).slice(0,250)};
   const next=businessEvents.slice(),i=next.findIndex(e=>e.id===financeEditId);if(financeEditId&&i<0)return;
@@ -26225,7 +26341,7 @@ function financeLegacyData(){return {businessEvents:businessEvents.filter(e=>!['
 function financeLegacy(){const el=document.getElementById('finance-legacy-list');if(!el)return;const data=financeLegacyData(),flat=[...data.businessEvents.map(e=>({date:e.date,label:e.note||BIZ_TYPE_INFO[e.type]?.label||e.type,amount:e.amount,currency:e.currency||'USD',id:e.id,restore:e.archived})),...data.records.map(e=>({date:e.date,label:`${e.type||''} · ${e.company||e.desc||''}`,amount:e.amount,currency:'USD'})),...data.customExpenses.map(e=>({date:e.date,label:e.desc||e.category,amount:e.amount,currency:'USD'})),...data.accountWithdrawals.flatMap(a=>a.withdrawals.map(e=>({date:e.date,label:'משיכה · '+a.name,amount:e.amount,currency:'USD'})))];el.innerHTML=flat.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>רשומה</th><th>סכום</th><th></th></tr></thead><tbody>${flat.sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(e=>`<tr><td>${escHtml(e.date||'')}</td><td>${escHtml(e.label||'')}</td><td>${Number.isFinite(+e.amount)&&e.amount!==null?financeMoney(+e.amount,e.currency):'—'}</td><td>${e.restore?`<button class="bn" data-finance-restore="${escHtml(String(e.id))}">שחזור לתנועות</button>`:'לעיון'}</td></tr>`).join('')}</tbody></table></div>`:'<p>אין רשומות בארכיון.</p>';}
 function workspaceDownload(name,text,type='application/json'){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function financeLegacyExport(){workspaceDownload('fayna-finance-archive.json',JSON.stringify(financeLegacyData(),null,2));}
-function financeExportCSV(){if(!canUse('export_csv')){showUpgradeModal('export_csv');return;}const cell=v=>'"'+String(v??'').replace(/^[=+@\-]/,"'$&").replace(/"/g,'""')+'"';const rows=financePeriodRows().map(e=>[e.date,e.type==='income'?'תקבול':'הוצאה',e.category||'כללי',e.note,e.amount,e.currency||'USD']);workspaceDownload('fayna-finance.csv','\ufeff'+[['תאריך','סוג','קטגוריה','תיאור','סכום','מטבע'],...rows].map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
+function financeExportCSV(){if(!canUse('export_csv')){showUpgradeModal('export_csv');return;}const cell=v=>'"'+String(v??'').replace(/^[=+@\-]/,"'$&").replace(/"/g,'""')+'"';const rows=financeCombinedRows().map(e=>[e.date,e.type==='income'?'תקבול':'הוצאה',e.category||'כללי',e.note,e.amount,e.currency||'USD',e.legacy?e.srcLabel:'תנועה ידנית']);workspaceDownload('fayna-finance.csv','\ufeff'+[['תאריך','סוג','קטגוריה','תיאור','סכום','מטבע','מקור'],...rows].map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
 function workspaceBackup(kind){if(!canUse('backup')){showUpgradeModal('backup');return;}const data=kind==='finance'?{kind:'fayna-finance',version:1,businessEvents,businessNotes}:{kind:'fayna-trading',version:1,tradesList,accounts,commSettings,customSymbols};workspaceDownload(kind+'-backup.json',JSON.stringify(data,null,2));}
 async function workspaceRestore(input,kind){
   try{const file=input.files[0];if(!file)return;if(!canUse('backup')){showUpgradeModal('backup');return;}if(file.size>25*1024*1024)throw Error('הקובץ גדול מדי');const d=JSON.parse(await file.text());
