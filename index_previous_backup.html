@@ -2082,7 +2082,7 @@ button.sn-item.active,button[aria-current="page"]{color:var(--t1);background:var
 @media(max-width:600px){.simple-section-nav{gap:6px}.simple-section-nav button{padding:8px 10px;font-size:12px}.mob-bnav-btn{font-size:9px}.simple-details{padding:10px}}
 
 /* v54: calm workspace and a compact, responsive home */
-#index-banner,#world-clocks,#ref-chip{display:none!important}
+#world-clocks,#ref-chip{display:none!important}
 .topnav{gap:12px}
 .app-layout>.main{padding:28px!important}
 #tp-overview.active{display:block!important}
@@ -2220,6 +2220,25 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 #pa-sidebar-stats,#pasnav-referral,#coach-streak-display,#coach-mentor-tasks{display:none!important}.pa-card{background:var(--bg1)!important;border-color:var(--border)!important;box-shadow:none!important}.pa-page-title{font-size:24px!important}#chat-fab{width:38px!important;height:38px!important;opacity:.8}.sn-icon,.mbn-icon{color:inherit}.home-shortcuts{gap:12px}.ws-insight{padding:18px 0;border-bottom:1px solid var(--border)}.ws-insight p{font-size:14px;color:var(--t1);margin-bottom:10px}.ws-insight small{display:block;color:var(--t3);font-size:12px}.ws-insight:last-child{border:0}
 @media(max-width:700px){.app-layout>.main{padding:16px 12px 90px!important}.ws-heading{align-items:flex-start;gap:12px}.ws-heading .home-primary{font-size:12px;padding:10px}.ws-kpis{gap:8px}.ws-kpis section{padding:14px 10px}.ws-kpis strong{font-size:20px}.ws-panel{padding:16px}.ws-period{margin-inline:0}.ws-toolbar{gap:10px}.ws-form-grid{grid-template-columns:1fr}.ws-table{font-size:12px}.ws-table :is(th,td):nth-child(3){display:none}.ws-table td,.ws-table th{padding:12px 6px}.ws-table td:first-child{font-size:11px}.ws-theme-options button{min-width:130px}.ws-dialog{padding:18px}.cal-day .dpnl{font-size:11px!important}.cal-day .dinfo{font-size:10px!important}.cal-day{min-height:65px}#tp-calc .clx-grid{grid-template-columns:1fr 1fr!important}#tp-trades .ws-toolbar{align-items:flex-end}}
 
+</style>
+<style id="v62-ticker">
+/* v62 — market ticker restored. Slim strip on the site's own surface colour, same divider as the top bar. */
+html body #index-banner,html body.light-mode #index-banner,html body.a11y-contrast #index-banner{
+  display:flex;align-items:stretch;position:relative;top:auto;height:44px;min-height:44px;
+  background:var(--bg1)!important;border-bottom:1px solid var(--border)!important;box-shadow:none!important;overflow:hidden;z-index:1}
+html body.light-mode #index-banner,html body.a11y-contrast #index-banner{background:var(--bg0)!important}
+html body #index-banner .tradingview-widget-container,html body #index-banner .tradingview-widget-container__widget{
+  height:44px!important;min-height:44px;flex:1;width:100%!important;background:transparent!important}
+html body #index-banner iframe{height:44px!important;width:100%!important;display:block;background:transparent!important;filter:none!important;color-scheme:dark}
+html body #banner-edit-btn{width:38px;background:transparent;border:0;border-inline-end:1px solid var(--border);color:var(--t3);font-size:14px;transition:color .15s,background .15s}
+html body #banner-edit-btn:hover,html body #banner-edit-btn:focus-visible{color:var(--t1);background:var(--bg2);outline:none}
+#ticker-fallback{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--bg1);color:var(--t3);font-size:12px;z-index:2}
+#ticker-fallback button{background:transparent;border:1px solid var(--border2);color:var(--t2);border-radius:6px;padding:3px 10px;font:inherit;cursor:pointer}
+#ticker-fallback button:hover{color:var(--t1);background:var(--bg2)}
+@media(max-width:767px){html body #index-banner{height:40px;min-height:40px}
+  html body #index-banner .tradingview-widget-container,html body #index-banner .tradingview-widget-container__widget,html body #index-banner iframe{height:40px!important;min-height:40px}
+  html body #banner-edit-btn{width:34px}}
+@media print{#index-banner{display:none!important}}
 </style>
 </head>
 <body>
@@ -3057,7 +3076,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <button class="hdr-more-btn" onclick="toggleHdrMore(event)" title="עוד אפשרויות">⋯</button>
       <div class="hdr-more-menu" id="hdr-more-menu">
         <button class="hdr-mi theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" title="ערכת נושא: Dark Professional (לחץ להחלפה)">☀️ ערכת נושא</button>
-        <button class="hdr-mi" id="ticker-toggle-mi" onclick="toggleTicker()">📈 הצג טיקר מדדים</button>
+        <button class="hdr-mi" id="ticker-toggle-mi" onclick="toggleTicker()">📈 הסתר טיקר מדדים</button>
         <button class="hdr-mi" id="pwa-install-btn" onclick="installPWA()" title="התקן אפליקציה">📲 התקן אפליקציה</button>
         <a class="hdr-mi" id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading">📷 אינסטגרם</a>
         <button class="hdr-mi" onclick="startTour()" title="סיור מודרך">❔ סיור מודרך</button>
@@ -3147,7 +3166,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         {"proName":"NASDAQ:MSFT","title":"MSFT"}
       ],
       "showSymbolLogo": false,
-      "isTransparent": false,
+      "isTransparent": true,
       "displayMode": "compact",
       "colorTheme": "dark",
       "locale": "en",
@@ -3629,7 +3648,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="mrow" id="wd-m" style="grid-template-columns:repeat(3,1fr)"></div>
   <div class="card" style="padding:0 17px;margin-top:10px">
     <table class="tbl tbl-cards">
-      <thead><tr><th>תאריך</th><th>חברה</th><th>ברוטו</th><th>עמלה %</th><th>נטו $</th><th>נטו ₪</th><th style="width:56px"></th></tr></thead>
+      <thead><tr><th>תאריך</th><th>חברה / חשבון</th><th>סכום משיכה</th><th>עמלה</th><th>נטו</th><th>הערה</th><th style="width:56px"></th></tr></thead>
       <tbody id="wd-tbody"></tbody>
     </table>
   </div>
@@ -7650,6 +7669,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div class="fr"><label>חברת נוסטרו (ממנה בוצעה המשיכה)</label><select id="f-wdco"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></div>
       <div class="fr"><label>עמלת חברה (%)</label><input type="number" id="f-wp" step="any" value="20" oninput="_wdFeeMode='pct';cWd()" inputmode="decimal"></div>
       <div class="fr"><label>או עמלה בסכום (באותו מטבע)</label><input type="number" id="f-wf" step="0.01" min="0" placeholder="0" oninput="_wdFeeMode='abs';cWd()" inputmode="decimal" dir="ltr"></div>
+      <div class="fr"><label>הערה (אופציונלי)</label><input type="text" id="f-wnote" maxlength="250"></div>
       <div class="wc show" id="wc-box">
         <div class="wcr"><span>ברוטו</span><span id="wc-g">$0.00</span></div>
         <div class="wcr"><span>עמלה (<span id="wc-p">20</span>%)</span><span id="wc-f">-$0.00</span></div>
@@ -11580,27 +11600,28 @@ function dDrop(e,i){e.preventDefault();e.currentTarget.classList.remove('drag-ov
 
 // WITHDRAWALS
 function renderWD(){
-  const wds=records.filter(r=>r.type==='משיכה');
-  const tG=wds.reduce((s,r)=>s+(r.wdGross||r.amount),0);
-  const tF=wds.reduce((s,r)=>s+(r.wdFeeAmt||0),0);
-  const tN=wds.reduce((s,r)=>s+(r.wdNet||r.amount),0);
-  const tNils=wds.reduce((s,r)=>s+((r.wdNet||r.amount)*r.rate),0);
+  /* Both original stores, read in place (records + accounts[].withdrawals). Nothing is copied or written. */
+  const rows=[];
+  records.forEach((r,ri)=>{if(!r||r.type!=='משיכה')return;
+    const g=Number(r.wdGross!=null?r.wdGross:r.amount)||0;let f=Number(r.wdFeeAmt!=null?r.wdFeeAmt:(r.wdNet!=null?g-Number(r.wdNet):0))||0;if(f<0)f=0;
+    rows.push({date:r.date||'',who:r.company||'—',g,f,n:g-f,note:r.note||'',rate:r.rate||histRate(r.date||''),pct:r.wdPct,ri});});
+  (typeof accounts!=='undefined'&&Array.isArray(accounts)?accounts:[]).forEach(a=>{(a&&Array.isArray(a.withdrawals)?a.withdrawals:[]).forEach(w=>{if(!w)return;
+    const g=Number(w.amount)||0,f=Math.max(0,Number(w.fee)||0);
+    rows.push({date:w.date||'',who:a.name||'חשבון',g,f,n:g-f,note:w.note||'',rate:histRate(w.date||''),acct:a.id});});});
+  const tG=rows.reduce((s,r)=>s+r.g,0),tF=rows.reduce((s,r)=>s+r.f,0),tN=rows.reduce((s,r)=>s+r.n,0),tNils=rows.reduce((s,r)=>s+r.n*r.rate,0);
   document.getElementById('wd-m').innerHTML=
-    `<div class="mc"><div class="mc-l">ברוטו</div><div class="mc-v cy">${fmt(tG)}</div><div class="mc-s">${wds.length} משיכות</div></div>`+
-    `<div class="mc"><div class="mc-l">עמלות חברה</div><div class="mc-v cr">${fmt(tF)}</div></div>`+
+    `<div class="mc"><div class="mc-l">סכום משיכות</div><div class="mc-v cy">${fmt(tG)}</div><div class="mc-s">${rows.length} משיכות</div></div>`+
+    `<div class="mc"><div class="mc-l">עמלות (הוצאה)</div><div class="mc-v cr">${fmt(tF)}</div></div>`+
     `<div class="mc"><div class="mc-l">נטו (קיבלת)</div><div class="mc-v cp">${fmt(tN)}</div><div class="mc-s">${fmtILS(tNils)}</div></div>`;
-  document.getElementById('wd-tbody').innerHTML=wds.length?wds.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{
-    const ri=records.indexOf(r);
-    return `<tr>
+  document.getElementById('wd-tbody').innerHTML=rows.length?rows.sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(r=>`<tr>
       <td class="mono" style="font-size:11px;color:var(--t3)">${fmtD(r.date)}</td>
-      <td style="color:var(--t2)">${r.company?escHtml(r.company):'—'}</td>
-      <td class="mono cy">$${(r.wdGross||r.amount).toFixed(2)}</td>
-      <td style="color:var(--t2)">${r.wdPct||0}%</td>
-      <td class="mono cp" style="font-weight:700">$${(r.wdNet||r.amount).toFixed(2)}</td>
-      <td style="color:var(--t3)">${fmtILS((r.wdNet||r.amount)*r.rate)}</td>
-      <td><button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
-    </tr>`;
-  }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--t3)">אין משיכות</td></tr>`;
+      <td style="color:var(--t2)">${escHtml(String(r.who))}</td>
+      <td class="mono cy">$${r.g.toFixed(2)}</td>
+      <td class="mono" style="color:var(--t2)">${r.f>0?'$'+r.f.toFixed(2)+(r.pct?' ('+r.pct+'%)':''):'$0.00'}</td>
+      <td class="mono cp" style="font-weight:700">$${r.n.toFixed(2)}<div style="font-weight:400;font-size:10px;color:var(--t3)">${fmtILS(r.n*r.rate)}</div></td>
+      <td style="color:var(--t3)">${escHtml(r.note)}</td>
+      <td>${r.acct!=null?`<button class="act ed" title="עריכה או מחיקה בחלון יעדי החשבון" onclick="openAcctGoals(${JSON.stringify(String(r.acct)).replace(/"/g,'&quot;')})">✏️</button>`:`<button class="act ed" onclick="openEdit(${r.ri})">✏️</button><button class="act" onclick="askDel(${r.ri})">🗑</button>`}</td>
+    </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--t3)">אין משיכות</td></tr>`;
 }
 
 // P&L
@@ -14266,7 +14287,7 @@ function openAdd(ft){
   document.getElementById('f-rtool').value='';
   document.getElementById('recur-sub').style.display='none';
   setCurrency('USD');
-  _wdFeeMode='pct';{const fe=document.getElementById('f-wf');if(fe)fe.value='';}
+  _wdFeeMode='pct';{const fe=document.getElementById('f-wf');if(fe)fe.value='';const wn=document.getElementById('f-wnote');if(wn)wn.value='';}
   setMT(ft||'הוצאה');updateRateHint();
   document.getElementById('modal').classList.add('open');
 }
@@ -14288,7 +14309,7 @@ function openEdit(ri){
     document.getElementById('f-am').value=r.amount;
   }
   setMT(r.type);
-  if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;
+  if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;document.getElementById('f-wnote').value=r.note||'';
     if(r.wdFeeAmt!=null){_wdFeeMode='abs';document.getElementById('f-wf').value=r.currency==='ILS'?+(r.wdFeeAmt*(r.rate||3.65)).toFixed(2):r.wdFeeAmt;}else{_wdFeeMode='pct';document.getElementById('f-wf').value='';}}
   else{document.getElementById('f-co').value=r.company||'BULENOX';_setFormCat(r.cat||'מבחן');document.getElementById('f-pv').value=String(r.portVal||0);}
   cWd();document.getElementById('modal').classList.add('open');
@@ -14406,12 +14427,13 @@ function saveRec(){
 
   let r={id:editI>=0?records[editI].id:uid(),date:dt,type:mType,amount:amUSD,rate:rt,done:true};
   if(mCurrency==='ILS'){ r.currency='ILS'; r.amountILS=rawAm; }
-  if(mType==='משיכה'){const _fc=_wdFeeCalc(amUSD,rt),p=_fc.p,f=_fc.fee;r={...r,company:document.getElementById('f-wdco').value,portVal:0,cat:'משיכה',wdGross:amUSD,wdPct:p,wdFeeAmt:f,wdNet:+(amUSD-f).toFixed(2)};}
+  if(mType==='משיכה'){const _fc=_wdFeeCalc(amUSD,rt),p=_fc.p,f=_fc.fee;r={...r,company:document.getElementById('f-wdco').value,portVal:0,cat:'משיכה',wdGross:amUSD,wdPct:p,wdFeeAmt:f,wdNet:+(amUSD-f).toFixed(2),note:String(document.getElementById('f-wnote')?.value||'').slice(0,250)};}
   else{r.company=document.getElementById('f-co').value;r.cat=_getFormCat();r.portVal=parseInt(document.getElementById('f-pv').value)||0;r.note=document.getElementById('f-note').value;}
   if(editI>=0)records[editI]=r;else records.push(r);
   cModal();renderAll();
+  if(mType==='משיכה'){try{saveData();}catch(e){console.warn('saveData',e);}}
 }
-function delFromM(){if(editI<0)return;cModal();askDel(editI);}
+function delFromM(){if(editI<0)return;const _ri=editI;cModal();askDel(_ri);}
 let _di=-1;
 function askDel(ri){_di=ri;const r=records[ri];document.getElementById('cfm-msg').textContent='למחוק: '+(r.company||r.type)+' — '+r.date+' — '+fmt(r.amount)+'?';document.getElementById('cfm').classList.add('open');}
 function cCfm(){document.getElementById('cfm').classList.remove('open');_di=-1;}
@@ -14794,8 +14816,8 @@ let _cxDelI=-1;
 function cxAskDel(i){_cxDelI=i;document.getElementById('cfm-msg').textContent='למחוק: '+customExpenses[i].desc+'?';document.getElementById('cfm').classList.add('open');}
 // Override doCfm to handle both records and custom expenses
 function doCfm(){
-  if(_cxDelI>=0){customExpenses.splice(_cxDelI,1);_cxDelI=-1;cCfm();renderAll();return;}
-  if(_di>=0){records.splice(_di,1);cCfm();renderAll();}
+  if(_cxDelI>=0){customExpenses.splice(_cxDelI,1);_cxDelI=-1;cCfm();renderAll();try{saveData();}catch(e){console.warn('saveData',e);}return;}
+  if(_di>=0){records.splice(_di,1);_di=-1;cCfm();renderAll();try{saveData();}catch(e){console.warn('saveData',e);}}
 }
 function cxDel(){if(_cxEditI>=0){cxClose();cxAskDel(_cxEditI);}}
 
@@ -18268,19 +18290,58 @@ async function sendNotifEmail(msg) {
   flashSaved('adm-banner-saved');
 }
 
+/* v61 — email broadcast without a mail client.
+   Root cause of "nothing opens": the old buttons were mailto: links carrying the whole Hebrew message.
+   Every Hebrew letter costs 6 characters once percent-encoded, so the link is several thousand characters,
+   far above what Windows/Outlook accept (~2000); the OS drops it silently. Also "open for all" put all
+   addresses in To:, exposing every user's email to everyone — now Bcc. */
+const _EMAIL_MAILTO_MAX = 1800, _EMAIL_GMAIL_MAX = 7000;
+function _emailBcCopy(text){
+  return new Promise(res=>{
+    const fallback=()=>{try{const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();res(!!ok);}catch(e){res(false);}};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>res(true),fallback);}else fallback();
+  });
+}
+function _emailBcBody(u){
+  const st=window._emailBcState||{msg:''};
+  const base=window.location.origin+window.location.pathname;
+  const unsub=`\n\n---\nהפסקת קבלת עדכונים — השב למייל זה עם המילה "הסר"`+(u&&u.uid?`\nאו להסרה מיידית: ${(typeof PUBLIC_SITE_URL!=='undefined'?PUBLIC_SITE_URL:base)}?unsub=${u.uid}`:'');
+  return u?`שלום ${u.name||''},\n\n${st.msg}\n\n---\nFayna Trading${unsub}`:`שלום,\n\n${st.msg}\n\n---\nFayna Trading — Professional Trading Journal`;
+}
+async function _emailBcAct(kind,i){
+  const st=window._emailBcState;if(!st)return;
+  const subj='📢 הודעה מ-Fayna Trading',enc=encodeURIComponent;
+  const all=i==null||i<0, u=all?null:st.targets[i];
+  if(!all&&!u)return;
+  const emails=all?st.targets.map(x=>x.email).filter(Boolean):[u.email];
+  const body=_emailBcBody(u);
+  let url,needCopy=false;
+  if(kind==='copymsg'){const ok=await _emailBcCopy(body);showToast(ok?'ההודעה הועתקה':'ההעתקה נכשלה, סמן והעתק ידנית',ok?'success':'error');return;}
+  if(kind==='copyaddr'){const ok=await _emailBcCopy(emails.join(', '));showToast(ok?`הועתקו ${emails.length} כתובות`:'ההעתקה נכשלה',ok?'success':'error');return;}
+  const rcpt=all?`bcc=${enc(emails.join(','))}`:`to=${enc(emails[0])}`;
+  if(kind==='gmail'){
+    url=`https://mail.google.com/mail/?view=cm&fs=1&${rcpt}&su=${enc(subj)}&body=${enc(body)}`;
+    if(url.length>_EMAIL_GMAIL_MAX){needCopy=true;url=`https://mail.google.com/mail/?view=cm&fs=1&${rcpt}&su=${enc(subj)}`;}
+    window.open(url,'_blank','noopener');
+  }else{
+    const q=all?`bcc=${enc(emails.join(','))}`:'';
+    url=`mailto:${all?'':encodeURI(emails[0])}?${q?q+'&':''}subject=${enc(subj)}&body=${enc(body)}`;
+    if(url.length>_EMAIL_MAILTO_MAX){needCopy=true;url=`mailto:${all?'':encodeURI(emails[0])}?${q?q+'&':''}subject=${enc(subj)}`;}
+    const a=document.createElement('a');a.href=url;a.style.display='none';document.body.appendChild(a);a.click();a.remove();
+  }
+  if(needCopy){const ok=await _emailBcCopy(body);showToast(ok?'ההודעה ארוכה מדי לקישור, לכן היא הועתקה. הדבק אותה בגוף המייל (Ctrl+V)':'ההודעה ארוכה מדי לקישור. השתמש ב"העתק הודעה" והדבק במייל','info');}
+  else if(kind==='mailto'){showToast('אם לא נפתחה תוכנת מייל, השתמש בכפתור Gmail או בהעתקה','info');}
+}
 function _showEmailBroadcastModal(msg, targets) {
+  window._emailBcState={msg,targets};
   const subj = encodeURIComponent('📢 הודעה מ-Fayna Trading');
   const body = encodeURIComponent(`שלום,\n\n${msg}\n\n---\nFayna Trading — Professional Trading Journal`);
   const base = window.location.origin + window.location.pathname;
-  const rows = targets.map(u => {
-    const unsubLine = `\n\n---\nהפסקת קבלת עדכונים — השב למייל זה עם המילה "הסר"` +
-      (u.uid ? `\nאו להסרה מיידית: ${(typeof PUBLIC_SITE_URL!=='undefined'?PUBLIC_SITE_URL:base)}?unsub=${u.uid}` : '');
-    const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+  const _bs='padding:5px 10px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:5px;font-size:11px;border:1px solid rgba(114,149,184,.3);white-space:nowrap;cursor:pointer;font-family:inherit';
+  const rows = targets.map((u,i) => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <div style="flex:1"><div style="font-size:12px;color:var(--t1);font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:var(--bl);direction:ltr">${escHtml(u.email)}</div></div>
-      <a href="${escHtml(ml)}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
-    </div>`;
-  }).join('');
+      <div style="display:flex;gap:6px;flex-shrink:0"><button type="button" data-email-act="gmail" data-i="${i}" style="${_bs}">Gmail</button><button type="button" data-email-act="mailto" data-i="${i}" style="${_bs}">📧 פתח מייל</button></div>
+    </div>`).join('');
   let m = document.getElementById('_email-bc-modal'); if(m) m.remove();
   m = document.createElement('div'); m.id = '_email-bc-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
@@ -18288,7 +18349,7 @@ function _showEmailBroadcastModal(msg, targets) {
     <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px">
       <div style="flex:1">
         <div style="font-size:14px;font-weight:700;color:var(--t1)">📧 שליחת Email — ${targets.length} משתמשים</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:2px">לחץ "פתח מייל" לכל משתמש לשליחה ידנית · <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" style="color:var(--bl)">הגדר EmailJS</a> לשליחה אוטומטית</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">Gmail פותח חלון כתיבה בדפדפן (לא צריך תוכנת מייל) · הודעה ארוכה מועתקת להדבקה · <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" style="color:var(--bl)">הגדר EmailJS</a> לשליחה אוטומטית</div>
       </div>
       <button onclick="document.getElementById('_email-bc-modal').remove()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
     </div>
@@ -18298,11 +18359,14 @@ function _showEmailBroadcastModal(msg, targets) {
     </div>
     <div style="overflow-y:auto;flex:1;padding:8px 22px 12px">${rows}</div>
     <div style="padding:12px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px">
-      <a href="mailto:${escHtml(targets.map(u=>u.email).join(','))}?subject=${subj}&body=${body}" style="flex:1;padding:8px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;border:1px solid rgba(114,149,184,.3)">📨 פתח לכולם יחד</a>
+      <button type="button" data-email-act="gmail" data-i="-1" style="flex:1;padding:8px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;font-weight:600;text-align:center;border:1px solid rgba(114,149,184,.3);cursor:pointer;font-family:inherit" title="הכתובות נשלחות בעותק מוסתר (Bcc), כך שהמשתמשים לא רואים אחד את השני">📨 Gmail לכולם (Bcc)</button>
+      <button type="button" data-email-act="mailto" data-i="-1" style="padding:8px 10px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;border:1px solid rgba(114,149,184,.3);cursor:pointer;font-family:inherit">📧 תוכנת מייל</button>
+      <button type="button" data-email-act="copyaddr" data-i="-1" style="padding:8px 10px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;border:1px solid rgba(114,149,184,.3);cursor:pointer;font-family:inherit">📋 כתובות</button>
+      <button type="button" data-email-act="copymsg" data-i="-1" style="padding:8px 10px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;border:1px solid rgba(114,149,184,.3);cursor:pointer;font-family:inherit">📋 הודעה</button>
     </div>
   </div>`;
   document.body.appendChild(m);
-  m.addEventListener('click', e => { if(e.target===m) m.remove(); });
+  m.addEventListener('click', e => { if(e.target===m){m.remove();return;} const b=e.target.closest('[data-email-act]'); if(b) _emailBcAct(b.dataset.emailAct, Number(b.dataset.i)); });
 }
 
 // ── WhatsApp broadcast ────────────────────────────────────────
@@ -21337,8 +21401,19 @@ function applyTickerSettings() {
   _rebuildTickerWidget();
 }
 
+function _tickerWatch(){
+  /* TradingView loads from a third-party host; ad blockers or a bad connection can block it. Say so instead of showing an empty strip. */
+  setTimeout(()=>{
+    const b=document.getElementById('index-banner'),w=document.getElementById('tv-ticker-widget');
+    if(!b||!w||b.style.display==='none'||w.querySelector('iframe')||document.getElementById('ticker-fallback'))return;
+    const f=document.createElement('div');f.id='ticker-fallback';
+    f.innerHTML='<span>המדדים לא נטענו. בדוק חיבור או חוסם פרסומות.</span><button type="button" onclick="_rebuildTickerWidget()">נסה שוב</button>';
+    b.appendChild(f);
+  },7000);
+}
 function _rebuildTickerWidget() {
   const banner = document.getElementById('index-banner');
+  document.getElementById('ticker-fallback')?.remove();
   const old = document.getElementById('tv-ticker-widget');
   if (old) old.remove();
 
@@ -21348,11 +21423,11 @@ function _rebuildTickerWidget() {
   const container = document.createElement('div');
   container.id = 'tv-ticker-widget';
   container.className = 'tradingview-widget-container';
-  container.style.cssText = 'flex:1;height:46px;overflow:hidden';
+  container.style.cssText = 'flex:1;height:44px;overflow:hidden';
 
   const inner = document.createElement('div');
   inner.className = 'tradingview-widget-container__widget';
-  inner.style.height = '46px';
+  inner.style.height = '44px';
   container.appendChild(inner);
 
   const script = document.createElement('script');
@@ -21361,11 +21436,12 @@ function _rebuildTickerWidget() {
   script.async = true;
   script.text = JSON.stringify({
     symbols: selected.map(s => ({ proName: s.proName, title: s.title })),
-    showSymbolLogo: false, isTransparent: false,
+    showSymbolLogo: false, isTransparent: true,
     displayMode: 'compact', colorTheme: 'dark', locale: 'en'
   });
   container.appendChild(script);
   banner.appendChild(container);
+  _tickerWatch();
 }
 
 // ════════════════════════════════════════════════════
@@ -23753,6 +23829,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   let tv='1'; try{ tv=localStorage.getItem('fx_ticker')||'1'; }catch(e){}
   const b=document.getElementById('index-banner'); if(b && tv!=='1') b.style.display='none';
   _updTickerMi();
+  /* apply the symbols the user picked (before this, a reload fell back to the default list) */
+  try{ if(b && tv==='1' && (_tickerCustom.length||_tickerHidden.size)) _rebuildTickerWidget(); else _tickerWatch(); }catch(e){ console.warn('ticker',e); }
   // overview sections: main open by default, advanced collapsed by default
   const tp=document.getElementById('tp-overview');
   if(tp){ let m='1',a='0'; try{ m=localStorage.getItem('fx_ovsec_main')??'1'; a=localStorage.getItem('fx_ovsec_adv')??'0'; }catch(e){}
@@ -26211,18 +26289,18 @@ function financeLegacyRows(){
     if(!r||!okDate(r.date))return;
     const ilsGross=r.currency==='ILS'?r.amountILS:null;
     if(r.type==='הוצאה'){
-      add({id:'rec:'+r.id,idx:i,src:'records',srcLabel:'יומן הוצאות',type:'expense',date:r.date,category:r.cat||'כללי',note:[r.company,r.note].filter(Boolean).join(' · '),amount:financeConvert(r.amount,r.rate,r.date,cur,ilsGross)});
+      add({id:'rec:'+r.id,idx:i,rid:r.id,src:'records',srcLabel:'יומן הוצאות',type:'expense',date:r.date,category:r.cat||'כללי',note:[r.company,r.note].filter(Boolean).join(' · '),amount:financeConvert(r.amount,r.rate,r.date,cur,ilsGross)});
     }else if(r.type==='משיכה'){
       const gUSD=Number(r.wdGross!=null?r.wdGross:r.amount);
       let fUSD=Number(r.wdFeeAmt!=null?r.wdFeeAmt:(r.wdNet!=null?gUSD-Number(r.wdNet):0));if(!Number.isFinite(fUSD)||fUSD<0)fUSD=0;
       const gross=financeConvert(gUSD,r.rate,r.date,cur,ilsGross),fee=fUSD>0?financeConvert(fUSD,r.rate,r.date,cur,null):0;
-      add({id:'rec:'+r.id,idx:i,src:'records',srcLabel:'משיכה',type:'income',wd:true,date:r.date,category:'תקבול ממשיכה',note:[r.company,'משיכה'].filter(Boolean).join(' · '),amount:gross,net:gross-fee});
-      if(fee>0)add({id:'recfee:'+r.id,idx:i,src:'records',srcLabel:'עמלת משיכה',type:'expense',wdFee:true,date:r.date,category:'עמלות',note:'עמלת משיכה · '+(r.company||''),amount:fee});
+      add({id:'rec:'+r.id,idx:i,rid:r.id,src:'records',srcLabel:'משיכה',type:'income',wd:true,date:r.date,category:'תקבול ממשיכה',note:[r.company,'משיכה'].filter(Boolean).join(' · '),amount:gross,net:gross-fee});
+      if(fee>0)add({id:'recfee:'+r.id,idx:i,rid:r.id,src:'records',srcLabel:'עמלת משיכה',type:'expense',wdFee:true,date:r.date,category:'עמלות',note:'עמלת משיכה · '+(r.company||''),amount:fee});
     }
   });
   (typeof customExpenses!=='undefined'&&Array.isArray(customExpenses)?customExpenses:[]).forEach((c,i)=>{
     if(!c||!okDate(c.date))return;
-    add({id:'cx:'+c.id,idx:i,src:'custom',srcLabel:'הוצאה חופשית',type:'expense',date:c.date,category:c.category||'כללי',note:c.desc||'',amount:financeConvert(c.amount,c.rate,c.date,cur,c.currency==='ILS'?c.amountILS:null)});
+    add({id:'cx:'+c.id,idx:i,rid:c.id,src:'custom',srcLabel:'הוצאה חופשית',type:'expense',date:c.date,category:c.category||'כללי',note:c.desc||'',amount:financeConvert(c.amount,c.rate,c.date,cur,c.currency==='ILS'?c.amountILS:null)});
   });
   (typeof accounts!=='undefined'&&Array.isArray(accounts)?accounts:[]).forEach(a=>{
     (a&&Array.isArray(a.withdrawals)?a.withdrawals:[]).forEach(w=>{
@@ -26258,8 +26336,11 @@ function financeBreakdown(rows){
   const sum=f=>rows.filter(f).reduce((a,e)=>a+e.amount,0);
   return {manual:sum(e=>!e.legacy&&e.type==='income'),manualOut:sum(e=>!e.legacy&&e.type==='expense'),log:sum(e=>e.src==='records'&&e.type==='expense'&&!e.wdFee),custom:sum(e=>e.src==='custom'),wd:sum(e=>e.wd),fee:sum(e=>e.wdFee)};
 }
+function financeFindIdx(src,id){const arr=src==='custom'?customExpenses:records;return arr.findIndex(x=>x&&String(x.id)===String(id));}
+function financeDeleteSrc(src,id){const i=financeFindIdx(src,id);if(i<0){showToast('הרשומה כבר לא קיימת','error');return;}src==='custom'?cxAskDel(i):askDel(i);}
 function financeOpenSource(src,ref){
   try{
+    if(src==='records'||src==='custom'){const i=financeFindIdx(src,ref);if(i<0){showToast('הרשומה כבר לא קיימת','error');return;}ref=i;}
     if(src==='records'){ref=Number(ref);if(records[ref]){openEdit(ref);return;}}
     if(src==='custom'){ref=Number(ref);if(customExpenses[ref]){openCX(ref);return;}}
     if(src==='acct'){openAcctGoals(ref);return;}
@@ -26289,23 +26370,23 @@ function financeSaveWithdrawal(data,amount){
 function financeNavigate(view='summary'){
   financeView=view;document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
   document.getElementById('tp-biz').classList.add('active');_simpleSync('biz');
-  const nav=document.getElementById('simple-section-nav');nav.innerHTML=['summary','expenses','custom','transactions','reports'].map((v,i)=>`<button type="button" onclick="financeNavigate('${v}')" ${view===v?'aria-current="page"':''}>${['סיכום','יומן הוצאות','הוצאות חופשיות','תנועות','דוחות'][i]}</button>`).join('');nav.hidden=false;
+  const nav=document.getElementById('simple-section-nav');nav.innerHTML=['summary','expenses','custom','withdrawals','transactions','reports'].map((v,i)=>`<button type="button" onclick="financeNavigate('${v}')" ${view===v?'aria-current="page"':''}>${['סיכום','יומן הוצאות','הוצאות חופשיות','משיכות','תנועות','דוחות'][i]}</button>`).join('');nav.hidden=false;
   const add=document.getElementById('add-btn');if(add)add.style.display='none';
   if(typeof mobNavClose==='function')mobNavClose();if(typeof closeNavMenu==='function')closeNavMenu();if(typeof closeSidePanel==='function')closeSidePanel();
   document.getElementById('hdr-more')?.classList.remove('open');document.body.classList.remove('drawer-open');if(typeof _syncBottomNav==='function')_syncBottomNav('biz');
-  if(view==='expenses'||view==='custom'){
+  if(view==='expenses'||view==='custom'||view==='withdrawals'){
     document.getElementById('tp-biz').classList.remove('active');document.getElementById('tp-'+view).classList.add('active');
-    if(view==='expenses'){expF='all';expC='הכל';expPeriod='all';document.querySelectorAll('#efbar .fb,#efbar2 .fb').forEach(b=>b.classList.remove('active'));renderExp();renderRecurringManager();}else renderCX();
+    if(view==='withdrawals')renderWD();else if(view==='expenses'){expF='all';expC='הכל';expPeriod='all';document.querySelectorAll('#efbar .fb,#efbar2 .fb').forEach(b=>b.classList.remove('active'));renderExp();renderRecurringManager();}else renderCX();
   }else financeRender();window.scrollTo({top:0,behavior:'instant'});
 }
 function financeChangePeriod(delta){financeDate=new Date(financeDate.getFullYear()+(financeRange==='year'?delta:0),financeDate.getMonth()+(financeRange==='year'?0:delta),1);financeRender();}
-function financeTable(rows,limit){const sorted=[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit||rows.length);return sorted.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>תיאור</th><th>קטגוריה</th><th>סכום</th><th><span class="ws-sr">פעולות</span></th></tr></thead><tbody>${sorted.map(e=>`<tr><td>${escHtml(e.date)}</td><td>${escHtml(e.note|| (e.type==='income'?'תקבול':'הוצאה'))}<small>${e.legacy?escHtml(e.srcLabel):(e.type==='income'?'תקבול':'הוצאה')}${e.suspect?' · ⚠ ייתכנה כפילות':''}</small></td><td>${escHtml(e.category||'כללי')}</td><td class="${e.type==='income'?'cg':'cr'}" dir="ltr">${e.type==='income'?'+':'−'}${financeMoney(+e.amount)}</td><td>${e.legacy?`<button class="ws-text-button" onclick="financeOpenSource('${e.src}','${escHtml(String(e.src==='acct'?e.acctId:e.idx))}')">במסך המקור</button>`:`<button class="ws-text-button" data-finance-edit="${escHtml(String(e.id))}">פרטים</button>`}</td></tr>`).join('')}</tbody></table></div>`:'<div class="ws-empty"><h2>אין תנועות בתקופה הזו</h2><p>רשום תקבול או הוצאה כדי להתחיל את הסיכום הכספי.</p><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></div>';}
+function financeTable(rows,limit){const sorted=[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit||rows.length);return sorted.length?`<div class="ws-table-wrap"><table class="ws-table"><thead><tr><th>תאריך</th><th>תיאור</th><th>קטגוריה</th><th>סכום</th><th><span class="ws-sr">פעולות</span></th></tr></thead><tbody>${sorted.map(e=>`<tr><td>${escHtml(e.date)}</td><td>${escHtml(e.note|| (e.type==='income'?'תקבול':'הוצאה'))}<small>${e.legacy?escHtml(e.srcLabel):(e.type==='income'?'תקבול':'הוצאה')}${e.suspect?' · ⚠ ייתכנה כפילות':''}</small></td><td>${escHtml(e.category||'כללי')}</td><td class="${e.type==='income'?'cg':'cr'}" dir="ltr">${e.type==='income'?'+':'−'}${financeMoney(+e.amount)}</td><td>${e.legacy?`<button class="ws-text-button" onclick="financeOpenSource('${e.src}','${escHtml(String(e.src==='acct'?e.acctId:e.rid))}')">במסך המקור</button>${e.src==='records'?`<button class="ws-text-button" onclick="financeDeleteSrc('records','${escHtml(String(e.rid))}')" title="מחיקת הרשומה המקורית${e.wd?' (המשיכה והעמלה שלה)':''}">🗑 מחיקה</button>`:e.src==='custom'?`<button class="ws-text-button" onclick="financeDeleteSrc('custom','${escHtml(String(e.rid))}')">🗑 מחיקה</button>`:''}`:`<button class="ws-text-button" data-finance-edit="${escHtml(String(e.id))}">פרטים</button>`}</td></tr>`).join('')}</tbody></table></div>`:'<div class="ws-empty"><h2>אין תנועות בתקופה הזו</h2><p>רשום תקבול או הוצאה כדי להתחיל את הסיכום הכספי.</p><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></div>';}
 function financeRender(){
   const el=document.getElementById('finance-workspace');if(!el)return;
   const rows=financeCombinedRows(),total=financeTotals(rows),brk=financeBreakdown(rows),sus=financeSuspects(rows),label=financeRange==='all'?'כל התקופות':financeDate.toLocaleDateString('he-IL',financeRange==='year'?{year:'numeric'}:{month:'long',year:'numeric'});
-  el.innerHTML=`<header class="ws-heading"><div><p class="ws-eyebrow">ניהול כספי</p><h1>${{summary:'התמונה הכספית שלך',transactions:'תקבולים והוצאות',reports:'דוחות כספיים'}[financeView]}</h1><p>רישום כספי עצמאי · ללא רווחי עסקאות או יעדי מסחר</p></div><button class="home-primary" onclick="financeOpen()">הוספת תנועה</button></header>
+  el.innerHTML=`<header class="ws-heading"><div><p class="ws-eyebrow">ניהול כספי</p><h1>${{summary:'התמונה הכספית שלך',transactions:'תקבולים והוצאות',reports:'דוחות כספיים'}[financeView]}</h1><p>רישום כספי עצמאי · ללא רווחי עסקאות או יעדי מסחר</p></div><div class="ws-toolbar"><button class="home-primary" onclick="financeOpen(null,'withdrawal')">הוספת משיכה</button><button class="bn" onclick="financeOpen()">הוספת תנועה</button></div></header>
   <div class="ws-toolbar"><div class="ws-segment" aria-label="תקופה">${[['month','חודש'],['year','שנה'],['all','הכל']].map(([v,t])=>`<button aria-pressed="${financeRange===v}" onclick="financeRange='${v}';financeRender()">${t}</button>`).join('')}</div><div class="ws-period"><button aria-label="תקופה קודמת" onclick="financeChangePeriod(-1)" ${financeRange==='all'?'disabled':''}>‹</button><strong>${label}</strong><button aria-label="תקופה הבאה" onclick="financeChangePeriod(1)" ${financeRange==='all'?'disabled':''}>›</button></div><label>מטבע <select aria-label="מטבע כספי" onchange="financeCurrency=this.value;financeRender()"><option ${financeCurrency==='USD'?'selected':''}>USD</option><option ${financeCurrency==='ILS'?'selected':''}>ILS</option></select></label></div>
-  ${rows.length?`<div class="ws-kpis">${[['תקבולים (כולל משיכות)',total.income,'cg'],['הוצאות (כולל עמלות משיכה)',total.expense,'cr'],['הפרש לתקופה',total.net,'']].map(([t,n,c])=>`<section><p>${t}</p><strong class="${c}" dir="ltr">${financeMoney(n)}</strong></section>`).join('')}</div><p class="ws-muted" id="finance-breakdown">מתוכם: משיכות ברוטו ${financeMoney(brk.wd)} · עמלות משיכה ${financeMoney(brk.fee)} · יומן הוצאות ${financeMoney(brk.log)} · הוצאות חופשיות ${financeMoney(brk.custom)} · תנועות ידניות: תקבולים ${financeMoney(brk.manual)}, הוצאות ${financeMoney(brk.manualOut)}</p>`:''}${sus.length?`<section class="ws-panel" role="status" id="finance-suspects"><h2>⚠ ייתכנו משיכות כפולות</h2><p>נמצאו ${sus.length} משיכות באותו יום ובאותו סכום ביותר ממקום אחד. הן נספרות בסיכום כמו שהן. אם זו כפילות, מחק או העבר לארכיון אחת מהן.</p><ul>${sus.slice(0,5).map(p=>`<li>${escHtml(p.date)} · ${financeMoney(p.a.amount)} — ${escHtml(p.a.srcLabel||'תנועה ידנית')} / ${escHtml(p.b.srcLabel||'תנועה ידנית')}</li>`).join('')}</ul></section>`:''}<section class="ws-panel" id="restored-expenses"><h2>ההוצאות השמורות שלך</h2><p>כל ההוצאות והמשיכות הקיימות נכללות בסיכום שלמעלה. הן נקראות ישירות מהנתונים המקוריים, בלי העתקה, ואפשר לערוך אותן במסכים שלהן.</p><div class="ws-toolbar"><button class="bn" onclick="financeNavigate('expenses')">יומן הוצאות (${records.filter(r=>r.type!=='משיכה').length})</button><button class="bn" onclick="financeNavigate('custom')">הוצאות חופשיות (${customExpenses.length})</button><button class="bn" onclick="financeOriginalBackup()">גיבוי ההוצאות המקוריות</button></div></section><div id="finance-content"></div>`;
+  ${rows.length?`<div class="ws-kpis">${[['סה״כ הכנסות',total.income-brk.wd,'cg'],['סה״כ הוצאות (כולל עמלות משיכה)',total.expense,'cr'],['סה״כ משיכות',brk.wd,'cg'],['סה״כ עמלות משיכה',brk.fee,'cr'],['מאזן לתקופה',total.net,'']].map(([t,n,c])=>`<section><p>${t}</p><strong class="${c}" dir="ltr">${financeMoney(n)}</strong></section>`).join('')}</div><p class="ws-muted" id="finance-breakdown">מאזן = הכנסות + משיכות − הוצאות (העמלות כלולות בהוצאות, ולכן משיכה נספרת פעם אחת, ברוטו). מתוכם: יומן הוצאות ${financeMoney(brk.log)} · הוצאות חופשיות ${financeMoney(brk.custom)} · תנועות ידניות: תקבולים ${financeMoney(brk.manual)}, הוצאות ${financeMoney(brk.manualOut)}</p>`:''}${sus.length?`<section class="ws-panel" role="status" id="finance-suspects"><h2>⚠ ייתכנו משיכות כפולות</h2><p>נמצאו ${sus.length} משיכות באותו יום ובאותו סכום ביותר ממקום אחד. הן נספרות בסיכום כמו שהן. אם זו כפילות, מחק או העבר לארכיון אחת מהן.</p><ul>${sus.slice(0,5).map(p=>`<li>${escHtml(p.date)} · ${financeMoney(p.a.amount)} — ${escHtml(p.a.srcLabel||'תנועה ידנית')} / ${escHtml(p.b.srcLabel||'תנועה ידנית')}</li>`).join('')}</ul></section>`:''}<section class="ws-panel" id="restored-expenses"><h2>ההוצאות השמורות שלך</h2><p>כל ההוצאות והמשיכות הקיימות נכללות בסיכום שלמעלה. הן נקראות ישירות מהנתונים המקוריים, בלי העתקה, ואפשר לערוך אותן במסכים שלהן.</p><div class="ws-toolbar"><button class="bn" onclick="financeNavigate('expenses')">יומן הוצאות (${records.filter(r=>r.type!=='משיכה').length})</button><button class="bn" onclick="financeNavigate('custom')">הוצאות חופשיות (${customExpenses.length})</button><button class="bn" onclick="financeOriginalBackup()">גיבוי ההוצאות המקוריות</button></div></section><div id="finance-content"></div>`;
   const body=el.querySelector('#finance-content');
   if(financeView==='summary')body.innerHTML=`<section class="ws-panel"><div class="ws-panel-title"><h2>תנועות אחרונות</h2><button class="ws-text-button" onclick="financeNavigate('transactions')">לכל התנועות ←</button></div>${financeTable(rows,5)}</section><details class="simple-details"><summary>הערות לתקופה</summary><label>הערה <textarea id="finance-note" oninput="financeSaveNote(this.value)">${escHtml(businessNotes[financeNoteKey()]||'')}</textarea></label></details>`;
   if(financeView==='transactions'){body.innerHTML=`<section class="ws-panel"><div class="ws-toolbar"><label class="ws-search">חיפוש<input type="search" value="${escHtml(financeQuery)}" placeholder="תיאור או קטגוריה" oninput="financeQuery=this.value;financeRenderRows()"></label><label>סוג<select onchange="financeType=this.value;financeRenderRows()"><option value="all" ${financeType==='all'?'selected':''}>כל התנועות</option><option value="income" ${financeType==='income'?'selected':''}>תקבולים</option><option value="expense" ${financeType==='expense'?'selected':''}>הוצאות</option></select></label><button class="bn" onclick="financeExportCSV()">ייצוא לתקופה</button></div><div id="finance-rows"></div></section>`;financeRenderRows();}
@@ -26319,11 +26400,11 @@ function financeOriginalBackup(){workspaceDownload('fayna-original-expenses.json
 function financeNoteKey(){return financeRange==='month'?`${financeDate.getFullYear()}-${String(financeDate.getMonth()+1).padStart(2,'0')}`:`finance-${financeRange}-${financeDate.getFullYear()}`;}
 function financeSaveNote(value){businessNotes[financeNoteKey()]=value;saveBizData();}
 function financeRenderRows(){const el=document.getElementById('finance-rows');if(el)el.innerHTML=financeTable(financeCombinedRows().filter(e=>(financeType==='all'||e.type===financeType)&&`${e.note||''} ${e.category||''} ${e.date}`.toLowerCase().includes(financeQuery.toLowerCase())));}
-function financeOpen(id){
+function financeOpen(id,preset){
   const existing=id?financeRows().find(e=>String(e.id)===String(id)):null;if(id&&!existing)return;financeEditId=existing?.id||null;
   const box=document.getElementById('finance-modal');box.innerHTML=`<form class="ws-finance-form"><div class="ws-panel-title"><h2>${existing?'פרטי תנועה':'תנועה חדשה'}</h2><button type="button" class="bn" onclick="document.getElementById('finance-modal').close()">סגירה</button></div><div class="ws-form-grid"><label>סוג<select name="type" onchange="financeToggleWd(this.form)"><option value="income">תקבול</option><option value="expense">הוצאה</option>${existing?'':'<option value="withdrawal">משיכה (סכום + עמלה)</option>'}</select></label><label>תאריך<input name="date" type="date" required></label><label>סכום<input name="amount" type="number" min="0.01" max="999999999" step="0.01" required inputmode="decimal"></label><label>מטבע<select name="currency"><option>USD</option><option>ILS</option></select></label><label data-wd-only style="display:none">עמלה (באותו מטבע)<input name="fee" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" placeholder="0"></label><label data-wd-only style="display:none">חברה<select name="company"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></label><label data-wd-hide>קטגוריה<select name="category">${FINANCE_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select></label><label>תיאור<input name="note" maxlength="250" placeholder="תיאור קצר (אופציונלי)"></label></div><p class="ws-muted">משיכה נרשמת כאן פעם אחת: הסכום נספר כתקבול והעמלה כהוצאה. אין לרשום אותה גם כתקבול נפרד.</p><div class="ws-toolbar"><button class="home-primary" type="submit">שמירת תנועה</button>${existing?'<button type="button" class="bn" onclick="financeArchive()">העברה לארכיון</button>':''}</div><p role="status" id="finance-form-status"></p></form>`;
-  const form=box.querySelector('form');Object.entries({type:existing?.type||'income',date:existing?.date||_homeDate(new Date()),amount:existing?.amount||'',currency:existing?.currency||financeCurrency,category:existing?.category||'כללי',note:existing?.note||''}).forEach(([k,v])=>form.elements.namedItem(k).value=v);
-  form.onsubmit=e=>{e.preventDefault();financeSave(form);};box.showModal();
+  const form=box.querySelector('form');Object.entries({type:existing?.type||(preset==='withdrawal'?'withdrawal':'income'),date:existing?.date||_homeDate(new Date()),amount:existing?.amount||'',currency:existing?.currency||financeCurrency,category:existing?.category||'כללי',note:existing?.note||''}).forEach(([k,v])=>form.elements.namedItem(k).value=v);
+  financeToggleWd(form);form.onsubmit=e=>{e.preventDefault();financeSave(form);};box.showModal();
 }
 function financeSave(form){
   const data=Object.fromEntries(new FormData(form)),amount=Number(data.amount);
