@@ -2080,6 +2080,79 @@ button.sn-item.active,button[aria-current="page"]{color:var(--t1);background:var
 .simple-section-nav button:focus-visible,.simple-details>summary:focus-visible,button.sn-item:focus-visible{outline:2px solid var(--bl);outline-offset:3px}
 @media(max-width:600px){.simple-section-nav{gap:6px}.simple-section-nav button{padding:8px 10px;font-size:12px}.mob-bnav-btn{font-size:9px}.simple-details{padding:10px}}
 
+/* v54: calm workspace and a compact, responsive home */
+#index-banner,#world-clocks,#ref-chip{display:none!important}
+.topnav{gap:12px}
+.app-layout>.main{padding:28px!important}
+#tp-overview.active{display:block!important}
+#tp-overview.active>:not(#home-dashboard){display:none!important}
+#home-dashboard{max-width:1180px;margin:0 auto;color:var(--t1)}
+.home-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px}
+.home-heading h1{font-size:clamp(24px,2.5vw,34px);font-weight:650;letter-spacing:-.8px;line-height:1.3;margin:4px 0 8px}
+.home-heading p{margin:0;color:var(--t3);font-size:13px}
+.home-heading .home-eyebrow{font-size:10px;letter-spacing:2px;font-weight:600;color:var(--bl)}
+.home-primary{border:0;background:var(--t1);color:var(--bg0);border-radius:10px;padding:12px 18px;font:inherit;font-size:13px;font-weight:650;min-height:44px;cursor:pointer;white-space:nowrap}
+.home-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.home-period{display:flex;background:var(--bg2);padding:4px;border:1px solid var(--border);border-radius:10px}
+.home-period button{border:0;background:transparent;color:var(--t3);padding:7px 16px;font:inherit;font-size:12px;border-radius:7px;cursor:pointer;min-height:36px}
+.home-period button[aria-pressed="true"]{background:var(--bg4);color:var(--t1)}
+.home-account-filter{display:flex;align-items:center;gap:16px;border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--t2);background:transparent;font:inherit;font-size:12px;cursor:pointer;min-height:44px}
+.home-account-filter select{font:inherit;color:var(--t1);background:var(--bg2);border:0;max-width:180px;cursor:pointer}
+.home-scope{margin-inline-start:auto;color:var(--t3);font-size:11px}
+.home-top-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:16px}
+.home-lower-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px}
+.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;min-width:0}
+.home-card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.home-card-head h2{font-size:14px;font-weight:600;margin:0}
+.home-card-head span,.home-muted{font-size:11px;color:var(--t3)}
+.home-total{font-size:42px;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;font-weight:650;text-align:start;direction:ltr;width:fit-content;line-height:1.2}
+.home-positive{color:var(--gr)}
+.home-negative{color:var(--re)}
+.home-performance .home-muted{margin:8px 0 0}
+.home-trend{height:115px;margin-top:8px}
+.home-trend svg{height:100%;width:100%;display:block}
+.home-chart-labels{display:flex;justify-content:space-between;color:var(--t3);font-size:10px;direction:ltr}
+.home-empty-chart{display:flex;height:100%;align-items:center;justify-content:center;color:var(--t3);font-size:12px;border-bottom:1px dashed var(--border)}
+.home-stat{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--t2)}
+.home-stat strong{font-size:19px;color:var(--t1);font-weight:550;font-variant-numeric:tabular-nums}
+.home-link{border:0;background:transparent;color:var(--bl);font:inherit;font-size:12px;padding:6px 0;cursor:pointer;min-height:36px;text-align:start}
+.home-summary>.home-link{margin-top:8px}
+.home-trade,.home-account{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--border)}
+.home-trade:last-child,.home-account:last-child{border:0}
+.home-trade strong{margin-inline-start:auto;font-size:13px;font-variant-numeric:tabular-nums}
+.home-symbol{min-width:62px;font-size:12px;font-weight:600}
+.home-trade-date{font-size:11px;color:var(--t3)}
+.home-trade-date small{display:block;font-size:10px}
+.home-account{flex-wrap:wrap;justify-content:space-between}
+.home-account strong,.home-account b{font-size:12px;font-weight:550}
+.home-account small{display:block;font-size:10px;color:var(--t3);margin-top:3px}
+.home-goal{width:100%;font-size:10px;color:var(--t3)}
+.home-goal progress{display:block;width:100%;height:4px;margin-top:7px;accent-color:var(--bl)}
+.home-empty{padding:24px 8px;text-align:center;color:var(--t2);font-size:12px}
+.home-empty p{font-size:11px;color:var(--t3);margin:6px 0}
+.home-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.home-shortcuts button{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:12px;padding:16px;background:transparent;color:var(--t2);font:inherit;text-align:start;cursor:pointer}
+.home-shortcuts button>span:last-child{margin-inline-start:auto;color:var(--t3)}
+.home-shortcuts strong{display:block;font-size:12px;font-weight:550}
+.home-shortcuts small{display:block;font-size:10px;color:var(--t3);margin-top:3px}
+.home-shortcut-icon{font-size:20px;color:var(--bl);width:28px;text-align:center}
+#home-dashboard button:focus-visible{outline:2px solid var(--bl);outline-offset:3px}
+#sidenav .sn-item{margin:3px 10px;width:calc(100% - 20px);border-radius:9px;min-height:44px;font-size:13px}
+#sidenav .sn-item .sn-icon{font-size:15px;opacity:.8}
+.simple-section-nav{padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:22px}
+.simple-section-nav button{border:0;background:transparent;font-size:13px}
+.simple-section-nav button[aria-current="page"]{background:var(--bg3)}
+.workspace-more{margin-inline-start:auto;position:relative}
+.workspace-more>summary{cursor:pointer;color:var(--t3);font-size:12px;padding:12px;min-height:44px}
+.workspace-more[open]{border:1px solid var(--border);border-radius:9px;background:var(--bg2)}
+.workspace-more button{display:block;width:100%;text-align:start}
+.tp .tbl th{font-size:11px}
+.tp .tbl td{padding-top:11px;padding-bottom:11px}
+.tp .filter-topbar{flex-wrap:wrap}
+@media(max-width:900px){.app-layout>.main{padding:20px!important}.home-top-grid{grid-template-columns:1.3fr 1fr}.home-heading h1{font-size:27px}.home-scope{width:100%;margin-inline-start:0}}
+@media(max-width:600px){.app-layout>.main{padding:16px 12px 90px!important}.home-heading{align-items:flex-start;gap:12px}.home-heading h1{font-size:24px;max-width:240px}.home-heading p{font-size:11px}.home-primary{font-size:11px;padding:10px}.home-top-grid,.home-lower-grid{grid-template-columns:1fr;gap:12px}.home-card{padding:16px;border-radius:12px}.home-total{font-size:36px}.home-stat{padding:9px 0}.home-shortcuts{grid-template-columns:1fr;gap:8px}.home-shortcuts button{padding:12px}.home-scope{font-size:10px}.home-heading .home-eyebrow{font-size:9px}.simple-section-nav{gap:3px}.simple-section-nav button{font-size:12px;padding:10px}}
+@media(max-width:600px){.home-summary{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.home-summary>.home-card-head,.home-summary>.home-link{grid-column:1/-1}.home-stat{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.home-stat strong{font-size:19px}.home-trend{height:88px}.home-heading h1{font-size:22px}}
+
 </style>
 <!-- ═══ FIREBASE SDK ═══ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -2938,7 +3011,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <!-- NAV DROPDOWN MENU -->
 <div id="nav-menu-dd" class="nav-menu-dd" onclick="if(event.target===this)closeNavMenu()">
   <div class="nav-menu-grid" id="nav-menu-grid">
-<button type="button" class="nav-menu-item" id="nm-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="nav-menu-item" id="nm-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="nav-menu-item" id="nm-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="nav-menu-item" id="nm-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
 <button type="button" class="nav-menu-item" id="nm-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
@@ -2965,7 +3038,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="mob-nav-overlay" id="mob-nav-overlay" onclick="mobNavClose()"></div>
 <div class="mob-nav-drawer" id="mob-nav-drawer">
   <div class="mob-nav-title">Fayna Trading</div>
-<button type="button" class="mob-nt" id="mobile-simple-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
@@ -2977,7 +3050,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
 <!-- ══════════ MOBILE BOTTOM NAV BAR ══════════ -->
 <div class="mob-bottom-nav" id="mob-bottom-nav">
-<button class="mob-bnav-btn" id="mbn-overview" onclick="swMob('overview')"><span class="mbn-icon">🏠</span><span>סקירה</span></button>
+<button class="mob-bnav-btn" id="mbn-overview" onclick="swMob('overview')"><span class="mbn-icon">🏠</span><span>בית</span></button>
 <button class="mob-bnav-btn" id="mbn-trades" onclick="swMob('trades')"><span class="mbn-icon">📓</span><span>יומן מסחר</span></button>
 <button class="mob-bnav-btn" id="mbn-stats" onclick="swMob('stats')"><span class="mbn-icon">📊</span><span>ביצועים</span></button>
 <button class="mob-bnav-btn" id="mbn-biz" onclick="swMob('biz')"><span class="mbn-icon">💼</span><span>חשבונות וכספים</span></button>
@@ -3029,7 +3102,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <button class="sn-toggle-btn" onclick="toggleSidenav()" id="sn-toggle-btn" title="הסתר/הצג תפריט">◀</button>
   </div>
 
-<button type="button" class="sn-item" id="sni-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">סקירה</span></button>
+<button type="button" class="sn-item" id="sni-overview" onclick="swNav('overview')"><span class="sn-icon">🏠</span><span class="sn-lbl">בית</span></button>
 <button type="button" class="sn-item" id="sni-trades" onclick="swNav('trades')"><span class="sn-icon">📓</span><span class="sn-lbl">יומן מסחר</span></button>
 <button type="button" class="sn-item" id="sni-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
 <button type="button" class="sn-item" id="sni-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">חשבונות וכספים</span></button>
@@ -3240,6 +3313,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <div class="tp active" id="tp-overview">
+<div id="home-dashboard" aria-label="עמוד הבית"></div>
 
 <!-- DAILY TIP -->
 <div id="daily-tip-wrap"></div>
@@ -4474,14 +4548,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <button onclick="openManualEntry()" style="padding:6px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t1);font-family:inherit;font-weight:600">✍️ יומן ידני</button>
       <button id="tj-del-sel" onclick="tjDeleteSelected()" style="display:none;padding:6px 14px;background:rgba(194,88,88,.15);border:1px solid rgba(194,88,88,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--re);font-family:inherit;font-weight:700">🗑 מחק נבחרות (<span id="tj-del-n">0</span>)</button>
       <button id="tj-sel-mode-btn" onclick="tjToggleSelMode()" style="padding:6px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit;font-weight:600;transition:all .2s">☑ בחר עסקאות</button>
+      <button type="button" class="bn" onclick="swNav('import')">ייבוא עסקאות</button>
       <div class="act-dd" id="actdd-tj">
         <button class="act-dd-btn" onclick="actDDToggle('actdd-tj',event)">⋯ עוד</button>
         <div class="act-dd-menu">
           <button class="act-mi" onclick="showReportMenu('trades',this)">📊 דוח P&amp;L</button>
           <button class="act-mi" onclick="exportCSV()">📤 ייצא CSV</button>
           <button class="act-mi" onclick="exportToExcel()">📊 ייצא Excel</button>
-          <div class="act-mi" onclick="swNav('import')">📥 אשף ייבוא (עם תצוגה מקדימה)</div>
-          <label class="act-mi">📂 ייבוא CSV / Excel <input type="file" accept=".csv,.xlsx" multiple style="display:none" onchange="importCSV(this)"></label>
+
         </div>
       </div>
     </div>
@@ -11002,7 +11076,68 @@ function renderGauges(opts){
     </div>`;
 }
 
+/* v54 — compact home. Read-only presentation over the existing journal. */
+var _homePeriod = 'month';
+function _homeDate(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _homeModel(rows, period, now, netOf) {
+  const end=_homeDate(now), start=period==='today'?end:period==='month'?end.slice(0,7)+'-01':'';
+  const valid=rows.filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')&&t.date<=end&&(!start||t.date>=start));
+  const ordered=[...valid].sort((a,b)=>(a.date+(a.btime||'')).localeCompare(b.date+(b.btime||'')));
+  let net=0,wins=0,losses=0,detailed=0,peak=0,drawdown=0;const daily={};
+  const clean=[];
+  for(const t of ordered){const n=Number(netOf(t));if(!Number.isFinite(n))continue;clean.push(t);net+=n;if(!t.isManual){detailed++;wins+=n>0?1:0;losses+=n<0?1:0;}peak=Math.max(peak,net);drawdown=Math.max(drawdown,peak-net);daily[t.date]=(daily[t.date]||0)+n;}
+  let run=0;const series=[0,...Object.values(daily).map(n=>+(run+=n).toFixed(2))];
+  return {rows:clean,net:+net.toFixed(2),wins,losses,count:clean.length,winRate:detailed?wins/detailed*100:null,drawdown:+drawdown.toFixed(2),series,start,end,excluded:valid.length-clean.length};
+}
+function _homeMoney(value){return (value<0?'−':value>0?'+':'')+'$'+Math.abs(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function _homeSelectAccount(value){selectedAccounts=new Set([value]);renderAcctMenu();applyAcctFilter();}
+function _homeTrend(series) {
+  const low=Math.min(...series),high=Math.max(...series),range=high-low||1;
+  const points=series.map((v,i)=>[(i/(series.length-1||1)*600).toFixed(1),(126-(v-low)/range*104).toFixed(1)]);
+  const line=points.map(p=>p.join(',')).join(' ');
+  return '<svg viewBox="0 0 600 150" role="img" aria-label="רווח והפסד מצטבר בתקופה, מתחיל מאפס" preserveAspectRatio="none"><line x1="0" x2="600" y1="'+(126-(0-low)/range*104).toFixed(1)+'" y2="'+(126-(0-low)/range*104).toFixed(1)+'" stroke="currentColor" opacity=".16" stroke-dasharray="4 6"/><polygon points="0,150 '+line+' 600,150" fill="currentColor" opacity=".08"/><polyline points="'+line+'" fill="none" stroke="currentColor" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>';
+}
+function renderHome(){
+  const root=document.getElementById('home-dashboard');if(!root)return;
+  const now=new Date(),all=typeof tradesList==='undefined'?[]:tradesList;
+  const selected=typeof selectedAccounts==='undefined'?new Set(['__all__']):selectedAccounts;
+  const every=selected.has('__all__')||!selected.size;
+  const rows=every?all:all.filter(t=>selected.has(t.acct));
+  const model=_homeModel(rows,_homePeriod,now,tradeNet);
+  const list=typeof accounts==='undefined'?[]:accounts;
+  const shown=every?list:list.filter(a=>selected.has(a.id));
+  const esc=v=>escHtml(String(v??''));
+  const periodTitle={today:'היום',month:'החודש',all:'כל התקופה'}[_homePeriod];
+  const tone=n=>n>0?'home-positive':n<0?'home-negative':'';
+  const accountLabel=every?'כל החשבונות':shown.length===1?shown[0].name:shown.length+' חשבונות';
+  const accountSelector='<label class="home-account-filter"><span>חשבון</span><select id="home-account-select" aria-label="סינון חשבון"><option value="__all__"'+(every?' selected':'')+'>כל החשבונות</option>'+(!every&&selected.size>1?'<option value="__selected__" selected disabled>'+esc(accountLabel)+'</option>':'')+list.map(a=>'<option value="'+esc(a.id)+'"'+(!every&&selected.size===1&&selected.has(a.id)?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label>';
+  const recent=[...model.rows].reverse().slice(0,5);
+  const fees=model.rows.reduce((sum,t)=>sum+tradeComm(t),0);
+  const scopedTitle=periodTitle+' · '+accountLabel;
+  const accountRows=shown.slice(0,3).map(a=>{
+    const accountTrades=all.filter(t=>t.acct===a.id);
+    const value=accountTrades.reduce((sum,t)=>{const n=tradeNet(t);return sum+(Number.isFinite(n)?n:0);},0);
+    const goal=Number(a.goals?.pass?.target||a.goals?.withdrawal?.target)||0;
+    const progress=goal?Math.max(0,Math.min(100,value/goal*100)):0;
+    return '<div class="home-account"><div><strong>'+esc(a.name)+'</strong><small>'+accountTrades.length+' עסקאות · כל התקופה</small></div><b class="'+tone(value)+'" dir="ltr">'+_homeMoney(value)+'</b>'+(goal?'<div class="home-goal"><span>התקדמות ליעד '+Math.round(progress)+'%</span><progress max="100" value="'+progress+'" aria-label="התקדמות ליעד של '+esc(a.name)+'"></progress></div>':'')+'</div>';
+  }).join('');
+  root.innerHTML=`
+    <header class="home-heading"><div><p class="home-eyebrow">FAYNA / HOME</p><h1>כל המסחר שלך. במבט אחד.</h1><p>תמונת מצב קצרה, והפעולה הבאה שלך.</p></div><button type="button" class="home-primary" data-home-action="add">＋ עסקה חדשה</button></header>
+    <div class="home-filter"><div class="home-period" role="group" aria-label="תקופת הסיכום">${[['today','היום'],['month','החודש'],['all','הכל']].map(([id,label])=>'<button type="button" data-home-period="'+id+'" aria-pressed="'+(_homePeriod===id)+'">'+label+'</button>').join('')}</div>${accountSelector}<span class="home-scope">לפי העסקאות הרשומות ביומן · USD</span></div>
+    <div class="home-top-grid"><section class="home-card home-performance"><div class="home-card-head"><h2>רווח והפסד נטו</h2><span>${esc(periodTitle)}</span></div><div class="home-total ${tone(model.net)}" dir="ltr">${_homeMoney(model.net)}</div><p class="home-muted">אחרי עמלות מסחר · לפני הוצאות ומשיכות</p><div class="home-trend ${tone(model.net)}">${model.count?_homeTrend(model.series):'<div class="home-empty-chart">העסקה הראשונה שלך תתחיל את התמונה.</div>'}</div><div class="home-chart-labels"><span>${esc(model.rows[0]?.date||model.start||'—')}</span><span>${esc(model.end)}</span></div></section>
+    <section class="home-card home-summary"><div class="home-card-head"><h2>המספרים החשובים</h2><span>${esc(periodTitle)}</span></div><div class="home-stat"><span>רשומות ביומן</span><strong>${model.count}</strong></div><div class="home-stat"><span>הצלחה בעסקאות מפורטות</span><strong>${model.winRate===null?'—':model.winRate.toFixed(0)+'%'}</strong></div><div class="home-stat"><span>ירידה מרבית מהשיא</span><strong dir="ltr">${model.count?_homeMoney(-model.drawdown):'—'}</strong></div><div class="home-stat"><span>עמלות מסחר</span><strong dir="ltr">$${Number.isFinite(fees)?fees.toFixed(2):'—'}</strong></div><button type="button" class="home-link" data-home-nav="stats">לניתוח הביצועים ←</button></section></div>
+    <div class="home-lower-grid"><section class="home-card"><div class="home-card-head"><div><h2>פעילות אחרונה</h2><span>${esc(scopedTitle)}</span></div><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button></div>${recent.length?'<div class="home-trades">'+recent.map(t=>'<div class="home-trade"><span class="home-symbol">'+esc(t.sym||'עסקה')+'</span><span class="home-trade-date">'+esc(t.date)+'<small>'+esc((t.btime||'').slice(0,5))+'</small></span><strong class="'+tone(tradeNet(t))+'" dir="ltr">'+_homeMoney(tradeNet(t))+'</strong></div>').join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות בתקופה הזו</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}</section>
+    <section class="home-card"><div class="home-card-head"><div><h2>החשבונות שלך</h2><span>סיכום מסחר · כל התקופה</span></div><button type="button" class="home-link" data-home-action="accounts">ניהול ←</button></div>${accountRows||'<div class="home-empty"><strong>הכל מתחיל בחשבון הראשון</strong><p>רכז את העסקאות לפי חשבון מסחר.</p><button type="button" class="home-link" data-home-action="accounts">הוסף חשבון ←</button></div>'}${shown.length>3?'<button type="button" class="home-link" data-home-action="accounts">לעוד '+(shown.length-3)+' חשבונות ←</button>':''}</section></div>
+    <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="expenses"><span class="home-shortcut-icon">₪</span><span><strong>הוצאות ומשיכות</strong><small>כל התנועות במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
+    ${model.excluded?'<p class="home-muted" role="status">'+model.excluded+' עסקאות עם סכום לא תקין לא נכללו בסיכום. בדוק אותן ביומן.</p>':''}`;
+  root.querySelectorAll('[data-home-nav]').forEach(b=>b.addEventListener('click',()=>swNav(b.dataset.homeNav)));
+  root.querySelector('#home-account-select')?.addEventListener('change',e=>_homeSelectAccount(e.target.value));
+  root.querySelectorAll('[data-home-period]').forEach(b=>b.addEventListener('click',()=>{_homePeriod=b.dataset.homePeriod;renderHome();root.querySelector('[data-home-period="'+_homePeriod+'"]').focus();}));
+  root.querySelectorAll('[data-home-action]').forEach(b=>b.addEventListener('click',()=>b.dataset.homeAction==='add'?openAddTrade():openAcctGrid()));
+}
+
 function renderOV() {
+  renderHome();
   renderTraderStatus();
   if (typeof renderAiInsightCard === 'function') renderAiInsightCard();
   renderDailyChecklist();
@@ -14448,7 +14583,7 @@ function _simpleGroup(name) {
 }
 function _simpleSync(name) {
   const group=_simpleGroup(name);
-  const titles={overview:'סקירה',trades:'יומן מסחר',stats:'ביצועים',biz:'חשבונות וכספים',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
+  const titles={overview:'בית',trades:'יומן מסחר',stats:'ביצועים',biz:'חשבונות וכספים',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
   const sections={
     overview:[],
     trades:[['trades','עסקאות'],['calendar','לוח שנה'],['import','ייבוא עסקאות'],['calc','מחשבונים'],['ecal','יומן כלכלי']],
@@ -14469,10 +14604,16 @@ function _simpleSync(name) {
   const nav=document.getElementById('simple-section-nav');
   if(!nav)return;
   nav.replaceChildren();
+  const secondary={trades:['import','calc','ecal'],biz:['pnl'],help:['news']}[group]||[];
+  let more=null;
   for(const [target,title] of sections[group]||[]){
     const b=document.createElement('button');b.type='button';b.textContent=title;
     if(target===name||(target==='expenses'&&name==='custom'))b.setAttribute('aria-current','page');
-    b.addEventListener('click',()=>swNav(target));nav.appendChild(b);
+    b.addEventListener('click',()=>swNav(target));
+    if(secondary.includes(target)){
+      if(!more){more=document.createElement('details');more.className='workspace-more';const summary=document.createElement('summary');summary.textContent='כלים נוספים';more.appendChild(summary);nav.appendChild(more);}
+      more.appendChild(b);if(target===name)more.open=true;
+    }else nav.appendChild(b);
   }
   nav.hidden=!nav.childElementCount;
   if(name==='calc'&&window._simpleTradeDraft){
@@ -24930,95 +25071,7 @@ function _ccNextGoal() {
 }
 
 /* ── COMMAND CENTER ── */
-function renderCommandCenter() {
-  const el = document.getElementById('command-center');
-  if (!el) return;
-  const s    = _computeTodayStats();
-  const sc   = _computeTradingScore(s);
-  const acct = _ccActiveAcct();
-  const bal  = _ccAcctBalance(acct);
-  const dd   = _ccDrawdown();
-  const wk   = _ccWeekStats();
-  const mood = _ccTodayMood();
-  const goal = _ccNextGoal();
-  let risk = null; try { risk = _computeRiskDashboard(); } catch(e){}
-  const rToday = risk?.today || null;
-
-  const money = v => (v<0?'-':'') + '$' + Math.abs(v).toFixed(0);
-  const kpi = (label, value, sub, color, extra) => `
-    <div class="cc-kpi">
-      <div class="cc-kpi-l">${label}</div>
-      <div class="cc-kpi-v" style="${color?'color:'+color:''}">${value}</div>
-      <div class="cc-kpi-s">${sub||''}</div>
-      ${extra||''}
-    </div>`;
-
-  const pnlColor = s.netPnl > 0 ? 'var(--gr)' : s.netPnl < 0 ? 'var(--re)' : 'var(--t1)';
-  const riskColor = rToday ? (rToday.pct>=80?'var(--re)':rToday.pct>=50?'var(--go)':'var(--gr)') : 'var(--t3)';
-  const statusColor = sc.status==='good'?'var(--gr)':sc.status==='warn'?'var(--go)':'var(--re)';
-
-  el.innerHTML = `
-  <div class="cc-top">
-    ${kpi('יתרת חשבון', bal!=null?money(bal):'—',
-          acct ? escHtml(acct.name) : 'לא הוגדר תיק', 'var(--t1)')}
-    ${kpi('P&L היום', (s.netPnl>=0?'+':'')+money(s.netPnl),
-          `${s.tradeCount} עסקאות · ${Math.round(s.winPct)}% הצלחה`, pnlColor)}
-    ${kpi('Drawdown', dd.cur>0?'-'+money(dd.cur):'$0',
-          'מקסימלי: ' + money(dd.max), dd.cur>0?'var(--go)':'var(--gr)')}
-    ${kpi('סיכון יומי', rToday && rToday.limit ? rToday.pct+'%' : '—',
-          rToday && rToday.limit ? 'נותר ' + money(rToday.remaining) : 'לא הוגדר סטופ יומי', riskColor,
-          rToday && rToday.limit ? `<div class="cc-bar"><div style="width:${rToday.pct}%;background:${riskColor}"></div></div>` : '')}
-    ${kpi('יעד הבא', goal ? goal.pct+'%' : '—',
-          goal ? goal.label + ' · ' + money(goal.cur) + ' / ' + money(goal.target) : 'לא הוגדר יעד', 'var(--ac)',
-          goal ? `<div class="cc-bar"><div style="width:${Math.max(0,goal.pct)}%;background:var(--ac)"></div></div>` : '')}
-  </div>
-
-  <div class="cc-mid">
-    <div class="zcl cc-equity">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--gr)"></div>Equity — P&L מצטבר</div>
-        <span style="font-size:11px;color:var(--t3)">${tradesList.length} עסקאות</span></div>
-      <div class="cc-chart-wrap" style="height:210px;position:relative"><canvas id="ccEquityChart" aria-label="Equity"></canvas></div>
-    </div>
-    <div class="cc-side">
-      <div class="zcl cc-mini">
-        <div class="cc-mini-t">ביצועי השבוע</div>
-        <div class="cc-mini-v" style="color:${wk.net>=0?'var(--gr)':'var(--re)'}">${(wk.net>=0?'+':'')+money(wk.net)}</div>
-        <div class="cc-mini-s">${wk.count} עסקאות · ${wk.winPct}% הצלחה</div>
-      </div>
-      <div class="zcl cc-mini" style="cursor:pointer" onclick="swNav('coach')">
-        <div class="cc-mini-t">מצב פסיכולוגי</div>
-        <div class="cc-mini-v" style="color:${mood?(mood.mood>=4?'var(--gr)':mood.mood>=3?'var(--go)':'var(--re)'):'var(--t3)'}">
-          ${mood && mood.mood!=null ? ['😞','😕','😐','🙂','😄'][Math.max(0,Math.min(4,Math.round(mood.mood)-1))] + ' ' + mood.mood + '/5' : '—'}</div>
-        <div class="cc-mini-s">${mood ? 'תרגול יומי הושלם' : 'לא מולא היום — לחץ למילוי'}</div>
-      </div>
-      <div class="zcl cc-mini">
-        <div class="cc-mini-t">Trading Score</div>
-        <div class="cc-score-ring" style="background:conic-gradient(${statusColor} 0 ${sc.overall}%, var(--bg4) ${sc.overall}% 100%)"><b>${sc.overall}</b></div>
-        <div class="cc-mini-s" style="color:${statusColor}">${sc.statusLabel}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="cc-bot">
-    <div class="zcl">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>עסקאות אחרונות</div>
-        <span style="font-size:11px;color:var(--ac);cursor:pointer" onclick="swNav('trades')">הכל ←</span></div>
-      <div id="cc-recent"></div>
-    </div>
-    <div class="zcl">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--ac)"></div>משימות היום</div>
-        <span id="cc-tasks-count" style="font-size:11px;color:var(--t3)"></span></div>
-      <div id="cc-tasks"></div>
-    </div>
-    <div class="zcl">
-      <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--re)"></div>התראות חשובות</div>
-        <span style="font-size:11px;color:var(--ac);cursor:pointer" onclick="toggleNotifPanel(event)">הכל ←</span></div>
-      <div id="cc-alerts"></div>
-    </div>
-  </div>`;
-
-  _ccRenderRecent(); _ccRenderTasks(); _ccRenderAlerts(); _ccRenderEquityChart();
-}
+function renderCommandCenter() { renderHome(); }
 
 function _ccRenderRecent() {
   const el = document.getElementById('cc-recent'); if (!el) return;
