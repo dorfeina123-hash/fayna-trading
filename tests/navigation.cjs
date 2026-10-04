@@ -4,11 +4,11 @@ const before=fs.readFileSync('dor_trading_v53.html','utf8'),after=fs.readFileSyn
 const scripts=s=>[...s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!m[1].includes('src=')&&!/application\/ld\+json/.test(m[1]));
 let checked=0;for(const m of scripts(after)){if(m[2].trim()){new vm.Script(m[2]);checked++;}}
 const styles=s=>[...s.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
-assert.equal(styles(before).length,styles(after).length);
+assert.equal(styles(before).length+1,styles(after).length);
 for(const m of styles(after))assert.equal((m[1].match(/{/g)||[]).length,(m[1].match(/}/g)||[]).length);
 const declarations=s=>new Set([...s.matchAll(/^(?:async )?(?:function|let|const|var)\s+(\w+)/gm)].map(m=>m[1]));
 assert.deepEqual([...declarations(before)].filter(n=>!declarations(after).has(n)),[]);
-assert.equal(after,fs.readFileSync('dor_trading_v54.html','utf8'));
+assert.equal(after,fs.readFileSync('dor_trading_v55.html','utf8'));
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});
@@ -67,4 +67,5 @@ assert.equal(after,fs.readFileSync('dor_trading_v54.html','utf8'));
  console.log(JSON.stringify({scriptBlocksChecked:checked,styleBlocks:styles(after).length,newDuplicateIDs:0,removedDeclarations:0,navigation:'desktop and mobile passed',expenseSwitch:'passed',planGate:'passed',lazyImport:'passed',dataWrites:'none (isolated fixture)'}));
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1});
+
 
