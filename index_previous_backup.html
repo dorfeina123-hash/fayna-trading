@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+<script>try{document.documentElement.dataset.faynaTheme=localStorage.getItem("fayna_theme")==="light"?"light":"dark";}catch(e){document.documentElement.dataset.faynaTheme="dark";}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
@@ -54,9 +55,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- v25: fonts load without blocking first paint -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
 <style>
 :root{--bg0:#0F172A;--bg1:#151E32;--bg2:#1B2540;--bg3:#222E4E;--bg4:#2A375C;
 --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
@@ -1645,7 +1646,7 @@ body.a11y-contrast #index-banner { background:#000 !important; border-bottom-col
 /* ── PLAN FEATURE GATE ── */
 .upgrade-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;align-items:center;justify-content:center}
 .upgrade-overlay.show{display:flex}
-.upgrade-box{background:#161b27;border:1px solid rgba(144,137,189,.35);border-radius:16px;padding:32px 28px;max-width:min(420px,calc(100vw - 16px));width:92%;text-align:center;animation:fadeInUp .22s ease;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.upgrade-box{background:var(--bg1);border:1px solid rgba(144,137,189,.35);border-radius:16px;padding:32px 28px;max-width:min(420px,calc(100vw - 16px));width:92%;text-align:center;animation:fadeInUp .22s ease;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .plan-up-card{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;text-align:right;cursor:pointer;transition:all .15s;margin-bottom:8px}
 .plan-up-card:hover{border-color:var(--ac);transform:translateY(-1px)}
 /* feature matrix in admin */
@@ -1777,7 +1778,7 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .tcm-stat{display:flex;flex-direction:column;gap:1px;padding:6px 12px;background:var(--bg3);border-radius:8px;min-width:75px}
 .tcm-stat-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
 .tcm-stat-val{font-size:13px;font-weight:700;color:var(--t1);font-family:'IBM Plex Mono',monospace}
-#tcm-chart-area{flex:1;position:relative;background:#0b0f16}
+#tcm-chart-area{flex:1;position:relative;background:var(--bg0)}
 #tcm-chart-tv{width:100%;height:100%}
 .tcm-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--t2);font-size:13px}
 .tcm-spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite}
@@ -2159,6 +2160,47 @@ button.sn-item.active,button[aria-current="page"]{color:var(--t1);background:var
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<style id="fayna-appearance-v55">
+/* v55: Graphite & Mint / Warm Stone, shared across the workspace. */
+:root,html[data-fayna-theme="dark"]{color-scheme:dark;--bg0:#111315;--bg1:#1b1e21;--bg2:#202428;--bg3:#292e33;--bg4:#343b40;--t1:#eff2f3;--t2:#bec6cd;--t3:#a8b0b7;--border:#34393e;--border2:#495158;--ac:#70dfbc;--bl:#70dfbc;--bd:#213e36;--pu:#bca7e9;--pd:#332b43;--gr:#79dab0;--gd:#203c30;--re:#ee9ba5;--rd:#43292f;--go:#dfc483;--yd:#3b3424;--fy-on-accent:#10281e;--fy-font:'Heebo',sans-serif;--fy-radius:10px;--depth-1:none;--depth-2:none;--depth-3:0 12px 36px #0004;--glow-g:none;--glow-b:none;--glow-r:none}
+html[data-fayna-theme="light"],html[data-fayna-theme="light"] body.light-mode{color-scheme:light;--bg0:#f3f1ed;--bg1:#fffefb;--bg2:#f8f6f2;--bg3:#eeeae4;--bg4:#e3ddd5;--t1:#292c35;--t2:#514f57;--t3:#68666b;--border:#dedbd5;--border2:#bdb7c0;--ac:#6b52b1;--bl:#6b52b1;--bd:#eee9f6;--pu:#6b52b1;--pd:#eee9f6;--gr:#377052;--gd:#e4efe7;--re:#b34a54;--rd:#f6e5e7;--go:#87641e;--yd:#f1ead8;--fy-on-accent:#fff;--fy-font:'Rubik',sans-serif;--fy-radius:18px;--depth-1:none;--depth-2:none;--depth-3:0 12px 36px #292c3514}
+html[data-fayna-theme] body{background:var(--bg0)!important;color:var(--t1);font-family:var(--fy-font);background-image:none!important}
+html[data-fayna-theme] body::before{display:none!important}
+html[data-fayna-theme] :is(#acct-picker,#report-menu,#notif-panel,.acct-menu,.act-menu){background:var(--bg1)!important;border-color:var(--border)!important;color:var(--t1)}
+html[data-fayna-theme] :is(button,input,select,textarea){font-family:inherit}
+html[data-fayna-theme] :is(.topnav,.sidenav,.mob-bottom-nav,.mob-nav-drawer,.side-panel,.nav-menu-dd,.hdr-more-menu,.act-dd-menu){background:var(--bg1)!important;color:var(--t1);border-color:var(--border)!important;box-shadow:none!important;backdrop-filter:none}
+html[data-fayna-theme] :is(.card,.home-card,.zcl,.zm,.mc,.modal,.auth-box,.welcome-back-box,.ts-status,.rd-risk-card,.gz-card){background:var(--bg1)!important;color:var(--t1);border-color:var(--border)!important;border-radius:var(--fy-radius);box-shadow:none!important;backdrop-filter:none}
+html[data-fayna-theme] :is(.zcl,.zm,.mc,.btn-p,.tbl tbody tr):hover{transform:none!important;box-shadow:none!important}
+html[data-fayna-theme] :is(.zm::before,.zm::after,.gz-card::before){display:none}
+html[data-fayna-theme] :is(.logo-icon,.logo:hover .logo-icon){filter:none}
+html[data-fayna-theme] :is(.home-primary,.btn-p,.bs,.auth-submit,.wb-enter-btn,.coach-btn.primary){background:var(--ac)!important;color:var(--fy-on-accent)!important;border-color:transparent!important;box-shadow:none!important;border-radius:9px}
+html[data-fayna-theme] :is(.sn-item.active,.mob-bnav-btn.active,.mob-nt.active,.nav-menu-item.active,.workspace-tab.active,.workspace-tab[aria-current="page"]){background:var(--bd)!important;color:var(--ac)!important;border-color:var(--ac)!important;box-shadow:none!important}
+html[data-fayna-theme] :is(.home-period button[aria-pressed="true"],.fb.active){background:var(--bd)!important;color:var(--ac)!important;border-color:var(--border)!important}
+html[data-fayna-theme] :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea){background:var(--bg2)!important;color:var(--t1)!important;border-color:var(--border2)!important;border-radius:8px}
+html[data-fayna-theme] :is(input,textarea)::placeholder{color:var(--t3);opacity:1}
+html[data-fayna-theme] :is(input,button,select,textarea,a,summary):focus-visible{outline:2px solid var(--ac)!important;outline-offset:3px}
+html[data-fayna-theme] :is(input[type=checkbox],input[type=radio]){accent-color:var(--ac)}
+html[data-fayna-theme] table{color:var(--t1)}
+html[data-fayna-theme] :is(.tbl thead,.tbl th){background:var(--bg2)!important;color:var(--t2)!important;border-color:var(--border)!important}
+html[data-fayna-theme] .tbl tbody tr:hover{background:var(--bg3)!important}
+html[data-fayna-theme] .tbl td{border-color:var(--border)!important}
+html[data-fayna-theme] .cal-day.win{background:var(--gd)!important;box-shadow:none!important}
+html[data-fayna-theme] .cal-day.loss{background:var(--rd)!important;box-shadow:none!important}
+html[data-fayna-theme] :is(#auth-screen,#welcome-back-screen){background:var(--bg0)!important;font-family:var(--fy-font)}
+html[data-fayna-theme] :is(.auth-logo-text,.auth-title){color:var(--t1)!important}
+html[data-fayna-theme] :is(.auth-input,.auth-tab){color:var(--t1)}
+html[data-fayna-theme] .home-heading h1{font-weight:600;letter-spacing:-.5px}
+html[data-fayna-theme] .home-card{padding:22px}
+html[data-fayna-theme] .home-chart-labels{font-size:11px}
+html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);background:var(--bg1);border-color:var(--border)}
+.fayna-appearance{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--border);padding:3px;border-radius:10px;background:var(--bg2);flex-shrink:0}
+.fayna-appearance button{border:0;background:transparent;color:var(--t2);font:inherit;font-size:12px;min-height:34px;padding:6px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.fayna-appearance button[aria-pressed="true"]{background:var(--ac);color:var(--fy-on-accent);font-weight:600}
+#theme-toggle-btn{width:100%;justify-content:flex-start;font-size:12px}
+@media(max-width:600px){.fayna-appearance button{padding:6px 8px;min-width:42px;min-height:40px}.topnav{gap:6px!important}.fayna-appearance{padding:2px}html[data-fayna-theme] .home-card{padding:16px}}
+@media(prefers-reduced-motion:reduce){html[data-fayna-theme] *,html[data-fayna-theme] *::before,html[data-fayna-theme] *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+</style>
 </head>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
@@ -2175,7 +2217,7 @@ button.sn-item.active,button[aria-current="page"]{color:var(--t1);background:var
     </div>
     <div id="auth-debug-bar" style="background:rgba(199,95,95,.08);border:1px solid rgba(199,95,95,.2);border-radius:8px;padding:8px 12px;margin-bottom:16px;display:none;font-size:11px;color:#c97272;text-align:center">
       ⚠️ בעיית כניסה? 
-      <button onclick="emergencyReset()" style="background:rgba(199,95,95,.2);border:1px solid rgba(199,95,95,.3);color:#c75f5f;border-radius:5px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:6px">🔄 אפס Cache ונסה שוב</button>
+      <button onclick="emergencyReset()" style="background:rgba(199,95,95,.2);border:1px solid rgba(199,95,95,.3);color:var(--re);border-radius:5px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:inherit;margin-right:6px">🔄 אפס Cache ונסה שוב</button>
     </div>
 
     <div class="auth-tabs">
@@ -2982,6 +3024,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div style="display:flex;align-items:center;gap:8px">
     <!-- v21: compact referral chip -->
     <button id="ref-chip" onclick="openReferralPanel()" title="הזמן חברים וקבל חודש Pro חינם">🎁 <span>הזמן חברים</span></button>
+    <div class="fayna-appearance" role="group" aria-label="מראה האתר"><button type="button" data-fayna-mode="light" aria-pressed="false" title="אבן חמה — מצב בהיר" onclick="setFaynaTheme('light')">בהיר</button><button type="button" data-fayna-mode="dark" aria-pressed="true" title="גרפיט ומנטה — מצב כהה" onclick="setFaynaTheme('dark')">כהה</button></div>
     <!-- Notification bell -->
     <button id="notif-bell-btn" onclick="toggleNotifPanel(event)" title="התראות" style="position:relative;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-size:15px;flex-shrink:0">
       🔔<span id="notif-badge" style="display:none;position:absolute;top:-3px;left:-3px;background:var(--re);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px"></span>
@@ -3031,7 +3074,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   </div>
   <button class="side-panel-btn" onclick="swNav('personal')">⚙️ הגדרות</button>
   <button class="side-panel-btn" onclick="swNav('help')">❓ עזרה ומשאבים</button>
-  <button class="side-panel-btn admin-only" id="sp-btn-admin" onclick="swSide('admin')" style="color:#9089bd;display:none">🛡️ ניהול</button>
+  <button class="side-panel-btn admin-only" id="sp-btn-admin" onclick="swSide('admin')" style="color:var(--pu);display:none">🛡️ ניהול</button>
 </div>
 
 <!-- Mobile nav drawer -->
@@ -3113,7 +3156,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <!-- Admin — hidden until admin login -->
   <div class="sn-sep" id="sn-admin-sep" style="display:none"></div>
   <div class="sn-item admin-only" id="admin-nav-btn" onclick="swSide('admin')" title="פאנל ניהול"
-       style="display:none;color:#9089bd;border-right-color:transparent">
+       style="display:none;color:var(--pu);border-right-color:transparent">
     <span class="sn-icon">🛡️</span><span class="sn-lbl">פאנל ניהול</span>
   </div>
 </aside>
@@ -3942,7 +3985,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         📎 לחץ לבחירת צילום מסך או גרור לכאן
         <input type="file" id="me-img-input" accept="image/*" style="display:none" onchange="meLoadImg(this)">
       </label>
-      <button type="button" id="me-ocr-btn" onclick="meRunOcr()" style="display:none;margin-top:8px;width:100%;padding:8px;border-radius:7px;background:rgba(114,149,184,.15);border:1px solid rgba(114,149,184,.4);color:#7295b8;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🔍 זהה סכום מהתמונה</button>
+      <button type="button" id="me-ocr-btn" onclick="meRunOcr()" style="display:none;margin-top:8px;width:100%;padding:8px;border-radius:7px;background:rgba(114,149,184,.15);border:1px solid rgba(114,149,184,.4);color:var(--bl);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🔍 זהה סכום מהתמונה</button>
       <div id="me-ocr-status" style="font-size:10px;color:var(--t3);margin-top:6px"></div>
     </div>
 
@@ -4009,7 +4052,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div class="fr" style="margin-bottom:0"><label style="font-size:10px">סכום ($)</label><input type="number" id="ag-wd-amount" step="1" placeholder="0" dir="ltr" inputmode="decimal"></div>
     </div>
     <div class="fr"><input type="text" id="ag-wd-note" placeholder="הערה (אופציונלי)"></div>
-    <button type="button" onclick="agAddWithdrawal()" style="margin-bottom:10px;padding:6px 12px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.4);border-radius:6px;cursor:pointer;font-size:11px;color:#3d9970;font-family:inherit;font-weight:600">+ הוסף משיכה</button>
+    <button type="button" onclick="agAddWithdrawal()" style="margin-bottom:10px;padding:6px 12px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--gr);font-family:inherit;font-weight:600">+ הוסף משיכה</button>
 
     <div class="fax">
       <button class="bn" onclick="closeAcctGoals()">ביטול</button>
@@ -5617,7 +5660,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
       <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(199,95,95,.15);color:#c97272;border:1px solid rgba(199,95,95,.25)">🔴 גבוה</span>
       <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(191,161,94,.12);color:#bfa15e;border:1px solid rgba(191,161,94,.25)">🟡 בינוני</span>
-      <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(61,153,112,.12);color:#3d9970;border:1px solid rgba(61,153,112,.25)">🟢 נמוך</span>
+      <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(61,153,112,.12);color:var(--gr);border:1px solid rgba(61,153,112,.25)">🟢 נמוך</span>
     </div>
   </div>
 
@@ -5851,7 +5894,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0">
           <button class="dm-btn primary" onclick="dmDetailedCSV()" title="הורד CSV מפורט">📋 CSV</button>
-          <button class="dm-btn primary" onclick="dmDetailedPDF()" title="הורד PDF מפורט" style="background:rgba(144,137,189,.18);border-color:rgba(144,137,189,.35);color:#9089bd">📄 PDF</button>
+          <button class="dm-btn primary" onclick="dmDetailedPDF()" title="הורד PDF מפורט" style="background:rgba(144,137,189,.18);border-color:rgba(144,137,189,.35);color:var(--pu)">📄 PDF</button>
         </div>
       </div>
 
@@ -5872,7 +5915,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div class="dm-action-sub">דוח PDF אחד הכולל: P&amp;L מלא, יומן הוצאות, משיכות ותמונה פיננסית כוללת</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0">
-          <button class="dm-btn primary" onclick="combinedReportPDF()" title="הורד דוח משולב PDF" style="background:rgba(61,153,112,.18);border-color:rgba(61,153,112,.35);color:#3d9970">📋 דוח משולב PDF</button>
+          <button class="dm-btn primary" onclick="combinedReportPDF()" title="הורד דוח משולב PDF" style="background:rgba(61,153,112,.18);border-color:rgba(61,153,112,.35);color:var(--gr)">📋 דוח משולב PDF</button>
         </div>
       </div>
     </div>
@@ -5929,7 +5972,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 </div>
 
 <!-- ACCOUNT PICKER POPUP -->
-<div id="acct-picker" style="position:fixed;z-index:800;background:#161b27;border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none;min-width:170px"></div>
+<div id="acct-picker" style="position:fixed;z-index:800;background:var(--bg1);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none;min-width:170px"></div>
 
 <!-- ACCOUNTS MANAGEMENT MENU (floating — works from any tab, not tied to one page's DOM) -->
 <div class="acct-menu" id="acct-menu" style="position:fixed">
@@ -5973,8 +6016,8 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 </div>
 
 <!-- REPORT MENU POPUP -->
-<div id="report-menu" style="position:fixed;z-index:800;background:#161b27;border:1px solid rgba(144,137,189,.25);border-radius:10px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.6);display:none;min-width:190px">
-  <div style="font-size:9px;color:#767f8e;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px 8px">בחר תקופה</div>
+<div id="report-menu" style="position:fixed;z-index:800;background:var(--bg1);border:1px solid rgba(144,137,189,.25);border-radius:10px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.6);display:none;min-width:190px">
+  <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:2px 8px 8px">בחר תקופה</div>
   <div id="report-menu-type" style="display:none"></div>
   <div onclick="_doReport('week')"  style="padding:9px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:10px">📅 <span>דוח שבועי</span></div>
   <div onclick="_doReport('month')" style="padding:9px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:10px">📆 <span>דוח חודשי</span></div>
@@ -5987,11 +6030,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="udp-header">
     <div class="udp-avatar" id="udp-avatar">?</div>
     <div style="flex:1;min-width:0">
-      <div id="udp-name" style="font-size:14px;font-weight:600;color:#e8ecf4"></div>
-      <div id="udp-email" style="font-size:11px;color:#7295b8;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+      <div id="udp-name" style="font-size:14px;font-weight:600;color:var(--t1)"></div>
+      <div id="udp-email" style="font-size:11px;color:var(--bl);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
     </div>
     <div id="udp-status-badge"></div>
-    <button onclick="closeUserDetail()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:18px;padding:4px;margin-right:4px">✕</button>
+    <button onclick="closeUserDetail()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:18px;padding:4px;margin-right:4px">✕</button>
   </div>
   <div class="udp-tabs">
     <button class="udp-tab active" id="udp-tab-info"     onclick="udpShowTab('info')">פרטים</button>
@@ -6016,7 +6059,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div class="udp-field">
         <label>שינוי חבילה</label>
         <div style="display:flex;gap:8px;margin-top:2px">
-          <select id="udp-plan-sel" style="flex:1;padding:7px 10px;border-radius:6px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#e8ecf4;font-family:inherit">
+          <select id="udp-plan-sel" style="flex:1;padding:7px 10px;border-radius:6px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--t1);font-family:inherit">
             <option value="free">Free</option>
             <option value="pro">Pro</option>
             <option value="lifetime">Lifetime</option>
@@ -6027,11 +6070,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <!-- ACTIVITY TAB -->
     <div id="udp-body-activity" style="display:none">
-      <div style="font-size:10px;color:#767f8e;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:10px;color:var(--t3);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
         <span>20 הפעולות האחרונות</span>
-        <button onclick="udpLoadActivity()" style="background:none;border:none;color:#7295b8;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
+        <button onclick="udpLoadActivity()" style="background:none;border:none;color:var(--bl);font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
       </div>
-      <div id="udp-activity-list"><div style="color:#767f8e;text-align:center;padding:20px">טוען...</div></div>
+      <div id="udp-activity-list"><div style="color:var(--t3);text-align:center;padding:20px">טוען...</div></div>
     </div>
     <!-- ACTIONS TAB -->
     <div id="udp-body-actions" style="display:none">
@@ -6046,21 +6089,21 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <!-- NOTES TAB -->
     <div id="udp-body-notes" style="display:none">
-      <label style="font-size:9px;color:#767f8e;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">הערות מנהל (פרטי, רק לך)</label>
+      <label style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">הערות מנהל (פרטי, רק לך)</label>
       <textarea class="udp-notes" id="udp-notes-ta" placeholder="הוסף הערות..."></textarea>
       <button onclick="udpSaveNote()" class="udp-btn primary" style="margin-top:8px;width:100%">💾 שמור הערה</button>
       <div id="udp-note-msg" style="font-size:11px;margin-top:6px;text-align:center;min-height:16px"></div>
     </div>
     <!-- PERMS TAB -->
     <div id="udp-body-perms" style="display:none">
-      <div style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#8892a4;line-height:1.6">
-        <b style="color:#9089bd">הרשאות אישיות</b> — עוקפות את הגדרות החבילה.<br>
-        <span style="color:#767f8e">לפי חבילה = ברירת מחדל | ✅ מאופשר = מאפשר בכפייה | ❌ חסום = חוסם בכפייה</span>
+      <div style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:var(--t2);line-height:1.6">
+        <b style="color:var(--pu)">הרשאות אישיות</b> — עוקפות את הגדרות החבילה.<br>
+        <span style="color:var(--t3)">לפי חבילה = ברירת מחדל | ✅ מאופשר = מאפשר בכפייה | ❌ חסום = חוסם בכפייה</span>
       </div>
       <div id="udp-perms-list"></div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button onclick="udpSavePerms()" class="udp-btn primary" style="flex:1">💾 שמור הרשאות</button>
-        <button onclick="udpClearPerms()" class="udp-btn" style="background:rgba(199,95,95,.1);border-color:rgba(199,95,95,.2);color:#c75f5f">אפס</button>
+        <button onclick="udpClearPerms()" class="udp-btn" style="background:rgba(199,95,95,.1);border-color:rgba(199,95,95,.2);color:var(--re)">אפס</button>
       </div>
       <div id="udp-perms-msg" style="font-size:11px;margin-top:6px;text-align:center;min-height:16px"></div>
     </div>
@@ -6071,7 +6114,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 <div class="tp" id="tp-admin">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div>
-      <div style="font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px">🛡️ פאנל ניהול — Dor <span style="font-size:10px;background:rgba(144,137,189,.2);color:#9089bd;padding:2px 8px;border-radius:10px;border:1px solid rgba(144,137,189,.3)">ADMIN</span></div>
+      <div style="font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px">🛡️ פאנל ניהול — Dor <span style="font-size:10px;background:rgba(144,137,189,.2);color:var(--pu);padding:2px 8px;border-radius:10px;border:1px solid rgba(144,137,189,.3)">ADMIN</span></div>
       <div style="font-size:10px;color:var(--t3);margin-top:3px">שליטה מלאה במערכת — שינויים מתעדכנים לכלל המשתמשים</div>
     </div>
     <button class="admin-logout" onclick="doLogout()">🚪 יציאה</button>
@@ -6135,20 +6178,20 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div style="font-size:12px;font-weight:600;color:var(--gr);margin-bottom:10px">✉️ הוסף / הזמן משתמש</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">שם מלא <span class="req-star">*</span></label>
-          <input type="text" id="inv-name" placeholder="ישראל ישראלי" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">שם מלא <span class="req-star">*</span></label>
+          <input type="text" id="inv-name" placeholder="ישראל ישראלי" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימייל <span class="req-star">*</span></label>
-          <input type="email" inputmode="email" autocomplete="email" id="inv-email" placeholder="user@email.com" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">אימייל <span class="req-star">*</span></label>
+          <input type="email" inputmode="email" autocomplete="email" id="inv-email" placeholder="user@email.com" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">טלפון <span class="req-star">*</span></label>
-          <input type="tel" inputmode="tel" autocomplete="tel" id="inv-phone" placeholder="050-0000000" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">טלפון <span class="req-star">*</span></label>
+          <input type="tel" inputmode="tel" autocomplete="tel" id="inv-phone" placeholder="050-0000000" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">חבילה</label>
-          <select id="inv-plan" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(30,37,53,1);color:#e8ecf4;font-family:inherit">
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">חבילה</label>
+          <select id="inv-plan" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(30,37,53,1);color:var(--t1);font-family:inherit">
             <option value="free">Free</option><option value="pro">Pro</option><option value="lifetime">Lifetime</option>
           </select>
         </div>
@@ -6158,16 +6201,16 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- USERS COUNT + FILTER STATUS -->
-    <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#767f8e;margin-bottom:8px">
-      <span>סה"כ: <strong id="adm-user-count" style="color:#e8ecf4">0</strong> משתמשים</span>
-      <span id="adm-filter-status" style="color:#9089bd"></span>
+    <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--t3);margin-bottom:8px">
+      <span>סה"כ: <strong id="adm-user-count" style="color:var(--t1)">0</strong> משתמשים</span>
+      <span id="adm-filter-status" style="color:var(--pu)"></span>
       <div style="margin-right:auto;display:flex;gap:6px">
         <button class="fb active" data-uf="all"      onclick="setUserFilter('all',this)">הכל</button>
         <button class="fb"        data-uf="active"   onclick="setUserFilter('active',this)">פעילים</button>
         <button class="fb"        data-uf="pending"  onclick="setUserFilter('pending',this)">ממתינים</button>
         <button class="fb"        data-uf="blocked"  onclick="setUserFilter('blocked',this)">חסומים</button>
         <button class="fb"        data-uf="pro"      onclick="setUserFilter('pro',this)">Pro+</button>
-        <button class="fb"        data-uf="optout"   onclick="setUserFilter('optout',this)" style="color:#c75f5f;border-color:rgba(199,95,95,.3)">🔕 מסורים (<span id="adm-optout-count">0</span>)</button>
+        <button class="fb"        data-uf="optout"   onclick="setUserFilter('optout',this)" style="color:var(--re);border-color:rgba(199,95,95,.3)">🔕 מסורים (<span id="adm-optout-count">0</span>)</button>
       </div>
     </div>
 
@@ -6191,7 +6234,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <tbody id="admin-users-tbody"></tbody>
       </table>
     </div>
-    <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:#767f8e;display:none">אין משתמשים רשומים עדיין</div>
+    <div id="admin-no-users" style="text-align:center;padding:24px;font-size:12px;color:var(--t3);display:none">אין משתמשים רשומים עדיין</div>
   </div>
 
 
@@ -6322,11 +6365,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div class="admin-section-title" style="margin-bottom:10px">
       <div class="dot" style="background:#7295b8"></div>לוג כניסות ופעילות (50 אחרונים)
       <button class="fb" id="logs-refresh-btn" onclick="refreshLoginLogs()" style="padding:3px 10px;font-size:10px;margin-right:auto">🔄 רענן</button>
-      <span id="logs-refresh-time" style="font-size:10px;color:#767f8e"></span>
+      <span id="logs-refresh-time" style="font-size:10px;color:var(--t3)"></span>
     </div>
     <div id="admin-online-users" style="margin-bottom:8px"></div>
     <div id="admin-login-logs" style="max-height:300px;overflow-y:auto;font-size:11px">
-      <div style="color:#767f8e;text-align:center;padding:20px">לחץ "רענן" לטעינת הלוגים</div>
+      <div style="color:var(--t3);text-align:center;padding:20px">לחץ "רענן" לטעינת הלוגים</div>
     </div>
   </div>
 
@@ -6339,7 +6382,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div class="admin-row-title">חבילה חינמית (Free)</div>
         <div class="admin-row-sub">האם להציג את הכרטיס בעמוד תשלום</div>
       </div>
-      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#8892a4">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--t2)">
         <span id="adm-free-lbl">מוצג</span>
         <div onclick="togglePlanVisibility('free')" id="adm-free-toggle" style="width:36px;height:20px;border-radius:10px;background:#3d9970;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
           <div style="position:absolute;top:3px;left:18px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s"></div>
@@ -6353,9 +6396,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div class="admin-row-sub">מחיר חודשי + שנתי</div>
       </div>
       <input type="number" class="admin-input" id="adm-price-basic" value="9" min="0" step="1" style="width:80px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/חודש</span>
+      <span style="font-size:11px;color:var(--t3)">$/חודש</span>
       <input type="number" class="admin-input" id="adm-price-basic-yr" value="79" min="0" step="1" style="width:80px;margin-right:6px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/שנה</span>
+      <span style="font-size:11px;color:var(--t3)">$/שנה</span>
     </div>
     <!-- Pro plan toggle + price -->
     <div class="admin-row">
@@ -6363,16 +6406,16 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div class="admin-row-title">חבילת Pro</div>
         <div class="admin-row-sub">מחיר + נראות</div>
       </div>
-      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#8892a4;margin-left:12px">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--t2);margin-left:12px">
         <span id="adm-pro-lbl">מוצג</span>
         <div onclick="togglePlanVisibility('pro')" id="adm-pro-toggle" style="width:36px;height:20px;border-radius:10px;background:#3d9970;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
           <div style="position:absolute;top:3px;left:18px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s"></div>
         </div>
       </label>
       <input type="number" class="admin-input" id="adm-price-pro" value="29" min="0" step="1" style="width:80px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/חודש</span>
+      <span style="font-size:11px;color:var(--t3)">$/חודש</span>
       <input type="number" class="admin-input" id="adm-price-pro-yr" value="199" min="0" step="1" style="width:80px;margin-right:6px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/שנה</span>
+      <span style="font-size:11px;color:var(--t3)">$/שנה</span>
     </div>
     <!-- v20: Premium plan price -->
     <div class="admin-row">
@@ -6381,9 +6424,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div class="admin-row-sub">מחיר חודשי + שנתי</div>
       </div>
       <input type="number" class="admin-input" id="adm-price-prem" value="49" min="0" step="1" style="width:80px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/חודש</span>
+      <span style="font-size:11px;color:var(--t3)">$/חודש</span>
       <input type="number" class="admin-input" id="adm-price-prem-yr" value="399" min="0" step="1" style="width:80px;margin-right:6px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$/שנה</span>
+      <span style="font-size:11px;color:var(--t3)">$/שנה</span>
     </div>
     <!-- Lifetime toggle + price (legacy one-time) -->
     <div class="admin-row">
@@ -6391,28 +6434,28 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <div class="admin-row-title">Lifetime — תשלום חד-פעמי (ותיק)</div>
         <div class="admin-row-sub">מחיר + נראות</div>
       </div>
-      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#8892a4;margin-left:12px">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--t2);margin-left:12px">
         <span id="adm-life-lbl">מוצג</span>
         <div onclick="togglePlanVisibility('lifetime')" id="adm-life-toggle" style="width:36px;height:20px;border-radius:10px;background:#3d9970;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
           <div style="position:absolute;top:3px;left:18px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s"></div>
         </div>
       </label>
       <input type="number" class="admin-input" id="adm-price-life" value="399" min="0" step="1" style="width:80px" inputmode="decimal">
-      <span style="font-size:11px;color:#767f8e">$</span>
+      <span style="font-size:11px;color:var(--t3)">$</span>
     </div>
     <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
       <button class="admin-save-btn" onclick="saveAdminPrices()">💾 שמור ועדכן לכולם</button>
-      <span id="adm-price-saved" style="font-size:11px;color:#3d9970;opacity:0;transition:opacity .3s"></span>
+      <span id="adm-price-saved" style="font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s"></span>
     </div>
   </div>
 
   <!-- PLAN FEATURE PERMISSIONS MATRIX -->
   <div class="admin-section" style="border-color:rgba(144,137,189,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#9089bd"></div>הרשאות לפי מנוי
-      <span style="font-size:10px;color:#767f8e;font-weight:400;margin-right:8px">— מה כל חבילה יכולה לעשות</span>
+      <span style="font-size:10px;color:var(--t3);font-weight:400;margin-right:8px">— מה כל חבילה יכולה לעשות</span>
       <button class="fb" onclick="renderFeatureMatrix()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
     </div>
-    <div style="font-size:11px;color:#767f8e;margin-bottom:14px">
+    <div style="font-size:11px;color:var(--t3);margin-bottom:14px">
       שנה הרשאות ולחץ שמור. השינויים ישפיעו על כל המשתמשים מיד. ניתן לעקוף לכל משתמש בנפרד דרך פרטי המשתמש ← 🔑 הרשאות.
     </div>
     <div style="overflow-x:auto">
@@ -6420,21 +6463,21 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <thead>
           <tr>
             <th>תכונה</th>
-            <th style="color:#8892a4">🆓 Free</th>
+            <th style="color:var(--t2)">🆓 Free</th>
             <th style="color:#3b82f6">🔹 Basic</th>
             <th style="color:#22c55e">⭐ Pro</th>
             <th style="color:#a855f7">👑 Premium</th>
           </tr>
         </thead>
         <tbody id="feat-matrix-body">
-          <tr><td colspan="5" style="text-align:center;color:#767f8e;padding:16px">טוען...</td></tr>
+          <tr><td colspan="5" style="text-align:center;color:var(--t3);padding:16px">טוען...</td></tr>
         </tbody>
       </table>
     </div>
     <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
       <button class="admin-save-btn" onclick="savePlanFeatures()">💾 שמור הרשאות</button>
       <button class="fb" onclick="resetPlanFeaturesToDefault()" style="padding:5px 12px;font-size:11px;border-color:rgba(199,95,95,.3);color:#c97272">↩ אפס לברירת מחדל</button>
-      <span id="feat-saved-msg" style="font-size:11px;color:#3d9970;opacity:0;transition:opacity .3s"></span>
+      <span id="feat-saved-msg" style="font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s"></span>
     </div>
   </div>
 
@@ -6445,50 +6488,50 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <!-- Primary: Israeli provider subscription links -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
       <div style="font-size:12px;font-weight:600;color:var(--t1)">🇮🇱 ספק סליקה ישראלי — קישורי מנוי</div>
-      <span style="font-size:10px;color:#767f8e">(עדיפות ראשונה בעמוד התשלום)</span>
+      <span style="font-size:10px;color:var(--t3)">(עדיפות ראשונה בעמוד התשלום)</span>
       <div class="fr" style="margin:0;margin-right:auto;display:flex;align-items:center;gap:6px">
-        <label style="font-size:10px;color:#767f8e;margin:0">שם ספק</label>
+        <label style="font-size:10px;color:var(--t3);margin:0">שם ספק</label>
         <input type="text" id="il-provider" placeholder="Grow / Meshulam / Cardcom" style="font-size:11px;width:170px">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
       <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:9px;padding:10px">
         <div style="font-size:11px;font-weight:700;color:#3b82f6;margin-bottom:8px">🔹 Basic</div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">חודשי</label><input type="text" id="il-basic-m" placeholder="https://..." style="font-size:11px"></div>
-        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:#767f8e">שנתי</label><input type="text" id="il-basic-y" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">חודשי</label><input type="text" id="il-basic-m" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:var(--t3)">שנתי</label><input type="text" id="il-basic-y" placeholder="https://..." style="font-size:11px"></div>
       </div>
       <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:9px;padding:10px">
         <div style="font-size:11px;font-weight:700;color:#22c55e;margin-bottom:8px">⭐ Pro</div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">חודשי</label><input type="text" id="il-pro-m" placeholder="https://..." style="font-size:11px"></div>
-        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:#767f8e">שנתי</label><input type="text" id="il-pro-y" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">חודשי</label><input type="text" id="il-pro-m" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:var(--t3)">שנתי</label><input type="text" id="il-pro-y" placeholder="https://..." style="font-size:11px"></div>
       </div>
       <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:9px;padding:10px">
         <div style="font-size:11px;font-weight:700;color:#a855f7;margin-bottom:8px">👑 Premium</div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">חודשי</label><input type="text" id="il-premium-m" placeholder="https://..." style="font-size:11px"></div>
-        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:#767f8e">שנתי</label><input type="text" id="il-premium-y" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">חודשי</label><input type="text" id="il-premium-m" placeholder="https://..." style="font-size:11px"></div>
+        <div class="fr" style="margin-bottom:0"><label style="font-size:10px;color:var(--t3)">שנתי</label><input type="text" id="il-premium-y" placeholder="https://..." style="font-size:11px"></div>
       </div>
     </div>
 
     <!-- Referral reward config -->
     <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding:10px 12px;background:rgba(191,161,94,.06);border:1px solid rgba(191,161,94,.2);border-radius:9px;flex-wrap:wrap">
       <span style="font-size:11px;font-weight:700;color:#bfa15e">🎁 תגמולי הפניות</span>
-      <label style="font-size:11px;color:#8892a4;display:flex;align-items:center;gap:6px">כל
+      <label style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:6px">כל
         <input type="number" id="adm-ref-per" min="1" step="1" style="width:52px;font-size:11px" class="admin-input" inputmode="decimal"> נרשמים</label>
-      <label style="font-size:11px;color:#8892a4;display:flex;align-items:center;gap:6px">→ תגמול של
+      <label style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:6px">→ תגמול של
         <input type="number" id="adm-ref-days" min="1" step="1" style="width:52px;font-size:11px" class="admin-input" inputmode="decimal"> ימי Pro</label>
     </div>
 
     <!-- Legacy / backup payment methods — collapsed by default -->
     <details style="margin-top:12px">
-      <summary style="cursor:pointer;font-size:11px;color:#767f8e;padding:6px 0">▸ אמצעי תשלום נוספים — ביט / פייבוקס / Stripe / GROW (גיבוי)</summary>
+      <summary style="cursor:pointer;font-size:11px;color:var(--t3);padding:6px 0">▸ אמצעי תשלום נוספים — ביט / פייבוקס / Stripe / GROW (גיבוי)</summary>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-        <div class="fr"><label style="font-size:10px;color:#767f8e">💙 ביט — Pro/Basic</label><input type="text" id="bit-pro-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">💙 ביט — Premium</label><input type="text" id="bit-life-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">📱 פייבוקס — Pro/Basic</label><input type="text" id="paybox-pro-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">📱 פייבוקס — Premium</label><input type="text" id="paybox-life-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">💳 Stripe — Pro</label><input type="text" id="st-pro-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
-        <div class="fr"><label style="font-size:10px;color:#767f8e">💳 Stripe — Premium</label><input type="text" id="st-life-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
-        <div class="fr" style="grid-column:1/-1"><label style="font-size:10px;color:#9089bd">🌱 קישור GROW (מוצג בעמוד תשלום)</label><input type="text" id="adm-grow-link" placeholder="https://..." style="font-size:11px;border-color:rgba(144,137,189,.3)"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">💙 ביט — Pro/Basic</label><input type="text" id="bit-pro-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">💙 ביט — Premium</label><input type="text" id="bit-life-link" placeholder="https://pay.bit.co.il/..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">📱 פייבוקס — Pro/Basic</label><input type="text" id="paybox-pro-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">📱 פייבוקס — Premium</label><input type="text" id="paybox-life-link" placeholder="https://payboxapp.com/..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">💳 Stripe — Pro</label><input type="text" id="st-pro-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
+        <div class="fr"><label style="font-size:10px;color:var(--t3)">💳 Stripe — Premium</label><input type="text" id="st-life-link" placeholder="https://buy.stripe.com/..." style="font-size:11px"></div>
+        <div class="fr" style="grid-column:1/-1"><label style="font-size:10px;color:var(--pu)">🌱 קישור GROW (מוצג בעמוד תשלום)</label><input type="text" id="adm-grow-link" placeholder="https://..." style="font-size:11px;border-color:rgba(144,137,189,.3)"></div>
       </div>
     </details>
 
@@ -6501,18 +6544,18 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
     <!-- GUIDE PDF UPLOAD -->
     <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:12px;font-weight:600;color:#3d9970;margin-bottom:10px;display:flex;align-items:center;gap:7px">📄 מדריך למשתמש — PDF במייל ברוכים הבאים</div>
-      <div style="font-size:11px;color:#8892a4;margin-bottom:10px">העלה קובץ PDF שיישלח אוטומטית לכל משתמש חדש שנרשם.</div>
+      <div style="font-size:12px;font-weight:600;color:var(--gr);margin-bottom:10px;display:flex;align-items:center;gap:7px">📄 מדריך למשתמש — PDF במייל ברוכים הבאים</div>
+      <div style="font-size:11px;color:var(--t2);margin-bottom:10px">העלה קובץ PDF שיישלח אוטומטית לכל משתמש חדש שנרשם.</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <label style="padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(61,153,112,.35);color:#3d9970;background:rgba(61,153,112,.12);font-family:inherit;white-space:nowrap">
+        <label style="padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(61,153,112,.35);color:var(--gr);background:rgba(61,153,112,.12);font-family:inherit;white-space:nowrap">
           📤 העלה PDF
           <input type="file" accept=".pdf" style="display:none" onchange="adminUploadGuidePDF(this)">
         </label>
-        <span id="guide-upload-status" style="font-size:11px;color:#8892a4"></span>
+        <span id="guide-upload-status" style="font-size:11px;color:var(--t2)"></span>
       </div>
       <div id="guide-url-display" style="margin-top:10px;display:none">
-        <div style="font-size:10px;color:#767f8e;margin-bottom:4px">קישור נוכחי:</div>
-        <a id="guide-url-link" href="#" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:#7295b8;word-break:break-all;direction:ltr;display:block"></a>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:4px">קישור נוכחי:</div>
+        <a id="guide-url-link" href="#" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:var(--bl);word-break:break-all;direction:ltr;display:block"></a>
       </div>
     </div>
 
@@ -6522,69 +6565,69 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         קישור אינסטגרם
       </div>
-      <div style="font-size:11px;color:#8892a4;margin-bottom:10px">הקישור יוצג במסך ההתחברות ובהודעות ברוכים הבאים למשתמשים חדשים.</div>
+      <div style="font-size:11px;color:var(--t2);margin-bottom:10px">הקישור יוצג במסך ההתחברות ובהודעות ברוכים הבאים למשתמשים חדשים.</div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <input type="url" id="instagram-url-input" placeholder="https://instagram.com/yourprofile" dir="ltr"
-          style="flex:1;min-width:200px;padding:8px 10px;font-size:12px;border:1px solid rgba(193,53,132,.3);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+          style="flex:1;min-width:200px;padding:8px 10px;font-size:12px;border:1px solid rgba(193,53,132,.3);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit">
         <button onclick="saveInstagramUrl()" style="padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(193,53,132,.4);color:#e1306c;background:rgba(193,53,132,.15);font-family:inherit;white-space:nowrap">💾 שמור</button>
-        <button onclick="clearInstagramUrl()" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:#767f8e;background:transparent;font-family:inherit" title="הסר קישור">✕</button>
+        <button onclick="clearInstagramUrl()" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:var(--t3);background:transparent;font-family:inherit" title="הסר קישור">✕</button>
       </div>
       <div id="instagram-save-status" style="font-size:11px;margin-top:7px;min-height:14px"></div>
     </div>
 
     <!-- ADMIN CREDENTIALS CHANGE -->
     <div style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:12px;font-weight:600;color:#9089bd;margin-bottom:12px;display:flex;align-items:center;gap:7px">🔐 פרטי כניסת אדמין</div>
+      <div style="font-size:12px;font-weight:600;color:var(--pu);margin-bottom:12px;display:flex;align-items:center;gap:7px">🔐 פרטי כניסת אדמין</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימייל אדמין</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">אימייל אדמין</label>
           <input type="email" inputmode="email" autocomplete="email" id="adm-new-email" placeholder="admin@email.com"
-            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:ltr">
+            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">סיסמה חדשה</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">סיסמה חדשה</label>
           <input type="password" id="adm-new-pass" placeholder="סיסמה חדשה (6+ תווים)"
-            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">אימות סיסמה</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">אימות סיסמה</label>
           <input type="password" id="adm-new-pass2" placeholder="הזן שוב לאישור"
-            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">סיסמה נוכחית (לאישור)</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">סיסמה נוכחית (לאישור)</label>
           <input type="password" id="adm-cur-pass" placeholder="הזן סיסמה נוכחית"
-            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit">
+            style="width:100%;padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit">
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button class="admin-save-btn" onclick="changeAdminCredentials()" style="background:rgba(144,137,189,.2);border-color:rgba(144,137,189,.3);color:#9089bd">🔐 עדכן פרטי כניסה</button>
+        <button class="admin-save-btn" onclick="changeAdminCredentials()" style="background:rgba(144,137,189,.2);border-color:rgba(144,137,189,.3);color:var(--pu)">🔐 עדכן פרטי כניסה</button>
         <span id="adm-creds-msg" style="font-size:11px;min-height:16px;transition:opacity .3s"></span>
       </div>
     </div>
 
     <!-- Banner / Broadcast -->
     <div style="margin-bottom:12px">
-      <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:8px">📣 שליחת הודעה למשתמשים</label>
+      <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:8px">📣 שליחת הודעה למשתמשים</label>
 
       <!-- Channel selector -->
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="notif-channel-btns">
-        <button type="button" data-ch="banner" onclick="setNotifChannel('banner')" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(61,153,112,.15);color:#3d9970;border:1px solid rgba(61,153,112,.3);transition:all .2s">📢 Banner</button>
-        <button type="button" data-ch="email"   onclick="setNotifChannel('email')"   style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(255,255,255,.04);color:#8892a4;border:1px solid rgba(255,255,255,.1);transition:all .2s">📧 Email</button>
-        <button type="button" data-ch="whatsapp" onclick="setNotifChannel('whatsapp')" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(255,255,255,.04);color:#8892a4;border:1px solid rgba(255,255,255,.1);transition:all .2s">📱 WhatsApp</button>
+        <button type="button" data-ch="banner" onclick="setNotifChannel('banner')" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(61,153,112,.15);color:var(--gr);border:1px solid rgba(61,153,112,.3);transition:all .2s">📢 Banner</button>
+        <button type="button" data-ch="email"   onclick="setNotifChannel('email')"   style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(255,255,255,.04);color:var(--t2);border:1px solid rgba(255,255,255,.1);transition:all .2s">📧 Email</button>
+        <button type="button" data-ch="whatsapp" onclick="setNotifChannel('whatsapp')" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;background:rgba(255,255,255,.04);color:var(--t2);border:1px solid rgba(255,255,255,.1);transition:all .2s">📱 WhatsApp</button>
       </div>
 
-      <textarea id="adm-banner-text" dir="rtl" rows="3" placeholder="לדוגמה: מחר תחזוקה 10:00-11:00..." onclick="this.focus();event.stopPropagation();" style="width:100%;padding:8px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:7px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;margin-bottom:8px;resize:vertical;min-height:60px;outline:none;line-height:1.5" onfocus="this.style.borderColor='rgba(61,153,112,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+      <textarea id="adm-banner-text" dir="rtl" rows="3" placeholder="לדוגמה: מחר תחזוקה 10:00-11:00..." onclick="this.focus();event.stopPropagation();" style="width:100%;padding:8px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:7px;background:rgba(255,255,255,.06);color:var(--t1);font-family:inherit;margin-bottom:8px;resize:vertical;min-height:60px;outline:none;line-height:1.5" onfocus="this.style.borderColor='rgba(61,153,112,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
 
       <!-- Banner controls row -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📅 הצג עד תאריך ושעה</label>
-          <input type="datetime-local" id="adm-banner-expiry" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.06);color:#e8ecf4;font-family:inherit;outline:none" onfocus="this.style.borderColor='rgba(61,153,112,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'" title="ריק = ללא הגבלת זמן">
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">📅 הצג עד תאריך ושעה</label>
+          <input type="datetime-local" id="adm-banner-expiry" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.06);color:var(--t1);font-family:inherit;outline:none" onfocus="this.style.borderColor='rgba(61,153,112,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'" title="ריק = ללא הגבלת זמן">
         </div>
         <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:#8892a4">
-            <input type="checkbox" id="adm-banner-active" checked style="width:14px;height:14px;accent-color:#3d9970">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--t2)">
+            <input type="checkbox" id="adm-banner-active" checked style="width:14px;height:14px;accent-color:var(--gr)">
             בנר פעיל (מוצג)
           </label>
           <button onclick="clearAdminBanner()" style="padding:4px 10px;background:rgba(199,95,95,.12);border:1px solid rgba(199,95,95,.3);border-radius:5px;color:#c97272;font-size:11px;cursor:pointer;font-family:inherit;text-align:center">🗑 נקה בנר</button>
@@ -6593,22 +6636,22 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <button class="admin-save-btn" onclick="saveAdminBanner()">📣 שמור ושלח</button>
-        <span id="adm-banner-saved" style="font-size:11px;color:#3d9970;opacity:0;transition:opacity .3s"></span>
-        <span id="adm-notif-progress" style="font-size:11px;color:#7295b8"></span>
-        <span id="adm-banner-status" style="font-size:10px;color:#767f8e"></span>
+        <span id="adm-banner-saved" style="font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s"></span>
+        <span id="adm-notif-progress" style="font-size:11px;color:var(--bl)"></span>
+        <span id="adm-banner-status" style="font-size:10px;color:var(--t3)"></span>
       </div>
     </div>
 
     <!-- Contact settings -->
     <div style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:6px">
-      <div style="font-size:11px;color:#7295b8;margin-bottom:12px;font-weight:500">📬 הגדרות יצירת קשר — כפתורים בלשונית עזרה</div>
+      <div style="font-size:11px;color:var(--bl);margin-bottom:12px;font-weight:500">📬 הגדרות יצירת קשר — כפתורים בלשונית עזרה</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📧 כתובת מייל ליצירת קשר</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">📧 כתובת מייל ליצירת קשר</label>
           <input type="email" inputmode="email" autocomplete="email" class="admin-input" id="adm-contact-email" placeholder="your@email.com" style="width:100%;direction:ltr">
         </div>
         <div>
-          <label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">📱 מספר WhatsApp (עם קידומת מדינה)</label>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">📱 מספר WhatsApp (עם קידומת מדינה)</label>
           <input type="text" class="admin-input" id="adm-wa-number" placeholder="972501234567" style="width:100%;direction:ltr">
         </div>
       </div>
@@ -6634,16 +6677,16 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         </div>
       </div>
       <button class="admin-save-btn" onclick="saveContactSettings()">💾 שמור יצירת קשר</button>
-      <span id="adm-contact-saved" style="font-size:11px;color:#3d9970;margin-right:10px;opacity:0;transition:opacity .3s"></span>
+      <span id="adm-contact-saved" style="font-size:11px;color:var(--gr);margin-right:10px;opacity:0;transition:opacity .3s"></span>
     </div>
 
     <!-- EmailJS -->
     <div style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:14px">
-      <div style="font-size:11px;color:#9089bd;margin-bottom:10px;font-weight:500">📧 EmailJS — מיילים אוטומטיים</div>
+      <div style="font-size:11px;color:var(--pu);margin-bottom:10px;font-weight:500">📧 EmailJS — מיילים אוטומטיים</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Service ID</label><input type="text" class="admin-input" id="adm-ejs-service" placeholder="service_..." style="width:100%"></div>
-        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Template ID</label><input type="text" class="admin-input" id="adm-ejs-template" placeholder="template_..." style="width:100%"></div>
-        <div><label style="font-size:10px;color:#767f8e;display:block;margin-bottom:3px">Public Key</label><input type="text" class="admin-input" id="adm-ejs-pubkey" placeholder="xxxxxxxx" style="width:100%"></div>
+        <div><label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Service ID</label><input type="text" class="admin-input" id="adm-ejs-service" placeholder="service_..." style="width:100%"></div>
+        <div><label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Template ID</label><input type="text" class="admin-input" id="adm-ejs-template" placeholder="template_..." style="width:100%"></div>
+        <div><label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Public Key</label><input type="text" class="admin-input" id="adm-ejs-pubkey" placeholder="xxxxxxxx" style="width:100%"></div>
       </div>
       <button class="admin-save-btn" style="margin-top:10px" onclick="saveAdminEmailJS()">💾 שמור EmailJS</button>
     </div>
@@ -6701,7 +6744,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
             <div style="background:rgba(61,153,112,.1);border:1px solid rgba(61,153,112,.2);border-radius:8px;padding:8px 6px;text-align:center">
               <div style="font-size:9px;color:var(--t3)">Net P&L</div>
-              <div style="font-size:13px;font-weight:700;color:#3d9970">+$2,450</div>
+              <div style="font-size:13px;font-weight:700;color:var(--gr)">+$2,450</div>
             </div>
             <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
               <div style="font-size:9px;color:var(--t3)">Win %</div>
@@ -6709,7 +6752,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             </div>
             <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
               <div style="font-size:9px;color:var(--t3)">Profit F.</div>
-              <div style="font-size:13px;font-weight:700;color:#7295b8">2.1</div>
+              <div style="font-size:13px;font-weight:700;color:var(--bl)">2.1</div>
             </div>
             <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
               <div style="font-size:9px;color:var(--t3)">Day Win</div>
@@ -6717,7 +6760,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             </div>
             <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:8px 6px;text-align:center">
               <div style="font-size:9px;color:var(--t3)">Avg Win</div>
-              <div style="font-size:13px;font-weight:700;color:#3d9970">$180</div>
+              <div style="font-size:13px;font-weight:700;color:var(--gr)">$180</div>
             </div>
           </div>
           <!-- mini heatmap -->
@@ -6773,7 +6816,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📸 לשונית יומן עסקאות</div>
           <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
             <div style="padding:6px 14px;background:rgba(74,143,168,.2);border:1px solid rgba(74,143,168,.4);border-radius:20px;font-size:11px;color:#4a8fa8;font-weight:600">📂 ייבא CSV</div>
-            <div style="padding:6px 14px;background:rgba(144,137,189,.15);border:1px solid rgba(144,137,189,.3);border-radius:20px;font-size:11px;color:#9089bd;font-weight:600">🧩 תוסף Chrome</div>
+            <div style="padding:6px 14px;background:rgba(144,137,189,.15);border:1px solid rgba(144,137,189,.3);border-radius:20px;font-size:11px;color:var(--pu);font-weight:600">🧩 תוסף Chrome</div>
             <div style="padding:6px 14px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--t2)">🔍 הכל ▾</div>
             <div style="padding:6px 14px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--t2)">Win / Loss</div>
           </div>
@@ -6784,7 +6827,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
               <span style="font-weight:700;color:var(--t1)">MES</span>
               <span style="color:var(--t3)">Long</span>
               <div style="height:6px;background:rgba(61,153,112,.3);border-radius:3px;overflow:hidden"><div style="width:70%;height:100%;background:#3d9970;border-radius:3px"></div></div>
-              <span style="color:#3d9970;font-weight:700;text-align:right">+$245</span>
+              <span style="color:var(--gr);font-weight:700;text-align:right">+$245</span>
             </div>
             <div style="display:grid;grid-template-columns:80px 60px 50px 1fr 70px;gap:8px;padding:7px 10px;background:rgba(178,82,96,.05);border:1px solid rgba(178,82,96,.12);border-radius:7px;align-items:center">
               <span style="color:var(--t3);font-size:10px">01/06/2025</span>
@@ -6813,7 +6856,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
             <!-- Chrome extension -->
             <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(144,137,189,.08),rgba(144,137,189,.04));border:1px solid rgba(144,137,189,.25);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#9089bd;margin-bottom:8px">🧩 שיטה 2 — תוסף Chrome (סנכרון אוטומטי)</div>
+              <div style="font-size:12px;font-weight:700;color:var(--pu);margin-bottom:8px">🧩 שיטה 2 — תוסף Chrome (סנכרון אוטומטי)</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
                 <strong style="color:var(--t1)">צעד 1:</strong> לחץ "הורד תוסף Chrome" בראש לשונית העסקאות<br>
                 <strong style="color:var(--t1)">צעד 2:</strong> פתח Chrome → chrome://extensions → "מצב מפתח" ON<br>
@@ -6892,7 +6935,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
             <!-- recurring expenses -->
             <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(61,153,112,.08),rgba(61,153,112,.04));border:1px solid rgba(61,153,112,.2);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#3d9970;margin-bottom:6px">🔁 הוצאות חוזרות חודשיות (חדש!)</div>
+              <div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:6px">🔁 הוצאות חוזרות חודשיות (חדש!)</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.8">
                 בטופס הוספה, סמן ✅ <strong style="color:var(--t1)">"חוזרת חודשית"</strong> → הוסף שם כלי (לדוגמה: TradingView Pro) ויום בחודש.<br>
                 <strong>המערכת תוסיף את ההוצאה אוטומטית כל חודש</strong> — ללא צורך לזכור להזין ידנית.
@@ -6950,7 +6993,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
               <div><strong style="color:var(--t1)">ניתוח לפי סימול</strong><br>השוואה בין MES, MNQ ושאר הסימולים — Win Rate ו-P&L ממוצע לכל אחד.</div>
             </div>
             <div style="padding:10px 12px;background:rgba(144,137,189,.05);border-radius:8px;border:1px solid rgba(144,137,189,.15);font-size:12px;color:var(--t2);line-height:1.7">
-              💡 <strong style="color:#9089bd">טיפ:</strong> לחץ על עמודה בגרף P&L יומי כדי לסנן ולראות את כל עסקאות אותו יום.
+              💡 <strong style="color:var(--pu)">טיפ:</strong> לחץ על עמודה בגרף P&L יומי כדי לסנן ולראות את כל עסקאות אותו יום.
             </div>
           </div>
         </div>
@@ -6965,9 +7008,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             <div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">א</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ב</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ג</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ד</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ה</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ו</div><div style="text-align:center;font-size:9px;color:var(--t3);padding:3px">ש</div>
             <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">28</div>
             <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">29</div>
-            <div style="padding:6px 4px;border-radius:6px;background:rgba(61,153,112,.2);text-align:center;font-size:10px;color:#3d9970;font-weight:700;border:1px solid rgba(61,153,112,.3)">2<br><span style="font-size:8px">+$245</span></div>
+            <div style="padding:6px 4px;border-radius:6px;background:rgba(61,153,112,.2);text-align:center;font-size:10px;color:var(--gr);font-weight:700;border:1px solid rgba(61,153,112,.3)">2<br><span style="font-size:8px">+$245</span></div>
             <div style="padding:6px 4px;border-radius:6px;background:rgba(178,82,96,.15);text-align:center;font-size:10px;color:#b25260;font-weight:700;border:1px solid rgba(178,82,96,.2)">3<br><span style="font-size:8px">-$80</span></div>
-            <div style="padding:6px 4px;border-radius:6px;background:rgba(61,153,112,.3);text-align:center;font-size:10px;color:#3d9970;font-weight:700;border:1px solid rgba(61,153,112,.4)">4<br><span style="font-size:8px">+$380</span></div>
+            <div style="padding:6px 4px;border-radius:6px;background:rgba(61,153,112,.3);text-align:center;font-size:10px;color:var(--gr);font-weight:700;border:1px solid rgba(61,153,112,.4)">4<br><span style="font-size:8px">+$380</span></div>
             <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">5</div>
             <div style="padding:6px 4px;border-radius:6px;background:var(--bg4);text-align:center;font-size:10px;color:var(--t3)">6</div>
           </div>
@@ -7025,16 +7068,16 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div style="display:flex;flex-direction:column;gap:10px">
             <!-- method: website -->
             <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(61,153,112,.08),rgba(61,153,112,.04));border:1px solid rgba(61,153,112,.2);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#3d9970;margin-bottom:8px">✅ שיטה מומלצת — גישה ישירה דרך הדפדפן</div>
+              <div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:8px">✅ שיטה מומלצת — גישה ישירה דרך הדפדפן</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
                 פתח <strong style="color:var(--t1)">Safari / Chrome</strong> בנייד וגלוש ל:<br>
-                <code style="background:var(--bg4);padding:3px 10px;border-radius:5px;font-size:11px;color:#3d9970;display:inline-block;margin:4px 0;direction:ltr">dorfeina123-hash.github.io/fayna-trading</code><br>
+                <code style="background:var(--bg4);padding:3px 10px;border-radius:5px;font-size:11px;color:var(--gr);display:inline-block;margin:4px 0;direction:ltr">dorfeina123-hash.github.io/fayna-trading</code><br>
                 התחבר עם אותו חשבון — כל הנתונים יופיעו מיד.
               </div>
             </div>
             <!-- add to home screen -->
             <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(114,149,184,.08),rgba(114,149,184,.04));border:1px solid rgba(114,149,184,.2);border-radius:10px">
-              <div style="font-size:12px;font-weight:700;color:#7295b8;margin-bottom:8px">📲 הוסף למסך הבית (כמו אפליקציה)</div>
+              <div style="font-size:12px;font-weight:700;color:var(--bl);margin-bottom:8px">📲 הוסף למסך הבית (כמו אפליקציה)</div>
               <div style="font-size:11px;color:var(--t2);line-height:1.9">
                 <strong style="color:var(--t1)">iPhone (Safari):</strong> לחץ על אייקון שיתוף ⬆️ → "הוסף למסך הבית" → "הוסף"<br>
                 <strong style="color:var(--t1)">Android (Chrome):</strong> תפריט ⋮ → "הוסף למסך הבית"<br>
@@ -7063,12 +7106,12 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
               </div>
               <div style="padding:14px 12px;background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.25);border-radius:10px;text-align:center">
                 <div style="font-size:18px;margin-bottom:6px">⭐</div>
-                <div style="font-size:13px;font-weight:700;color:#3d9970;margin-bottom:4px">Pro</div>
+                <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">Pro</div>
                 <div style="font-size:10px;color:var(--t3);line-height:1.6">כל הפיצ'רים<br>לוח שנה + P&L מלא<br>סנכרון Live + גיבוי</div>
               </div>
               <div style="padding:14px 12px;background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.25);border-radius:10px;text-align:center">
                 <div style="font-size:18px;margin-bottom:6px">💎</div>
-                <div style="font-size:13px;font-weight:700;color:#9089bd;margin-bottom:4px">Lifetime</div>
+                <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:4px">Lifetime</div>
                 <div style="font-size:10px;color:var(--t3);line-height:1.6">תשלום חד-פעמי<br>עדכונים לנצח<br>תמיכה עדיפות</div>
               </div>
             </div>
@@ -7167,7 +7210,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
             <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.2);border-radius:9px;text-align:center">
               <div style="font-size:18px;margin-bottom:3px">⚡</div>
-              <div style="font-size:11px;font-weight:700;color:#3d9970">זמן תגובה</div>
+              <div style="font-size:11px;font-weight:700;color:var(--gr)">זמן תגובה</div>
               <div style="font-size:10px;color:var(--t3)">עד 3 שעות</div>
             </div>
             <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(74,143,168,.07);border:1px solid rgba(74,143,168,.2);border-radius:9px;text-align:center">
@@ -7177,7 +7220,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             </div>
             <div style="flex:1;min-width:130px;padding:10px 14px;background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.2);border-radius:9px;text-align:center">
               <div style="font-size:18px;margin-bottom:3px">🌐</div>
-              <div style="font-size:11px;font-weight:700;color:#9089bd">שפות</div>
+              <div style="font-size:11px;font-weight:700;color:var(--pu)">שפות</div>
               <div style="font-size:10px;color:var(--t3)">עברית / English</div>
             </div>
           </div>
@@ -7186,7 +7229,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <div id="contact-chat-wrap" style="background:rgba(144,137,189,.06);border:1px solid rgba(144,137,189,.2);border-radius:12px;padding:18px;margin-bottom:16px">
             <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:12px;display:flex;align-items:center;gap:8px">
               💬 צ'אט ישיר עם דור
-              <span style="font-size:10px;background:rgba(61,153,112,.15);color:#3d9970;padding:1px 8px;border-radius:10px;font-weight:600">● online</span>
+              <span style="font-size:10px;background:rgba(61,153,112,.15);color:var(--gr);padding:1px 8px;border-radius:10px;font-weight:600">● online</span>
             </div>
             <div id="chat-messages" style="height:220px;overflow-y:auto;background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;gap:8px;align-items:flex-start">
@@ -7198,10 +7241,10 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             </div>
             <div style="display:flex;gap:8px">
               <input type="text" id="chat-input" placeholder="כתוב הודעה..." onkeydown="if(event.key==='Enter')sendChatMessage()"
-                style="flex:1;padding:9px 12px;font-size:12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04);color:#e8ecf4;font-family:inherit;direction:rtl">
+                style="flex:1;padding:9px 12px;font-size:12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04);color:var(--t1);font-family:inherit;direction:rtl">
               <button onclick="sendChatMessage()" style="padding:9px 20px;background:var(--pu);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">שלח ✈️</button>
             </div>
-            <div id="chat-status" style="font-size:10px;color:#767f8e;margin-top:6px;min-height:14px"></div>
+            <div id="chat-status" style="font-size:10px;color:var(--t3);margin-top:6px;min-height:14px"></div>
           </div>
 
           <!-- EMAIL + WHATSAPP CONTACT CARDS -->
@@ -7213,7 +7256,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                 <div style="width:42px;height:42px;border-radius:10px;background:rgba(114,149,184,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📧</div>
                 <div>
                   <div style="font-size:12px;font-weight:700;color:var(--t1)">שלח מייל</div>
-                  <div id="contact-email-display" style="font-size:10px;color:#767f8e;margin-top:1px">dorfeina123@gmail.com</div>
+                  <div id="contact-email-display" style="font-size:10px;color:var(--t3);margin-top:1px">dorfeina123@gmail.com</div>
                   <div style="font-size:10px;color:var(--t3)">תגובה תוך 3 שעות</div>
                 </div>
               </div>
@@ -7226,7 +7269,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                 <div style="width:42px;height:42px;border-radius:10px;background:rgba(61,153,112,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📱</div>
                 <div>
                   <div style="font-size:12px;font-weight:700;color:var(--t1)">WhatsApp</div>
-                  <div id="contact-wa-display" style="font-size:10px;color:#767f8e;margin-top:1px">זמינות: א-ה 9:00-18:00</div>
+                  <div id="contact-wa-display" style="font-size:10px;color:var(--t3);margin-top:1px">זמינות: א-ה 9:00-18:00</div>
                   <div style="font-size:10px;color:var(--t3)">הכי מהיר לתגובה</div>
                 </div>
               </a>
@@ -10189,7 +10232,7 @@ function dmapForStats(list) {
 function _safeChart(canvas, config) {
   if (typeof Chart === 'undefined') { console.warn('Chart.js unavailable — skipping chart render (check network/CDN access to cdnjs.cloudflare.com)'); return null; }
   if (!canvas) return null;
-  try { return new Chart(canvas, config); } catch(e) { console.warn('Chart render failed:', e.message); return null; }
+  try { return new Chart(canvas, _themeChartOptions(config)); } catch(e) { console.warn('Chart render failed:', e.message); return null; }
 }
 function totalNetPnl() { return +tradesList.reduce((s,t)=>s+tradeNet(t),0).toFixed(2); }
 function totalGrossPnl() { return +tradesList.reduce((s,t)=>s+t.pnl,0).toFixed(2); }
@@ -11380,7 +11423,7 @@ function renderOV() {
   if(cCtx) catOvCh = _safeChart(cCtx,{type:'doughnut',data:{labels:cL,datasets:[{data:cV,backgroundColor:cols,borderWidth:2,borderColor:'#161b27'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}},animation:{animateRotate:true,duration:1000}}});
   const tot=cV.reduce((a,b)=>a+b,0);
   const legEl = document.getElementById('cleg');
-  if(legEl) legEl.innerHTML=cL.map((l,i)=>`<span style="display:flex;align-items:center;gap:3px;font-size:10px;color:#8892a4"><span style="width:7px;height:7px;border-radius:2px;background:${cols[i]};display:inline-block"></span>${l} ${((cV[i]/tot)*100).toFixed(0)}%</span>`).join('');
+  if(legEl) legEl.innerHTML=cL.map((l,i)=>`<span style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--t2)"><span style="width:7px;height:7px;border-radius:2px;background:${cols[i]};display:inline-block"></span>${l} ${((cV[i]/tot)*100).toFixed(0)}%</span>`).join('');
 
   // ── MINI CALENDAR ──
   const calTitleEl = document.getElementById('ov-cal-title');
@@ -11585,14 +11628,14 @@ function renderExp(){
     return `<tr draggable="true" ondragstart="dStart(event,${ri})" ondragover="dOver(event)" ondrop="dDrop(event,${ri})" ondragleave="dLeave(event)" style="${r.done?'':'opacity:.6'}">
       <td><span class="dh">⠿</span></td>
       <td><input type="checkbox" class="chk" ${r.done?'checked':''} onchange="records[${ri}].done=this.checked;renderExp()"></td>
-      <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(r.date)}</td>
-      <td style="color:#8892a4;white-space:nowrap">${r.company?escHtml(r.company):'—'}</td>
+      <td class="mono" style="font-size:11px;color:var(--t3);white-space:nowrap">${fmtD(r.date)}</td>
+      <td style="color:var(--t2);white-space:nowrap">${r.company?escHtml(r.company):'—'}</td>
       <td><span class="cat ${catCls(r.cat)}" onclick="openCatP(${ri},event)">${r.cat||'—'} ▾</span></td>
       <td class="mono" style="color:var(--re);font-weight:600">$${r.amount.toFixed(2)}</td>
-      <td style="color:#767f8e;font-size:11px">${fmtILS(r.amount*r.rate)}</td>
+      <td style="color:var(--t3);font-size:11px">${fmtILS(r.amount*r.rate)}</td>
       <td style="white-space:nowrap">${r.recurringId?'<span title="הוצאה חוזרת חודשית" style="font-size:11px;margin-left:4px">🔄</span>':''}<button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
-  }).join(''):`<tr><td colspan="10" style="text-align:center;padding:2rem;color:#767f8e">אין רשומות</td></tr>`;
+  }).join(''):`<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--t3)">אין רשומות</td></tr>`;
 }
 function fExp(f,b){expF=f;document.querySelectorAll('#efbar .fb:not([data-c])').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderExp();}
 function fCat(c,b){expC=c;document.querySelectorAll('#efbar .fb[data-c]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderExp();}
@@ -11616,15 +11659,15 @@ function renderWD(){
   document.getElementById('wd-tbody').innerHTML=wds.length?wds.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{
     const ri=records.indexOf(r);
     return `<tr>
-      <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(r.date)}</td>
-      <td style="color:#8892a4">${r.company?escHtml(r.company):'—'}</td>
+      <td class="mono" style="font-size:11px;color:var(--t3)">${fmtD(r.date)}</td>
+      <td style="color:var(--t2)">${r.company?escHtml(r.company):'—'}</td>
       <td class="mono cy">$${(r.wdGross||r.amount).toFixed(2)}</td>
-      <td style="color:#8892a4">${r.wdPct||0}%</td>
+      <td style="color:var(--t2)">${r.wdPct||0}%</td>
       <td class="mono cp" style="font-weight:700">$${(r.wdNet||r.amount).toFixed(2)}</td>
-      <td style="color:#767f8e">${fmtILS((r.wdNet||r.amount)*r.rate)}</td>
+      <td style="color:var(--t3)">${fmtILS((r.wdNet||r.amount)*r.rate)}</td>
       <td><button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
-  }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:#767f8e">אין משיכות</td></tr>`;
+  }).join(''):`<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--t3)">אין משיכות</td></tr>`;
 }
 
 // P&L
@@ -11747,7 +11790,7 @@ function renderPNL(){
   if(cRows.length){
     pnlChart2=_safeChart(document.getElementById('pnlchart'),{type:'doughnut',data:{labels:cRows.map(r=>r.lbl),datasets:[{data:cRows.map(r=>r.ils),backgroundColor:pc.slice(0,cRows.length),borderWidth:2,borderColor:'#161b27'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}});
     const tot=cRows.reduce((s,r)=>s+r.ils,0);
-    document.getElementById('pnlleg').innerHTML=cRows.map((r,i)=>`<span style="display:flex;align-items:center;gap:3px;font-size:10px;color:#8892a4"><span style="width:7px;height:7px;border-radius:2px;background:${pc[i]};display:inline-block"></span>${r.lbl} ${((r.ils/tot)*100).toFixed(0)}%</span>`).join('');
+    document.getElementById('pnlleg').innerHTML=cRows.map((r,i)=>`<span style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--t2)"><span style="width:7px;height:7px;border-radius:2px;background:${pc[i]};display:inline-block"></span>${r.lbl} ${((r.ils/tot)*100).toFixed(0)}%</span>`).join('');
   }
 }
 
@@ -12561,12 +12604,12 @@ function renderTJ(){
     const sellCell= t.isManual ? '—' : t.sell.toFixed(2);
     return `<tr class="tj-row" id="tj-row-${ti}" style="${sel?'background:rgba(74,143,168,.12)':''}">
       <td id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" ${sel?'checked':''} onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
-      <td class="mono" style="font-size:11px;color:#767f8e;white-space:nowrap">${fmtD(t.date)}</td>
+      <td class="mono" style="font-size:11px;color:var(--t3);white-space:nowrap">${fmtD(t.date)}</td>
       <td style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td>${acctCell}</td>
-      <td style="color:#8892a4">${symCell}</td><td style="color:#767f8e">${qtyCell}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${buyCell}</td>
-      <td class="mono" style="font-size:11px;color:#767f8e">${sellCell}</td>
+      <td style="color:var(--t2)">${symCell}</td><td style="color:var(--t3)">${qtyCell}</td>
+      <td class="mono" style="font-size:11px;color:var(--t3)">${buyCell}</td>
+      <td class="mono" style="font-size:11px;color:var(--t3)">${sellCell}</td>
       <td style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td style="padding:3px 5px">${spark}</td>
       <td class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${tradeNet(t)>=0?'+':'−'}$${Math.abs(tradeNet(t)).toFixed(2)}</td>
@@ -12576,7 +12619,7 @@ function renderTJ(){
         <button class="act" onclick="delTrade(${ti})">🗑</button>
       </td>
     </tr>`;
-  }).join(''):`<tr><td colspan="11" style="text-align:center;padding:2rem;color:#767f8e">אין עסקאות</td></tr>`;
+  }).join(''):`<tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--t3)">אין עסקאות</td></tr>`;
 }
 
 
@@ -14152,7 +14195,7 @@ function renderStats(){
   if(dCh)dCh.destroy();
   dCh=_safeChart(document.getElementById('dchart'),{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dd2,backgroundColor:dd2.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const srt=[...tl].sort((a,b)=>tradeNet(b)-tradeNet(a));
-  const rf=t=>`<tr><td data-label="תאריך" class="mono" style="font-size:10px;color:#767f8e">${fmtD(t.date)}</td><td data-label="שעה" style="color:#767f8e;font-size:10px">${t.btime.slice(0,5)}</td><td data-label="נטו $" class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
+  const rf=t=>`<tr><td data-label="תאריך" class="mono" style="font-size:10px;color:var(--t3)">${fmtD(t.date)}</td><td data-label="שעה" style="color:var(--t3);font-size:10px">${t.btime.slice(0,5)}</td><td data-label="נטו $" class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
   document.getElementById('top10').innerHTML=srt.slice(0,10).map(rf).join('');
   document.getElementById('bot10').innerHTML=srt.slice(-10).reverse().map(rf).join('');
 
@@ -14172,7 +14215,7 @@ function renderStats(){
   const rate=histRate(new Date().toISOString().slice(0,10));
   document.getElementById('dow-tbody').innerHTML=dowKeys.map(d=>{
     const dd=dowData[d];const avg=dd.trades?dd.pnl/dd.trades:0;const wr=dd.trades?(dd.wins/dd.trades*100).toFixed(0):0;
-    return `<tr><td data-label="יום" style="font-weight:500">${days[d]}</td><td data-label="עסקאות">${dd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:#767f8e">₪${fmtILS(dd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="יום" style="font-weight:500">${days[d]}</td><td data-label="עסקאות">${dd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">₪${fmtILS(dd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 
   // Hour of day analysis
@@ -14189,7 +14232,7 @@ function renderStats(){
   hourCh=_safeChart(document.getElementById('hourChart'),{type:'bar',data:{labels:hrKeys.map(h=>h+':00'),datasets:[{data:hrVals,backgroundColor:hrVals.map(v=>v>=0?'rgba(114,149,184,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   document.getElementById('hour-tbody').innerHTML=hrKeys.map(h=>{
     const hd=hourData[h];const avg=hd.trades?hd.pnl/hd.trades:0;const wr=hd.trades?(hd.wins/hd.trades*100).toFixed(0):0;
-    return `<tr><td data-label="שעה" style="font-weight:500">${h}:00–${h+1}:00</td><td data-label="עסקאות">${hd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:#767f8e">₪${fmtILS(hd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:#767f8e">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="שעה" style="font-weight:500">${h}:00–${h+1}:00</td><td data-label="עסקאות">${hd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">₪${fmtILS(hd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 }
 
@@ -14728,16 +14771,16 @@ function renderCX() {
     customExpenses.sort((a,b)=>b.date.localeCompare(a.date)).map(c=>{
       const ci = customExpenses.indexOf(c);
       return `<tr>
-        <td class="mono" style="font-size:11px;color:#767f8e">${fmtD(c.date)}</td>
+        <td class="mono" style="font-size:11px;color:var(--t3)">${fmtD(c.date)}</td>
         <td><span class="cat cm">${escHtml(c.category)}</span></td>
-        <td style="color:#8892a4">${escHtml(c.desc)}</td>
+        <td style="color:var(--t2)">${escHtml(c.desc)}</td>
         <td class="mono cr">${fmt(c.amount)}</td>
         <td><span class="rate-tag">${c.rate}</span></td>
-        <td style="color:#767f8e;font-size:11px">${fmtILS(c.amount*c.rate)}</td>
-        <td style="color:#767f8e;font-size:11px">${c.note?escHtml(c.note):'—'}</td>
+        <td style="color:var(--t3);font-size:11px">${fmtILS(c.amount*c.rate)}</td>
+        <td style="color:var(--t3);font-size:11px">${c.note?escHtml(c.note):'—'}</td>
         <td><button class="act ed" onclick="openCX(${ci})">✏️</button><button class="act" onclick="cxAskDel(${ci})">🗑</button></td>
       </tr>`;
-    }).join('') : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#767f8e">אין הוצאות עדיין</td></tr>`;
+    }).join('') : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--t3)">אין הוצאות עדיין</td></tr>`;
 }
 
 let _cxEditI = -1;
@@ -15602,9 +15645,9 @@ function renderAcctMenu() {
       ${(a.balance!=null)?`<div style="font-size:10px;color:var(--t2);margin-left:4px" title="יתרת חשבון נוכחית">💰 $${(+a.balance).toLocaleString('en-US',{maximumFractionDigits:0})}</div>`:''}
       <div style="font-size:10px;color:var(--t3);margin-left:4px">${cnt} עסקאות</div>
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
-      <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
-      <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
-      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
+      <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
+      <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
+      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
       ${goalBar}
     </div>`;
   }).join('');
@@ -15677,8 +15720,8 @@ function pickTradeAcct(ti, evt) {
   picker.innerHTML = options.map(a =>
     `<div onclick="_setTradeAcct(${ti},'${a.id||''}')" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;${cur===(a.id||null)?'background:rgba(255,255,255,.07)':''}">
       <span style="width:7px;height:7px;border-radius:50%;background:${a.color||'#767f8e'};flex-shrink:0"></span>
-      <span style="flex:1">${escHtml(a.name)}${a.number?'<span style="font-size:10px;color:#767f8e;margin-right:5px"> #'+escHtml(a.number)+'</span>':''}</span>
-      ${cur===(a.id||null)?'<span style="color:#3d9970;font-size:10px">✓</span>':''}
+      <span style="flex:1">${escHtml(a.name)}${a.number?'<span style="font-size:10px;color:var(--t3);margin-right:5px"> #'+escHtml(a.number)+'</span>':''}</span>
+      ${cur===(a.id||null)?'<span style="color:var(--gr);font-size:10px">✓</span>':''}
     </div>`
   ).join('') +
     `<div onclick="_newTradeAcct(${ti})" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;border-top:1px solid var(--border2);margin-top:4px;color:#bfa15e;font-weight:600">➕ תיק חדש (הקלד שם)</div>`;
@@ -15972,14 +16015,14 @@ function _agRenderWithdrawals() {
     const i = a.withdrawals.indexOf(w);
     return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:4px;font-size:11px">
       <span class="mono" style="color:var(--t3);min-width:78px">${fmtD(w.date)}</span>
-      <span style="color:#3d9970;font-weight:700;min-width:70px">$${(+w.amount||0).toFixed(0)}</span>
+      <span style="color:var(--gr);font-weight:700;min-width:70px">$${(+w.amount||0).toFixed(0)}</span>
       <span style="flex:1;color:var(--t3)">${escHtml(w.note||'')}</span>
-      <button type="button" onclick="agRemoveWithdrawal(${i})" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:11px">✕</button>
+      <button type="button" onclick="agRemoveWithdrawal(${i})" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px">✕</button>
     </div>`;
   }).join('') : '<div style="font-size:11px;color:var(--t3)">אין משיכות רשומות עדיין</div>';
   const total = (a.withdrawals||[]).reduce((s,w)=>s+(+w.amount||0),0);
   const cumulativeProfit = computeAcctNet(a.id);
-  sumEl.innerHTML = `סה״כ נמשך: <b style="color:#3d9970">$${total.toFixed(0)}</b> · רווח מצטבר מהתיק (כולל מה שעדיין בפנים): <b style="color:${cumulativeProfit>=0?'#3d9970':'#c75f5f'}">${cumulativeProfit>=0?'+':''}$${cumulativeProfit.toFixed(0)}</b>`;
+  sumEl.innerHTML = `סה״כ נמשך: <b style="color:var(--gr)">$${total.toFixed(0)}</b> · רווח מצטבר מהתיק (כולל מה שעדיין בפנים): <b style="color:${cumulativeProfit>=0?'#3d9970':'#c75f5f'}">${cumulativeProfit>=0?'+':''}$${cumulativeProfit.toFixed(0)}</b>`;
 }
 
 function agAddWithdrawal() {
@@ -16278,9 +16321,9 @@ function showUpgradeModal(feature) {
         <div class="plan-up-card" style="border-color:${pBorder[p]};background:${pColors[p]}"
              onclick="closeUpgradeModal();sw('billing',document.querySelector('.nt[onclick*=\\'billing\\']'))">
           <div style="font-size:13px;font-weight:700;color:${pText[p]}">${pLabels[p]}</div>
-          <div style="font-size:11px;color:#8892a4;margin-top:3px">לחץ לשדרוג חבילה ולקבלת גישה</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:3px">לחץ לשדרוג חבילה ולקבלת גישה</div>
         </div>`).join('')
-    : '<div style="font-size:12px;color:#767f8e;padding:12px">צור קשר עם הניהול לקבלת גישה לתכונה זו</div>')
+    : '<div style="font-size:12px;color:var(--t3);padding:12px">צור קשר עם הניהול לקבלת גישה לתכונה זו</div>')
     + `<div style="text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)">
          <button onclick="joinWaitlist('${escJs(feature)}')" id="ugm-waitlist-btn" style="background:none;border:1px solid rgba(191,161,94,.35);color:#bfa15e;border-radius:7px;padding:6px 14px;font-size:11px;cursor:pointer">🕐 אני מעוניין ב-Pro — הצטרף לרשימת ההמתנה</button>
        </div>`;
@@ -16904,26 +16947,26 @@ function _showTodayEcalBriefing(todayEvents) {
     return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <span style="font-size:10px;color:#bfa15e;font-family:monospace;flex-shrink:0;min-width:38px">${t}</span>
       <span style="font-size:9px;flex-shrink:0">${ecalStars(ev)}</span>
-      <span style="font-size:11px;color:#e8ecf4">${escHtml(ev.title)}</span>
+      <span style="font-size:11px;color:var(--t1)">${escHtml(ev.title)}</span>
     </div>`;
   }).join('');
   toast.innerHTML = `<div style="background:#13110a;border:1px solid rgba(191,161,94,.3);border-radius:10px;padding:12px 14px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
     <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
       <span style="font-size:14px">📅</span>
       <span style="font-size:12px;font-weight:700;color:#bfa15e">הודעות היום — ארה"ב</span>
-      <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:#767f8e;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
+      <button onclick="document.getElementById('_ecal-briefing').remove()" style="margin-right:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0 2px;line-height:1">×</button>
     </div>
     ${rows}
     <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.06)">
-      <span style="font-size:9px;color:#767f8e">רמת סינון:</span>
-      <select onchange="setEcalMinImpact(this.value)" style="padding:2px 5px;font-size:9px;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:#1b2540;color:#e8ecf4;font-family:inherit">
+      <span style="font-size:9px;color:var(--t3)">רמת סינון:</span>
+      <select onchange="setEcalMinImpact(this.value)" style="padding:2px 5px;font-size:9px;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:#1b2540;color:var(--t1);font-family:inherit">
         <option value="High"${ecalMinImpact()==='High'?' selected':''}>⭐⭐⭐ בלבד</option>
         <option value="Medium"${ecalMinImpact()==='Medium'?' selected':''}>⭐⭐ ומעלה</option>
         <option value="Low"${ecalMinImpact()==='Low'?' selected':''}>הכל</option>
       </select>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-      <div style="font-size:10px;color:#767f8e">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
+      <div style="font-size:10px;color:var(--t3)">התראה תופיע ב 15, 10, 5 דקות לפני כל הודעה</div>
       <button onclick="ecalForceRefresh()" style="background:rgba(191,161,94,.12);border:1px solid rgba(191,161,94,.25);color:#bfa15e;border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit">🔄 רענן</button>
     </div>
   </div>`;
@@ -16948,12 +16991,12 @@ function _showEcalAlertBar(title, country, evDate, minsLeft) {
       <span style="font-size:30px;flex-shrink:0;animation:pulse-dot 1s infinite">⚠️</span>
       <div style="flex:1">
         <div style="font-size:15px;font-weight:800;color:${urgencyColor};line-height:1.3;letter-spacing:.3px">בעוד ${minsLeft} דקות — הודעה חשובה!</div>
-        <div style="font-size:11px;color:#8892a4;margin-top:2px">סחור חכם · שים לב לתנועות</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px">סחור חכם · שים לב לתנועות</div>
       </div>
-      <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#8892a4;cursor:pointer;font-size:16px;border-radius:8px;width:28px;height:28px;flex-shrink:0;font-family:inherit;line-height:1;padding:0">✕</button>
+      <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--t2);cursor:pointer;font-size:16px;border-radius:8px;width:28px;height:28px;flex-shrink:0;font-family:inherit;line-height:1;padding:0">✕</button>
     </div>
     <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px">
-      <div style="font-size:13px;font-weight:700;color:#e8ecf4;margin-bottom:4px">${window._ecalLastStars || '⭐⭐'} &nbsp;${escHtml(title)}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px">${window._ecalLastStars || '⭐⭐'} &nbsp;${escHtml(title)}</div>
       <div style="font-size:12px;color:#bfa15e;font-family:monospace;font-weight:600">🕐 ${timeStr} &nbsp;·&nbsp; 🇺🇸 ארה"ב</div>
     </div>
   </div>`;
@@ -17223,14 +17266,14 @@ async function sendWelcomeWA(users) {
   const close = () => { if(timer) clearInterval(timer); m.remove(); };
 
   const render = () => {
-    m.innerHTML = `<div style="background:#111520;border:1px solid rgba(61,153,112,.25);border-radius:14px;width:100%;max-width:min(500px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
+    m.innerHTML = `<div style="background:var(--bg1);border:1px solid rgba(61,153,112,.25);border-radius:14px;width:100%;max-width:min(500px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px">
         <div style="width:36px;height:36px;border-radius:9px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.25);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">🎉</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#e8ecf4">ברכת ברוכים הבאים — WhatsApp</div>
-          <div style="font-size:10px;color:#767f8e;margin-top:2px">${users.length} משתמשים חדשים · ${sent.size} נשלחו</div>
+          <div style="font-size:13px;font-weight:700;color:var(--t1)">ברכת ברוכים הבאים — WhatsApp</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">${users.length} משתמשים חדשים · ${sent.size} נשלחו</div>
         </div>
-        <button onclick="(()=>{if(window._welcomeTimer)clearInterval(window._welcomeTimer);document.getElementById('_welcome-modal').remove()})()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;padding:2px 6px">×</button>
+        <button onclick="(()=>{if(window._welcomeTimer)clearInterval(window._welcomeTimer);document.getElementById('_welcome-modal').remove()})()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;padding:2px 6px">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;padding:10px 20px">
         ${users.map((u,i) => {
@@ -17238,14 +17281,14 @@ async function sendWelcomeWA(users) {
           const url = `https://wa.me/${ph}?text=${encoded}`;
           const done = sent.has(i);
           return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);opacity:${done?.5:1}">
-            <div style="flex:1"><div style="font-size:12px;color:${done?'#767f8e':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.phone)}</div></div>
+            <div style="flex:1"><div style="font-size:12px;color:${done?'#767f8e':'#e8ecf4'};font-weight:600">${done?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:var(--bl);direction:ltr">${escHtml(u.phone)}</div></div>
             <a href="${url}" target="_blank" rel="noopener" onclick="window._waSentIdx(${i})" style="flex-shrink:0;padding:5px 12px;background:${done?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${done?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${done?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">${done?'✓ נשלח':'📱 שלח'}</a>
           </div>`;
         }).join('')}
       </div>
       <div style="padding:12px 20px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:8px">
-        <button id="_welcome-auto-btn" onclick="window._welcomeAutoSend()" style="padding:9px;background:rgba(61,153,112,.2);color:#3d9970;border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🚀 שלח לכולם אוטומטי (${users.length - sent.size})</button>
-        <div id="_welcome-prog" style="font-size:11px;color:#3d9970;text-align:center;min-height:14px"></div>
+        <button id="_welcome-auto-btn" onclick="window._welcomeAutoSend()" style="padding:9px;background:rgba(61,153,112,.2);color:var(--gr);border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🚀 שלח לכולם אוטומטי (${users.length - sent.size})</button>
+        <div id="_welcome-prog" style="font-size:11px;color:var(--gr);text-align:center;min-height:14px"></div>
       </div>
     </div>`;
   };
@@ -17305,10 +17348,10 @@ function _renderWelcomeBadge(count) {
   badge.innerHTML = `
     <div style="width:38px;height:38px;border-radius:10px;background:rgba(61,153,112,.15);border:1px solid rgba(61,153,112,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;animation:pulse-dot 2s infinite">🎉</div>
     <div style="flex:1">
-      <div style="font-size:13px;font-weight:700;color:#3d9970">${count} משתמש${count===1?'':'ים'} חד${count===1?'ש':'שים'} — ממתינ${count===1?'':'ים'} לברכת ברוכים הבאים</div>
-      <div style="font-size:10px;color:#767f8e;margin-top:2px">יש לשלוח הודעת וואטספ אוטומטית · לחץ לשליחה</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gr)">${count} משתמש${count===1?'':'ים'} חד${count===1?'ש':'שים'} — ממתינ${count===1?'':'ים'} לברכת ברוכים הבאים</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:2px">יש לשלוח הודעת וואטספ אוטומטית · לחץ לשליחה</div>
     </div>
-    <button id="_welcome-send-btn" onclick="document.getElementById('_welcome-badge').dataset.sending='1';_checkWelcomePending().then(sendWelcomeWA)" style="padding:8px 16px;background:rgba(61,153,112,.2);color:#3d9970;border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">📱 שלח ברכות</button>
+    <button id="_welcome-send-btn" onclick="document.getElementById('_welcome-badge').dataset.sending='1';_checkWelcomePending().then(sendWelcomeWA)" style="padding:8px 16px;background:rgba(61,153,112,.2);color:var(--gr);border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">📱 שלח ברכות</button>
   `;
 }
 
@@ -17432,7 +17475,7 @@ function renderFeatureMatrix() {
     return `<tr>
       <td>
         <div style="font-size:12px;color:#c8d0de;font-weight:500">${f.label}</div>
-        <div style="font-size:10px;color:#767f8e;margin-top:1px">${f.desc}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:1px">${f.desc}</div>
       </td>${cells}
     </tr>`;
   }).join('');
@@ -17471,9 +17514,9 @@ function udpLoadPerms() {
     const ov = overrides[f.key];
     const sel = ov === true ? 'grant' : ov === false ? 'block' : 'inherit';
     const ovTag = ov === true
-      ? '<span style="font-size:9px;background:rgba(61,153,112,.15);color:#3d9970;border:1px solid rgba(61,153,112,.3);border-radius:3px;padding:1px 5px">מאופשר</span>'
+      ? '<span style="font-size:9px;background:rgba(61,153,112,.15);color:var(--gr);border:1px solid rgba(61,153,112,.3);border-radius:3px;padding:1px 5px">מאופשר</span>'
       : ov === false
-      ? '<span style="font-size:9px;background:rgba(199,95,95,.12);color:#c75f5f;border:1px solid rgba(199,95,95,.25);border-radius:3px;padding:1px 5px">חסום</span>'
+      ? '<span style="font-size:9px;background:rgba(199,95,95,.12);color:var(--re);border:1px solid rgba(199,95,95,.25);border-radius:3px;padding:1px 5px">חסום</span>'
       : '';
     return `<div class="udp-perm-row">
       <div class="udp-perm-info">
@@ -17570,10 +17613,10 @@ async function refreshAdminUsers() {
   const allBtn = document.querySelector('[data-uf="all"]');
   if (allBtn) allBtn.classList.add('active');
   const tbody = document.getElementById('admin-users-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#767f8e">טוען...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--t3)">טוען...</td></tr>';
   const result = await _getUsers();
   if (result && result.error) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:#c75f5f;font-size:11px">❌ שגיאת Firestore: ${result.error}<br><span style="color:#767f8e">בדוק הרשאות ו-indexes ב-Firebase Console</span></td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--re);font-size:11px">❌ שגיאת Firestore: ${result.error}<br><span style="color:var(--t3)">בדוק הרשאות ו-indexes ב-Firebase Console</span></td></tr>`;
     return;
   }
   _adminUsersCache = result || [];
@@ -17679,17 +17722,17 @@ function _renderUsersTable() {
     const reg  = u.registeredAt?.toDate ? u.registeredAt.toDate() : new Date(u.registeredAt||0);
     const last = u.lastLogin?.toDate ? u.lastLogin.toDate() : null;
     let badge;
-    if (isBlocked)      badge = '<span style="background:rgba(199,95,95,.15);color:#c75f5f;border:1px solid rgba(199,95,95,.25);border-radius:3px;padding:1px 7px;font-size:10px">חסום</span>';
+    if (isBlocked)      badge = '<span style="background:rgba(199,95,95,.15);color:var(--re);border:1px solid rgba(199,95,95,.25);border-radius:3px;padding:1px 7px;font-size:10px">חסום</span>';
     else if (isPending) badge = '<span style="background:rgba(191,161,94,.15);color:#bfa15e;border:1px solid rgba(191,161,94,.25);border-radius:3px;padding:1px 7px;font-size:10px">ממתין</span>';
-    else                badge = '<span style="background:rgba(61,153,112,.12);color:#3d9970;border:1px solid rgba(61,153,112,.2);border-radius:3px;padding:1px 7px;font-size:10px">פעיל</span>';
+    else                badge = '<span style="background:rgba(61,153,112,.12);color:var(--gr);border:1px solid rgba(61,153,112,.2);border-radius:3px;padding:1px 7px;font-size:10px">פעיל</span>';
     return `<tr style="${isBlocked?'opacity:.45':''}">
-      <td style="color:#767f8e">${i+1}</td>
+      <td style="color:var(--t3)">${i+1}</td>
       <td><span class="user-link" onclick="openUserDetail('${escJs(u.uid)}')">${u.name?escHtml(u.name):'—'}</span>${u.foundingMember?' <span title="Founding Member" style="font-size:10px">🏆</span>':''}</td>
-      <td style="color:#7295b8;font-size:11px">${escHtml(u.email)}</td>
+      <td style="color:var(--bl);font-size:11px">${escHtml(u.email)}</td>
       <td style="font-family:monospace;font-size:11px">${u.phone?escHtml(u.phone):'—'}</td>
-      <td style="color:#767f8e;font-size:10px">${reg.toLocaleDateString('he-IL')}</td>
-      <td style="color:#767f8e;font-size:10px">${last?last.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
-      <td style="color:#767f8e;font-size:10px;text-align:center">${u.loginCount||0}</td>
+      <td style="color:var(--t3);font-size:10px">${reg.toLocaleDateString('he-IL')}</td>
+      <td style="color:var(--t3);font-size:10px">${last?last.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
+      <td style="color:var(--t3);font-size:10px;text-align:center">${u.loginCount||0}</td>
       <td><span style="background:${col}20;color:${col};border:1px solid ${col}40;border-radius:3px;padding:1px 7px;font-size:10px">${u.plan||'free'}</span></td>
       <td>${badge}</td>
       <td style="white-space:nowrap;display:flex;gap:4px;align-items:center">
@@ -17697,9 +17740,9 @@ function _renderUsersTable() {
           ${PLAN_ORDER.map(p=>`<option value="${p}" ${_normPlan(u.plan||'free')===p?'selected':''}>${PLAN_META[p].label}</option>`).join('')}
         </select>
         <button onclick="adminQuickReset('${escJs(u.email)}')" title="איפוס סיסמה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:rgba(191,161,94,.12);color:#bfa15e;font-family:inherit">🔑</button>
-        ${u.emailOptOut ? `<button onclick="adminResubscribe('${escJs(u.uid)}')" title="החזר לרשימת תפוצה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(199,95,95,.3);background:rgba(199,95,95,.1);color:#c75f5f;font-family:inherit">🔕</button>` : ''}
+        ${u.emailOptOut ? `<button onclick="adminResubscribe('${escJs(u.uid)}')" title="החזר לרשימת תפוצה" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(199,95,95,.3);background:rgba(199,95,95,.1);color:var(--re);font-family:inherit">🔕</button>` : ''}
         <button onclick="adminQuickBlock('${escJs(u.uid)}','${escJs(u.status||'active')}')" title="${isBlocked?'בטל חסימה':'חסום'}" style="padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:${isBlocked?'rgba(61,153,112,.12)':'rgba(199,95,95,.12)'};color:${isBlocked?'#3d9970':'#c75f5f'};font-family:inherit">${isBlocked?'✅':'🚫'}</button>
-        <button onclick="openUserDetail('${escJs(u.uid)}')" title="פרטים נוספים" style="padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8892a4;font-family:inherit">⋯</button>
+        <button onclick="openUserDetail('${escJs(u.uid)}')" title="פרטים נוספים" style="padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--t2);font-family:inherit">⋯</button>
       </td>
     </tr>`;
   }).join('');
@@ -17711,7 +17754,7 @@ async function refreshLoginLogs() {
   const timeEl   = document.getElementById('logs-refresh-time');
   const btn      = document.getElementById('logs-refresh-btn');
   if (!logsEl) return;
-  logsEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:20px">טוען לוגים...</div>';
+  logsEl.innerHTML = '<div style="color:var(--t3);text-align:center;padding:20px">טוען לוגים...</div>';
   if (onlineEl) onlineEl.innerHTML = '';
   if (btn) btn.disabled = true;
   try {
@@ -17730,22 +17773,22 @@ async function refreshLoginLogs() {
       if (online.length) {
         onlineEl.innerHTML = `
           <div style="padding:10px 12px;background:rgba(61,153,112,.06);border:1px solid rgba(61,153,112,.2);border-radius:7px;margin-bottom:10px">
-            <div style="font-size:10px;color:#3d9970;font-weight:600;letter-spacing:.4px;margin-bottom:8px">🟢 מחובר כעת — ${online.length} משתמש${online.length>1?'ים':''}</div>
+            <div style="font-size:10px;color:var(--gr);font-weight:600;letter-spacing:.4px;margin-bottom:8px">🟢 מחובר כעת — ${online.length} משתמש${online.length>1?'ים':''}</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
-              ${online.map(u=>`<span style="font-size:11px;color:#e8ecf4;background:rgba(61,153,112,.08);border:1px solid rgba(61,153,112,.25);border-radius:20px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px">
+              ${online.map(u=>`<span style="font-size:11px;color:var(--t1);background:rgba(61,153,112,.08);border:1px solid rgba(61,153,112,.25);border-radius:20px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px">
                 <span style="width:6px;height:6px;border-radius:50%;background:#3d9970;animation:pulse-dot 1.5s infinite"></span>
                 ${escHtml(u.name||u.email)}
               </span>`).join('')}
             </div>
           </div>`;
       } else {
-        onlineEl.innerHTML = '<div style="font-size:11px;color:#767f8e;padding:6px 0 8px">⚫ אין משתמשים מחוברים כרגע</div>';
+        onlineEl.innerHTML = '<div style="font-size:11px;color:var(--t3);padding:6px 0 8px">⚫ אין משתמשים מחוברים כרגע</div>';
       }
     }
 
     // ── Login log ──
     if (snap.empty) {
-      logsEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:20px">אין לוגים עדיין</div>';
+      logsEl.innerHTML = '<div style="color:var(--t3);text-align:center;padding:20px">אין לוגים עדיין</div>';
     } else {
       const icons  = { login:'🟢', register:'✨', logout:'🔴' };
       const labels = { login:'כניסה', register:'הרשמה', logout:'יציאה' };
@@ -17754,19 +17797,19 @@ async function refreshLoginLogs() {
         const isOnline = online.some(u => u.uid === l.uid);
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px">
           <span style="flex-shrink:0">${icons[l.action]||'•'}</span>
-          <span style="color:#e8ecf4;min-width:110px;flex-shrink:0;display:flex;align-items:center;gap:5px">
+          <span style="color:var(--t1);min-width:110px;flex-shrink:0;display:flex;align-items:center;gap:5px">
             ${isOnline&&l.action==='login'?'<span style="width:5px;height:5px;border-radius:50%;background:#3d9970;flex-shrink:0"></span>':''}
             ${l.name?escHtml(l.name):'—'}
           </span>
-          <span style="color:#7295b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(l.email)}</span>
-          <span style="color:#767f8e;min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
-          <span style="color:#767f8e;min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
+          <span style="color:var(--bl);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(l.email)}</span>
+          <span style="color:var(--t3);min-width:55px;text-align:center">${labels[l.action]||l.action}</span>
+          <span style="color:var(--t3);min-width:130px;text-align:left;direction:ltr">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
         </div>`;
       }).join('');
     }
     if (timeEl) timeEl.textContent = 'עודכן: ' + new Date().toLocaleTimeString('he-IL',{timeStyle:'short'});
   } catch(e) {
-    logsEl.innerHTML = '<div style="color:#c75f5f;padding:10px">שגיאה — בדוק הרשאות Firestore</div>';
+    logsEl.innerHTML = '<div style="color:var(--re);padding:10px">שגיאה — בדוק הרשאות Firestore</div>';
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -17906,24 +17949,24 @@ async function adminQuickPlan(uid, plan, selectEl) {
 async function udpLoadActivity() {
   const listEl = document.getElementById('udp-activity-list');
   if (!listEl || !_udpCurrentUid) return;
-  listEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:16px">טוען...</div>';
+  listEl.innerHTML = '<div style="color:var(--t3);text-align:center;padding:16px">טוען...</div>';
   try {
     const snap = await db.collection('loginLogs')
       .where('uid','==',_udpCurrentUid)
       .orderBy('timestamp','desc')
       .limit(20).get();
-    if (snap.empty) { listEl.innerHTML = '<div style="color:#767f8e;text-align:center;padding:16px">אין פעילות רשומה</div>'; return; }
+    if (snap.empty) { listEl.innerHTML = '<div style="color:var(--t3);text-align:center;padding:16px">אין פעילות רשומה</div>'; return; }
     const icons  = { login:'🟢', register:'✨', logout:'🔴' };
     const labels = { login:'כניסה', register:'הרשמה', logout:'יציאה' };
     listEl.innerHTML = snap.docs.map(d => {
       const l = d.data(), ts = l.timestamp?.toDate ? l.timestamp.toDate() : new Date();
       return `<div class="udp-log-row">
         <span>${icons[l.action]||'•'} ${labels[l.action]||l.action}</span>
-        <span style="color:#767f8e;font-size:10px">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
+        <span style="color:var(--t3);font-size:10px">${ts.toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'})}</span>
       </div>`;
     }).join('');
   } catch(e) {
-    listEl.innerHTML = '<div style="color:#c75f5f;padding:10px;font-size:11px">שגיאה בטעינת פעילות</div>';
+    listEl.innerHTML = '<div style="color:var(--re);padding:10px;font-size:11px">שגיאה בטעינת פעילות</div>';
   }
 }
 
@@ -18279,28 +18322,28 @@ function _showEmailBroadcastModal(msg, targets) {
       (u.uid ? `\nאו להסרה מיידית: ${(typeof PUBLIC_SITE_URL!=='undefined'?PUBLIC_SITE_URL:base)}?unsub=${u.uid}` : '');
     const ml = `mailto:${u.email}?subject=${subj}&body=${encodeURIComponent(`שלום ${u.name||''},\n\n${msg}\n\n---\nFayna Trading${unsubLine}`)}`;
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="flex:1"><div style="font-size:12px;color:#e8ecf4;font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.email)}</div></div>
-      <a href="${escHtml(ml)}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:#7295b8;border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
+      <div style="flex:1"><div style="font-size:12px;color:var(--t1);font-weight:600">${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:var(--bl);direction:ltr">${escHtml(u.email)}</div></div>
+      <a href="${escHtml(ml)}" style="flex-shrink:0;padding:5px 12px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:5px;font-size:11px;text-decoration:none;border:1px solid rgba(114,149,184,.3);white-space:nowrap">📧 פתח מייל</a>
     </div>`;
   }).join('');
   let m = document.getElementById('_email-bc-modal'); if(m) m.remove();
   m = document.createElement('div'); m.id = '_email-bc-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
-  m.innerHTML = `<div style="background:#111520;border:1px solid rgba(114,149,184,.25);border-radius:14px;width:100%;max-width:min(560px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
+  m.innerHTML = `<div style="background:var(--bg1);border:1px solid rgba(114,149,184,.25);border-radius:14px;width:100%;max-width:min(560px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px">
       <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:#e8ecf4">📧 שליחת Email — ${targets.length} משתמשים</div>
-        <div style="font-size:10px;color:#767f8e;margin-top:2px">לחץ "פתח מייל" לכל משתמש לשליחה ידנית · <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" style="color:#7295b8">הגדר EmailJS</a> לשליחה אוטומטית</div>
+        <div style="font-size:14px;font-weight:700;color:var(--t1)">📧 שליחת Email — ${targets.length} משתמשים</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">לחץ "פתח מייל" לכל משתמש לשליחה ידנית · <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" style="color:var(--bl)">הגדר EmailJS</a> לשליחה אוטומטית</div>
       </div>
-      <button onclick="document.getElementById('_email-bc-modal').remove()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
+      <button onclick="document.getElementById('_email-bc-modal').remove()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
     </div>
     <div style="padding:14px 22px;background:rgba(114,149,184,.06);border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="font-size:10px;color:#767f8e;margin-bottom:4px">תוכן ההודעה:</div>
-      <div style="font-size:12px;color:#e8ecf4;line-height:1.6;white-space:pre-wrap">${escHtml(msg)}</div>
+      <div style="font-size:10px;color:var(--t3);margin-bottom:4px">תוכן ההודעה:</div>
+      <div style="font-size:12px;color:var(--t1);line-height:1.6;white-space:pre-wrap">${escHtml(msg)}</div>
     </div>
     <div style="overflow-y:auto;flex:1;padding:8px 22px 12px">${rows}</div>
     <div style="padding:12px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px">
-      <a href="mailto:${escHtml(targets.map(u=>u.email).join(','))}?subject=${subj}&body=${body}" style="flex:1;padding:8px;background:rgba(114,149,184,.15);color:#7295b8;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;border:1px solid rgba(114,149,184,.3)">📨 פתח לכולם יחד</a>
+      <a href="mailto:${escHtml(targets.map(u=>u.email).join(','))}?subject=${subj}&body=${body}" style="flex:1;padding:8px;background:rgba(114,149,184,.15);color:var(--bl);border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;border:1px solid rgba(114,149,184,.3)">📨 פתח לכולם יחד</a>
     </div>
   </div>`;
   document.body.appendChild(m);
@@ -18324,7 +18367,7 @@ async function sendNotifWhatsApp(msg) {
     const url = `https://wa.me/${ph}?text=${encoded}`;
     const isSent = sent.has(i);
     return `<div id="wa-row-${i}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);opacity:${isSent?.5:1}">
-      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#767f8e':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:#7295b8;direction:ltr">${escHtml(u.phone)}</div></div>
+      <div style="flex:1"><div style="font-size:12px;color:${isSent?'#767f8e':'#e8ecf4'};font-weight:600">${isSent?'✅ ':''} ${u.name?escHtml(u.name):'—'}</div><div style="font-size:10px;color:var(--bl);direction:ltr">${escHtml(u.phone)}</div></div>
       <a href="${url}" target="_blank" rel="noopener" onclick="waMarkSent(${i})"
         style="flex-shrink:0;padding:5px 12px;background:${isSent?'rgba(255,255,255,.04)':'rgba(61,153,112,.15)'};color:${isSent?'#767f8e':'#3d9970'};border-radius:5px;font-size:11px;text-decoration:none;border:1px solid ${isSent?'rgba(255,255,255,.08)':'rgba(61,153,112,.3)'};white-space:nowrap">
         ${isSent ? '✓ נשלח' : '📱 שלח'}
@@ -18336,23 +18379,23 @@ async function sendNotifWhatsApp(msg) {
   m = document.createElement('div'); m.id = 'wa-broadcast-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
   const render = () => {
-    m.innerHTML = `<div style="background:#111520;border:1px solid rgba(61,153,112,.2);border-radius:14px;width:100%;max-width:min(560px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
+    m.innerHTML = `<div style="background:var(--bg1);border:1px solid rgba(61,153,112,.2);border-radius:14px;width:100%;max-width:min(560px,calc(100vw - 16px));max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
       <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px">
         <div style="width:38px;height:38px;border-radius:10px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.25);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📱</div>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:#e8ecf4">WhatsApp Broadcast</div>
-          <div style="font-size:10px;color:#767f8e;margin-top:2px">${targets.length} משתמשים · ${sent.size} נשלחו</div>
+          <div style="font-size:14px;font-weight:700;color:var(--t1)">WhatsApp Broadcast</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">${targets.length} משתמשים · ${sent.size} נשלחו</div>
         </div>
-        <button onclick="if(_waBroadcastTimer)clearInterval(_waBroadcastTimer);document.getElementById('wa-broadcast-modal').remove()" style="background:none;border:none;color:#767f8e;cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
+        <button onclick="if(_waBroadcastTimer)clearInterval(_waBroadcastTimer);document.getElementById('wa-broadcast-modal').remove()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px">×</button>
       </div>
       <div style="padding:14px 22px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:10px;color:#767f8e;margin-bottom:6px">תצוגה מקדימה של ההודעה (WhatsApp):</div>
-        <div style="background:#1a1f2e;border-radius:8px;padding:12px 14px;font-size:12px;color:#e8ecf4;line-height:1.7;white-space:pre-wrap;direction:rtl;border:1px solid rgba(61,153,112,.15)">${branded.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/_([^_\n]+)_/g,'<i>$1</i>')}</div>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:6px">תצוגה מקדימה של ההודעה (WhatsApp):</div>
+        <div style="background:#1a1f2e;border-radius:8px;padding:12px 14px;font-size:12px;color:var(--t1);line-height:1.7;white-space:pre-wrap;direction:rtl;border:1px solid rgba(61,153,112,.15)">${branded.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/_([^_\n]+)_/g,'<i>$1</i>')}</div>
         <div style="display:flex;gap:8px;margin-top:10px">
-          <button onclick="waAutoSend()" id="wa-auto-btn" style="flex:1;padding:8px;background:rgba(61,153,112,.2);color:#3d9970;border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🚀 שלח לכולם אוטו (${targets.length - sent.size})</button>
-          <button onclick="navigator.clipboard.writeText(${JSON.stringify(branded)}).then(()=>showToast('הועתק ✅'))" style="padding:8px 14px;background:rgba(255,255,255,.05);color:#8892a4;border:1px solid rgba(255,255,255,.1);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">📋 העתק</button>
+          <button onclick="waAutoSend()" id="wa-auto-btn" style="flex:1;padding:8px;background:rgba(61,153,112,.2);color:var(--gr);border:1px solid rgba(61,153,112,.35);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🚀 שלח לכולם אוטו (${targets.length - sent.size})</button>
+          <button onclick="navigator.clipboard.writeText(${JSON.stringify(branded)}).then(()=>showToast('הועתק ✅'))" style="padding:8px 14px;background:rgba(255,255,255,.05);color:var(--t2);border:1px solid rgba(255,255,255,.1);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">📋 העתק</button>
         </div>
-        <div id="wa-auto-progress" style="margin-top:8px;font-size:11px;color:#3d9970;text-align:center;min-height:16px"></div>
+        <div id="wa-auto-progress" style="margin-top:8px;font-size:11px;color:var(--gr);text-align:center;min-height:16px"></div>
       </div>
       <div id="wa-rows-wrap" style="overflow-y:auto;flex:1;padding:8px 22px 12px">${buildRows()}</div>
     </div>`;
@@ -18668,25 +18711,25 @@ async function sendRegistrationEmail(user) {
   if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'PASTE_YOUR_KEY_HERE') return;
   const dateStr = new Date().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'});
   const html = `
-<div dir="rtl" style="font-family:Arial,sans-serif;max-width:min(520px,calc(100vw - 16px));margin:0 auto;background:#0a0d12;color:#e8ecf4;border-radius:12px;overflow:hidden;border:1px solid #252d40">
+<div dir="rtl" style="font-family:Arial,sans-serif;max-width:min(520px,calc(100vw - 16px));margin:0 auto;background:var(--bg0);color:var(--t1);border-radius:12px;overflow:hidden;border:1px solid #252d40">
   <div style="background:linear-gradient(135deg,#3d9970,#31815c);padding:24px 28px">
     <div style="font-size:22px;font-weight:700;color:#000">📈 Fayna Trading</div>
     <div style="font-size:13px;color:rgba(0,0,0,0.7);margin-top:4px">משתמש חדש נרשם לפלטפורמה</div>
   </div>
   <div style="padding:28px">
     <table style="width:100%;border-collapse:collapse">
-      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px;width:80px">שם מלא</td>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:var(--t2);font-size:12px;width:80px">שם מלא</td>
           <td style="padding:10px 0;border-bottom:1px solid #252d40;font-weight:600">${user.name}</td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px">אימייל</td>
-          <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="mailto:${user.email}" style="color:#7295b8">${user.email}</a></td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px">טלפון</td>
-          <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="tel:${user.phone}" style="color:#7295b8">${user.phone}</a></td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:#8892a4;font-size:12px">סוג חשבון</td>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:var(--t2);font-size:12px">אימייל</td>
+          <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="mailto:${user.email}" style="color:var(--bl)">${user.email}</a></td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:var(--t2);font-size:12px">טלפון</td>
+          <td style="padding:10px 0;border-bottom:1px solid #252d40"><a href="tel:${user.phone}" style="color:var(--bl)">${user.phone}</a></td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #252d40;color:var(--t2);font-size:12px">סוג חשבון</td>
           <td style="padding:10px 0;border-bottom:1px solid #252d40;font-weight:600">${user.plan || 'pro'}</td></tr>
-      <tr><td style="padding:10px 0;color:#8892a4;font-size:12px">תאריך</td>
+      <tr><td style="padding:10px 0;color:var(--t2);font-size:12px">תאריך</td>
           <td style="padding:10px 0">${dateStr}</td></tr>
     </table>
-    <div style="margin-top:24px;background:#161b27;border-radius:8px;padding:14px;font-size:12px;color:#767f8e;text-align:center">
+    <div style="margin-top:24px;background:var(--bg1);border-radius:8px;padding:14px;font-size:12px;color:var(--t3);text-align:center">
       Fayna Trading Admin Panel — fayna-trading.firebaseapp.com
     </div>
   </div>
@@ -18709,7 +18752,7 @@ async function sendRegistrationEmail(user) {
   const logoUrl    = siteUrl + 'fayna_logo.jpg';
   const guideUrl   = window._guideUrl || '';
   const igUrl      = window._instagramUrl || '';
-  const unsubLine  = `<br><a href="mailto:${ADMIN_EMAIL}?subject=הסר%20אותי%20מרשימת%20התפוצה" style="color:#767f8e;font-size:10px">הסר אותי מרשימת תפוצה</a>`;
+  const unsubLine  = `<br><a href="mailto:${ADMIN_EMAIL}?subject=הסר%20אותי%20מרשימת%20התפוצה" style="color:var(--t3);font-size:10px">הסר אותי מרשימת תפוצה</a>`;
 
   const welcomeHtml = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -18741,7 +18784,7 @@ async function sendRegistrationEmail(user) {
 
         <p style="font-size:17px;font-weight:600;margin:0 0 14px;color:#ffffff">היי ${user.name} 👋</p>
         <p style="font-size:14px;line-height:1.75;margin:0 0 14px;color:#c4cfe0">
-          ברוך הבא ל-<strong style="color:#3d9970">Fayna Trading Journal</strong> — המקום שלך לתעד,
+          ברוך הבא ל-<strong style="color:var(--gr)">Fayna Trading Journal</strong> — המקום שלך לתעד,
           לנתח ולשפר את המסחר שלך.
         </p>
         <p style="font-size:14px;line-height:1.75;margin:0 0 24px;color:#c4cfe0">
@@ -18751,7 +18794,7 @@ async function sendRegistrationEmail(user) {
         <!-- CTA: כניסה לאתר -->
         <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:20px">
           <a href="${siteUrl}" target="_blank" rel="noopener noreferrer"
-             style="display:inline-block;padding:14px 36px;background-color:#3d9970;color:#000000;font-weight:700;font-size:15px;border-radius:9px;text-decoration:none;letter-spacing:.3px">
+             style="display:inline-block;padding:14px 36px;background-color:var(--gr);color:#000000;font-weight:700;font-size:15px;border-radius:9px;text-decoration:none;letter-spacing:.3px">
             🚀 כניסה לאפליקציה
           </a>
         </td></tr></table>
@@ -18777,7 +18820,7 @@ async function sendRegistrationEmail(user) {
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr><td bgcolor="#0a0e18" style="background-color:#0a0e18;border-radius:8px;padding:14px;text-align:center">
             <div style="font-size:13px;color:#6b7280">לשאלות ועזרה — פנה דרך הצ'אט באפליקציה</div>
-            <div style="font-size:12px;color:#3d9970;font-weight:600;margin-top:4px">Fayna Trading</div>
+            <div style="font-size:12px;color:var(--gr);font-weight:600;margin-top:4px">Fayna Trading</div>
             <div style="font-size:10px;color:#374151;margin-top:8px">
               © ${new Date().getFullYear()} Fayna Trading · כל הזכויות שמורות
               ${unsubLine}
@@ -18848,18 +18891,18 @@ async function _handleUnsubParam() {
 
   // Show confirmation screen before doing anything
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:#0a0d12;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg0);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
   overlay.innerHTML = `
-    <div style="background:#111520;border:1px solid #252d40;border-radius:16px;max-width:min(420px,calc(100vw - 16px));width:100%;padding:36px 32px;text-align:center;direction:rtl">
+    <div style="background:var(--bg1);border:1px solid #252d40;border-radius:16px;max-width:min(420px,calc(100vw - 16px));width:100%;padding:36px 32px;text-align:center;direction:rtl">
       <div style="font-size:36px;margin-bottom:14px">📧</div>
-      <div style="font-size:18px;font-weight:700;color:#e8ecf4;margin-bottom:10px">הסרה מרשימת התפוצה</div>
-      <div style="font-size:13px;color:#8892a4;line-height:1.7;margin-bottom:28px">
+      <div style="font-size:18px;font-weight:700;color:var(--t1);margin-bottom:10px">הסרה מרשימת התפוצה</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:28px">
         לאחר האישור לא תקבל יותר הודעות ועדכונים מ-Fayna Trading.<br>
         תוכל לפנות לתמיכה בכל עת לביטול.
       </div>
       <div style="display:flex;gap:10px;justify-content:center">
         <button id="_unsub-confirm" style="padding:11px 28px;background:#c75f5f;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✓ אשר הסרה</button>
-        <button id="_unsub-cancel"  style="padding:11px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#8892a4;font-size:14px;cursor:pointer;font-family:inherit">ביטול</button>
+        <button id="_unsub-cancel"  style="padding:11px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--t2);font-size:14px;cursor:pointer;font-family:inherit">ביטול</button>
       </div>
       <div id="_unsub-msg" style="margin-top:16px;font-size:12px;min-height:18px"></div>
     </div>`;
@@ -18890,7 +18933,7 @@ async function _handleUnsubParam() {
           subject: `🔕 הסרה מרשימת תפוצה: ${userData.name || uid}`,
           from_name: 'Fayna Trading — Unsubscribe',
           html: `<div dir="rtl" style="font-family:Arial,sans-serif;padding:20px">
-            <h3 style="color:#c75f5f">🔕 משתמש הסיר את עצמו מרשימת התפוצה</h3>
+            <h3 style="color:var(--re)">🔕 משתמש הסיר את עצמו מרשימת התפוצה</h3>
             <table style="width:100%;border-collapse:collapse;margin-top:14px">
               <tr><td style="padding:8px;color:#666;width:80px">שם</td><td style="padding:8px;font-weight:600">${userData.name||'—'}</td></tr>
               <tr><td style="padding:8px;color:#666">אימייל</td><td style="padding:8px"><a href="mailto:${userData.email||''}">${userData.email||'—'}</a></td></tr>
@@ -18904,9 +18947,9 @@ async function _handleUnsubParam() {
       // Show success
       overlay.querySelector('div > div').innerHTML = `
         <div style="font-size:36px;margin-bottom:14px">✅</div>
-        <div style="font-size:18px;font-weight:700;color:#3d9970;margin-bottom:10px">הוסרת בהצלחה</div>
-        <div style="font-size:13px;color:#8892a4;line-height:1.7;margin-bottom:24px">לא תקבל יותר הודעות שיווקיות ממנו.</div>
-        <button onclick="document.querySelector('[id^=_unsub]')?.closest('div[style*=fixed]')?.remove()" style="padding:10px 28px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#e8ecf4;font-size:13px;cursor:pointer;font-family:inherit">סגור</button>`;
+        <div style="font-size:18px;font-weight:700;color:var(--gr);margin-bottom:10px">הוסרת בהצלחה</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:24px">לא תקבל יותר הודעות שיווקיות ממנו.</div>
+        <button onclick="document.querySelector('[id^=_unsub]')?.closest('div[style*=fixed]')?.remove()" style="padding:10px 28px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit">סגור</button>`;
     } catch(e) {
       if (msgEl) { msgEl.style.color='#c75f5f'; msgEl.textContent='שגיאה: ' + e.message; }
       btn.disabled = false; btn.textContent = '✓ אשר הסרה';
@@ -18949,7 +18992,7 @@ function sendChatMessage() {
   const userName = currentUser ? (currentUser.name || currentUser.email) : 'אנונימי';
   userBubble.innerHTML = `
     <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3d9970,#31815c);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0">${(userName[0]||'?').toUpperCase()}</div>
-    <div style="background:rgba(61,153,112,.15);border:1px solid rgba(61,153,112,.2);border-radius:8px 0 8px 8px;padding:9px 12px;font-size:12px;color:#e8ecf4;line-height:1.5;max-width:80%;direction:rtl">${escHtml(text)}</div>`;
+    <div style="background:rgba(61,153,112,.15);border:1px solid rgba(61,153,112,.2);border-radius:8px 0 8px 8px;padding:9px 12px;font-size:12px;color:var(--t1);line-height:1.5;max-width:80%;direction:rtl">${escHtml(text)}</div>`;
   messages.appendChild(userBubble);
   messages.scrollTop = messages.scrollHeight;
 
@@ -19590,7 +19633,7 @@ window.renderTJ = function renderTJ() {
   if (afbar && abtns && accounts.length > 0) {
     afbar.style.display = '';
     const bulkBtn = tjAcct !== '__all__'
-      ? `<button onclick="bulkAssignAcct('${tjAcct}')" style="padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;border:1px solid rgba(61,153,112,.3);background:rgba(61,153,112,.08);color:#3d9970;font-family:inherit;margin-right:4px">⚡ שייך הכל</button>`
+      ? `<button onclick="bulkAssignAcct('${tjAcct}')" style="padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;border:1px solid rgba(61,153,112,.3);background:rgba(61,153,112,.08);color:var(--gr);font-family:inherit;margin-right:4px">⚡ שייך הכל</button>`
       : '';
     abtns.innerHTML =
       `<button class="fb ${tjAcct==='__all__'?'active':''}" onclick="fAcct('__all__',this)">כל התיקים</button>` +
@@ -19629,7 +19672,7 @@ window.renderTJ = function renderTJ() {
       ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:${acctObj.color};white-space:nowrap;cursor:pointer" onclick="pickTradeAcct(${ti},event)" title="שנה תיק">
            <span style="width:6px;height:6px;border-radius:50%;background:${acctObj.color};flex-shrink:0"></span>${escHtml(acctObj.name)}${acctObj.number?'<span style="font-size:9px;opacity:.6"> #'+escHtml(acctObj.number)+'</span>':''}
          </span>`
-      : `<span style="font-size:10px;color:#767f8e;cursor:pointer;border:1px dashed rgba(255,255,255,.15);border-radius:4px;padding:1px 7px" onclick="pickTradeAcct(${ti},event)" title="שייך לתיק">+ תיק</span>`;
+      : `<span style="font-size:10px;color:var(--t3);cursor:pointer;border:1px dashed rgba(255,255,255,.15);border-radius:4px;padding:1px 7px" onclick="pickTradeAcct(${ti},event)" title="שייך לתיק">+ תיק</span>`;
     const starCount = t.stars || 0;
     const starsHtml = starCount
       ? `<span style="color:#bfa15e;font-size:11px">${'★'.repeat(starCount)}</span><span style="color:var(--t3);font-size:11px">${'★'.repeat(5-starCount)}</span>`
@@ -19652,13 +19695,13 @@ window.renderTJ = function renderTJ() {
     const sellHtml= t.isManual ? '—' : t.sell.toFixed(2);
     return `<tr id="tj-row-${ti}" ${noteTitle}>
       <td data-label="" id="tjcell-${ti}" style="display:none"><input type="checkbox" class="chk" id="tjchk-${ti}" onchange="tradesList[${ti}]._sel=this.checked;tjRowMark(${ti},this.checked)"></td>
-      <td data-label="תאריך" class="mono" style="font-size:11px;color:#767f8e">${fmtD(t.date)}</td>
+      <td data-label="תאריך" class="mono" style="font-size:11px;color:var(--t3)">${fmtD(t.date)}</td>
       <td data-label="שעה" style="color:#3a4252;font-size:11px">${t.btime.slice(0,5)}</td>
       <td data-label="תיק">${acctCell}</td>
-      <td data-label="סימול" style="color:#8892a4">${symHtml}</td>
-      <td data-label="כמות" style="color:#767f8e">${qtyHtml}</td>
-      <td data-label="קנייה" class="mono" style="font-size:11px;color:#767f8e">${buyHtml}</td>
-      <td data-label="מכירה" class="mono" style="font-size:11px;color:#767f8e">${sellHtml}</td>
+      <td data-label="סימול" style="color:var(--t2)">${symHtml}</td>
+      <td data-label="כמות" style="color:var(--t3)">${qtyHtml}</td>
+      <td data-label="קנייה" class="mono" style="font-size:11px;color:var(--t3)">${buyHtml}</td>
+      <td data-label="מכירה" class="mono" style="font-size:11px;color:var(--t3)">${sellHtml}</td>
       <td data-label="משך" style="color:#3a4252;font-size:11px">${t.dur}</td>
       <td data-label="נטו $" class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
       <td data-label="אסטרטגיה"><div>${stratHtml}</div>${tagsHtml}</td>
@@ -19669,7 +19712,7 @@ window.renderTJ = function renderTJ() {
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
     </tr>`;
-  }).join('') : `<tr><td colspan="14" style="text-align:center;padding:2rem;color:#767f8e">אין עסקאות</td></tr>`;
+  }).join('') : `<tr><td colspan="14" style="text-align:center;padding:2rem;color:var(--t3)">אין עסקאות</td></tr>`;
 }
 
 function fStrat(s, b) {
@@ -21536,37 +21579,37 @@ function installPWA() {
     icon  = '📱';
     title = 'התקנה על iPhone / iPad';
     steps = [
-      `פתח את האתר ב-<strong style="color:#7295b8">Safari</strong> (חובה, לא Chrome)`,
-      `לחץ על כפתור השיתוף <strong style="color:#7295b8">⎙</strong> בתחתית המסך`,
-      `גלול ובחר <strong style="color:#3d9970">״הוסף למסך הבית״</strong>`,
-      `לחץ <strong style="color:#3d9970">״הוסף״</strong> — הסתיים!`
+      `פתח את האתר ב-<strong style="color:var(--bl)">Safari</strong> (חובה, לא Chrome)`,
+      `לחץ על כפתור השיתוף <strong style="color:var(--bl)">⎙</strong> בתחתית המסך`,
+      `גלול ובחר <strong style="color:var(--gr)">״הוסף למסך הבית״</strong>`,
+      `לחץ <strong style="color:var(--gr)">״הוסף״</strong> — הסתיים!`
     ];
     tip = 'חייב להיות Safari — Chrome ב-iOS לא תומך';
   } else if (isAndroid) {
     icon  = '🤖';
     title = 'התקנה על Android';
     steps = [
-      `לחץ על תפריט <strong style="color:#7295b8">⋮</strong> בפינה הימנית העליונה`,
-      `בחר <strong style="color:#3d9970">״הוסף למסך הבית״</strong> או <strong style="color:#3d9970">״התקן אפליקציה״</strong>`,
-      `לחץ <strong style="color:#3d9970">״התקן״</strong> — הסתיים!`
+      `לחץ על תפריט <strong style="color:var(--bl)">⋮</strong> בפינה הימנית העליונה`,
+      `בחר <strong style="color:var(--gr)">״הוסף למסך הבית״</strong> או <strong style="color:var(--gr)">״התקן אפליקציה״</strong>`,
+      `לחץ <strong style="color:var(--gr)">״התקן״</strong> — הסתיים!`
     ];
     tip = 'עובד ב-Chrome, Samsung Internet, Edge';
   } else if (isEdge) {
     icon  = '💻';
     title = 'התקנה ב-Microsoft Edge';
     steps = [
-      `לחץ על תפריט <strong style="color:#7295b8">⋯</strong> בפינה הימנית העליונה`,
-      `בחר <strong style="color:#3d9970">״Apps״</strong> ← <strong style="color:#3d9970">״Install this site as an app״</strong>`,
-      `לחץ <strong style="color:#3d9970">״Install״</strong> — הסתיים!`
+      `לחץ על תפריט <strong style="color:var(--bl)">⋯</strong> בפינה הימנית העליונה`,
+      `בחר <strong style="color:var(--gr)">״Apps״</strong> ← <strong style="color:var(--gr)">״Install this site as an app״</strong>`,
+      `לחץ <strong style="color:var(--gr)">״Install״</strong> — הסתיים!`
     ];
     tip = 'האפליקציה תופיע בתפריט Start';
   } else {
     icon  = '🖥️';
     title = 'התקנה ב-Google Chrome';
     steps = [
-      `חפש את אייקון <strong style="color:#7295b8">⊕</strong> בצד ימין של שורת הכתובת`,
-      `לחץ עליו ← <strong style="color:#3d9970">״התקן״</strong>`,
-      `<em style="color:#767f8e">אם לא מופיע:</em> לחץ <strong style="color:#7295b8">⋮</strong> ← <strong style="color:#3d9970">״שמור ושתף״</strong> ← <strong style="color:#3d9970">״התקן את הדף הזה כאפליקציה״</strong>`
+      `חפש את אייקון <strong style="color:var(--bl)">⊕</strong> בצד ימין של שורת הכתובת`,
+      `לחץ עליו ← <strong style="color:var(--gr)">״התקן״</strong>`,
+      `<em style="color:var(--t3)">אם לא מופיע:</em> לחץ <strong style="color:var(--bl)">⋮</strong> ← <strong style="color:var(--gr)">״שמור ושתף״</strong> ← <strong style="color:var(--gr)">״התקן את הדף הזה כאפליקציה״</strong>`
     ];
     tip = 'האפליקציה תיפתח בחלון נפרד ללא שורת כתובת';
   }
@@ -21575,14 +21618,14 @@ function installPWA() {
   m = document.createElement('div'); m.id = '_pwa-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:20000;display:flex;align-items:center;justify-content:center;padding:16px';
   m.innerHTML = `
-    <div style="background:#161b27;border:1px solid rgba(61,153,112,.2);border-radius:18px;padding:28px 24px;max-width:min(360px,calc(100vw - 16px));width:100%;position:relative;direction:rtl;box-shadow:0 24px 60px rgba(0,0,0,.7)">
-      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:#767f8e;font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
+    <div style="background:var(--bg1);border:1px solid rgba(61,153,112,.2);border-radius:18px;padding:28px 24px;max-width:min(360px,calc(100vw - 16px));width:100%;position:relative;direction:rtl;box-shadow:0 24px 60px rgba(0,0,0,.7)">
+      <button onclick="document.getElementById('_pwa-modal').remove()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
       <div style="text-align:center;font-size:36px;margin-bottom:10px">${icon}</div>
-      <div style="font-size:16px;font-weight:700;color:#e8ecf4;text-align:center;margin-bottom:18px">${title}</div>
+      <div style="font-size:16px;font-weight:700;color:var(--t1);text-align:center;margin-bottom:18px">${title}</div>
       <ol style="padding-right:18px;margin:0 0 16px;line-height:1">
-        ${steps.map(s => `<li style="font-size:13px;color:#8892a4;margin-bottom:11px;line-height:1.6">${s}</li>`).join('')}
+        ${steps.map(s => `<li style="font-size:13px;color:var(--t2);margin-bottom:11px;line-height:1.6">${s}</li>`).join('')}
       </ol>
-      <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.18);border-radius:8px;padding:9px 12px;font-size:11px;color:#767f8e;text-align:center">
+      <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.18);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--t3);text-align:center">
         💡 ${tip}
       </div>
     </div>`;
@@ -21992,32 +22035,48 @@ try { if (sessionStorage.getItem('ft_g_redirect') === '1') _registering = true; 
 // ════════════════════════════════════════════════════
 //  THEME SWITCHER (Dark Professional / Light / High Contrast)
 // ════════════════════════════════════════════════════
+// Two persistent, device-local appearance choices. Storage may be unavailable.
 const THEME_INFO = {
-  dark:     { icon:'☀️', label:'Dark Professional', next:'light' },
-  light:    { icon:'⚡', label:'Light Mode',         next:'contrast' },
-  contrast: { icon:'🌙', label:'High Contrast',      next:'dark' },
+  dark: {label:'גרפיט ומנטה',next:'light'},
+  light: {label:'אבן חמה',next:'dark'}
 };
 function _applyTheme(mode) {
-  document.body.classList.toggle('light-mode', mode === 'light');
-  document.body.classList.toggle('contrast-mode', mode === 'contrast');
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) {
-    const info = THEME_INFO[mode] || THEME_INFO.dark;
-    btn.textContent = info.icon + ' ערכת נושא';
-    btn.title = 'ערכת נושא: ' + info.label + ' (לחץ להחלפה)';
-  }
+  mode=mode==='light'?'light':'dark';
+  document.documentElement.dataset.faynaTheme=mode;
+  document.body.classList.toggle('light-mode',mode==='light');
+  document.body.classList.remove('contrast-mode');
+  document.querySelectorAll('[data-fayna-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.faynaMode===mode)));
+  const next=THEME_INFO[mode].next,btn=document.getElementById('theme-toggle-btn');
+  if(btn){btn.textContent='מראה: '+THEME_INFO[mode].label;btn.title='מעבר ל'+THEME_INFO[next].label;btn.setAttribute('aria-label',btn.title);}
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>m.content=mode==='light'?'#f3f1ed':'#111315');
+  if(typeof Chart!=='undefined'&&Chart.instances){Object.values(Chart.instances).forEach(chart=>{try{_themeChartOptions(chart.config);chart.update('none');}catch(e){console.warn('Chart appearance update skipped',e);}});}
+  document.dispatchEvent(new CustomEvent('fayna:themechange',{detail:{mode}}));
 }
 function _initTheme() {
-  const saved = localStorage.getItem('fayna_theme') || 'dark';
-  _applyTheme(THEME_INFO[saved] ? saved : 'dark');
+  let saved=document.documentElement.dataset.faynaTheme||'dark';
+  try{saved=localStorage.getItem('fayna_theme')||saved;}catch(e){}
+  _applyTheme(saved);
+}
+function setFaynaTheme(mode) {
+  if(!THEME_INFO[mode])return;
+  try{localStorage.setItem('fayna_theme',mode);}catch(e){}
+  _applyTheme(mode);
 }
 function cycleTheme() {
-  const cur = localStorage.getItem('fayna_theme') || 'dark';
-  const next = (THEME_INFO[cur] || THEME_INFO.dark).next;
-  localStorage.setItem('fayna_theme', next);
-  _applyTheme(next);
-  if (typeof showToast === 'function') showToast((THEME_INFO[next]||{}).label || next, 'info', 1200);
+  setFaynaTheme((THEME_INFO[document.documentElement.dataset.faynaTheme]||THEME_INFO.dark).next);
 }
+function _themeChartOptions(config) {
+  const css=getComputedStyle(document.documentElement),text=css.getPropertyValue('--t2').trim(),grid=css.getPropertyValue('--border').trim();
+  const options=config.options||(config.options={});
+  options.color=text;
+  Object.values(options.scales||{}).forEach(axis=>{axis.ticks=Object.assign({},axis.ticks,{color:text});axis.grid=Object.assign({},axis.grid,{color:grid});if(axis.title)axis.title.color=text;if(axis.pointLabels)axis.pointLabels.color=text;});
+  options.plugins=options.plugins||{};
+  if(options.plugins.legend!==false){options.plugins.legend=options.plugins.legend||{};options.plugins.legend.labels=Object.assign({},options.plugins.legend.labels,{color:text});}
+  return config;
+}
+window.addEventListener('storage',e=>{if(e.key==='fayna_theme')_applyTheme(e.newValue);});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_initTheme,{once:true});else _initTheme();
+
 // Kept for backward compatibility with any older callers.
 /* v29: toggleTheme() removed — dead code, zero references */
 
@@ -23119,11 +23178,11 @@ function _sessionWarning() {
 <div class="upgrade-overlay" id="upgrade-overlay" onclick="if(event.target===this)closeUpgradeModal()">
   <div class="upgrade-box">
     <div style="font-size:36px;margin-bottom:10px">🔒</div>
-    <div style="font-size:16px;font-weight:700;color:#e8ecf4;margin-bottom:8px" id="ugm-title">תכונה זו דורשת שדרוג</div>
-    <div style="font-size:12px;color:#8892a4;margin-bottom:20px;line-height:1.6" id="ugm-desc"></div>
+    <div style="font-size:16px;font-weight:700;color:var(--t1);margin-bottom:8px" id="ugm-title">תכונה זו דורשת שדרוג</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:20px;line-height:1.6" id="ugm-desc"></div>
     <div id="ugm-plans" style="margin-bottom:8px"></div>
     <div style="margin-top:4px;display:flex;gap:8px;justify-content:center">
-      <button onclick="closeUpgradeModal()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#767f8e;cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
+      <button onclick="closeUpgradeModal()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--t3);cursor:pointer;font-family:inherit;font-size:12px">סגור</button>
     </div>
   </div>
 </div>
@@ -23543,7 +23602,7 @@ function _calcKey(e){
             <button type="button" onclick="_togglePwd('prof-new-pass','eye-new')" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:14px;padding:0" id="eye-new">👁</button>
           </div>
         </div>
-        <button onclick="changePassword()" style="padding:8px 16px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.3);color:#3d9970;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit">🔑 עדכן סיסמה</button>
+        <button onclick="changePassword()" style="padding:8px 16px;background:rgba(61,153,112,.12);border:1px solid rgba(61,153,112,.3);color:var(--gr);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit">🔑 עדכן סיסמה</button>
         <div id="pwd-change-msg" style="font-size:11px;margin-top:8px"></div>
         <div style="margin-top:8px;font-size:11px;color:var(--t3)">או: <button onclick="sendResetFromProfile()" style="background:none;border:none;color:var(--bl);font-size:11px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0">שלח קישור איפוס למייל</button></div>
       </div>
@@ -24616,13 +24675,13 @@ function _notifyAdminUnsub(info) {
         subject: (info.duplicate ? '🔁 בקשת הסרה חוזרת: ' : '🔕 הסרה מרשימת תפוצה: ') + info.email,
         from_name: 'Fayna Trading — Unsubscribe',
         html: `<div dir="rtl" style="font-family:Arial,sans-serif;padding:20px;max-width:520px">
-          <h3 style="color:#c75f5f;margin:0 0 14px">${info.duplicate ? '🔁 בקשת הסרה חוזרת' : '🔕 משתמש הוסר מרשימת התפוצה'}</h3>
+          <h3 style="color:var(--re);margin:0 0 14px">${info.duplicate ? '🔁 בקשת הסרה חוזרת' : '🔕 משתמש הוסר מרשימת התפוצה'}</h3>
           <table style="width:100%;border-collapse:collapse;font-size:14px">
             <tr><td style="padding:8px;color:#666;width:110px">שם</td><td style="padding:8px;font-weight:600">${escHtml(info.name || '—')}</td></tr>
             <tr><td style="padding:8px;color:#666">אימייל</td><td style="padding:8px">${escHtml(info.email || '—')}</td></tr>
             <tr><td style="padding:8px;color:#666">מועד הבקשה</td><td style="padding:8px">${when}</td></tr>
             <tr><td style="padding:8px;color:#666">אופן הבקשה</td><td style="padding:8px">${escHtml(src)}</td></tr>
-            <tr><td style="padding:8px;color:#666">סטטוס</td><td style="padding:8px;font-weight:700;color:#3d9970">${escHtml(info.status)}</td></tr>
+            <tr><td style="padding:8px;color:#666">סטטוס</td><td style="padding:8px;font-weight:700;color:var(--gr)">${escHtml(info.status)}</td></tr>
           </table>
           <p style="font-size:11px;color:#999;margin-top:16px">
             הכתובת נוספה לרשימת החסימה הקבועה ולא תקבל דיוור גם אם תירשם מחדש.
