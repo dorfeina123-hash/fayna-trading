@@ -2240,7 +2240,39 @@ html body #banner-edit-btn:hover,html body #banner-edit-btn:focus-visible{color:
   html body #banner-edit-btn{width:34px}}
 @media print{#index-banner{display:none!important}}
 </style>
-</head>
+<style id="v64-ticker">
+/* v64 — own slow-moving ticker strip: click the strip (or the button) to lock/unlock the motion. */
+#fx-ticker{position:relative;flex:1;min-width:0;height:44px;overflow:hidden;cursor:pointer;background:#000;direction:ltr;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%)}
+#fx-ticker-track{display:flex;width:max-content;height:100%;align-items:center;will-change:transform;animation:fxTickerScroll var(--fx-dur,240s) linear infinite}
+#fx-ticker:hover #fx-ticker-track,#fx-ticker.locked #fx-ticker-track{animation-play-state:paused}
+@keyframes fxTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fx-tk{display:inline-flex;align-items:baseline;gap:8px;padding:0 20px;border-inline-start:1px solid rgba(255,255,255,.07);white-space:nowrap;font-size:13px;line-height:44px;font-variant-numeric:tabular-nums}
+.fx-tk-n{color:#8B98AD;font-weight:600;font-size:12px;letter-spacing:.2px}
+.fx-tk-p{color:#F1F5F9;font-weight:650}
+.fx-tk-c{font-size:12px;font-weight:600;color:#8B98AD}
+.fx-tk-c.up{color:var(--gr,#22c55e)}.fx-tk-c.dn{color:var(--re,#f56565)}
+.fx-tk.stale .fx-tk-p{opacity:.55}
+#fx-ticker-lock{flex-shrink:0;width:34px;border:0;border-inline-end:1px solid rgba(255,255,255,.08);background:#000;color:#8B98AD;font-size:12px;cursor:pointer;transition:color .15s,background .15s}
+#fx-ticker-lock:hover,#fx-ticker-lock:focus-visible{color:#F1F5F9;background:#14171f;outline:none}
+#fx-ticker-lock[aria-pressed="true"]{color:var(--go,#eab308)}
+#fx-ticker.locked::after{content:"🔒 נעול";position:absolute;inset-inline-start:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#eab308;background:rgba(0,0,0,.75);padding:2px 6px;border-radius:4px;direction:rtl;pointer-events:none}
+@media(prefers-reduced-motion:reduce){#fx-ticker-track{animation:none}#fx-ticker{overflow-x:auto;-webkit-mask-image:none;mask-image:none}}
+@media(max-width:767px){#fx-ticker{height:40px}.fx-tk{line-height:40px;padding:0 14px}#fx-ticker-lock{width:30px}}
+#ticker-speed-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--t2)}
+#ticker-speed-row button{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--t2);font:inherit;cursor:pointer}
+#ticker-speed-row button[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+</style>
+<style id="accounts-readable-v65">html[data-fayna-theme] #acct-menu{width:min(480px,calc(100vw - 24px))!important;min-width:0!important;max-height:75dvh;overflow-y:auto;padding:12px 0;border-radius:var(--fy-radius)}
+html[data-fayna-theme] #acct-menu .acct-menu-header{font-size:14px;padding:12px 18px}
+html[data-fayna-theme] #acct-menu .acct-item{min-height:52px;padding:12px 18px;gap:12px;font-size:14px;flex-wrap:wrap}
+html[data-fayna-theme] #acct-menu :is(.acct-name,.acct-pnl){font-size:14px!important;line-height:1.5}
+html[data-fayna-theme] #acct-menu .acct-check{width:21px;height:21px;font-size:13px}
+html[data-fayna-theme] #acct-menu :is(button,.acct-add-btn){min-height:40px;font-size:13px!important}
+html[data-fayna-theme] #acct-menu .acct-footer{padding:10px 18px}
+html[data-fayna-theme] #acct-menu .acct-item span[style*="font-size"]{font-size:12px!important}
+@media(max-width:520px){html[data-fayna-theme] #acct-menu{inset-inline:12px!important;width:calc(100vw - 24px)!important}html[data-fayna-theme] #acct-menu .acct-item{gap:8px;padding:12px}}
+</style></head>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
 <div id="toast-container"></div>
@@ -3145,35 +3177,8 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <!-- ═══════════════ INDEX TICKER BANNER — TradingView Live ═══════════════ -->
 <div id="index-banner">
   <button id="banner-edit-btn" onclick="openTickerSettings()" title="ערוך מדדים">⚙</button>
-  <div class="tradingview-widget-container" id="tv-ticker-widget">
-    <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-    {
-      "symbols": [
-        {"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},
-        {"proName":"FOREXCOM:NSXUSD","title":"Nasdaq"},
-        {"proName":"CAPITALCOM:US30","title":"Dow"},
-        {"proName":"CAPITALCOM:VIX","title":"VIX"},
-        {"proName":"TVC:GOLD","title":"Gold"},
-        {"proName":"TVC:USOIL","title":"Oil"},
-        {"proName":"BITSTAMP:BTCUSD","title":"BTC"},
-        {"proName":"BITSTAMP:ETHUSD","title":"ETH"},
-        {"proName":"FX_IDC:USDILS","title":"USD/ILS"},
-        {"proName":"NASDAQ:AAPL","title":"AAPL"},
-        {"proName":"NASDAQ:TSLA","title":"TSLA"},
-        {"proName":"NASDAQ:NVDA","title":"NVDA"},
-        {"proName":"NASDAQ:META","title":"META"},
-        {"proName":"NASDAQ:MSFT","title":"MSFT"}
-      ],
-      "showSymbolLogo": false,
-      "isTransparent": false,
-      "displayMode": "compact",
-      "colorTheme": "dark",
-      "locale": "en",
-      "largeChartUrl": ""
-    }
-    </script>
-  </div>
+  <button id="fx-ticker-lock" type="button" aria-pressed="false" title="נעילת תנועה" onclick="fxTickerToggleLock()">⏸</button>
+  <div id="fx-ticker" role="region" aria-label="מדדי שוק" onclick="fxTickerToggleLock()"><div id="fx-ticker-track" dir="ltr"></div></div>
 </div>
 
 <div class="app-layout">
@@ -6276,7 +6281,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;
                 background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:9px;padding:11px 13px">
-      <span style="font-size:12px;font-weight:600;color:var(--gr)">📧 סיכום יומי למייל</span>
+      <span style="font-size:12px;font-weight:600;color:var(--gr)">סיכום יומי למייל</span><label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" data-digest-toggle onchange="setDigestEmailEnabled(this.checked)">שליחה אוטומטית במכשיר הזה</label><span style="font-size:12px;color:var(--t3)">כבוי כברירת מחדל בכל מכשיר</span>
       <label style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:6px">
         שעת שליחה
         <select onchange="setDigestHour(this.value)" id="digest-hour"
@@ -7707,6 +7712,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 <div class="modal-bg" id="ticker-settings-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal" style="width:min(500px,calc(100vw - 16px))">
     <h3>⚙ עריכת מדדים בבאנר <button class="cx" onclick="document.getElementById('ticker-settings-modal').classList.remove('open')">×</button></h3>
+    <div id="ticker-speed-row"><span>מהירות התנועה:</span>
+      <button type="button" data-fx-speed="slow" onclick="fxTickerSetSpeed('slow')">איטי</button>
+      <button type="button" data-fx-speed="mid" onclick="fxTickerSetSpeed('mid')">בינוני</button>
+      <button type="button" data-fx-speed="fast" onclick="fxTickerSetSpeed('fast')">מהיר</button>
+      <span style="color:var(--t3)">· לחיצה על הפס נועלת/משחררת אותו</span></div>
 
     <!-- ADD CUSTOM SYMBOL -->
     <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:14px">
@@ -21391,6 +21401,112 @@ function tickerSelectAll(val) {
   document.querySelectorAll('#ticker-sym-list input[data-sym]').forEach(cb => cb.checked = val);
 }
 
+/* ───────── v64 — own ticker engine ─────────
+   Prices: CNBC quote service (indices, commodities, FX, US stocks) + Binance public market data (crypto).
+   Both were checked from the live site origin. The old TradingView tape is only used if neither answers. */
+const FX_TK_SPEED={slow:28,mid:55,fast:90};          /* pixels per second */
+const FX_TK_MAP={
+  'FOREXCOM:SPXUSD':{s:'cnbc',k:'.SPX'},'FOREXCOM:NSXUSD':{s:'cnbc',k:'.NDX'},'CAPITALCOM:US30':{s:'cnbc',k:'.DJI'},'CAPITALCOM:VIX':{s:'cnbc',k:'.VIX'},
+  'TVC:GOLD':{s:'cnbc',k:'@GC.1'},'TVC:USOIL':{s:'cnbc',k:'@CL.1'},'TVC:SILVER':{s:'cnbc',k:'@SI.1'},
+  'FX_IDC:USDILS':{s:'cnbc',k:'ILS='},'FX:EURUSD':{s:'cnbc',k:'EUR='},
+  'BITSTAMP:BTCUSD':{s:'bn',k:'BTCUSDT'},'BITSTAMP:ETHUSD':{s:'bn',k:'ETHUSDT'},'BINANCE:SOLUSD':{s:'bn',k:'SOLUSDT'}};
+let _fxTk={data:{},timer:null,fallback:false,items:[]};
+function fxTkResolve(proName){
+  if(FX_TK_MAP[proName])return FX_TK_MAP[proName];
+  const p=String(proName||'').toUpperCase().split(':'),ex=p.length>1?p[0]:'',sym=p.length>1?p[1]:p[0];
+  if(!/^[A-Z0-9.=@^\-]{1,15}$/.test(sym))return null;
+  if(['NASDAQ','NYSE','AMEX','NYSEARCA','ARCA','BATS'].includes(ex)||!ex)return {s:'cnbc',k:sym};
+  if(['BITSTAMP','BINANCE','COINBASE','KRAKEN','BITFINEX'].includes(ex)){const m=sym.match(/^([A-Z0-9]{2,10}?)(USDT|USD)$/);return m?{s:'bn',k:m[1]+'USDT'}:null;}
+  if(/^(FX|FX_IDC|OANDA|FOREXCOM)$/.test(ex)&&/^[A-Z]{6}$/.test(sym)){const a=sym.slice(0,3),b=sym.slice(3);return a==='USD'?{s:'cnbc',k:b+'='}:b==='USD'?{s:'cnbc',k:a+'='}:null;}
+  return null;
+}
+function fxTkSelected(){return _allTickerSyms().filter(x=>!_tickerHidden.has(x.proName)).map(x=>({...x,src:fxTkResolve(x.proName)})).filter(x=>x.src);}
+function fxTkNum(v){const n=parseFloat(String(v).replace(/,/g,''));return Number.isFinite(n)?n:NaN;}
+async function fxTkFetchCnbc(keys){
+  if(!keys.length)return{};
+  const u='https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols='+encodeURIComponent(keys.join('|'))+'&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1';
+  const j=await (await fetch(u,{cache:'no-store'})).json(),out={};
+  (j.FormattedQuoteResult&&j.FormattedQuoteResult.FormattedQuote||[]).forEach(q=>{
+    if(!q||Number(q.code)!==0)return;
+    const last=fxTkNum(q.last);if(!Number.isFinite(last))return;
+    let pct=String(q.change_pct||'').replace('%','');pct=/UNCH/i.test(pct)?0:fxTkNum(pct);
+    out[q.symbol]={price:String(q.last),pct:Number.isFinite(pct)?pct:null};});
+  return out;
+}
+async function fxTkFetchBinance(keys){
+  if(!keys.length)return{};
+  const q='/api/v3/ticker/24hr?symbols='+encodeURIComponent(JSON.stringify(keys));let rows;
+  try{rows=await (await fetch('https://api.binance.com'+q,{cache:'no-store'})).json();if(!Array.isArray(rows))throw 0;}
+  catch(e){rows=await (await fetch('https://data-api.binance.vision'+q,{cache:'no-store'})).json();}
+  const out={};(Array.isArray(rows)?rows:[]).forEach(r=>{const p=parseFloat(r.lastPrice);if(!Number.isFinite(p))return;
+    out[r.symbol]={price:p.toLocaleString('en-US',{maximumFractionDigits:p<1?4:2,minimumFractionDigits:p<1?4:2}),pct:parseFloat(r.priceChangePercent)};});
+  return out;
+}
+async function fxTkPoll(){
+  const sel=_fxTk.items;if(!sel.length)return false;
+  const c=[...new Set(sel.filter(x=>x.src.s==='cnbc').map(x=>x.src.k))],b=[...new Set(sel.filter(x=>x.src.s==='bn').map(x=>x.src.k))];
+  const [rc,rb]=await Promise.allSettled([fxTkFetchCnbc(c),fxTkFetchBinance(b)]);
+  let got=0;
+  if(rc.status==='fulfilled')Object.entries(rc.value).forEach(([k,v])=>{_fxTk.data['cnbc:'+k]={...v,t:Date.now()};got++;});
+  if(rb.status==='fulfilled')Object.entries(rb.value).forEach(([k,v])=>{_fxTk.data['bn:'+k]={...v,t:Date.now()};got++;});
+  fxTkPaint();return got>0;
+}
+function fxTkItemHtml(x,copy){
+  const key=x.src.s+':'+x.src.k;
+  return `<span class="fx-tk" data-k="${escHtml(key)}"${copy?' aria-hidden="true"':''}><span class="fx-tk-n">${escHtml(x.title)}</span> <span class="fx-tk-p" dir="ltr">—</span> <span class="fx-tk-c" dir="ltr"></span></span>`;
+}
+function fxTkPaint(){
+  const track=document.getElementById('fx-ticker-track');if(!track)return;
+  track.querySelectorAll('.fx-tk').forEach(el=>{
+    const d=_fxTk.data[el.dataset.k];if(!d)return;
+    el.querySelector('.fx-tk-p').textContent=d.price;
+    const c=el.querySelector('.fx-tk-c');
+    if(d.pct==null||!Number.isFinite(d.pct)){c.textContent='';c.className='fx-tk-c';}
+    else{const up=d.pct>0.0049,dn=d.pct<-0.0049,v=Math.abs(d.pct).toFixed(2)+'%';c.textContent=up?'▲ +'+v:dn?'▼ '+v:v;c.className='fx-tk-c '+(up?'up':dn?'dn':'');}
+    el.classList.toggle('stale',Date.now()-d.t>5*60*1000);
+  });
+}
+function fxTkLayout(){
+  const track=document.getElementById('fx-ticker-track'),wrap=document.getElementById('fx-ticker');if(!track||!wrap)return;
+  let sp='slow';try{sp=localStorage.getItem('fx_ticker_speed')||'slow';}catch(e){}
+  const pps=FX_TK_SPEED[sp]||FX_TK_SPEED.slow,half=track.scrollWidth/2;
+  if(half>0)track.style.setProperty('--fx-dur',Math.max(20,half/pps).toFixed(1)+'s');
+  document.querySelectorAll('#ticker-speed-row [data-fx-speed]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fxSpeed===sp)));
+}
+function fxTickerSetSpeed(sp){try{localStorage.setItem('fx_ticker_speed',sp);}catch(e){}fxTkLayout();}
+function fxTickerSetLock(on,persist){
+  const w=document.getElementById('fx-ticker'),b=document.getElementById('fx-ticker-lock');if(!w)return;
+  w.classList.toggle('locked',!!on);
+  if(b){b.setAttribute('aria-pressed',String(!!on));b.textContent=on?'▶':'⏸';b.title=on?'שחרור התנועה':'נעילת תנועה';b.setAttribute('aria-label',b.title);}
+  if(persist){try{localStorage.setItem('fx_ticker_lock',on?'1':'0');}catch(e){}}
+}
+function fxTickerToggleLock(){fxTickerSetLock(!document.getElementById('fx-ticker')?.classList.contains('locked'),true);}
+function fxTkStop(){clearInterval(_fxTk.timer);_fxTk.timer=null;}
+async function fxTickerStart(force){
+  const banner=document.getElementById('index-banner'),track=document.getElementById('fx-ticker-track');if(!banner||!track)return;
+  fxTkStop();document.getElementById('ticker-fallback')?.remove();
+  _fxTk.fallback=false;
+  document.getElementById('tv-ticker-widget')?.remove();
+  const wrap=document.getElementById('fx-ticker'),lockBtn=document.getElementById('fx-ticker-lock');
+  if(wrap)wrap.style.display='';if(lockBtn)lockBtn.style.display='';
+  const items=fxTkSelected();_fxTk.items=items;
+  if(!items.length){track.innerHTML='<span class="fx-tk"><span class="fx-tk-n">אין מדדים נבחרים. לחץ על ⚙ כדי לבחור.</span></span>';return;}
+  /* two identical copies so the loop is seamless; the second copy is hidden from screen readers */
+  track.innerHTML=items.map(x=>fxTkItemHtml(x,false)).join('')+items.map(x=>fxTkItemHtml(x,true)).join('');
+  fxTkPaint();fxTkLayout();
+  let lock=null;try{lock=localStorage.getItem('fx_ticker_lock');}catch(e){}
+  if(lock===null)lock=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'1':'0';
+  fxTickerSetLock(lock==='1',false);
+  const ok=await fxTkPoll().catch(()=>false);
+  fxTkLayout(); /* once, after the first prices set the real width (re-running it mid-scroll would make the strip jump) */
+  if(!ok&&!Object.keys(_fxTk.data).length){
+    /* neither feed answered: fall back to the TradingView tape (it cannot be slowed or locked) */
+    _fxTk.fallback=true;if(wrap)wrap.style.display='none';if(lockBtn)lockBtn.style.display='none';_rebuildTickerWidget();return;
+  }
+  _fxTk.timer=setInterval(()=>{if(document.visibilityState==='visible'&&banner.style.display!=='none')fxTkPoll().catch(()=>{});},60000);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!_fxTk.fallback&&_fxTk.items.length){const b=document.getElementById('index-banner');if(b&&b.style.display!=='none')fxTkPoll().catch(()=>{});}});
+window.addEventListener('resize',()=>{clearTimeout(window._fxTkRz);window._fxTkRz=setTimeout(fxTkLayout,250);});
 function applyTickerSettings() {
   _tickerHidden = new Set();
   document.querySelectorAll('#ticker-sym-list input[data-sym]').forEach(cb => {
@@ -21398,7 +21514,7 @@ function applyTickerSettings() {
   });
   localStorage.setItem('ticker_hidden', JSON.stringify([..._tickerHidden]));
   document.getElementById('ticker-settings-modal').classList.remove('open');
-  _rebuildTickerWidget();
+  fxTickerStart(true);
 }
 
 function _tickerWatch(){
@@ -21407,7 +21523,7 @@ function _tickerWatch(){
     const b=document.getElementById('index-banner'),w=document.getElementById('tv-ticker-widget');
     if(!b||!w||b.style.display==='none'||w.querySelector('iframe')||document.getElementById('ticker-fallback'))return;
     const f=document.createElement('div');f.id='ticker-fallback';
-    f.innerHTML='<span>המדדים לא נטענו. בדוק חיבור או חוסם פרסומות.</span><button type="button" onclick="_rebuildTickerWidget()">נסה שוב</button>';
+    f.innerHTML='<span>המדדים לא נטענו. בדוק חיבור או חוסם פרסומות.</span><button type="button" onclick="fxTickerStart(true)">נסה שוב</button>';
     b.appendChild(f);
   },7000);
 }
@@ -23808,7 +23924,8 @@ function _updTickerMi(){ const mi=document.getElementById('ticker-toggle-mi'); i
   mi.textContent = vis ? '📈 הסתר טיקר מדדים' : '📈 הצג טיקר מדדים'; }
 function toggleTicker(){ const b=document.getElementById('index-banner'); if(!b) return;
   const show=b.style.display==='none'; b.style.display=show?'':'none';
-  try{localStorage.setItem('fx_ticker',show?'1':'0');}catch(e){} _updTickerMi(); }
+  try{localStorage.setItem('fx_ticker',show?'1':'0');}catch(e){} _updTickerMi();
+  try{ if(show) fxTickerStart(); else fxTkStop(); }catch(e){} }
 // Overview collapsible sections (desktop)
 function ovSecToggle(which){ const tp=document.getElementById('tp-overview'); if(!tp) return;
   const closed=tp.classList.toggle('ov-'+which+'-closed');
@@ -23830,7 +23947,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const b=document.getElementById('index-banner'); if(b && tv!=='1') b.style.display='none';
   _updTickerMi();
   /* apply the symbols the user picked (before this, a reload fell back to the default list) */
-  try{ if(b && tv==='1' && (_tickerCustom.length||_tickerHidden.size)) _rebuildTickerWidget(); else _tickerWatch(); }catch(e){ console.warn('ticker',e); }
+  try{ if(b) fxTickerStart(); }catch(e){ console.warn('ticker',e); }
   // overview sections: main open by default, advanced collapsed by default
   const tp=document.getElementById('tp-overview');
   if(tp){ let m='1',a='0'; try{ m=localStorage.getItem('fx_ovsec_main')??'1'; a=localStorage.getItem('fx_ovsec_adv')??'0'; }catch(e){}
@@ -26183,7 +26300,7 @@ Agents.register({
   every: 30 * 60_000,
   runWhenHidden: true,
   async run(ctx) {
-    if (!ctx.user) return;
+    if (!ctx.user?.isAdmin || !digestEmailEnabled()) return { summary: 'משלוח יומי כבוי' };
 
     const hour = parseInt(localStorage.getItem('fx_digest_hour') || '21', 10);
     const key  = 'fx_digest_' + new Date().toISOString().slice(0, 10);
@@ -26211,7 +26328,11 @@ Agents.register({
 });
 
 /* manual trigger — used by the admin panel button */
+function digestEmailEnabled(){return !!currentUser?.isAdmin && localStorage.getItem('fx_digest_optin_v1')==='true';}
+function setDigestEmailEnabled(enabled){if(!currentUser?.isAdmin)return;try{localStorage.setItem('fx_digest_optin_v1',enabled?'true':'false');}catch(e){showToast('לא ניתן לשמור את ההעדפה','error');syncDigestEmailUI();return;}syncDigestEmailUI();showToast(enabled?'משלוח יומי הופעל במכשיר הזה':'משלוח יומי בוטל במכשיר הזה','info');}
+function syncDigestEmailUI(){document.querySelectorAll('[data-digest-toggle]').forEach(el=>el.checked=digestEmailEnabled());const hour=document.getElementById('digest-hour');if(hour)hour.disabled=!digestEmailEnabled();}
 async function sendDigestNow() {
+  if(!digestEmailEnabled()){showToast('משלוח מיילים כבוי. הפעל אותו במפורש כדי לשלוח.','info');return;}
   try {
     const d = await composeDigest();
     const r = await fetch('https://api.web3forms.com/submit', {
@@ -26252,6 +26373,7 @@ function setDigestHour(h) {
         Agents.start();
         Agents.publish('user:login', {});
         Agents.renderBoard();
+        syncDigestEmailUI();
         const dh = document.getElementById('digest-hour');
         if (dh) dh.value = localStorage.getItem('fx_digest_hour') || '21';
       } catch (e) { console.warn('agents start:', e); }
