@@ -2245,7 +2245,7 @@ html body #banner-edit-btn:hover,html body #banner-edit-btn:focus-visible{color:
 #fx-ticker{position:relative;flex:1;min-width:0;height:44px;overflow:hidden;cursor:pointer;background:#000;direction:ltr;
   -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%)}
 #fx-ticker-track{display:flex;width:max-content;height:100%;align-items:center;will-change:transform;animation:fxTickerScroll var(--fx-dur,240s) linear infinite}
-#fx-ticker:hover #fx-ticker-track,#fx-ticker.locked #fx-ticker-track{animation-play-state:paused}
+#fx-ticker.locked #fx-ticker-track{animation-play-state:paused}
 @keyframes fxTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .fx-tk{display:inline-flex;align-items:baseline;gap:8px;padding:0 20px;border-inline-start:1px solid rgba(255,255,255,.07);white-space:nowrap;font-size:13px;line-height:44px;font-variant-numeric:tabular-nums}
 .fx-tk-n{color:#8B98AD;font-weight:600;font-size:12px;letter-spacing:.2px}
@@ -2342,7 +2342,7 @@ html[data-fayna-theme] #recur-manager [style*="color:#c97272"]{color:var(--t1)!i
 html[data-fayna-theme] :is(#exp-total,#cx-total){font-size:14px!important;color:var(--t2)!important}
 html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;font-size:13px}
 @media(max-width:650px){html[data-fayna-theme] #recur-manager>div{padding:14px!important}html[data-fayna-theme] .tp .tbl td{padding:12px 8px}html[data-fayna-theme] :is(#efbar,#efbar2){padding:9px;gap:5px}html[data-fayna-theme] .tp .fb{padding:7px 9px}}
-</style></head>
+</style><style id="ticker-motion-v68">html[data-fayna-theme] #fx-ticker.motion-enabled #fx-ticker-track{animation:fxTickerScroll var(--fx-dur,240s) linear infinite!important;animation-play-state:running!important}html[data-fayna-theme] #fx-ticker.locked #fx-ticker-track{animation-play-state:paused!important}</style></head>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
 <div id="toast-container"></div>
@@ -21547,6 +21547,7 @@ function fxTickerSetSpeed(sp){try{localStorage.setItem('fx_ticker_speed',sp);}ca
 function fxTickerSetLock(on,persist){
   const w=document.getElementById('fx-ticker'),b=document.getElementById('fx-ticker-lock');if(!w)return;
   w.classList.toggle('locked',!!on);
+  w.classList.toggle('motion-enabled',!on);
   if(b){b.setAttribute('aria-pressed',String(!!on));b.textContent=on?'▶':'⏸';b.title=on?'שחרור התנועה':'נעילת תנועה';b.setAttribute('aria-label',b.title);}
   if(persist){try{localStorage.setItem('fx_ticker_lock',on?'1':'0');}catch(e){}}
 }
@@ -21565,7 +21566,7 @@ async function fxTickerStart(force){
   track.innerHTML=items.map(x=>fxTkItemHtml(x,false)).join('')+items.map(x=>fxTkItemHtml(x,true)).join('');
   fxTkPaint();fxTkLayout();
   let lock=null;try{lock=localStorage.getItem('fx_ticker_lock');}catch(e){}
-  if(lock===null)lock=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'1':'0';
+  if(lock===null)lock=((window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)||document.body.classList.contains('a11y-noanim'))?'1':'0';
   fxTickerSetLock(lock==='1',false);
   const ok=await fxTkPoll().catch(()=>false);
   fxTkLayout(); /* once, after the first prices set the real width (re-running it mid-scroll would make the strip jump) */
