@@ -4,6 +4,24 @@ Status: development foundation, **not deployed or connected**. The production jo
 expenses, Firebase user documents and account data are untouched. No credentials or
 personal records belong in this directory or GitHub.
 
+## Current deployment decision (2026-10-05)
+
+The owner explicitly chose **no cloud billing**. The authenticated Firebase console
+was checked: the project is on Spark. No upgrade, trial or billing account was enabled.
+The target is now a per-user local companion while the user's computer is running,
+not an always-on hosted backend. The server repository below is a tested development
+reference and MUST NOT ship with Admin credentials in the desktop application.
+
+The local variant still needs a desktop Google OAuth client (only a web OAuth client
+was present when inspected), PKCE + loopback callback, Windows-protected per-user
+token storage, and Firebase user authentication. Direct Firestore sync must use that
+user's Firebase ID token and separately tested owner-only rules, never Admin SDK or
+service-account credentials. Existing application login must stay intact. Gmail
+processing should happen locally, uploading only reviewed expense data to the site.
+No processing occurs while the companion is closed. This architecture adjustment
+has not yet been implemented end-to-end; the items below document the earlier server
+adapter and requirements that must be adapted before release.
+
 ## Implemented and checked
 
 - `atas/JournalCapture.cs`: read-only ATAS indicator prototype. Opt-in, exact account
@@ -17,6 +35,9 @@ personal records belong in this directory or GitHub.
   fill IDs by user through the storage adapter.
 - `gmail.mjs`: bounded Gmail read-only candidate scanner, exact supplier addresses,
   deterministic draft IDs, no expense booking, no sending or deletion of emails.
+- `repository.mjs`: Firestore Admin adapter with transactional create/replay handling,
+  immutable original fills, reviewable correction revisions and create-only invoice
+  drafts. Tested with an in-memory transaction double, not a live database/emulator.
 - `core.test.mjs`: synthetic isolation, replay, correction, validation and Gmail tests.
 
 Run `node --test integrations/core.test.mjs`. Build on Windows using
@@ -44,9 +65,8 @@ reports failures programmatically; a visible status panel is still needed.
 2. Add expiring one-time device pairing, revocable hashed per-device credentials,
    account/route allowlists, rate limits, bounded batches and durable retry/backoff.
    The ingress core is NOT an HTTP endpoint and supplies no authentication by itself.
-3. Implement a Firestore transactional repository in a separate server-only
-   namespace. `atomicUpsert(uid,id,revision,fill)` must create once, acknowledge exact
-   retries, and retain changed revisions for review, never blindly overwrite.
+3. Wire and emulator-test the Firestore transactional repository in the separate
+   server-only `integrationPrivate` namespace; deny direct client access in rules.
    Do not replace `td_records`, `td_trades` or other existing arrays. Do not merge
    new rules before reading/testing the current production rules.
 4. Add reviewed execution-to-journal reconstruction, instrument contract metadata,
@@ -65,8 +85,9 @@ Google `gmail.readonly` grants broad mailbox read access even when the applicati
 only searches selected suppliers. It is a restricted scope and may require OAuth
 verification/security assessment for a public service. The scanner requests full
 MIME messages to inspect attachment metadata but does not persist message bodies.
-Cloud billing/project administration and each user's Google consent are required
-before activation; no paid service has been enabled by this change.
+The hosted backend option would require cloud billing. It was declined. The selected
+local option still needs project OAuth configuration and each user's Google consent;
+no paid service has been enabled by this change.
 
 ## Sources
 

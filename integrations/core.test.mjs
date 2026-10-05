@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ingestFills, normalizeFill, invoiceSearch, invoiceDraft } from './core.mjs';
 import { scanInvoiceCandidates } from './gmail.mjs';
+import { createRepository } from './repository.mjs';
 
 const fill = { schemaVersion: 1, provider: 'atas', route: 'test-route', accountId: 'demo-A',
   fillId: 'f1', orderId: 'o1', instrument: 'TEST', side: 'Buy', price: '123.456789123',
@@ -9,13 +10,19 @@ const fill = { schemaVersion: 1, provider: 'atas', route: 'test-route', accountI
 const conn = uid => ({ uid, id: 'connection', accounts: [{accountId: 'demo-A', route: 'test-route'}] });
 function memory() {
   const records = new Map();
-  return { records, async atomicUpsert(uid, id, revision, data) {
-    const key = JSON.stringify([uid, id]);
-    const previous = records.get(key);
-    if (previous?.revision === revision) return 'duplicate';
-    if (previous) return 'correction_needs_review';
-    records.set(key, {revision, data}); return 'created';
+  const reference = path => ({path,
+    collection: name => reference(path ? `${path}/${name}` : name),
+    doc: id => reference(`${path}/${id}`)});
+  const db = {collection:name=>reference(name), async runTransaction(callback) {
+    const pending = [];
+    const result = await callback({
+      get:async ref=>({exists:records.has(ref.path),data:()=>records.get(ref.path)}),
+      create:(ref,data)=>pending.push([ref.path,structuredClone(data)])});
+    for (const [path] of pending) assert.ok(!records.has(path));
+    for (const [path,data] of pending) records.set(path,data);
+    return result;
   }};
+  return { records, ...createRepository(db) };
 }
 test('retains precision and unknown commission', () => {
   const result = normalizeFill(fill);
@@ -51,7 +58,10 @@ test('revoked connection cannot ingest', async () => {
 test('correction does not overwrite original', async () => {
   const repo = memory(); await ingestFills(conn('u1'), [fill], repo);
   assert.deepEqual(await ingestFills(conn('u1'), [{...fill, commission:'2.50'}], repo), ['correction_needs_review']);
-  assert.equal([...repo.records.values()][0].data.commission, null);
+  assert.equal([...repo.records.values()][0].fill.commission, null);
+  assert.equal(repo.records.size,2);
+  await ingestFills(conn('u1'), [{...fill, commission:'2.50'}], repo);
+  assert.equal(repo.records.size,2);
 });
 test('supplier query rejects search injection', () => {
   assert.throws(() => invoiceSearch({senders:['x@example.com OR in:anywhere'], after:'2026-01-01'}));
@@ -69,6 +79,14 @@ test('Gmail creates unbooked draft with no invented amount', () => {
 });
 test('Gmail rejects suppliers outside user selection', () => {
   assert.throws(() => invoiceDraft('u1',message,['another@example.com']));
+});
+test('rescanning cannot reset the state of reviewed invoice drafts', async () => {
+  const repo = memory();
+  const draft = invoiceDraft('u1',message,['billing@example.com']);
+  await repo.saveDraft('u1',draft);
+  [...repo.records.values()][0].status = 'rejected';
+  assert.equal(await repo.saveDraft('u1',draft),'duplicate');
+  assert.equal([...repo.records.values()][0].status,'rejected');
 });
 test('Gmail read requests use per-user token and bounded page', async () => {
   const calls = [], saved = [];
