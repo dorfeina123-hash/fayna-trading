@@ -13975,6 +13975,8 @@ async function importCSV(inp){
   inp.value='';
   if (files.some(f=>f.name.toLowerCase().endsWith('.xlsx'))) {
     try { await _ensureXlsxLoaded(); } catch(e) { showToast('טעינת ספריית XLSX נכשלה, נסה שוב','error'); }
+    try { if (typeof Import === 'undefined') await _loadModule('fayna-import.js'); }
+    catch(e) { showToast('טעינת מודול הייבוא נכשלה, נסה שוב','error'); return; }
   }
   let processed=0, totalImported=0, totalSkipped=0;
   const existing = new Set(tradesList.map(_tradeKey));
@@ -14076,6 +14078,12 @@ async function importCSV(inp){
       fr.onload=e=>{
         try{
           const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:false});
+          const journal=Import._core.parseAny(Import._core.workbookText(wb,XLSX),'auto');
+          if(journal.format==='atas'){
+            if(journal.warnings.length) showToast(journal.warnings.join(' '),'info',6000);
+            _commitTrades(_dedupe(journal.trades),'ATAS Journal');
+            return;
+          }
           const wsName=wb.SheetNames[0];
           const ws=wb.Sheets[wsName];
           // Try Rithmic via CSV conversion (preserves section headers)
@@ -26658,4 +26666,3 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 </script>
 </body>
 </html>
-
