@@ -22621,7 +22621,29 @@ function _tcmReloadChart() {
   if(!sym) return;
   _loadTradingViewChart(sym, tradesList[_tcmTradeIdx]?.date);
 }
+function _tradeChartSymbol(symbol, tradeDate) {
+  const raw=String(symbol||'').trim().toUpperCase();
+  if(raw.includes(':')) return raw;
+  const match=/^(MNQ|NQ|MES|ES)(?:([FGHJKMNQUVXZ])(\d{1,4})|(1!))?(?:@CME)?$/.exec(raw);
+  if(!match) return raw;
+  const root=match[1];
+  if(!match[2]) return 'CME_MINI:'+root+'1!';
+  const digits=match[3];
+  let year=Number(digits);
+  if(digits.length<4){
+    const reference=/^\d{4}-/.test(tradeDate||'')?Number(tradeDate.slice(0,4)):new Date().getFullYear();
+    const span=digits.length===1?10:100;
+    year=Math.floor(reference/span)*span+year;
+    if(year<reference-span/2) year+=span;
+    if(year>reference+span/2) year-=span;
+  }
+  return 'CME_MINI:'+root+match[2]+year;
+}
+
 function _loadTradingViewChart(sym, date) {
+  sym=_tradeChartSymbol(sym,date);
+  const symbolInput=document.getElementById('tcm-sym-inp');
+  if(symbolInput) symbolInput.value=sym;
   const tv=document.getElementById('tcm-chart-tv'); const loading=document.getElementById('tcm-loading');
   if(!tv) return;
   tv.innerHTML=''; if(loading) loading.style.display='flex';
