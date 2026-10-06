@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v70';
+const VERSION    = 'fayna-v71';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
@@ -167,4 +167,3 @@ self.addEventListener('notificationclick', event => {
 });
 
 self.addEventListener('notificationclose', () => { /* reserved for delivery metrics */ });
-
