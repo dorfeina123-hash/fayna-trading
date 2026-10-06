@@ -265,6 +265,32 @@ function fromEntryExit(dir, entry, exit) {
 }
 
 const FORMATS = [
+  {
+    id: 'atas', label: 'ATAS Journal',
+    hint: 'קובץ Excel של ATAS — גיליון Journal',
+    detect: h => ['account','instrument','opentime','openprice','openvolume','closetime','closeprice','closevolume','pnl'].every(k => h.some(v => norm(v) === k)) ? 1 : 0,
+    build(rows, h) {
+      const keys = Object.fromEntries(h.map(k => [norm(k), k]));
+      const trades = []; let skipped = 0;
+      for (const r of rows) {
+        const get = k => r[keys[k]];
+        const a = parseDT(get('opentime')), b = parseDT(get('closetime'));
+        const volume = num(get('openvolume'));
+        const pnl = get('pnl');
+        if (!a || !b || !volume || !get('instrument') || pnl === '' || pnl == null) { skipped++; continue; }
+        const dir = volume < 0 ? 'short' : 'long';
+        const t = mkTrade({sym: get('instrument'), qty: Math.abs(volume),
+          ...fromEntryExit(dir, get('openprice'), get('closeprice')),
+          pnl, dir, date: a.date, btime: a.time, stime: b.time,
+          dur: durOf(a,b), notes: get('comment') || '', src: 'ATAS Journal'});
+        // ATAS supplies monetary PnL separately from price PnL and ticks. Preserve zero too.
+        t.pnl = +num(pnl).toFixed(2);
+        t.sourceAccount = String(get('account') || '');
+        trades.push(t);
+      }
+      return {trades, warnings: skipped ? [skipped + ' שורות לא סגורות או חסרות נתונים דולגו.'] : []};
+    }
+  },
 
   /* ── TopstepX / ProjectX ─────────────────────────────────────────────
      ייצוא "Trades" מלוח הבקרה. עמודות אופייניות:
@@ -617,6 +643,23 @@ function xmlToRows(text) {
  * מנתח טקסט גולמי (CSV/TSV/XML) ומחזיר תוצאה מלאה.
  * formatId: מזהה פורמט מפורש, או 'auto'.
  */
+function workbookText(wb, xlsx) {
+  // Match the schema, not the first tab: ATAS puts Statistics before Journal.
+  for (const name of wb.SheetNames) {
+    const matrix = xlsx.utils.sheet_to_json(wb.Sheets[name], {header: 1, raw: true, defval: ''});
+    const h = (matrix[0] || []).map(String);
+    if (!FORMATS.find(f => f.id === 'atas').detect(h)) continue;
+    return matrix.map((row, i) => row.map((value, j) => {
+      if (i && /^(opentime|closetime)$/.test(norm(h[j])) && typeof value === 'number') {
+        const d = xlsx.SSF.parse_date_code(value, {date1904: !!wb.Workbook?.WBProps?.date1904});
+        value = d ? `${d.y}-${pad2(d.m)}-${pad2(d.d)} ${pad2(d.H)}:${pad2(d.M)}:${pad2(d.S)}` : '';
+      }
+      return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    }).join(',')).join('\n');
+  }
+  return xlsx.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+}
+
 function parseAny(text, formatId, manualMap) {
   const isXml = /^\s*<\?xml|<FlexQueryResponse|<Trade\b/i.test(text);
   const { rows, headers } = isXml ? xmlToRows(text) : toRows(text, {
@@ -795,7 +838,7 @@ async function readFiles(files) {
         if (typeof XLSX === 'undefined') { toast('ספריית XLSX לא נטענה — נסה לייצא כ-CSV', 'error'); continue; }
         const buf = await f.arrayBuffer();
         const wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
-        text = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+        text = workbookText(wb, XLSX);
       } catch (e) { toast('קריאת Excel נכשלה: ' + e.message, 'error'); continue; }
     } else {
       text = await f.text();
@@ -941,7 +984,7 @@ function commit() {
 const Import = {
   open() { if (out()) screenPick(); },
   // חשוף לבדיקות ולשימוש חוזר ממודולים אחרים
-  _core: { parseAny, dedupe, toRows, parseDT, num, pick, autoMap, mkTrade, FORMATS },
+  _core: { parseAny, workbookText, dedupe, toRows, parseDT, num, pick, autoMap, mkTrade, FORMATS },
 };
 
 if (typeof window !== 'undefined') window.Import = Import;
