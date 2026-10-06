@@ -4713,6 +4713,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
           <button class="act-mi" onclick="showReportMenu('trades',this)">📊 דוח P&amp;L</button>
           <button class="act-mi" onclick="exportCSV()">📤 ייצא CSV</button>
           <button class="act-mi" onclick="exportToExcel()">📊 ייצא Excel</button>
+          <button type="button" class="act-mi" style="color:var(--re)" onclick="dmClearTrades()">מחיקת כל העסקאות</button>
 
         </div>
       </div>
@@ -15547,8 +15548,11 @@ showAdd['help'] = false;
 // ════════════════════════════════════════════════════════════════
 async function dmClearTrades() {
   if(!tradesList.length){showToast('אין עסקאות למחוק','info');return;}
-  if(!await customConfirm('למחוק את כל '+tradesList.length+' העסקאות? פעולה זו בלתי הפיכה!',{danger:true}))return;
-  tradesList=[];renderAll();renderDM();showToast('עסקאות נמחקו','success');
+  const targets = new Set(tradesList);
+  if(!await customConfirm('למחוק את כל '+targets.size+' העסקאות מכל התיקים ובכל התקופות? גם עסקאות שאינן מוצגות בגלל סינון יימחקו. ההוצאות והחשבונות יישארו ללא שינוי.',{danger:true}))return;
+  // Preserve any trades added while the confirmation dialog was open.
+  tradesList=tradesList.filter(t=>!targets.has(t));
+  saveData();renderAll();renderDM();showToast('העסקאות נמחקו','success');
 }
 async function dmClearRecords() {
   const exp=records.filter(r=>r.type!=='משיכה');
