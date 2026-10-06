@@ -4,7 +4,7 @@ Status: development foundation, **not deployed or connected**. The production jo
 expenses, Firebase user documents and account data are untouched. No credentials or
 personal records belong in this directory or GitHub.
 
-## Current deployment decision (2026-10-05)
+## Current deployment decision (2026-10-06)
 
 The owner explicitly chose **no cloud billing**. The authenticated Firebase console
 was checked: the project is on Spark. No upgrade, trial or billing account was enabled.
@@ -12,9 +12,12 @@ The target is now a per-user local companion while the user's computer is runnin
 not an always-on hosted backend. The server repository below is a tested development
 reference and MUST NOT ship with Admin credentials in the desktop application.
 
-The local variant still needs a desktop Google OAuth client (only a web OAuth client
-was present when inspected), PKCE + loopback callback, Windows-protected per-user
-token storage, and Firebase user authentication. Direct Firestore sync must use that
+The desktop OAuth client `Fayna Local Connector` has now been created and Gmail API
+enabled. `local/connector.mjs` implements PKCE + loopback OAuth, Windows DPAPI token
+storage, token refresh, revocation and bounded local invoice-candidate scans. Google
+user consent and real Gmail scanning have not yet been completed; the app displays
+Google's unverified-app warning. Firebase user authentication remains to implement.
+Direct Firestore sync must use that
 user's Firebase ID token and separately tested owner-only rules, never Admin SDK or
 service-account credentials. Existing application login must stay intact. Gmail
 processing should happen locally, uploading only reviewed expense data to the site.
@@ -40,8 +43,35 @@ adapter and requirements that must be adapted before release.
   drafts. Tested with an in-memory transaction double, not a live database/emulator.
 - `core.test.mjs`: synthetic isolation, replay, correction, validation and Gmail tests.
 
-Run `node --test integrations/core.test.mjs`. Build on Windows using
+Run `node --test integrations/core.test.mjs integrations/local/local.test.mjs`.
+All 20 tests pass, including a real loopback HTTP callback with synthetic Google
+tokens and a Windows DPAPI encryption/decryption round trip. This is not a live
+Google consent or ATAS runtime test. Build on Windows using
 `dotnet build integrations/atas/Fayna.Atas.csproj -c Release`.
+
+## Local Gmail preview commands
+
+Requires Node 24 and Windows. Keep downloaded desktop OAuth JSON outside the repo.
+
+```
+node integrations/local/connector.mjs connect <desktop-oauth.json> <profile-name>
+node integrations/local/connector.mjs scan <desktop-oauth.json> <profile-name> <preferences.json>
+node integrations/local/connector.mjs disconnect <desktop-oauth.json> <profile-name>
+```
+
+Preferences: `{"senders":["billing@example.com"],"after":"2026-01-01"}` with actual
+user-selected exact supplier email addresses, not the example. Consent requests
+gmail.readonly only (no sending/deletion). The scope covers the mailbox; filtering
+is application behavior, not a narrower Google permission. Connecting checks the
+Gmail profile and saves encrypted tokens; it does not scan messages.
+
+Data defaults to `%LOCALAPPDATA%/Fayna/LocalConnector/<profile-name>`; the optional
+`FAYNA_DATA_DIR` environment variable can select a private local folder. Profiles
+are local labels, not authenticated Fayna user IDs. Invoice candidates stay local
+and contain no parsed amount, PDF text or automatic expense entry. Scans are manual
+and bounded to 250 candidates per invocation; a truncated result is not complete.
+Background scheduling, usable installation UI, complete historical pagination and
+site publishing are still pending. Do not advertise this preview as live sync.
 
 ## ATAS verification still required
 

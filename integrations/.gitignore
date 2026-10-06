@@ -6,3 +6,5 @@ node_modules/
 outbox/
 *.token
 *.credentials.json
+client_secret*.json
+invoice-drafts/
