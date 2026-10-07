@@ -22610,6 +22610,15 @@ function openTradeChart(ti) {
   document.body.style.overflow='hidden';
   _loadTradingViewChart(t.sym, t.date);
 }
+async function _openTradeMarkers() {
+  const trade=tradesList[_tcmTradeIdx];
+  if(!trade) return;
+  const symbol=_tradeChartSymbol(trade.sym,trade.date);
+  try {
+    if(typeof FaynaTradeMarkers==='undefined') await _loadModule('fayna-trade-markers.js?v=73');
+    FaynaTradeMarkers.open(trade,symbol);
+  } catch(e) { showToast('טעינת סימוני העסקה נכשלה. נסה שוב.','error'); }
+}
 function closeTradeChart() {
   document.getElementById('trade-chart-modal').classList.remove('open');
   document.body.style.overflow='';
@@ -23921,6 +23930,7 @@ function _calcKey(e){
         <div class="tcm-stat"><span class="tcm-stat-lbl">כמות</span><span class="tcm-stat-val" id="tcm-qty">—</span></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <button type="button" class="bn" onclick="_openTradeMarkers()">סמן עסקה ב־TradingView</button>
         <input type="text" class="tcm-sym-input" id="tcm-sym-inp" placeholder="שנה סמל..." onkeydown="if(event.key==='Enter')_tcmReloadChart()" title="הקלד סמל TradingView">
         <button onclick="_tcmReloadChart()" style="padding:5px 10px;border-radius:7px;background:var(--ac);color:#fff;border:none;font-size:11px;cursor:pointer;font-family:inherit;font-weight:700">טען</button>
         <button class="cx" onclick="closeTradeChart()" style="font-size:22px;width:32px;height:32px">×</button>
