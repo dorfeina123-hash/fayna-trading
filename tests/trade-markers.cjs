@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const {build,dateParts}=require('../fayna-trade-markers.js');
+const base={zone:'America/New_York',direction:'long',symbol:'CME_MINI:MNQZ2026',qty:3,entry:100,exit:105,entryTime:'2026-10-01T09:30:22',exitTime:'2026-10-01T09:53:11'};
+const p=build(base);
+assert(p.includes('timestamp("America/New_York", 2026, 10, 1, 9, 30, 22)'));
+assert(p.includes('BUY ENTRY | Qty 3 | 100'));assert(p.includes('SELL EXIT | 105'));
+assert.equal((p.match(/label.new/g)||[]).length,2);assert(p.includes('xloc=xloc.bar_time'));assert(p.includes('yloc=yloc.price'));
+assert(build({...base,direction:'short',entry:110,exit:100}).includes('SELL ENTRY | Qty 3 | 110'));
+assert(build({...base,exitTime:'2026-10-02T01:00:00'}).includes('2026, 10, 2, 1, 0, 0'));
+for(const patch of [{zone:''},{direction:''},{qty:0},{entry:''},{entry:'1);bad'},{exitTime:''},{exitTime:'2026-09-30T12:00:00'},{symbol:'X"\nmalicious'}])assert.throws(()=>build({...base,...patch}));
+assert.throws(()=>dateParts('2026-02-30T12:00:00'));
+assert.throws(()=>dateParts('2026-10-01T25:00:00'));
+console.log('Pine generator: long/short, timestamps, overnight exit, coordinates, missing values and injection checks passed.');
