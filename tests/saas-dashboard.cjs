@@ -8,3 +8,7 @@ const streak=summary([{date:'2026-10-03',pnl:-20},{date:'2026-10-01',pnl:100},{d
 a.equal(streak.averageWin,150);a.equal(streak.averageLoss,30);a.equal(streak.averageRatio,5);a.equal(streak.maxWins,2);a.equal(streak.maxLosses,2);
 a.equal(summary([],t=>t.pnl).averageWin,null);a.equal(summary([],t=>t.pnl).averageLoss,null);
 const {initialMode}=require('../saas-default-theme');a.equal(initialMode(null),'light');a.equal(initialMode('dark'),'dark');a.equal(initialMode('light'),'light');
+const {monthSummary}=require('../saas-dashboard.js');
+a.deepEqual(monthSummary(r.days,2026,9),{net:60,count:2,activeDays:1});
+a.deepEqual(monthSummary(r.days,2026,8),{net:0,count:0,activeDays:0});
+a.deepEqual(monthSummary({'2025-12-31':[{net:-20}],'2026-01-01':[{net:0}]},2026,0),{net:0,count:1,activeDays:1});

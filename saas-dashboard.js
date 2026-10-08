@@ -9,6 +9,11 @@ function summary(rows,netOf,includeMetrics=true){
  const averageWin=wins?winSum/wins:null,averageLoss=losers?lossSum/losers:null;
  return {factor:losses?gains/losses:null,days,averageWin,averageLoss,averageRatio:averageWin!==null&&averageLoss!==null?averageWin/averageLoss:null,maxWins,maxLosses};
 }
+function monthSummary(days,year,month){
+ const prefix=year+'-'+String(month+1).padStart(2,'0')+'-';let net=0,count=0,activeDays=0;
+ for(const [date,list] of Object.entries(days)){if(!date.startsWith(prefix)||!list.length)continue;activeDays++;count+=list.length;net+=list.reduce((sum,t)=>sum+t.net,0);}
+ return {net,count,activeDays};
+}
 function decorate(root,model,rows,now,netOf){
  const data=summary(model.rows,netOf),money=n=>new Intl.NumberFormat('he-IL',{style:'currency',currency:'USD'}).format(n);
  const kpis=document.createElement('div');kpis.className='saas-kpis';
@@ -32,6 +37,7 @@ function decorate(root,model,rows,now,netOf){
  for(const [b,label,text] of [[previous,'החודש הקודם','‹'],[next,'החודש הבא','›'],[today,'חזרה לחודש הנוכחי','החודש']]){b.type='button';b.setAttribute('aria-label',label);b.textContent=text;}
  toolbar.append(previous,title,next,today);target.append(toolbar);
  const hint=document.createElement('p');hint.className='home-muted';hint.textContent='הלוח מציג את החודש הנבחר בחשבונות שנבחרו, ללא תלות בטווח הסיכום למעלה.';target.append(hint);
+ const monthly=document.createElement('p');monthly.className='home-muted';monthly.setAttribute('aria-live','polite');monthly.id='saas-month-summary';target.append(monthly);
  const grid=document.createElement('div');grid.className='saas-calendar';
  const detail=document.createElement('div');detail.className='saas-day-detail';detail.setAttribute('aria-live','polite');
  const calendarData=model.start===''?data:summary(rows.filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')&&t.date<=localDate(now)),netOf,false);
@@ -41,6 +47,7 @@ function decorate(root,model,rows,now,netOf){
  title.textContent='לוח מסחר · '+cursor.toLocaleDateString('he-IL',{month:'long',year:'numeric'});
  for(const day of ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳']){const s=document.createElement('span');s.textContent=day;grid.append(s);}
  const year=cursor.getFullYear(),month=cursor.getMonth();
+ const totals=monthSummary(calendarData.days,year,month);monthly.textContent='סיכום החודש: '+money(totals.net)+' · '+totals.count+' רשומות · '+totals.activeDays+' ימי מסחר';
  for(let i=0;i<new Date(year,month,1).getDay();i++){const s=document.createElement('span');s.setAttribute('aria-hidden','true');grid.append(s);}
  for(let day=1;day<=new Date(year,month+1,0).getDate();day++){
   const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'),trades=calendarData.days[date]||[],total=trades.reduce((s,t)=>s+t.net,0);
@@ -56,5 +63,5 @@ function decorate(root,model,rows,now,netOf){
 }
 function localDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 if(typeof window!=='undefined'){window.SaasDashboard={decorate,summary};document.body.classList.add('saas-foundation');}
-if(typeof module!=='undefined')module.exports={summary};
+if(typeof module!=='undefined')module.exports={summary,monthSummary};
 })();
