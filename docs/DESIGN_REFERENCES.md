@@ -4,6 +4,12 @@ Recorded 2026-10-08 from the owner's explicit direction in the development chat.
 
 ## Permanent reference
 
+Owner-confirmed shared conversation: [מעקב מסחר-דור — shared reference](https://chatgpt.com/share/6ac79be3-2888-83eb-89ce-ca9b4973da3e?no_universal_links=1)
+This is the primary reference supplied by the owner. The earlier app conversation link below is retained as a secondary lookup.
+
+Access check on 2026-10-08: web fetch failed; the in-app browser redirected to ChatGPT home with “We couldn’t load your account”. The shared transcript/images have not been read. Do not claim full source review or infer its contents.
+
+
 Related conversation: [מעקב מסחר-דור](https://chatgpt.com/c/6a5e586b-7e6c-83eb-ab29-17e60d9f7980)
 Conversation ID: 6a5e586b-7e6c-83eb-ab29-17e60d9f7980.
 Development chat ID: 01a1060d-3799-7f71-8f08-8169b7d5bea6.
