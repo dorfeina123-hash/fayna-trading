@@ -35,3 +35,6 @@ body.saas-foundation.light-mode{--bg0:#f2f5f9;--bg1:#fff;--bg2:#fff;--bg3:#edf2f
 .saas-foundation.light-mode #sidenav .sn-item.active{background:#d7f1e7!important;color:#11765c!important}
 .saas-foundation #mob-bottom-nav{background:var(--bg1)!important}.saas-foundation #mob-bottom-nav button{color:var(--t2)!important}.saas-foundation #mob-bottom-nav button.active{color:var(--ac)!important;background:var(--bg3)!important}
 @media(prefers-reduced-motion:reduce){.saas-foundation *, .saas-foundation *::before,.saas-foundation *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(min-width:801px){.saas-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1200px){.saas-kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.saas-kpis .home-card{padding:16px}.saas-kpis strong{font-size:23px}}
+.saas-summary-strip{line-height:1.7;margin:0 0 18px}

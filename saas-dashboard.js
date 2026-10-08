@@ -1,17 +1,22 @@
 (function(){
 'use strict';
-function summary(rows,netOf){
- let gains=0,losses=0;const days={};
- for(const t of rows){const n=Number(netOf(t));if(!Number.isFinite(n))continue;gains+=Math.max(n,0);losses+=Math.max(-n,0);(days[t.date]??=[]).push({symbol:t.sym||'עסקה',time:t.btime||'',net:n});}
- return {factor:losses?gains/losses:null,days};
+function summary(rows,netOf,includeMetrics=true){
+ let gains=0,losses=0,winSum=0,lossSum=0,wins=0,losers=0;const days={},detailed=[];
+ for(const t of rows){const n=Number(netOf(t));if(!Number.isFinite(n))continue;gains+=Math.max(n,0);losses+=Math.max(-n,0);(days[t.date]??=[]).push({symbol:t.sym||'עסקה',time:t.btime||'',net:n,strategy:t.strategy||'',notes:t.notes||t.note||''});if(includeMetrics&&!t.isManual){detailed.push({key:String(t.date||'')+String(t.btime||''),net:n});if(n>0){wins++;winSum+=n;}if(n<0){losers++;lossSum-=n;}}}
+ let ws=0,ls=0,maxWins=0,maxLosses=0;
+ if(detailed.some((t,i)=>i&&t.key<detailed[i-1].key))detailed.sort((a,b)=>a.key.localeCompare(b.key));
+ for(const t of detailed){ws=t.net>0?ws+1:0;ls=t.net<0?ls+1:0;maxWins=Math.max(maxWins,ws);maxLosses=Math.max(maxLosses,ls);}
+ const averageWin=wins?winSum/wins:null,averageLoss=losers?lossSum/losers:null;
+ return {factor:losses?gains/losses:null,days,averageWin,averageLoss,averageRatio:averageWin!==null&&averageLoss!==null?averageWin/averageLoss:null,maxWins,maxLosses};
 }
 function decorate(root,model,rows,now,netOf){
  const data=summary(model.rows,netOf),money=n=>new Intl.NumberFormat('he-IL',{style:'currency',currency:'USD'}).format(n);
  const kpis=document.createElement('div');kpis.className='saas-kpis';
- for(const [label,value] of [['תוצאה נטו',money(model.net)],['אחוז הצלחה',model.winRate===null?'—':model.winRate.toFixed(0)+'%'],['יחס סך רווחים להפסדים',data.factor===null?'—':data.factor.toFixed(2)],['רשומות בתקופה',model.count]]){
+ for(const [label,value] of [['תוצאה נטו',money(model.net)],['אחוז הצלחה',model.winRate===null?'—':model.winRate.toFixed(0)+'%'],['יחס סך רווחים להפסדים',data.factor===null?'—':data.factor.toFixed(2)],['רשומות בתקופה',model.count],['רווח ממוצע לעסקה מרוויחה',data.averageWin===null?'—':money(data.averageWin)],['הפסד ממוצע לעסקה מפסידה',data.averageLoss===null?'—':money(-data.averageLoss)]]){
   const card=document.createElement('section'),small=document.createElement('span'),strong=document.createElement('strong');card.className='home-card';small.textContent=label;strong.textContent=value;card.append(small,strong);kpis.append(card);
  }
  root.querySelector('.home-filter').after(kpis);
+ const strip=document.createElement('p');strip.className='home-muted saas-summary-strip';strip.textContent='מעסקאות מפורטות בלבד: יחס רווח/הפסד ממוצע '+(data.averageRatio===null?'—':data.averageRatio.toFixed(2))+' · רצף ניצחונות מרבי '+data.maxWins+' · רצף הפסדים מרבי '+data.maxLosses;kpis.after(strip);
  const target=root.querySelector('.home-summary');target.replaceChildren();
  const toolbar=document.createElement('div');toolbar.className='saas-month-toolbar';
  const title=document.createElement('h2');title.id='saas-month-title';title.setAttribute('aria-live','polite');
@@ -21,7 +26,7 @@ function decorate(root,model,rows,now,netOf){
  const hint=document.createElement('p');hint.className='home-muted';hint.textContent='הלוח מציג את החודש הנבחר בחשבונות שנבחרו, ללא תלות בטווח הסיכום למעלה.';target.append(hint);
  const grid=document.createElement('div');grid.className='saas-calendar';
  const detail=document.createElement('div');detail.className='saas-day-detail';detail.setAttribute('aria-live','polite');
- const calendarData=summary(rows.filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')&&t.date<=localDate(now)),netOf);
+ const calendarData=model.start===''?data:summary(rows.filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')&&t.date<=localDate(now)),netOf,false);
  let cursor=new Date(now.getFullYear(),now.getMonth(),1);
  function draw(){
  grid.replaceChildren();detail.replaceChildren();
@@ -32,7 +37,7 @@ function decorate(root,model,rows,now,netOf){
  for(let day=1;day<=new Date(year,month+1,0).getDate();day++){
   const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'),trades=calendarData.days[date]||[],total=trades.reduce((s,t)=>s+t.net,0);
   const b=document.createElement('button');b.type='button';b.textContent=day;b.className=trades.length?(total>=0?'up':'down'):'';b.setAttribute('aria-label',date+' · '+trades.length+' עסקאות'+(trades.length?' · '+money(total):''));b.setAttribute('aria-pressed','false');
-  b.onclick=()=>{grid.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));detail.replaceChildren();const heading=document.createElement('strong');heading.textContent=date+' · '+(trades.length?money(total):'אין עסקאות ביום זה');detail.append(heading);for(const t of trades){const p=document.createElement('p');p.textContent=[t.symbol,t.time,money(t.net)].join(' · ');detail.append(p);}};grid.append(b);
+  b.onclick=()=>{grid.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));detail.replaceChildren();const heading=document.createElement('strong');heading.textContent=date+' · '+trades.length+' רשומות · '+(trades.length?money(total):'אין עסקאות ביום זה');detail.append(heading);for(const t of trades){const p=document.createElement('p');p.textContent=[t.symbol,t.time,money(t.net),t.strategy?'אסטרטגיה: '+t.strategy:'',t.notes?'הערות: '+t.notes:''].filter(Boolean).join(' · ');detail.append(p);}};grid.append(b);
  }
  }
  previous.onclick=()=>{cursor=new Date(cursor.getFullYear(),cursor.getMonth()-1,1);draw();};

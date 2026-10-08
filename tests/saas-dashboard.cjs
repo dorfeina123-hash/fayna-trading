@@ -4,3 +4,7 @@ const before=JSON.stringify(source),r=summary(source,t=>t.pnl);
 a.equal(r.factor,2.5);a.equal(r.days['2026-10-01'].length,2);a.equal(r.days['2026-10-02'],undefined);a.equal(JSON.stringify(source),before);
 a.equal(summary([],t=>t.pnl).factor,null);a.equal(summary([{date:'2026-10-01',pnl:10}],t=>t.pnl).factor,null);
 console.log('Dashboard source data, empty state, missing PnL and profit factor checks passed.');
+const streak=summary([{date:'2026-10-03',pnl:-20},{date:'2026-10-01',pnl:100},{date:'2026-10-02',pnl:200},{date:'2026-10-04',pnl:-40},{date:'2026-10-05',pnl:0},{date:'2026-10-06',pnl:999,isManual:true}],t=>t.pnl);
+a.equal(streak.averageWin,150);a.equal(streak.averageLoss,30);a.equal(streak.averageRatio,5);a.equal(streak.maxWins,2);a.equal(streak.maxLosses,2);
+a.equal(summary([],t=>t.pnl).averageWin,null);a.equal(summary([],t=>t.pnl).averageLoss,null);
+const {initialMode}=require('../saas-default-theme');a.equal(initialMode(null),'light');a.equal(initialMode('dark'),'dark');a.equal(initialMode('light'),'light');
