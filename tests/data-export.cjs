@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const {csv,tradeRows,packageData}=require('../fayna-export.js');
+const d={tradesList:[{date:'2026-10-01',sym:'MNQ',pnl:-12,acct:'a',notes:'שורה, "מצוטטת"\nשנייה'}],accounts:[{id:'a',name:'תיק',number:'00123',withdrawals:[{amount:20}]}],records:[{id:'old',amount:10}],customExpenses:[{id:'custom'}],recurringTemplates:[{id:'repeat'}],businessEvents:[{id:'archived',archived:true}],businessNotes:{month:'note'},commSettings:{fee:1},customSymbols:['MNQ'],pnlOn:{}};
+const before=JSON.stringify(d);
+const rows=tradeRows(d.tradesList,d.accounts,()=>2,()=>-14);
+assert.equal(rows[1][4],'00123');assert.equal(rows[1][9],-12);assert.equal(rows[1][11],-14);
+const text=csv(rows);assert(text.startsWith('\ufeff'));assert(text.includes('"-12"'));assert(text.includes('"מצוטטת"'.replace(/"/g,'""')));
+assert(csv([['=SUM(1,2)',' \t@evil',-3]]).includes('"\'=SUM(1,2)"'));
+const f=packageData(d,'finance');assert(!f.trading);assert.equal(f.finance.records.length,1);assert.equal(f.finance.accountWithdrawals[0].withdrawals.length,1);assert.equal(f.finance.businessEvents[0].archived,true);
+const all=packageData(d,'all');assert.equal(all.trading.tradesList.length,1);assert.deepEqual(JSON.parse(JSON.stringify(all)).finance,f.finance);
+assert.equal(JSON.stringify(d),before);assert.equal(tradeRows([],[],()=>0,()=>0).length,1);
+console.log('Export checks passed: Hebrew/quotes/newlines, signed numbers, formula neutralization, missing trade fields, finance completeness and source preservation.');
