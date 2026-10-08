@@ -1,0 +1,15 @@
+{
+  "name": "fayna-ui-regression",
+  "private": true,
+  "scripts": {
+    "test:browser": "node tests/saas-browser.cjs",
+    "test:emulator": "firebase emulators:exec --config firebase.test.json --project demo-fayna-ui --only auth,firestore \"node tests/firebase-emulator.cjs\""
+  },
+  "devDependencies": {
+    "playwright": "1.55.1",
+    "axe-core": "4.10.3",
+    "firebase": "11.10.0",
+    "@firebase/rules-unit-testing": "4.0.1",
+    "firebase-tools": "14.7.0"
+  }
+}
