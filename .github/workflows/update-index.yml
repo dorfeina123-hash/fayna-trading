@@ -1,54 +1,22 @@
-name: Auto-update index.html
-
+name: Validate application (no automatic HTML promotion)
 on:
+  pull_request:
   push:
-    branches:
-      - main
-
+    branches: [main, codex/saas-foundation]
 permissions:
-  contents: write
-
+  contents: read
 jobs:
-  update-index:
+  regression:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[auto]')"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-
-      - name: Find newly changed HTML files
-        id: find
-        run: |
-          BEFORE="${{ github.event.before }}"
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            BEFORE=$(git rev-list --max-parents=0 HEAD)
-          fi
-          FILES=$(git diff --name-only --diff-filter=ACMR "$BEFORE" "${{ github.sha }}" -- '*.html' | grep -v -E '^(index\.html|index_previous_backup\.html)$' || true)
-          COUNT=$(echo "$FILES" | grep -c . || true)
-          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          # Prefer the canonical source file if it's among the changed files, even when
-          # other unrelated .html files changed in the same push — avoids silently skipping
-          # the index.html update just because more than one .html file was touched.
-          if false; then
-            FILE_FIRST="dor_trading_v5_final.html"
-          else
-            FILE_FIRST=$(echo "$FILES" | sort -V | tail -n1)
-          fi
-          echo "file=$FILE_FIRST" >> "$GITHUB_OUTPUT"
-
-      - name: Update index.html
-        if: steps.find.outputs.count != '0' && steps.find.outputs.file != ''
-        run: |
-          NEWFILE="${{ steps.find.outputs.file }}"
-          echo "Updating index.html from $NEWFILE"
-          if [ -f index.html ]; then
-            cp index.html index_previous_backup.html
-          fi
-          cp "$NEWFILE" index.html
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html index_previous_backup.html
-          git commit -m "[auto] Update index.html from $NEWFILE"
-          git push
+          node-version: '22'
+      - run: node scripts/validate-app.cjs
+      - run: node tests/saas-dashboard.cjs
+      - run: node tests/import-atas.cjs
+      - run: node tests/chart-symbol.cjs
+      - run: node tests/delete-trades.cjs
+      - run: node tests/data-export.cjs
+      - run: node tests/trade-markers.cjs
