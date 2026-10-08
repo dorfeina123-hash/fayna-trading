@@ -15,6 +15,7 @@ jobs:
           node-version: '22'
       - run: node scripts/validate-app.cjs
       - run: node tests/saas-dashboard.cjs
+      - run: node tests/finance-currency.cjs
       - run: node tests/import-atas.cjs
       - run: node tests/chart-symbol.cjs
       - run: node tests/delete-trades.cjs

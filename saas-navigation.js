@@ -11,10 +11,11 @@ const sections={
  personal:[['personal','פרופיל והעדפות'],['datamgr','נתונים וגיבוי'],['billing','מנוי'],['ai','עוזר AI קיים'],['help','עזרה'],['course','קורס'],['software','תוכנות'],['firms','חברות מימון'],['news','חדשות']]
 };
 function group(name){for(const [key,list] of Object.entries(sections))if(list.some(x=>x[0]===name))return key;return ['expenses','custom','withdrawals','pnl'].includes(name)?'biz':['goals'].includes(name)?'overview':name;}
-function sync(name){
+function sync(name,updateSections=true){
  const active=group(name);
  document.querySelectorAll('[data-saas-route]').forEach(b=>{const current=b.dataset.saasRoute===active;b.classList.toggle('active',current);if(current)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const label=document.getElementById('nav-active-name');if(label)label.textContent=destinations.find(x=>x[0]===active)?.[1]||name;
+ if(!updateSections)return;
  const nav=document.getElementById('simple-section-nav');if(!nav)return;
  nav.replaceChildren();for(const [route,title] of sections[active]||[]){const b=document.createElement('button');b.type='button';b.textContent=title;if(route===name)b.setAttribute('aria-current','page');b.onclick=()=>window.swNav(route);nav.append(b);}nav.hidden=!nav.childElementCount;
  if(name==='calc'&&window._simpleTradeDraft){const back=document.createElement('button');back.type='button';back.textContent='חזרה לעסקה';back.onclick=()=>{window.swNav('trades');document.getElementById('add-trade-modal')?.classList.add('open');window._simpleTradeDraft=false;};nav.append(back);}
@@ -37,7 +38,7 @@ function install(){
  }
  const originalNav=window.swNav,originalSync=window._simpleSync,originalBottom=window._syncBottomNav;
  window._simpleSync=function(name){originalSync(name);sync(name);};
- window._syncBottomNav=function(name){originalBottom(name);sync(name);};
+ window._syncBottomNav=function(name){originalBottom(name);sync(name,false);};
  window.swNav=function(name){
   if(name!=='lab'){originalNav(name);return;}
   // Lab has no server or simulated results. All real routes retain the original gate.

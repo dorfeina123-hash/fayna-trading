@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const html=fs.readFileSync('index.html','utf8');
-function fn(name){const s=html.indexOf('function '+name+'(');assert(s>=0,name);const e=html.indexOf('\n}',s);assert(e>s);return html.slice(s,e+2);}
+function fn(name){const s=html.indexOf('function '+name+'(');assert(s>=0,name);const first=html.slice(s,html.indexOf('\n',s));if(first.trimEnd().endsWith('}'))return first;const e=html.indexOf('\n}',s);assert(e>s);return html.slice(s,e+2);}
 const home=html.slice(html.indexOf('var _homePeriod ='),html.indexOf('\n}',html.indexOf('function renderHome('))+2);
 const output=path.resolve('artifacts/saas-ui');fs.mkdirSync(output,{recursive:true});
 (async()=>{
@@ -44,6 +44,16 @@ const output=path.resolve('artifacts/saas-ui');fs.mkdirSync(output,{recursive:tr
    await page.screenshot({path:path.join(output,`dashboard-${width}-${light?'light':'dark'}.png`),fullPage:true});report.push({width,theme:light?'light':'dark',rtl:true,overflow:false,navigation:6,keyboard:true,contrast});
   }
   await page.evaluate(()=>{permit=false;swNav('overview')});await page.locator('#mob-bottom-nav [data-saas-route="stats"]').click();assert.equal(await page.evaluate(()=>upgradeCalls),1);assert.equal(await page.locator('#tp-overview').isVisible(),true);
+  await page.addScriptTag({content:`var financeCurrency='USD',financeRange='all',financeView='summary',financeDate=new Date(),financeType='all',financeQuery='',businessNotes={},records=[{id:'legacy',date:'2026-10-01',type:'הוצאה',amount:20,rate:4}],customExpenses=[],businessEvents=[{id:'usd',date:'2026-10-01',type:'expense',amount:100,currency:'USD',rate:3.5},{id:'ils',date:'2026-10-02',type:'income',amount:600,currency:'ILS',rate:3}];accounts=[];function histRate(){return 3}function financeNoteKey(){return 'synthetic'}\n`+['financeMoney','financeRows','financePeriodRows','financeTotals','financeInPeriod','financeConvert','financeLegacyRows','financeSuspects','financeCombinedRows','financeBreakdown','financeTable','financeRender'].map(fn).join('\n')});
+  await page.addScriptTag({content:fn('financeNavigate')});
+  await page.evaluate(()=>{document.getElementById('tp-biz').innerHTML='<div id="finance-workspace"></div>';});
+  await page.addScriptTag({content:fs.readFileSync('saas-finance-currency.js','utf8')});
+  const originalFinance=await page.evaluate(()=>JSON.stringify({businessEvents,records}));await page.evaluate(()=>{swNav('biz');financeRender()});
+  const ledgerCount=await page.locator('#finance-content tbody tr').count();assert.equal(ledgerCount,3);
+  const usdNet=await page.locator('.ws-kpis section').last().locator('strong').innerText();assert.equal(usdNet,await page.evaluate(()=>financeMoney(80)));
+  await page.getByRole('combobox',{name:'מטבע כספי',exact:true}).selectOption('ILS');assert.equal(await page.locator('#finance-content tbody tr').count(),ledgerCount);assert.equal(await page.locator('.ws-kpis section').last().locator('strong').innerText(),await page.evaluate(()=>financeMoney(170)));
+  await page.locator('#simple-section-nav').getByRole('button',{name:'דוחות',exact:true}).click();assert.equal(await page.locator('#finance-content tbody tr').first().locator('td').last().innerText(),await page.evaluate(()=>financeMoney(170)));await page.locator('#simple-section-nav').getByRole('button',{name:'סיכום',exact:true}).click();
+  await page.getByRole('combobox',{name:'מטבע כספי',exact:true}).selectOption('USD');assert.equal(await page.locator('.ws-kpis section').last().locator('strong').innerText(),usdNet);assert.equal(await page.evaluate(()=>JSON.stringify({businessEvents,records})),originalFinance);
   assert.deepEqual(errors,[]);fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({scope:'isolated presentation harness; Firebase and expensive legacy renderers stubbed, not auth regression',browser:browser.version(),checks:report},null,2));console.log('Browser RTL, six routes, keyboard, calendar/account scoping and plan gate checks passed.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
