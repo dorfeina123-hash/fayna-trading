@@ -31,3 +31,9 @@ Six primary destinations remain per FAYNA_APPROVED_ROADMAP_2026-10-08.md; strate
 Charts, summaries, strategy comparisons and overtrading views must derive from available authorized journal data. Define any composite score before showing it. Do not fabricate candle data, percentage improvements, AI replies or connected-service state. Pending server features stay disabled and say “עדיין לא זמין”.
 
 Current v75 is an incremental implementation and has not yet implemented all visual components in these references. Track remaining work explicitly. Keep all work in codex/saas-foundation and PR #18; do not change main or publish.
+
+## Exact visual target — owner clarification
+
+The owner explicitly clarified: “זה המראה הנכון במדוייק”. The two supplied screenshots are the exact visual acceptance targets for light and dark views, superseding the earlier description of them as general inspiration. Match their information hierarchy, navy navigation, blue active state, surfaces, typography scale, spacing, compact metric cards, chart framing, large calendar and trade table. The Hebrew dark panels define the visual treatment of strategy analysis, overtrading and assistant screens. Adapt labels to Hebrew/RTL and retain the supplied gold Fayna logo, six agreed navigation areas and actual user data. Do not import third-party branding, screenshot sample values, fabricated scores or inactive service claims.
+
+Current v75 does not yet meet this visual target: the smaller calendar, limited chart layout and earlier palette are interim implementation. Future visual review must compare real synthetic-fixture screenshots against these references at comparable viewports, then verify mobile/keyboard/AA behavior. Do not describe the current UI as visually complete or publish it. This clarification changes visual acceptance; it does not authorize production publication, backend activation or billing.
