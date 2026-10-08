@@ -1,0 +1,19 @@
+/* Dashboard-v2 visual language applied to the real application, without demo data. */
+body.saas-foundation{--bg0:#101722;--bg1:#1a2533;--bg2:#1a2533;--bg3:#223143;--border:#334256;--border2:#405268;--t1:#e6eff8;--t2:#becbda;--t3:#a4b5c7;--ac:#52d5b7;background:var(--bg0)!important}
+body.saas-foundation.light-mode{--bg0:#f2f5f9;--bg1:#fff;--bg2:#fff;--bg3:#edf2f7;--border:#e3e9f0;--border2:#cbd6e2;--t1:#1a2b40;--t2:#475d74;--t3:#596f87;--ac:#158f7a;background:var(--bg0)!important}
+.saas-foundation #sidenav{background:#132235!important;color:#a8bdd1}
+.saas-foundation #sidenav .sn-item{color:#c1d1df!important;border-radius:9px;min-height:44px}
+.saas-foundation #sidenav .sn-item.active{background:#21444a!important;color:#9af0d6!important}
+.saas-foundation .home-card,.saas-foundation .ws-panel{background:var(--bg1)!important;border:1px solid var(--border)!important;border-radius:15px!important;box-shadow:none!important;padding:20px}
+.saas-foundation .home-heading h1{font-size:clamp(24px,3vw,30px);letter-spacing:0}
+.saas-foundation .home-top-grid{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+.saas-foundation .home-trend{min-height:190px}
+.saas-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}
+.saas-kpis span{font-size:13px;color:var(--t3)}.saas-kpis strong{display:block;margin-top:14px;font-size:26px;font-variant-numeric:tabular-nums}
+.saas-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:16px;text-align:center}
+.saas-calendar button{min-height:44px;border:1px solid transparent;border-radius:7px;background:var(--bg3);color:var(--t1);font:inherit;cursor:pointer}
+.saas-calendar button.up{background:#184b41;color:#b9f6e4}.saas-calendar button.down{background:#552936;color:#ffd3db}
+.light-mode .saas-calendar button.up{background:#d7f1e7;color:#11765c}.light-mode .saas-calendar button.down{background:#fae1e5;color:#973649}
+.saas-calendar button[aria-pressed=true]{outline:2px solid var(--ac);outline-offset:2px}.saas-day-detail{margin-top:16px;max-height:200px;overflow:auto}.saas-day-detail p{padding:8px 0;border-bottom:1px solid var(--border)}
+.saas-foundation button:focus-visible,.saas-foundation a:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+@media(max-width:800px){.saas-foundation .home-top-grid{grid-template-columns:1fr}.saas-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.saas-kpis strong{font-size:22px}.saas-foundation .home-card{padding:14px}.saas-calendar{gap:3px}}

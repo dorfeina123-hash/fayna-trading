@@ -1,0 +1,16 @@
+const fs=require('node:fs'),crypto=require('node:crypto'),vm=require('node:vm'),assert=require('node:assert/strict');
+const baseline=fs.readFileSync('dor_trading_v74.html','utf8'),current=fs.readFileSync('index.html','utf8');
+const gitHash=s=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(s)+'\0').update(s).digest('hex');
+assert.equal(gitHash(baseline),'ffaf4533b9a5db9eacf335c1d271552f7fbd11c7','v74 recovery baseline must be immutable');
+assert.equal(current,fs.readFileSync('dor_trading_v75.html','utf8'),'canonical application mismatch');
+assert(current.includes('firebase.auth')&&current.includes('function renderHome()')&&current.includes('id="auth-screen"'),'prototype cannot become application');
+const scripts=s=>[...s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!m[1].includes('src=')&&!/ld\+json/.test(m[1])).map(m=>m[2]);
+for(const script of scripts(current))new vm.Script(script);
+const removeFn=(s,name)=>{const start=s.indexOf('function '+name+'(');if(start<0)return s;const end=s.indexOf('\n}',start);assert(end>=0);return s.slice(0,start)+s.slice(end+2);};
+const unchanged=s=>removeFn(removeFn(s,'renderHome'),'_tradeSpark').trim();
+assert.deepEqual(scripts(current).map(unchanged),scripts(baseline).map(unchanged),'auth, storage and other inline logic changed');
+const styles=s=>[...s.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(m=>m[1]);
+assert.deepEqual(styles(current),styles(baseline),'legacy style blocks changed');
+const ids=s=>[...s.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.deepEqual(ids(current),ids(baseline),'legacy element ids changed');
+assert(!current.includes('Math.sin(seed + i*2.37)'),'fabricated trade price sparkline remains');
+console.log('Canonical recovery, inline syntax, auth/storage logic preservation, legacy CSS/IDs and non-fabricated chart checks passed.');
