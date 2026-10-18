@@ -29,6 +29,9 @@ const output=process.env.FAYNA_REVIEW_OUTPUT;
   await page.locator('[data-fy-auth="register"]').first().click();assert(await page.locator('#auth-register-form').isVisible());assert.equal(await page.locator('#auth-login-form').isVisible(),false);
  }
  assert.deepEqual(await page.evaluate(()=>JSON.parse(JSON.stringify(FaynaPlanModel))),baseline);
+ await page.addScriptTag({content:`var currentUser={uid:'owner',status:'active'},auth={currentUser:{uid:'owner'}},appEntries=0;function showApp(){appEntries++}`});
+ await page.evaluate(()=>FaynaExperience.openLanding());await page.locator('#fy-public-login').click();assert.equal(await page.evaluate(()=>appEntries),1);
+ await page.evaluate(()=>{currentUser=null;auth.currentUser=null;FaynaExperience.openLanding()});await page.locator('#fy-public-login').click();assert(await page.locator('#auth-login-form').isVisible());assert.equal(await page.evaluate(()=>appEntries),1);
  await page.addScriptTag({content:`function loadPlanVisibility(){}function loadContactSettings(){}function showMsg(el,type,text){el.textContent=text}\n`+fn('_showAuthScreen')});
  await page.evaluate(()=>{FaynaExperience.openLanding();_showAuthScreen('לא הצלחנו להתחבר — נסה שוב')});
  assert(await page.locator('#auth-login-form').isVisible());assert.equal(await page.locator('#login-msg').textContent(),'לא הצלחנו להתחבר — נסה שוב');

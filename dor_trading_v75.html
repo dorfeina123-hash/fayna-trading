@@ -16567,6 +16567,7 @@ let contactSettings = {
 // ──────────────────────────────────────────────────────────────
 //  INIT
 // ──────────────────────────────────────────────────────────────
+let _siteEntryRequested = false; // session restore never bypasses the public opening
 let _authInitialized = false;
 let _registering  = false; // prevents onAuthStateChanged firing during registration
 let _manualLogin  = false; // set when user explicitly presses login/google button → skip welcome screen
@@ -16590,8 +16591,8 @@ function initAuth() {
             await db.collection('users').doc(fbUser.uid).set(adminData); _invalidateUsersCache();
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
-            /* v33: a restored session means a page reload — go straight in. */
-            _manualLogin = false; showApp();
+            /* Restored profiles stay on welcome until the user requests entry. */
+            _manualLogin = false; if (_siteEntryRequested) showApp();
             return;
           }
           await auth.signOut();
@@ -16605,8 +16606,8 @@ function initAuth() {
           return;
         }
         loadSettingsFromFirestore().catch(()=>{});
-        /* v33: a restored session means a page reload — go straight in. */
-        _manualLogin = false; showApp();
+        /* Restored profiles stay on welcome until the user requests entry. */
+        _manualLogin = false; if (_siteEntryRequested) showApp();
       } catch(e) {
         clearTimeout(_fsTimer);
         console.error('Auth state error:', e);
@@ -16871,6 +16872,7 @@ async function doLogout() {
   /* the e-mail is the ONLY thing that may survive a logout, and only by choice */
   const savedEmail = localStorage.getItem(REMEMBER_KEY);
 
+  _siteEntryRequested = false;
   await auth.signOut();
   await _purgeAuthState();          // no access/refresh token left behind
 
@@ -16890,6 +16892,7 @@ async function doLogout() {
 
   currentUser = null;
   authShowTab('login');
+  window.FaynaExperience?.openLanding();
   if (savedEmail) setTimeout(()=>passEl?.focus(), 200);
 }
 
