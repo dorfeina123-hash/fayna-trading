@@ -1,0 +1,8 @@
+{
+  "name": "fayna-billing-functions",
+  "private": true,
+  "main": "index.cjs",
+  "engines": { "node": "22" },
+  "scripts": { "test": "node --test billing.test.cjs account-policy.test.cjs fx.test.cjs" },
+  "dependencies": { "firebase-admin": "^13.0.0", "firebase-functions": "^6.0.0" }
+}

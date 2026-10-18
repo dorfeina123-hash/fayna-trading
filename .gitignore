@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.firebaserc
+.env*
+*-debug.log
+
+subscription-*.png

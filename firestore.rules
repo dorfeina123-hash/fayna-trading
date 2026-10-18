@@ -31,6 +31,10 @@ service cloud.firestore {
       return request.auth != null
           && request.auth.token.email == 'dorfeina123@gmail.com';
     }
+    function managedTrading(uid) {
+      return exists(/databases/$(database)/documents/subscriptions/$(uid))
+          || exists(/databases/$(database)/documents/trialGrants/$(uid));
+    }
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
 
@@ -65,7 +69,13 @@ service cloud.firestore {
                          && request.resource.data.isAdmin == resource.data.isAdmin
                          && request.resource.data.plan    == resource.data.plan
                          && request.resource.data.status  == resource.data.status
-                         && request.resource.data.email   == resource.data.email );
+                         && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+                           'isAdmin', 'plan', 'status', 'email', 'planCycle', 'planExpiresAt',
+                           'planStatus', 'cancelAtPeriodEnd', 'subscriptionPlan',
+                           'subscriptionStatus', 'paymentStatus', 'refRewardsGranted',
+                           'providerCustomerId', 'providerSubscriptionId', 'td_workspaceRevision'
+                         ])
+                         && (!managedTrading(uid) || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['td_accounts','td_tradesList'])) );
 
       allow delete: if isAdmin();
     }
@@ -93,6 +103,20 @@ service cloud.firestore {
     // ── admin-only collections ──
     match /adminNotes/{id} { allow read, write: if isAdmin(); }
     match /adminLogs/{id}  { allow read, write: if isAdmin(); }
+
+    // Billing collections are server-owned. Even browser admin sessions cannot write.
+    match /subscriptions/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+    match /subscriptionCancellationRequests/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+    match /trialGrants/{uid} { allow read, write: if false; }
+    match /billingQuotes/{id} { allow read, write: if false; }
+    match /billingEvents/{id} { allow read, write: if false; }
+    match /billingOperations/{id} { allow read, write: if false; }
 
     // ── deny everything not explicitly allowed above ──
     match /{document=**} { allow read, write: if false; }
