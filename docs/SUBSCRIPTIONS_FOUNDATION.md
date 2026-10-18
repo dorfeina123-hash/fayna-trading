@@ -32,7 +32,7 @@ Repository rules are not evidence of deployed Firebase rules. No live Firebase u
 - Offline actual repository HTML/CSS browser tests pass for desktop/mobile RTL, both feature maps/PDF, USD monthly prices, hidden unapproved annual option, server quote display, legacy expiry/referral display, trial/expiry, cache identity and payment guards; syntax/CSS/declarations/IDs and index/v75 equality.
 - Existing finance-summary, data-export, ATAS import and bulk deletion regressions pass.
 - Original home/workspace tests have failures that also reproduce on v74 (style count 8 vs 14; KPI count 5 vs 3). They are not represented as passing.
-- Added isolated CI Firestore emulator tests on demo-fayna (localhost only) for managed trading bypass, cross-user access, protected fields and legacy compatibility. Local host lacks Java; emulator validation is performed by CI, not claimed as a local pass until observed.
+- Added isolated CI Firestore emulator tests on demo-fayna (localhost only) for managed trading bypass, cross-user access, protected fields and legacy compatibility. Local host lacks Java. The isolated CI emulator job completed successfully for code commit efd67b0; managed bypass, cross-user access, protected fields and legacy compatibility checks passed. No production Firebase rules were deployed.
 
 ## Remaining launch blockers
 1. Actual Grow API/Sandbox authorization and userId + dedicated recurring pageCode via secret storage. Merchant UI access is not proof of API entitlement. Do not put provider secrets into adminPrefs/localStorage or public scripts. Official recurring setup: https://developers.grow.business/reference/create-payment-process-3
