@@ -16377,6 +16377,8 @@ let planFeatures = JSON.parse(JSON.stringify(_DEF_FEATURES));
 function canUse(feature) {
   if (!currentUser) return false;
   if (currentUser.isAdmin) return true;
+  const managed = typeof FaynaSubscriptions !== 'undefined' ? FaynaSubscriptions.statusFor(currentUser.uid) : null;
+  if (managed?.source === 'managed') return !!FaynaPlanModel.plans[FaynaPlanModel.normalize(managed.plan)].features[feature];
   const ov = currentUser.featureOverrides || {};
   if (ov[feature] === true)  return true;
   if (ov[feature] === false) return false;
@@ -24766,9 +24768,17 @@ function renderPricing() {
   const grid = document.getElementById('pricing-grid');
   if (!grid) return;
   grid.dir = 'rtl';
-  grid.innerHTML = '<p role="status" style="grid-column:1/-1">החבילות בהכנה. מחירים וספק סליקה טרם אושרו; אין חיוב אוטומטי.</p>' + PLAN_ORDER.map(p => {
-    const pm = PLAN_META[p];
-    return `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">${escHtml(pm.label)}</h2><p>${p==='free'?'ללא תשלום':'מחיר יפורסם לאחר אישור'}</p><div>${FEATURE_DEFS.map(f=>`<p>${planFeatures[p]?.[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('')}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">הרכישה טרם נפתחה</button></section>`;
+  const model = typeof FaynaPlanModel !== 'undefined' ? FaynaPlanModel : null;
+  if (!model) { grid.textContent='טוען את מודל החבילות…'; return; }
+  const annual = _billCycle === 'yearly';
+  const money = value => new Intl.NumberFormat('he-IL',{style:'currency',currency:model.currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(value/100);
+  const trial = '<section class="price-card" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">14 ימי ניסיון ב־Pro</h2><p>למשתמשים חדשים זכאים, ללא כרטיס אשראי. בסיום עוברים למסלול חינמי ללא חיוב אוטומטי וללא מחיקת נתונים.</p><p>מודל החבילות והמחירים מוצעים לבדיקה. הניסיון טרם נפתח לציבור והרכישה אינה פעילה.</p></section>';
+  grid.innerHTML = trial + Object.entries(model.plans).map(([id,p]) => {
+    const amount = model.price(id,annual?'yearly':'monthly');
+    const price = id==='free' ? 'ללא תשלום' : money(amount)+(annual?' לשנה':' לחודש');
+    const period = annual && id!=='free' ? `<p>${money(amount/12)} לחודש בממוצע · תשלום שנתי אחד</p>` : '';
+    const features = FEATURE_DEFS.map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
+    return `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}עד ${p.accounts} חשבונות · עד ${p.newTradesPerMonth.toLocaleString('he-IL')} עסקאות חדשות בחודש</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">${id==='free'?'מסלול ההמשך לאחר הניסיון':'הרכישה טרם נפתחה'}</button></section>`;
   }).join('');
   renderMySub();
 }
@@ -24777,9 +24787,14 @@ function renderMySub() {
   if (!el) return;
   el.style.display = currentUser?.uid ? 'block' : 'none';
   if (!currentUser?.uid) return;
-  const label = PLAN_META[_normPlan(currentUser.plan)]?.label || currentUser.plan;
+  const server = typeof FaynaSubscriptions !== 'undefined' ? FaynaSubscriptions.statusFor(currentUser.uid) : null;
+  const label = server ? (FaynaPlanModel.plans[FaynaPlanModel.normalize(server.plan)]?.label || server.plan) : PLAN_META[_normPlan(currentUser.plan)]?.label || currentUser.plan;
+  const status = server?.status==='trialing'
+    ? `תקופת ניסיון: נותרו ${server.trialDaysRemaining} ימים. מסתיימת ב־${new Date(server.trialEndsAt).toLocaleDateString('he-IL')}. בסיום מעבר לחינם ללא חיוב.`
+    : server?.status==='trial_expired' ? 'תקופת הניסיון הסתיימה. המסלול כעת חינמי; הנתונים נשמרו ולא בוצע חיוב.'
+    : 'הזכאות הקיימת נשמרת בשלב ההכנה. לא הוגדר חיוב חדש או חידוש אוטומטי.';
   el.dir = 'rtl';
-  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>הזכאות הקיימת נשמרת בשלב ההכנה. לא הוגדר חיוב חדש או חידוש אוטומטי.</p><p>תנאי המעבר למשתמשים קיימים טרם נקבעו. אין צורך להזין פרטי תשלום.</p><button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p></section>`;
+  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>${escHtml(status)}</p><p>משתמשים קיימים אינם מועברים לניסיון או למסלול מצומצם ללא מדיניות מעבר מאושרת.</p><button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.startTrial()">בדיקת זכאות לניסיון של 14 יום</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p></section>`;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -25564,6 +25579,12 @@ const PLAN_LIMITS = {
 };
 function _planLimits() {
   if (currentUser?.isAdmin) return PLAN_LIMITS.premium;
+  const managed = typeof FaynaSubscriptions !== 'undefined' ? FaynaSubscriptions.statusFor(currentUser?.uid) : null;
+  if (managed?.source === 'managed') {
+    const limits=FaynaPlanModel.plans[FaynaPlanModel.normalize(managed.plan)];
+    // Monthly intake is a separate server quota, never a cap on saved history.
+    return {accounts:limits.accounts,trades:Infinity,ai:false};
+  }
   return PLAN_LIMITS[_normPlan(currentUser?.plan)] || PLAN_LIMITS.free;
 }
 function checkLimit(kind, currentCount) {
@@ -26675,6 +26696,7 @@ function workspaceIcons(){const paths={overview:'M3 10 12 3l9 7M5 9v12h14V9M9 21
 document.addEventListener('DOMContentLoaded',workspaceInit);
 
 </script>
+<script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
 </body>
 </html>

@@ -1,20 +1,21 @@
 'use strict';
-// No provider SDK, secret, checkout URL, or activation switch exists in this release.
-const PLANS = Object.freeze(['free', 'basic', 'pro', 'premium']);
-function snapshot(user, managed) {
+const model = require('./plan-model.js');
+const PLANS = Object.freeze(Object.keys(model.plans));
+function snapshot(user, managed, now=Date.now()) {
+  const access = model.entitlement(managed,user.plan,now);
   return {
-    plan: managed?.plan || user.plan || 'free',
-    source: managed ? 'managed' : 'legacy',
-    status: managed?.status || 'legacy_preserved',
-    billingEnabled: false,
-    cancellationRequest: managed?.cancellationRequest || null,
-    // Legacy dates are informational; no migration or access mutation is performed.
-    currentPeriodEnd: managed?.currentPeriodEnd?.toMillis?.() || null,
+    ...access,
+    // Preserve the old API value for existing lifetime profiles; no legacy migration.
+    plan: managed ? access.plan : user.plan || 'free',
+    billingEnabled:false,
+    serverNow:now,
+    policyVersion:model.version,
+    trialDays:model.trialDays,
+    cancellationRequest:managed?.cancellationRequest || null,
+    currentPeriodEnd:managed?.currentPeriodEnd?.toMillis?.() || (typeof managed?.currentPeriodEnd==='number'?managed.currentPeriodEnd:null),
   };
 }
 function validateAction(action) {
-  if (!['status', 'requestCancellation', 'checkout'].includes(action)) {
-    throw new Error('invalid_action');
-  }
+  if (!['status','requestCancellation','checkout','startTrial'].includes(action)) throw new Error('invalid_action');
 }
-module.exports = { PLANS, snapshot, validateAction };
+module.exports = { PLANS,snapshot,validateAction };
