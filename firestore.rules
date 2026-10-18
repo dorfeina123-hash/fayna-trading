@@ -65,7 +65,12 @@ service cloud.firestore {
                          && request.resource.data.isAdmin == resource.data.isAdmin
                          && request.resource.data.plan    == resource.data.plan
                          && request.resource.data.status  == resource.data.status
-                         && request.resource.data.email   == resource.data.email );
+                         && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+                           'isAdmin', 'plan', 'status', 'email', 'planCycle', 'planExpiresAt',
+                           'planStatus', 'cancelAtPeriodEnd', 'subscriptionPlan',
+                           'subscriptionStatus', 'paymentStatus', 'refRewardsGranted',
+                           'providerCustomerId', 'providerSubscriptionId'
+                         ]) );
 
       allow delete: if isAdmin();
     }
@@ -93,6 +98,18 @@ service cloud.firestore {
     // ── admin-only collections ──
     match /adminNotes/{id} { allow read, write: if isAdmin(); }
     match /adminLogs/{id}  { allow read, write: if isAdmin(); }
+
+    // Billing collections are server-owned. Even browser admin sessions cannot write.
+    match /subscriptions/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+    match /subscriptionCancellationRequests/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+    match /billingEvents/{id} { allow read, write: if false; }
+    match /billingOperations/{id} { allow read, write: if false; }
 
     // ── deny everything not explicitly allowed above ──
     match /{document=**} { allow read, write: if false; }
