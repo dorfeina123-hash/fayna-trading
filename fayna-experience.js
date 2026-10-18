@@ -10,6 +10,12 @@
     authScreen.scrollTop=0;
     document.getElementById(tab==='register'?'reg-name':'login-email')?.focus();
   }
+  function requestEntry(tab='login'){
+    if(typeof _siteEntryRequested!=='undefined')_siteEntryRequested=true;
+    const ready=typeof currentUser!=='undefined' && currentUser?.uid && currentUser.status!=='blocked' && typeof auth!=='undefined' && auth.currentUser?.uid===currentUser.uid;
+    if(ready && typeof showApp==='function'){showApp();return;}
+    openAuth(tab);
+  }
   function openLanding(){
     if(!authScreen)return;
     authScreen.dataset.fyView='landing';authScreen.scrollTop=0;
@@ -24,7 +30,7 @@
   document.addEventListener('click',event=>{
     const target=event.target.closest('[data-fy-auth],[data-fy-back],[data-fy-anchor],[data-fy-setup]');
     if(!target)return;
-    if(target.hasAttribute('data-fy-auth')){event.preventDefault();openAuth(target.dataset.fyAuth);}
+    if(target.hasAttribute('data-fy-auth')){event.preventDefault();requestEntry(target.dataset.fyAuth);}
     else if(target.hasAttribute('data-fy-back')){event.preventDefault();openLanding();}
     else if(target.hasAttribute('data-fy-anchor')){event.preventDefault();document.getElementById(target.dataset.fyAnchor)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
     else if(target.dataset.fySetup==='account'){if(typeof addAccount==='function')addAccount();}
@@ -36,5 +42,5 @@
     const el=document.getElementById('fy-price-'+id),price=model.plans[id]?.monthlyMinor;
     if(el&&Number.isSafeInteger(price))el.textContent=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(price/100);
   }
-  window.FaynaExperience=Object.freeze({openAuth,openLanding,onboarding});
+  window.FaynaExperience=Object.freeze({openAuth,openLanding,requestEntry,onboarding});
 })();
