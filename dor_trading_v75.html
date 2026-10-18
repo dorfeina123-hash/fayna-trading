@@ -6587,6 +6587,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- v20: UNIFIED PAYMENTS SECTION -->
+  <p role="note" style="padding:12px;border:1px solid var(--border2);border-radius:8px;color:var(--t1)">חיבור הסליקה בהכנה: ההגדרות והקישורים הישנים נשמרו לצורך בדיקה. שמירת קישור כאן אינה מפעילה גבייה ואינה מעדכנת זכאות. החבילות החדשות יופעלו דרך שרת מאובטח לאחר בחירת ספק ואישור המחירים.</p>
   <div class="admin-section">
     <div class="admin-section-title"><div class="dot" style="background:#7295b8"></div>💳 תשלומים וסליקה</div>
 
@@ -24780,7 +24781,7 @@ function renderPricing() {
     const price = id==='free' ? 'ללא תשלום' : money(amount)+(annual?' לשנה':' לחודש');
     const period = annual && id!=='free' ? `<p>${money(amount/12)} לחודש בממוצע · תשלום שנתי אחד</p>` : '';
     const features = FEATURE_DEFS.filter(f=>f.key!=='multi_accounts').map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
-    return `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">${id==='free'?'מסלול ההמשך לאחר הניסיון':'הרכישה טרם נפתחה'}</button></section>`;
+    return `<section class="price-card${id==='unlimited'?' pop':''}" style="--pc:var(--ac);color:var(--t1);font-size:14px;line-height:1.6">${id==='unlimited'?'<div class="pc-badge">לניהול מספר חשבונות</div>':''}<h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">בחר ${escHtml(p.label)}</button><p style="font-size:12px;color:var(--t2)">בחירת חבילה תיפתח לאחר חיבור ספק הסליקה ואישור המחיר.</p></section>`;
   }).join('');
   renderMySub();
 }
@@ -24795,8 +24796,10 @@ function renderMySub() {
     ? `תקופת ניסיון: נותרו ${server.trialDaysRemaining} ימים. מסתיימת ב־${new Date(server.trialEndsAt).toLocaleDateString('he-IL')}. בסיום מעבר לחינם ללא חיוב.`
     : server?.status==='trial_expired' ? 'תקופת הניסיון הסתיימה. המסלול כעת חינמי; הנתונים נשמרו ולא בוצע חיוב.'
     : 'הזכאות הקיימת נשמרת בשלב ההכנה. לא הוגדר חיוב חדש או חידוש אוטומטי.';
+  const legacyEnd = currentUser.planExpiresAt?.toDate?.();
+  const legacyInfo = !server && legacyEnd && Number.isFinite(legacyEnd.getTime()) ? 'תאריך התוקף הרשום: '+legacyEnd.toLocaleDateString('he-IL')+(currentUser.planCycle==='reward'?' · זכאות מהפניות':'') : '';
   el.dir = 'rtl';
-  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>${escHtml(status)}</p><p>משתמשים קיימים אינם מועברים לניסיון או למסלול מצומצם ללא מדיניות מעבר מאושרת.</p><button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.startTrial()">בדיקת זכאות לניסיון של 14 יום</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p></section>`;
+  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>${escHtml(status)}</p>${legacyInfo?`<p>${escHtml(legacyInfo)}</p>`:''}<p>משתמשים קיימים אינם מועברים לניסיון או למסלול מצומצם ללא מדיניות מעבר מאושרת.</p><button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.startTrial()">בדיקת זכאות לניסיון של 14 יום</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p></section>`;
 }
 
 /* ══════════════════════════════════════════════════════════════════
