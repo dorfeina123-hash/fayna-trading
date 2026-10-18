@@ -2342,7 +2342,8 @@ html[data-fayna-theme] #recur-manager [style*="color:#c97272"]{color:var(--t1)!i
 html[data-fayna-theme] :is(#exp-total,#cx-total){font-size:14px!important;color:var(--t2)!important}
 html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;font-size:13px}
 @media(max-width:650px){html[data-fayna-theme] #recur-manager>div{padding:14px!important}html[data-fayna-theme] .tp .tbl td{padding:12px 8px}html[data-fayna-theme] :is(#efbar,#efbar2){padding:9px;gap:5px}html[data-fayna-theme] .tp .fb{padding:7px 9px}}
-</style><style id="ticker-motion-v68">html[data-fayna-theme] #fx-ticker.motion-enabled #fx-ticker-track{animation:fxTickerScroll var(--fx-dur,240s) linear infinite!important;animation-play-state:running!important}html[data-fayna-theme] #fx-ticker.locked #fx-ticker-track{animation-play-state:paused!important}</style><style id="logo-v69">img[src*="fayna-logo-gold.png"]{object-fit:contain!important;border-radius:8px!important}#auth-screen img[src*="fayna-logo-gold.png"]{width:160px!important;height:160px!important;border:0!important}.topnav img[src*="fayna-logo-gold.png"]{width:52px!important;height:52px!important}#wb-cover-img{height:100%!important;max-width:100%;object-fit:contain!important}</style></head>
+</style><style id="ticker-motion-v68">html[data-fayna-theme] #fx-ticker.motion-enabled #fx-ticker-track{animation:fxTickerScroll var(--fx-dur,240s) linear infinite!important;animation-play-state:running!important}html[data-fayna-theme] #fx-ticker.locked #fx-ticker-track{animation-play-state:paused!important}</style><style id="logo-v69">img[src*="fayna-logo-gold.png"]{object-fit:contain!important;border-radius:8px!important}#auth-screen img[src*="fayna-logo-gold.png"]{width:160px!important;height:160px!important;border:0!important}.topnav img[src*="fayna-logo-gold.png"]{width:52px!important;height:52px!important}#wb-cover-img{height:100%!important;max-width:100%;object-fit:contain!important}</style><link rel="stylesheet" href="fayna-experience.css">
+</head>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
 <div id="toast-container"></div>
@@ -2350,8 +2351,24 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
 <!-- ═══════════════════════════════════════════
      AUTH SCREEN — Login / Register
 ════════════════════════════════════════════ -->
-<div id="auth-screen">
+<div id="auth-screen" data-fy-view="landing">
+<section class="fy-public" aria-label="ברוכים הבאים ל־Fayna Trading">
+ <header class="fy-public-header fy-wrap"><a class="fy-wordmark" href="#" data-fy-anchor="fy-public-top" aria-label="Fayna Trading — ראש העמוד">Fayna <span>Trading</span></a><nav class="fy-public-nav" aria-label="היכרות עם המערכת"><a href="#fy-how" data-fy-anchor="fy-how">איך זה עובד</a><a href="#fy-public-plans" data-fy-anchor="fy-public-plans">מסלולים</a><a href="#fy-public-faq" data-fy-anchor="fy-public-faq">שאלות נפוצות</a></nav><button id="fy-public-login" type="button" class="fy-button fy-button-secondary" data-fy-auth="login">כניסה למערכת ←</button></header>
+ <div class="fy-wrap">
+  <section class="fy-hero" id="fy-public-top"><div class="fy-hero-copy"><p class="fy-eyebrow">המסחר שלך. במקום אחד.</p><h1>יותר בהירות.<br><span>יותר שליטה במסחר.</span></h1><p class="fy-intro">מתעדים עסקאות, משווים ביצועים ומנהלים את חשבונות המסחר שלך — ביומן אחד, בעברית מלאה.</p><div class="fy-actions"><button type="button" class="fy-button" data-fy-auth="register">מתחילים כאן ←</button><a class="fy-button fy-button-secondary" href="#fy-how" data-fy-anchor="fy-how">קודם רוצה להכיר ↓</a></div><p class="fy-caption">ניסיון של 14 יום במסגרת ההשקה · ההפעלה בהתאם לזכאות בחשבון.<br>לא מתבצע חיוב בעת הרשמה או לחיצה בעמוד זה.</p></div>
+   <div class="fy-preview" role="img" aria-label="המחשת יומן מסחר עם נתונים בדיוניים: רווח נקי 2840 דולר, שיעור הצלחה 64.3 אחוז. אלו אינם נתוני החשבון שלך."><div class="fy-preview-top"><span>Fayna Trading / סקירה</span><span>נתונים להמחשה בלבד</span></div><h2>התמונה הגדולה. במבט אחד.</h2><div class="fy-preview-metrics"><div><span>רווח נקי החודש</span><strong dir="ltr">+$2,840</strong></div><div><span>אחוז הצלחה</span><strong dir="ltr">64.3%</strong></div></div><div class="fy-preview-bars" aria-hidden="true"><span style="height:20%"></span><span style="height:34%"></span><span style="height:28%"></span><span style="height:51%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:64%"></span><span style="height:90%"></span></div><p class="fy-caption">חשבון מסחר ברור לכל עסקה · יומן · ביצועים · לוח שנה</p></div>
+  </section>
+  <section class="fy-section" id="fy-how"><div class="fy-section-heading"><p class="fy-eyebrow">מתחילים מסודר</p><h2>שלושה צעדים. תמונה אחת ברורה.</h2></div><div class="fy-steps"><article class="fy-step"><span>01 / החשבון שלך</span><h3>מגדירים חשבון מסחר</h3><p>מפרידים בין חשבונות המסחר ומשייכים כל עסקה לחשבון המתאים.</p></article><article class="fy-step"><span>02 / היומן שלך</span><h3>מוסיפים עסקאות</h3><p>מייבאים קובץ נתמך או מוסיפים עסקאות ידנית, עם חשבון יעד ברור.</p></article><article class="fy-step"><span>03 / התמונה שלך</span><h3>סוקרים ביצועים</h3><p>רואים תוצאות, עמלות וימי מסחר כדי להבין את ההיסטוריה שתיעדת.</p></article></div></section>
+  <section class="fy-section" id="fy-public-plans"><div class="fy-section-heading"><p class="fy-eyebrow">אותם כלים. היקף החשבונות שמתאים לך.</p><h2>שתי חבילות. כל האפשרויות פתוחות.</h2><p>14 ימי ניסיון עם כל הכלים, בכפוף לזכאות ולהפעלת הניסיון בחשבון.</p></div><div class="fy-plans"><article class="fy-plan"><h3>Fayna One</h3><p class="fy-price"><bdi id="fy-price-single">$14.90</bdi> <small>לחודש</small></p><p>חשבון מסחר פעיל אחד</p><ul><li>כל הכלים הזמינים במערכת</li><li>ללא הגבלה על מספר העסקאות</li><li>היסטוריית חשבונות בארכיון נשמרת</li></ul><button type="button" class="fy-button fy-button-secondary" data-fy-auth="register">הרשמה ופרטי הזכאות ←</button></article><article class="fy-plan"><h3>Fayna Unlimited</h3><p class="fy-price"><bdi id="fy-price-unlimited">$24.90</bdi> <small>לחודש</small></p><p>חשבונות מסחר פעילים ללא הגבלה</p><ul><li>כל הכלים הזמינים במערכת</li><li>ללא הגבלה על מספר העסקאות</li><li>ניהול חשבונות באותה סביבת עבודה</li></ul><button type="button" class="fy-button" data-fy-auth="register">הרשמה ופרטי הזכאות ←</button></article></div><p class="fy-caption">המחירים מוצגים בדולר. בסליקה העתידית החיוב יהיה בשקלים, והסכום והשער יוצגו לפני אישור.<br>הסליקה עדיין בהכנה. לחצני ההרשמה אינם רכישה ואינם יוצרים מנוי בתשלום.</p></section>
+  <section class="fy-section" id="fy-public-faq"><div class="fy-section-heading"><h2>לפני שמתחילים</h2></div><div class="fy-faq"><details><summary>כבר יש לי חשבון ב־Fayna. מה עושים?</summary><p>נכנסים דרך „כניסה למערכת” עם פרטי החשבון הקיימים. ההיסטוריה והזכויות הקיימות אינן משתנות בעקבות עיצוב האתר.</p></details><details><summary>מה ההבדל בין החבילות?</summary><p>מספר חשבונות המסחר הפעילים: אחד ב־One וללא הגבלה ב־Unlimited. בשתיהן אותם כלים זמינים וללא מגבלת מספר עסקאות.</p></details><details><summary>האם מתבצע חיוב אחרי ההרשמה?</summary><p>לא. סליקה אמיתית עדיין אינה מופעלת. ניסיון נפתח רק בהתאם לזכאות ולהפעלתו בחשבון, ולא מעצם יצירת המשתמש. לא יבוצע חיוב ללא אישור תשלום מפורש.</p></details><details><summary>מה קורה להיסטוריה בחשבון שבארכיון?</summary><p>העסקאות נשארות משויכות לחשבון וזמינות לצפייה. חשבון שבארכיון אינו יעד לעסקאות חדשות עד להפעלתו בהתאם לחבילה.</p></details></div></section>
+  <footer class="fy-public-footer"><span>Fayna Trading · Fayna Group</span><a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a><span>תיעוד וניתוח ביצועים · אין הבטחה לתשואה</span></footer>
+ </div>
+</section>
+
   <div class="auth-box">
+    <button type="button" class="fy-auth-back" data-fy-back>→ חזרה להיכרות עם Fayna</button>
+    <h1 class="fy-auth-title">טוב לראות אותך כאן.</h1>
+    <p class="fy-auth-copy">היומן, החשבונות והביצועים שלך — במקום אחד.</p>
     <div class="auth-logo" style="flex-direction:column;gap:6px">
       <img src="fayna-logo-gold.png" alt="Fayna" style="width:100px;height:100px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,255,255,0.1)"
            onerror="if(!this._h){this._h=1;this.src='https://dorfeina123-hash.github.io/fayna-trading/fayna-logo-gold.png';}else{this.style.display='none';}" loading="lazy" decoding="async">
@@ -11227,6 +11244,7 @@ function renderHome(){
   }).join('');
   root.innerHTML=`
     <header class="home-heading"><div><p class="home-eyebrow">FAYNA / HOME</p><h1>כל המסחר שלך. במבט אחד.</h1><p>תמונת מצב קצרה, והפעולה הבאה שלך.</p></div><button type="button" class="home-primary" data-home-action="add">＋ עסקה חדשה</button></header>
+    ${window.FaynaExperience?.onboarding(list,all)||''}
     <div class="home-filter"><div class="home-period" role="group" aria-label="תקופת הסיכום">${[['today','היום'],['month','החודש'],['all','הכל']].map(([id,label])=>'<button type="button" data-home-period="'+id+'" aria-pressed="'+(_homePeriod===id)+'">'+label+'</button>').join('')}</div>${accountSelector}<span class="home-scope">לפי העסקאות הרשומות ביומן · USD</span></div>
     <div class="home-top-grid"><section class="home-card home-performance"><div class="home-card-head"><h2>רווח והפסד נטו</h2><span>${esc(periodTitle)}</span></div><div class="home-total ${tone(model.net)}" dir="ltr">${_homeMoney(model.net)}</div><p class="home-muted">אחרי עמלות מסחר · לפני הוצאות ומשיכות</p><div class="home-trend ${tone(model.net)}">${model.count?_homeTrend(model.series):'<div class="home-empty-chart">העסקה הראשונה שלך תתחיל את התמונה.</div>'}</div><div class="home-chart-labels"><span>${esc(model.rows[0]?.date||model.start||'—')}</span><span>${esc(model.end)}</span></div></section>
     <section class="home-card home-summary"><div class="home-card-head"><h2>המספרים החשובים</h2><span>${esc(periodTitle)}</span></div><div class="home-stat"><span>רשומות ביומן</span><strong>${model.count}</strong></div><div class="home-stat"><span>הצלחה בעסקאות מפורטות</span><strong>${model.winRate===null?'—':model.winRate.toFixed(0)+'%'}</strong></div><div class="home-stat"><span>ירידה מרבית מהשיא</span><strong dir="ltr">${model.count?_homeMoney(-model.drawdown):'—'}</strong></div><div class="home-stat"><span>עמלות מסחר</span><strong dir="ltr">$${Number.isFinite(fees)?fees.toFixed(2):'—'}</strong></div><button type="button" class="home-link" data-home-nav="stats">לניתוח הביצועים ←</button></section></div>
@@ -16587,7 +16605,7 @@ function _showAuthScreen(errorMsg) {
   if (btn) { btn.disabled=false; btn.textContent='כניסה למערכת'; }
   const rbtn = document.getElementById('reg-btn');
   if (rbtn) { rbtn.disabled=false; rbtn.textContent='הרשמה חינמית'; }
-  if (errorMsg) { const m=document.getElementById('login-msg'); if(m) showMsg(m,'err',errorMsg); }
+  if (errorMsg) { window.FaynaExperience?.openAuth('login'); const m=document.getElementById('login-msg'); if(m) showMsg(m,'err',errorMsg); }
   try { loadPlanVisibility(); } catch(e) {}
   try { loadContactSettings(); } catch(e) {}
 }
@@ -19037,6 +19055,7 @@ async function sendRegistrationEmail(user) {
 //  UTILS
 // ──────────────────────────────────────────────────────────────
 function authShowTab(tab) {
+  document.getElementById('auth-screen').dataset.fyView='auth';
   document.getElementById('auth-login-form').style.display    = tab==='login'    ? '' : 'none';
   document.getElementById('auth-register-form').style.display = tab==='register' ? '' : 'none';
   document.getElementById('tab-login').classList.toggle('active',    tab==='login');
@@ -26767,5 +26786,6 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="functions/account-policy.js"></script>
 <script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
+<script src="fayna-experience.js"></script>
 </body>
 </html>
