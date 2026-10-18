@@ -16572,11 +16572,8 @@ let _authInitialized = false;
 let _registering  = false; // prevents onAuthStateChanged firing during registration
 let _manualLogin  = false; // set when user explicitly presses login/google button → skip welcome screen
 
-function initAuth() {
-  if (_authInitialized) return;
-  _authInitialized = true;
-
-  auth.onAuthStateChanged(async (fbUser) => {
+let _authProfileTask = null;
+async function _handleAuthUser(fbUser) {
     if (_registering) return;
     if (fbUser) {
       // Timeout — if Firestore hangs, release the user after 8 seconds
@@ -16592,7 +16589,7 @@ function initAuth() {
             currentUser = { ...adminData, uid: fbUser.uid };
             loadSettingsFromFirestore().catch(()=>{});
             /* Restored profiles stay on welcome until the user requests entry. */
-            _manualLogin = false; if (_siteEntryRequested) showApp();
+            _manualLogin = false; if (_siteEntryRequested && document.getElementById('auth-screen')?.style.display !== 'none') showApp();
             return;
           }
           await auth.signOut();
@@ -16607,7 +16604,7 @@ function initAuth() {
         }
         loadSettingsFromFirestore().catch(()=>{});
         /* Restored profiles stay on welcome until the user requests entry. */
-        _manualLogin = false; if (_siteEntryRequested) showApp();
+        _manualLogin = false; if (_siteEntryRequested && document.getElementById('auth-screen')?.style.display !== 'none') showApp();
       } catch(e) {
         clearTimeout(_fsTimer);
         console.error('Auth state error:', e);
@@ -16617,7 +16614,19 @@ function initAuth() {
       currentUser = null;
       _showAuthScreen('');
     }
-  });
+}
+async function _ensureAuthProfile(fbUser) {
+  if (!fbUser) return _handleAuthUser(null);
+  if (_authProfileTask?.uid === fbUser.uid) return _authProfileTask.promise;
+  const task = {uid:fbUser.uid,promise:_handleAuthUser(fbUser)};
+  _authProfileTask = task;
+  try { return await task.promise; }
+  finally { if (_authProfileTask === task) _authProfileTask = null; }
+}
+function initAuth() {
+  if (_authInitialized) return;
+  _authInitialized = true;
+  auth.onAuthStateChanged(_ensureAuthProfile);
 }
 
 function _showAuthScreen(errorMsg) {
@@ -16843,8 +16852,8 @@ async function doLogin(ev) {
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION);
     _manualLogin = true; // user pressed login → skip welcome screen
-    await auth.signInWithEmailAndPassword(email, pass);
-    clearTimeout(_loginTimer);
+    _siteEntryRequested = true;
+    const credential = await auth.signInWithEmailAndPassword(email, pass);
     if (remember) {
       localStorage.setItem(REMEMBER_KEY, email);
       localStorage.setItem('ft_stay_signed_in', '1');
@@ -16852,7 +16861,11 @@ async function doLogin(ev) {
       localStorage.removeItem(REMEMBER_KEY);
       localStorage.removeItem('ft_stay_signed_in');
     }
-    // onAuthStateChanged handles the rest
+    // Firebase may not emit another auth event when signing into the same user.
+    // Reuse an in-flight profile check, or explicitly complete the validated session.
+    await _ensureAuthProfile(credential.user);
+    clearTimeout(_loginTimer);
+    btn.disabled=false; btn.textContent='כניסה למערכת';
   } catch(e) {
     clearTimeout(_loginTimer);
     btn.disabled=false; btn.textContent='כניסה למערכת';

@@ -1,10 +1,11 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const start=html.indexOf('function initAuth() {'),end=html.indexOf('\n}',start);
+function source(name){const a=html.indexOf('function '+name+'('),b=html.indexOf('\n}',a);return (html.slice(a-6,a)==='async '?'async ':'')+html.slice(a,b+2);}
 function harness(requested){
  let callback,entries=0,errors=[];
- const ctx={setTimeout,clearTimeout,console,ADMIN_EMAIL:'admin@example.test',auth:{onAuthStateChanged:fn=>callback=fn,signOut:async()=>{}},db:{collection:()=>({doc:()=>({get:async()=>({exists:true,data:()=>({name:'Trader',status:'active',plan:'pro'})})})})},loadSettingsFromFirestore:()=>Promise.resolve(),showApp:()=>entries++,_showAuthScreen:e=>errors.push(e)};
- vm.createContext(ctx);vm.runInContext('let _siteEntryRequested='+requested+';let _authInitialized=false,_registering=false,_manualLogin=false,currentUser=null;'+html.slice(start,end+2)+';initAuth();',ctx);
+ const ctx={setTimeout,clearTimeout,console,document:{getElementById:()=>({style:{display:'flex'}})},ADMIN_EMAIL:'admin@example.test',auth:{onAuthStateChanged:fn=>callback=fn,signOut:async()=>{}},db:{collection:()=>({doc:()=>({get:async()=>({exists:true,data:()=>({name:'Trader',status:'active',plan:'pro'})})})})},loadSettingsFromFirestore:()=>Promise.resolve(),showApp:()=>entries++,_showAuthScreen:e=>errors.push(e)};
+ vm.createContext(ctx);vm.runInContext('let _authProfileTask=null;let _siteEntryRequested='+requested+';let _authInitialized=false,_registering=false,_manualLogin=false,currentUser=null;'+source('_handleAuthUser')+source('_ensureAuthProfile')+html.slice(start,end+2)+';initAuth();',ctx);
  return {run:s=>vm.runInContext(s,ctx),callback:()=>callback({uid:'trader',email:'trader@example.test'}),entries:()=>entries,errors};
 }
 test('restored Firebase session loads profile but remains on public opening',async()=>{
