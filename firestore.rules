@@ -31,6 +31,10 @@ service cloud.firestore {
       return request.auth != null
           && request.auth.token.email == 'dorfeina123@gmail.com';
     }
+    function managedTrading(uid) {
+      return exists(/databases/$(database)/documents/subscriptions/$(uid))
+          || exists(/databases/$(database)/documents/trialGrants/$(uid));
+    }
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
 
@@ -69,8 +73,9 @@ service cloud.firestore {
                            'isAdmin', 'plan', 'status', 'email', 'planCycle', 'planExpiresAt',
                            'planStatus', 'cancelAtPeriodEnd', 'subscriptionPlan',
                            'subscriptionStatus', 'paymentStatus', 'refRewardsGranted',
-                           'providerCustomerId', 'providerSubscriptionId'
-                         ]) );
+                           'providerCustomerId', 'providerSubscriptionId', 'td_workspaceRevision'
+                         ])
+                         && (!managedTrading(uid) || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['td_accounts','td_tradesList'])) );
 
       allow delete: if isAdmin();
     }
@@ -109,6 +114,7 @@ service cloud.firestore {
       allow write: if false;
     }
     match /trialGrants/{uid} { allow read, write: if false; }
+    match /billingQuotes/{id} { allow read, write: if false; }
     match /billingEvents/{id} { allow read, write: if false; }
     match /billingOperations/{id} { allow read, write: if false; }
 

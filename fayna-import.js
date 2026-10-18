@@ -762,7 +762,7 @@ function fmtMoney(n) {
 
 /* ── מסך 1: בחירת פורמט + קובץ ── */
 function screenPick() {
-  const accs = (typeof accounts !== 'undefined' && Array.isArray(accounts)) ? accounts : [];
+  const accs = (typeof accounts !== 'undefined' && Array.isArray(accounts)) ? accounts.filter(a=>a.active!==false && a.archived!==true) : [];
   const cards = FORMATS.filter(f => f.id !== 'generic').concat(FORMATS.filter(f => f.id === 'generic'))
     .map(f => `<button type="button" class="imp-fmt${UI.fmt === f.id ? ' sel' : ''}" data-fmt="${esc(f.id)}">
         <div class="imp-fmt-t">${esc(f.label)}</div>
@@ -796,10 +796,10 @@ function screenPick() {
     <div class="imp-card">
       <div class="imp-step">חשבון יעד ביומן</div>
       <select id="imp-acct" class="imp-sel">
-        <option value="">— ללא שיוך לחשבון —</option>
+        <option value="">— בחר חשבון מסחר —</option>
         ${accs.map(a => `<option value="${esc(a.id)}"${UI.acct === a.id ? ' selected' : ''}>${esc(a.name || a.id)}</option>`).join('')}
       </select>
-      <div class="imp-note">${accs.length ? 'העסקאות ישויכו לחשבון שנבחר, כך שהאנליטיקה לפי חשבון תעבוד.' : 'אין עדיין חשבונות. אפשר לייבא בלי שיוך ולהוסיף חשבון מאוחר יותר.'}</div>
+      <div class="imp-note">${accs.length ? 'העסקאות ישויכו לחשבון שנבחר, כך שהאנליטיקה לפי חשבון תעבוד.' : 'יש ליצור חשבון מסחר לפני אישור הייבוא.'}</div>
     </div>`;
 
   out().querySelectorAll('.imp-fmt').forEach(b => b.addEventListener('click', () => {
@@ -958,7 +958,8 @@ function screenPreview() {
 function commit() {
   if (!UI.fresh.length) return;
   const n = UI.fresh.length;
-  const acct = UI.acct || '';
+  const acct=typeof _requireTradeAccount==='function'?_requireTradeAccount(UI.acct):'';
+  if(!acct){toast('יש לבחור חשבון מסחר לפני הייבוא','error');return;}
   const batch = UI.fresh.map(t => {
     const c = Object.assign({}, t);
     if (acct) c.acct = acct;

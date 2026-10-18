@@ -4,6 +4,10 @@ const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const { getAuth } = require('firebase-admin/auth');
 const model = require('./plan-model.js');
+const accountPolicy=require('./account-policy.js');
+const {workspacePayload}=require('./workspace.cjs');
+const {fetchUsdRate,makeQuote}=require('./fx.cjs');
+const {randomUUID}=require('node:crypto');
 const { snapshot, validateAction } = require('./billing.cjs');
 initializeApp();
 const db = getFirestore();
@@ -27,6 +31,15 @@ exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async reque
     const created=Date.parse(record.metadata.creationTime);
     if (!Number.isFinite(created) || created < cutoff) throw new HttpsError('failed-precondition','הזכאות הקיימת נשמרת; מדיניות מעבר תוגדר בנפרד');
   }
+  let quote=null,quoteId=null;
+  if(action==='getQuote') {
+    if(request.data?.cycle!=='monthly' || !model.publicPlanIds.includes(request.data?.plan))throw new HttpsError('invalid-argument','חבילה או תקופה לא תקינות');
+    try {
+      const rate=await fetchUsdRate();
+      quote={...makeQuote(request.data.plan,model.price(request.data.plan,'monthly'),rate,Date.now()),merchantDisplayName:model.merchantDisplayName};
+      quoteId=randomUUID();
+    }catch(e){throw new HttpsError('unavailable','לא ניתן לקבל שער המרה מאומת כרגע. לא בוצע חיוב');}
+  }
   const userRef = db.doc(`users/${uid}`);
   const subRef = db.doc(`subscriptions/${uid}`);
   const grantRef = db.doc(`trialGrants/${uid}`);
@@ -34,6 +47,22 @@ exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async reque
     const [user, sub, grant] = await Promise.all([tx.get(userRef), tx.get(subRef),tx.get(grantRef)]);
     const managed=sub.exists?sub.data():grant.exists?{plan:'free',status:'free'}:undefined;
     if (!user.exists) throw new HttpsError('failed-precondition', 'פרופיל המשתמש חסר');
+    if(action==='getQuote') {
+      if(user.data().status==='blocked')throw new HttpsError('permission-denied','החשבון חסום');
+      tx.create(db.doc(`billingQuotes/${quoteId}`),{...quote,uid,policyVersion:model.version,status:'quoted'});
+      return {...quote,quoteId};
+    }
+    if (action === 'saveWorkspace') {
+      if (!managed || user.data().status==='blocked') throw new HttpsError('permission-denied','אין הרשאת שמירה');
+      const access=snapshot(user.data(),managed,now);
+      if(!Number.isSafeInteger(request.data.expectedRevision)||request.data.expectedRevision!==access.workspaceRevision)throw new HttpsError('aborted','הנתונים השתנו במכשיר אחר. יש לרענן לפני שמירה');
+      try {
+        const payload=workspacePayload(request.data.workspace);
+        accountPolicy.validateWorkspace(user.data(),payload,model.plans[model.normalize(access.plan)].accounts);
+        tx.set(userRef,{...payload,td_updatedAt:FieldValue.serverTimestamp(),td_workspaceRevision:access.workspaceRevision+1},{merge:true});
+      } catch (e) { throw new HttpsError('failed-precondition','יש לשייך כל עסקה חדשה לחשבון פעיל בחבילה שלך',{reason:e.code||e.message}); }
+      return {...access,workspaceRevision:access.workspaceRevision+1,saved:true};
+    }
     if (action === 'startTrial') {
       if (user.data().isAdmin || ['premium','lifetime'].includes(user.data().plan) || user.data().planExpiresAt) throw new HttpsError('failed-precondition','הזכאות הקיימת נשמרת');
       // One grant per UID. Repeat clicks return the existing state without resetting dates.

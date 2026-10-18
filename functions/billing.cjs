@@ -9,6 +9,7 @@ function snapshot(user, managed, now=Date.now()) {
     plan: managed ? access.plan : user.plan || 'free',
     billingEnabled:false,
     serverNow:now,
+    workspaceRevision:Number.isSafeInteger(user.td_workspaceRevision)?user.td_workspaceRevision:0,
     policyVersion:model.version,
     trialDays:model.trialDays,
     cancellationRequest:managed?.cancellationRequest || null,
@@ -16,6 +17,6 @@ function snapshot(user, managed, now=Date.now()) {
   };
 }
 function validateAction(action) {
-  if (!['status','requestCancellation','checkout','startTrial'].includes(action)) throw new Error('invalid_action');
+  if (!['status','requestCancellation','checkout','startTrial','saveWorkspace','getQuote'].includes(action)) throw new Error('invalid_action');
 }
 module.exports = { PLANS,snapshot,validateAction };

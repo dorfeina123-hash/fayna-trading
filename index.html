@@ -3962,6 +3962,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <div class="fr"><label>שעת כניסה</label><input type="time" id="at-time" step="1"></div>
     </div>
 
+    <div class="fr"><label for="at-acct">חשבון מסחר *</label><select id="at-acct" required></select></div>
     <!-- Row 2: symbol + qty + direction -->
     <div style="display:grid;grid-template-columns:1fr 80px;gap:8px">
       <div class="fr">
@@ -8235,6 +8236,7 @@ function openAddTrade() {
     const today = new Date().toISOString().slice(0,10);
     const now   = new Date().toTimeString().slice(0,5);
     const g = id => document.getElementById(id);
+    _populateTradeAccountSelect();
     g('at-date').value     = today;
     g('at-time').value     = now || '09:30';
     g('at-sym').value      = '';
@@ -8307,6 +8309,25 @@ function atCalcPnl() {
   } catch(err) { console.warn('atCalcPnl:', err); }
 }
 
+function _activeTradingAccounts() {
+  return FaynaAccountPolicy.active(accounts);
+}
+function _requireTradeAccount(requested) {
+  try { return FaynaAccountPolicy.target(accounts,requested,[...selectedAccounts]); }
+  catch(e) {
+    showToast(e.code==='create_trade_account'?'יש ליצור חשבון מסחר לפני הוספת עסקאות':'יש לבחור חשבון מסחר פעיל עבור העסקאות','error');
+    return '';
+  }
+}
+function _canCreateTradingAccount() {
+  return checkLimit('accounts',_activeTradingAccounts().length);
+}
+function _populateTradeAccountSelect() {
+  const el=document.getElementById('at-acct');if(!el)return;
+  el.innerHTML='<option value="">בחר חשבון מסחר</option>'+_activeTradingAccounts().map(a=>`<option value="${escHtml(a.id)}">${escHtml(a.name)}</option>`).join('');
+  try { el.value=FaynaAccountPolicy.target(accounts,null,[...selectedAccounts]); } catch(e) { el.value=''; }
+}
+
 function saveAddTrade() {
   try {
     const g    = id => document.getElementById(id);
@@ -8336,8 +8357,9 @@ function saveAddTrade() {
     // Manual commission override for this trade
     const manualComm = parseFloat(g('at-comm')?.value);
     if(!isNaN(manualComm) && manualComm >= 0) trade.commOverride = +manualComm.toFixed(2);
-    const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
-    if(selIds.length===1) trade.acct = selIds[0];
+    const accountId=_requireTradeAccount(g('at-acct')?.value);
+    if(!accountId)return;
+    trade.acct=accountId;
     tradesList.push(trade);
     renderAll(); saveData(); closeAddTrade();
     const net = +(pnl - tradeComm(trade)).toFixed(2);
@@ -8357,12 +8379,13 @@ function _mePopulateAcctSelect() {
   const sel = document.getElementById('me-acct');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">ללא שיוך</option>' +
-    accounts.map(a => `<option value="${a.id}">${escHtml(a.name)}${a.number?' #'+escHtml(a.number):''}</option>`).join('') +
+  sel.innerHTML = '<option value="">בחר חשבון מסחר</option>' +
+    _activeTradingAccounts().map(a => `<option value="${a.id}">${escHtml(a.name)}${a.number?' #'+escHtml(a.number):''}</option>`).join('') +
     '<option value="__new__">➕ תיק חדש (הקלד שם)</option>';
   const selIds = [...selectedAccounts].filter(id=>id!=='__all__');
   if (selIds.length===1) sel.value = selIds[0];
   else if (cur) sel.value = cur;
+  else if(_activeTradingAccounts().length===1)sel.value=_activeTradingAccounts()[0].id;
   meAcctSelectChange();
 }
 
@@ -8552,11 +8575,13 @@ function saveManualEntry() {
       const newName = (g('me-acct-new').value||'').trim();
       if (!newName) { showToast('נא להזין שם לתיק החדש','error'); return; }
       if (accounts.length >= 1 && !canUse('multi_accounts')) { showUpgradeModal('multi_accounts'); return; }
+      if(!_canCreateTradingAccount())return;
       const newAcct = _newAccountObject(newName, null);
       accounts.push(newAcct);
       saveAccounts(); renderAcctMenu();
       acct = newAcct.id;
     }
+    acct=_requireTradeAccount(acct);if(!acct)return;
     const trade = {
       sym: which ? which.toUpperCase() : '📝 סיכום יומי',
       qty: 0, buy: 0, sell: 0,
@@ -10194,7 +10219,7 @@ function _bizRenderList(elId, list, emptyHtml) {
         <div>${amtTxt}${info.label}${e.note?' — '+escHtml(e.note):''}</div>
         <div class="biz-tx-date">${fmtD(e.date)}</div>
       </div>
-      <button class="biz-tx-del" onclick="bizDeleteEvent('${e.id}')" title="מחק">✕</button>
+      <button class="biz-tx-del" onclick="bizDeleteEvent('${e.id}')" title="העבר חשבון לארכיון">✕</button>
     </div>`;
   }).join('');
 }
@@ -10563,7 +10588,7 @@ function renderAcctGrid() {
       <div class="acg-actions">
         <button onclick="closeAcctGrid();openAcctGoals('${a.id}')">🎯 יעדים</button>
         <button onclick="renameAccount('${a.id}').then(()=>renderAcctGrid())">✏️ שם</button>
-        <button onclick="deleteAccount('${a.id}').then(()=>renderAcctGrid())">🗑 מחק</button>
+        <button onclick="deleteAccount('${a.id}').then(()=>renderAcctGrid())">📁 ארכיון</button>
       </div>
     </div>`;
   }).join('');
@@ -13982,6 +14007,7 @@ function _parseRithmicCSV(text) {
 async function importCSV(inp){
   if (!canUse('import_csv')) { showUpgradeModal('import_csv'); inp.value=''; return; }
   const files=Array.from(inp.files);if(!files.length)return;
+  const importTarget=_requireTradeAccount(null);if(!importTarget){inp.value='';return;}
   inp.value='';
   if (files.some(f=>f.name.toLowerCase().endsWith('.xlsx'))) {
     try { await _ensureXlsxLoaded(); } catch(e) { showToast('טעינת ספריית XLSX נכשלה, נסה שוב','error'); }
@@ -14006,9 +14032,8 @@ async function importCSV(inp){
   // Process parsed trades list (shared by all format paths)
   function _commitTrades(nt, srcLabel) {
     if(nt.length){
-      const selIds=[...selectedAccounts].filter(id=>id!=='__all__');
-      const tagAcct=selIds.length===1?selIds[0]:null;
-      if(tagAcct)nt.forEach(t=>{t.acct=tagAcct;});
+      const tagAcct=_requireTradeAccount(importTarget);if(!tagAcct)return;
+      nt.forEach(t=>{t.acct=tagAcct;});
       tradesList=[...tradesList,...nt];
       totalImported+=nt.length;
     }
@@ -14146,8 +14171,11 @@ window.addEventListener('message', e => {
     return { sym: o.sym||o.symbol||'', qty: parseInt(o.qty)||1, buy: parseFloat(o.buy||o.buyPrice)||0, sell: parseFloat(o.sell||o.sellPrice)||0, pnl: pp(o.pnl||0), date, btime: t||'00:00:00', stime:'', dur: o.dur||o.duration||'' };
   }).filter(t => t.date);
   if (!nt.length) return;
+  const bridgeAccount=_requireTradeAccount(null);if(!bridgeAccount)return;
+  nt.forEach(t=>{t.acct=bridgeAccount;});
   tradesList = [...tradesList, ...nt];
   renderAll();
+  saveData();
   showToast('✅ ' + nt.length + ' עסקאות יובאו מהתוסף!', 'success');
 });
 
@@ -15014,7 +15042,7 @@ function renderRecurringManager() {
                 <div style="position:absolute;top:6px;left:8px;display:flex;gap:4px">
                   <button onclick="togglePauseRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid ${tmpl.paused?'rgba(61,153,112,.4)':'rgba(191,161,94,.35)'};border-radius:4px;background:${tmpl.paused?'rgba(61,153,112,.1)':'transparent'};color:${tmpl.paused?'#3d9970':'#bfa15e'};font-size:10px;cursor:pointer;font-family:inherit" title="${tmpl.paused?'המשך':'השהה'}">${tmpl.paused?'▶':'⏸'}</button>
                   <button onclick="editRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(74,143,168,.35);border-radius:4px;background:transparent;color:var(--bl);font-size:10px;cursor:pointer;font-family:inherit" title="ערוך">✏️</button>
-                  <button onclick="delRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(199,95,95,.3);border-radius:4px;background:transparent;color:#c97272;font-size:10px;cursor:pointer;font-family:inherit" title="מחק">✕</button>
+                  <button onclick="delRecurring('${tmpl.id}')" style="padding:2px 7px;border:1px solid rgba(199,95,95,.3);border-radius:4px;background:transparent;color:#c97272;font-size:10px;cursor:pointer;font-family:inherit" title="העבר חשבון לארכיון">✕</button>
                 </div>
                 ${tmpl.paused?'<div style="position:absolute;top:6px;right:10px;font-size:9px;color:#bfa15e;background:rgba(191,161,94,.12);border:1px solid rgba(191,161,94,.3);border-radius:10px;padding:1px 7px">מושהה</div>':''}
               </div>`;
@@ -15217,6 +15245,7 @@ document.addEventListener('keydown', e => {
 // ════════════════════════════════════════════════════
 let _cloudSaveTimer = null;
 let _cloudSyncing   = false;
+let _cloudSaveAgain = false;
 
 function _updateSyncDot(status) {
   const dot = document.getElementById('nav-status');
@@ -15229,15 +15258,17 @@ function _updateSyncDot(status) {
 
 function _cloudSave() {
   if (!currentUser?.uid) return;
+  const saveUid=currentUser.uid;
   clearTimeout(_cloudSaveTimer);
   _cloudSaveTimer = setTimeout(async () => {
-    if (_cloudSyncing) return;
+    if(currentUser?.uid!==saveUid)return;
+    if(_cloudSyncing){_cloudSaveAgain=true;return;}
     _cloudSyncing = true;
     _updateSyncDot('syncing');
     try {
       // Store trading data inside the existing users/{uid} doc using td_ prefix
       // — covered by the same Firestore security rules as the auth user doc
-      await db.collection('users').doc(currentUser.uid).set({
+      const workspace={
         td_records: records,
         td_tradesList: tradesList,
         td_customExpenses: customExpenses,
@@ -15257,32 +15288,39 @@ function _cloudSave() {
         td_personalGoals: (typeof personalGoals !== 'undefined') ? personalGoals : [],
         td_tradingRules: (typeof tradingRules !== 'undefined') ? tradingRules : [],
         td_coachDailyLossLimit: (typeof coachDailyLossLimit !== 'undefined') ? coachDailyLossLimit : null,
-        td_updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }, { merge: true }); _invalidateUsersCache();
+      };
+      const access=typeof FaynaSubscriptions!=='undefined'?FaynaSubscriptions.statusFor(saveUid):null;
+      if(access?.source==='managed')await FaynaSubscriptions.saveWorkspace(JSON.parse(JSON.stringify(workspace)));
+      else await db.collection('users').doc(saveUid).set({...workspace,td_updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      _invalidateUsersCache();
       _updateSyncDot('synced');
     } catch(e) {
       console.warn('Cloud save failed:', e);
       _updateSyncDot('error');
-    } finally { _cloudSyncing = false; }
+      if(currentUser?.uid===saveUid)showToast(e.code==='functions/aborted'?'הנתונים השתנו במכשיר אחר. יש לרענן לפני שמירה':'השמירה בענן לא אושרה. הנתונים נשמרו במכשיר; בדוק שיוך חשבון וחיבור לפני סגירה.','error');
+    } finally { _cloudSyncing = false;if(_cloudSaveAgain && currentUser?.uid===saveUid){_cloudSaveAgain=false;_cloudSave();} }
   }, 1500); // debounce 1.5s
 }
 
 async function _cloudLoad() {
   if (!currentUser?.uid) return;
+  const loadUid=currentUser.uid;
   _updateSyncDot('syncing');
   try {
-    const snap = await db.collection('users').doc(currentUser.uid).get();
+    const snap = await db.collection('users').doc(loadUid).get();
+    if(currentUser?.uid!==loadUid)return;
     if (snap.exists) {
       const d = snap.data();
+      if(typeof FaynaSubscriptions!=='undefined')FaynaSubscriptions.loadedWorkspace(currentUser.uid,d.td_workspaceRevision);
       // Prefer cloud data if it has content (td_ prefix = trading data)
       if (d.td_records?.length)            records            = d.td_records;
-      if (d.td_tradesList?.length)         tradesList         = d.td_tradesList;
+      if (Array.isArray(d.td_tradesList))  tradesList         = d.td_tradesList;
       if (d.td_customExpenses?.length)     customExpenses     = d.td_customExpenses;
       if (d.td_pnlOn)                      Object.assign(pnlOn, d.td_pnlOn);
       if (d.td_commSettings)               Object.assign(commSettings, d.td_commSettings);
       if (d.td_customSymbols?.length)      customSymbols = d.td_customSymbols;
       if (d.td_recurringTemplates?.length) recurringTemplates = d.td_recurringTemplates;
-      if (d.td_accounts?.length && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
+      if (Array.isArray(d.td_accounts) && typeof accounts !== 'undefined') { accounts = d.td_accounts; localStorage.setItem('dor_accounts', JSON.stringify(accounts)); }
       if (Array.isArray(d.td_bizEvents) && typeof businessEvents !== 'undefined') { businessEvents = d.td_bizEvents; localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents)); }
       if (d.td_bizNotes && typeof businessNotes !== 'undefined') { businessNotes = d.td_bizNotes; localStorage.setItem('dor_bizNotes', JSON.stringify(businessNotes)); }
       if (d.td_notifications?.length) { notifications = d.td_notifications; localStorage.setItem('dor_notifications', JSON.stringify(notifications)); }
@@ -15368,6 +15406,7 @@ function importAll(inp) {
   fr.onload = async e => {
     try {
       const data = JSON.parse(e.target.result);
+      FaynaAccountPolicy.validateWorkspace({td_accounts:accounts,td_tradesList:tradesList},{td_accounts:accounts,td_tradesList:data.tradesList||tradesList},_planLimits().accounts);
       if(!await customConfirm('לייבא נתונים? זה ידרוס את הנתונים הנוכחיים.')) return;
       if(data.records) records = data.records;
       if(data.tradesList) tradesList = data.tradesList;
@@ -15723,7 +15762,7 @@ function renderAcctMenu() {
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
       <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
       <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
-      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="מחק">✕</button>
+      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="העבר חשבון לארכיון">✕</button>
       ${goalBar}
     </div>`;
   }).join('');
@@ -15792,7 +15831,7 @@ function pickTradeAcct(ti, evt) {
   const picker = document.getElementById('acct-picker');
   if (!picker) return;
   const cur = tradesList[ti]?.acct || null;
-  const options = [{ id: null, name: 'ללא שיוך', color: '#767f8e' }, ...accounts];
+  const options = _activeTradingAccounts();
   picker.innerHTML = options.map(a =>
     `<div onclick="_setTradeAcct(${ti},'${a.id||''}')" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:9px;${cur===(a.id||null)?'background:rgba(255,255,255,.07)':''}">
       <span style="width:7px;height:7px;border-radius:50%;background:${a.color||'#767f8e'};flex-shrink:0"></span>
@@ -15811,7 +15850,9 @@ function pickTradeAcct(ti, evt) {
 }
 
 function _setTradeAcct(ti, acctId) {
-  tradesList[ti].acct = acctId || null;
+  if(!tradesList[ti])return;
+  const target=_requireTradeAccount(acctId);if(!target)return;
+  tradesList[ti].acct = target;
   document.getElementById('acct-picker').style.display = 'none';
   renderTJ(); saveData();
 }
@@ -15822,6 +15863,7 @@ async function _newTradeAcct(ti) {
   if (accounts.length >= 1 && !canUse('multi_accounts')) { showUpgradeModal('multi_accounts'); return; }
   const name = await customPrompt('שם התיק החדש:', '');
   if (!name || !name.trim()) return;
+  if(!_canCreateTradingAccount())return;
   const newAcct = _newAccountObject(name, null);
   accounts.push(newAcct);
   saveAccounts(); renderAcctMenu();
@@ -15887,25 +15929,19 @@ async function addAccount() {
   const name = await customPrompt('שם התיק (לדוגמה: APEX $25K):','');
   if (!name || !name.trim()) return;
   const num  = await customPrompt('מספר חשבון (אופציונלי — ניתן להשאיר ריק):','');
+  if(!_canCreateTradingAccount())return;
   accounts.push(_newAccountObject(name, num));
   saveAccounts();
   renderAcctMenu();
 }
 
 async function deleteAccount(id) {
-  const a = accounts.find(x=>x.id===id);
-  if (!a) return;
-  const cnt = tradesList.filter(t=>t.acct===id).length;
-  const warn = cnt ? `\n(${cnt} עסקאות משויכות לתיק זה יישארו ביומן, רק ללא שיוך לתיק)` : '';
-  if (!await customConfirm(`למחוק את התיק "${a.name}"?${warn}`,{danger:true})) return;
-  accounts = accounts.filter(a=>a.id !== id);
-  selectedAccounts.delete(id);
-  if (typeof tjAcct !== 'undefined' && tjAcct === id) { tjAcct = '__all__'; }
-  saveAccounts();
-  renderAcctMenu();
-  applyAcctFilter();
-  renderAll();
-  showToast(`🗑 תיק "${a.name}" נמחק`, 'info');
+  const a=accounts.find(x=>x.id===id);if(!a)return;
+  if(!await customConfirm(`להעביר את החשבון "${a.name}" לארכיון? העסקאות יישארו משויכות אליו וזמינות לצפייה.`))return;
+  a.active=false;a.archived=true;
+  selectedAccounts.delete(id);if(!selectedAccounts.size)selectedAccounts.add('__all__');
+  saveAccounts();renderAcctMenu();applyAcctFilter();renderAll();
+  showToast('החשבון הועבר לארכיון; ההיסטוריה נשמרה','info');
 }
 
 // Rename an existing account (and/or its account number) — updates everywhere the account is shown,
@@ -19765,7 +19801,7 @@ window.renderTJ = function renderTJ() {
       accounts.map(a=>`<span style="display:inline-flex;align-items:center;gap:1px">
         <button class="fb ${tjAcct===a.id?'active':''}" onclick="fAcct('${a.id}',this)" style="${tjAcct===a.id?'':'border-color:'+a.color+'40;color:'+a.color};border-top-left-radius:0;border-bottom-left-radius:0">${escHtml(a.name)}${a.number?' <span style="opacity:.6;font-size:9px">#'+escHtml(a.number)+'</span>':''}</button>
         <button onclick="event.stopPropagation();renameAccount('${a.id}')" title="שנה שם" style="padding:3px 5px;background:transparent;border:1px solid var(--border2);border-right:none;color:var(--t3);cursor:pointer;font-size:9px;border-radius:0">✏️</button>
-        <button onclick="event.stopPropagation();deleteAccount('${a.id}')" title="מחק תיק" style="padding:3px 5px;background:transparent;border:1px solid var(--border2);border-right:none;color:var(--t3);cursor:pointer;font-size:9px;border-top-right-radius:5px;border-bottom-right-radius:5px">✕</button>
+        <button onclick="event.stopPropagation();deleteAccount('${a.id}')" title="העבר חשבון לארכיון" style="padding:3px 5px;background:transparent;border:1px solid var(--border2);border-right:none;color:var(--t3);cursor:pointer;font-size:9px;border-top-right-radius:5px;border-bottom-right-radius:5px">✕</button>
       </span>`).join('') +
       bulkBtn;
   } else if (afbar) { afbar.style.display = 'none'; }
@@ -24738,7 +24774,7 @@ async function resumeSubscription() {
 /* ── PRICING PAGE ── */
 let _billCycle = 'monthly';
 function setBillingCycle(c) {
-  _billCycle = c;
+  _billCycle = typeof FaynaPlanModel!=='undefined' && FaynaPlanModel.availableCycles.includes(c) ? c : 'monthly';
   document.getElementById('cyc-m')?.classList.toggle('active', c==='monthly');
   document.getElementById('cyc-y')?.classList.toggle('active', c==='yearly');
   renderPricing();
@@ -24772,16 +24808,19 @@ function renderPricing() {
   const model = typeof FaynaPlanModel !== 'undefined' ? FaynaPlanModel : null;
   if (!model) { grid.textContent='טוען את מודל החבילות…'; return; }
   grid.style.gridTemplateColumns='repeat(2,minmax(0,1fr))';
-  const annual = _billCycle === 'yearly';
-  const money = value => new Intl.NumberFormat('he-IL',{style:'currency',currency:model.currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(value/100);
-  const trial = '<section class="price-card" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">14 ימי ניסיון עם כל היכולות וחשבונות ללא הגבלה</h2><p>למשתמשים חדשים זכאים, ללא כרטיס אשראי. בסיום עוברים למסלול חינמי ללא חיוב אוטומטי וללא מחיקת נתונים.</p><p>מודל החבילות והמחירים מוצעים לבדיקה. הניסיון טרם נפתח לציבור והרכישה אינה פעילה. שתי החבילות בתשלום כוללות אותן יכולות; ההבדל היחיד הוא מספר חשבונות המסחר.</p></section>';
+  const annual = model.availableCycles.includes('yearly') && _billCycle === 'yearly';
+  const yearlyButton=document.getElementById('cyc-y');
+  if(yearlyButton){yearlyButton.hidden=!model.availableCycles.includes('yearly');yearlyButton.disabled=yearlyButton.hidden;if(yearlyButton.hidden)yearlyButton.style.setProperty('display','none','important');else yearlyButton.style.removeProperty('display');}
+  document.getElementById('cyc-m')?.classList.toggle('active',!annual);
+  const money = value => new Intl.NumberFormat('he-IL',{style:'currency',currency:model.currency,minimumFractionDigits:2,maximumFractionDigits:2}).format(value/100);
+  const trial = '<section class="price-card" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">14 ימי ניסיון עם כל היכולות וחשבונות ללא הגבלה</h2><p>Fayna Trading מבית Fayna Group · <a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a></p><p>למשתמשים חדשים זכאים, ללא כרטיס אשראי. בסיום עוברים למסלול חינמי ללא חיוב אוטומטי וללא מחיקת נתונים.</p><p>מחירי פתיחה: 14.90 דולר לחשבון אחד ו־24.90 דולר לחשבונות ללא הגבלה, לחודש. הניסיון טרם נפתח לציבור והרכישה אינה פעילה. שתי החבילות בתשלום כוללות אותן יכולות; ההבדל היחיד הוא מספר חשבונות המסחר.</p></section>';
   grid.innerHTML = trial + model.publicPlanIds.map(id => {
     const p=model.plans[id];
     const amount = model.price(id,annual?'yearly':'monthly');
     const price = id==='free' ? 'ללא תשלום' : money(amount)+(annual?' לשנה':' לחודש');
     const period = annual && id!=='free' ? `<p>${money(amount/12)} לחודש בממוצע · תשלום שנתי אחד</p>` : '';
     const features = FEATURE_DEFS.filter(f=>f.key!=='multi_accounts').map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
-    return `<section class="price-card${id==='unlimited'?' pop':''}" style="--pc:var(--ac);color:var(--t1);font-size:14px;line-height:1.6">${id==='unlimited'?'<div class="pc-badge">לניהול מספר חשבונות</div>':''}<h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">בחר ${escHtml(p.label)}</button><p style="font-size:12px;color:var(--t2)">בחירת חבילה תיפתח לאחר חיבור ספק הסליקה ואישור המחיר.</p></section>`;
+    return `<section class="price-card${id==='unlimited'?' pop':''}" style="--pc:var(--ac);color:var(--t1);font-size:14px;line-height:1.6">${id==='unlimited'?'<div class="pc-badge">לניהול מספר חשבונות</div>':''}<h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong dir="ltr">${price}</strong>${period}<p style="font-size:12px">החיוב בפועל בשקלים. הסכום ושער ההמרה יוצגו לפני אישור תשלום.</p><p>מחיר פתיחה · ${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="bn" onclick="FaynaSubscriptions.showQuote('${id}')">בדיקת סכום החיוב בשקלים</button><p id="billing-quote-${id}" role="status" aria-live="polite"></p><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">בחר ${escHtml(p.label)}</button><p style="font-size:12px;color:var(--t2)">בחירת חבילה תיפתח לאחר השלמת חיבור הסליקה.</p></section>`;
   }).join('');
   renderMySub();
 }
@@ -25606,7 +25645,7 @@ if (typeof addAccount === 'function' && !window._addAccountWrapped) {
   window._addAccountWrapped = true;
   const _origAddAccount = addAccount;
   window.addAccount = async function() {
-    if (!checkLimit('accounts', (typeof accounts!=='undefined'?accounts.length:0))) return;
+    if (!checkLimit('accounts', (typeof accounts!=='undefined'?_activeTradingAccounts().length:0))) return;
     return _origAddAccount.apply(this, arguments);
   };
 }
@@ -26673,6 +26712,7 @@ async function workspaceRestore(input,kind){
     }else{
       if(!Array.isArray(d.tradesList)||!Array.isArray(d.accounts)||d.tradesList.some(e=>!e||typeof e.date!=='string'||!Number.isFinite(e.pnl)||typeof e.sym!=='string')||d.accounts.some(a=>!a||typeof a.id!=='string'||typeof a.name!=='string'))throw Error('גיבוי מסחר לא תקין');
       if(!await customConfirm('לשחזר את עסקאות וחשבונות המסחר מהגיבוי? הנתונים הכספיים לא ישתנו. מומלץ לייצא גיבוי מסחר לפני המשך.'))return;
+      FaynaAccountPolicy.validateWorkspace({td_accounts:accounts,td_tradesList:tradesList},{td_accounts:d.accounts,td_tradesList:d.tradesList},_planLimits().accounts);
       tradesList=d.tradesList;accounts=d.accounts;if(d.commSettings)Object.assign(commSettings,d.commSettings);if(Array.isArray(d.customSymbols))customSymbols=d.customSymbols;saveAccounts();saveData();renderAll();
     }showToast('הגיבוי נטען','success');
   }catch(e){showToast(e.message||'לא ניתן לקרוא את הגיבוי','error');}finally{input.value='';}
@@ -26701,6 +26741,7 @@ function workspaceIcons(){const paths={overview:'M3 10 12 3l9 7M5 9v12h14V9M9 21
 document.addEventListener('DOMContentLoaded',workspaceInit);
 
 </script>
+<script src="functions/account-policy.js"></script>
 <script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
 </body>

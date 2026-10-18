@@ -7,6 +7,7 @@ function fixture(options={}) {
   const docs = new Map([['users/alice', {plan:'lifetime', td_trades:[{pnl:25}]}], ['users/bob', {plan:'free'}]]);
   const db = {doc: path => ({path}), runTransaction: async fn => fn({
     get: async ref => ({exists:docs.has(ref.path), data:()=>docs.get(ref.path)}),
+    set: (ref,value)=>docs.set(ref.path,{...docs.get(ref.path),...value}),
     create: (ref, value) => {assert(!docs.has(ref.path));docs.set(ref.path,value);}
   })};
   class HttpsError extends Error {constructor(code,message){super(message);this.code=code;}}
@@ -14,6 +15,7 @@ function fixture(options={}) {
   vm.runInNewContext(fs.readFileSync(__dirname+'/index.cjs','utf8'), {exports,process:{env:options.env || {}}, require: name => {
     if(name.includes('/https'))return {onCall:(options,fn)=>{assert.equal(options.enforceAppCheck,true);return fn;},onRequest:(_,fn)=>fn,HttpsError};
     if(name.includes('/auth'))return {getAuth:()=>({getUser:async uid=>({metadata:{creationTime:options.createdAt || new Date().toISOString()}})})};
+    if(name==='./fx.cjs')return {...require('./fx.cjs'),fetchUsdRate:async()=>({rateMillionths:3089000,publishedAt:Date.now(),source:'Bank of Israel'})};
     if(name.includes('/app'))return {initializeApp(){}};
     if(name.includes('/firestore'))return {getFirestore:()=>db,FieldValue:{serverTimestamp:()=>123}};
     return require(name);
@@ -57,13 +59,14 @@ test('14 days means exactly 336 hours; expiry resolves to Free without mutation'
  assert.equal(model.entitlement({...trial,trialEndsAt:end+1},'pro',start).plan,'free');
  assert.equal(model.entitlement(trial,'pro',start-1).plan,'free');
 });
-test('draft prices use integer agorot and annual totals; data export stays free',()=>{
- assert.equal(model.pricesApproved,false);assert.equal(model.autoChargeAfterTrial,false);
+test('approved monthly USD prices use integer cents; annual billing unavailable; data export stays free',()=>{
+ assert.equal(model.pricesApproved,true);assert.equal(model.autoChargeAfterTrial,false);
  for(const [id,p] of Object.entries(model.plans)) {
-  assert(Number.isSafeInteger(model.price(id,'monthly')));assert.equal(model.price(id,'yearly'),model.price(id,'monthly')*10);
+  assert(Number.isSafeInteger(model.price(id,'monthly')));if(id==='free')assert.equal(model.price(id,'yearly'),0);else assert.throws(()=>model.price(id,'yearly'),/unavailable/);
   assert(p.features.export_csv);assert(p.features.backup);
  }
- assert.throws(()=>model.price('pro','weekly'));
+ assert.equal(model.currency,'USD');assert.equal(model.price('single','monthly'),1490);assert.equal(model.price('unlimited','monthly'),2490);
+ assert.throws(()=>model.price('single','weekly'));
  assert.throws(()=>model.price('__proto__','monthly'));
  assert(Object.isFrozen(model.plans.single.features));
 });
@@ -93,4 +96,27 @@ test('two public plans have identical full features and differ only in account c
  assert.equal(model.plans.single.newTradesPerMonth,null);assert.equal(model.plans.unlimited.newTradesPerMonth,null);
  assert.equal(JSON.parse(JSON.stringify(model.plans.unlimited)).accounts,null);
  assert.equal(model.trialPlan,'unlimited');
+});
+
+test('managed workspace saves enforce account capacity and ownership using server plan',async()=>{
+ const f=fixture(),now=Date.now();
+ f.docs.set('users/bob',{plan:'premium',status:'active',td_accounts:[{id:'a',active:true}],td_tradesList:[]});
+ f.docs.set('subscriptions/bob',{status:'active',plan:'single',currentPeriodEnd:now+86400000});
+ const req=workspace=>({auth:{uid:'bob'},data:{action:'saveWorkspace',expectedRevision:0,uid:'alice',plan:'unlimited',workspace}});
+ await assert.rejects(f.billing(req({td_accounts:[{id:'a'},{id:'b'}],td_tradesList:[]})),{code:'failed-precondition'});
+ await assert.rejects(f.billing(req({td_accounts:[{id:'a'}],td_tradesList:[{pnl:10}]})),{code:'failed-precondition'});
+ await assert.rejects(f.billing(req({td_accounts:[{id:'a'}],td_tradesList:[{acct:'alice-account',pnl:10}]})),{code:'failed-precondition'});
+ await assert.rejects(f.billing(req({td_accounts:[{id:'a'}],td_tradesList:[],isAdmin:true})),{code:'failed-precondition'});
+ const r=await f.billing(req({td_accounts:[{id:'a',active:true}],td_tradesList:[{acct:'a',pnl:10}]}));
+ assert.equal(r.saved,true);assert.equal(r.workspaceRevision,1);await assert.rejects(f.billing(req({td_accounts:[{id:'a'}],td_tradesList:[]})),{code:'aborted'});assert.equal(f.docs.get('users/bob').td_tradesList[0].acct,'a');
+ assert.equal(f.docs.get('users/bob').plan,'premium');assert.equal(f.docs.get('users/alice').td_accounts,undefined);
+ const legacy=fixture();await assert.rejects(legacy.billing(req({td_accounts:[],td_tradesList:[]})),{code:'permission-denied'});
+});
+
+test('quotes take USD price and uid from trusted catalog and token, not client amounts',async()=>{
+ const f=fixture();
+ await assert.rejects(f.billing({auth:{uid:'bob'},data:{action:'getQuote',plan:'single',cycle:'yearly'}}),{code:'invalid-argument'});
+ const q=await f.billing({auth:{uid:'bob'},data:{action:'getQuote',plan:'single',cycle:'monthly',uid:'alice',price:1}});
+ assert.equal(q.displayMinor,1490);assert.equal(q.settlementMinor,4603);assert.equal(q.billingEnabled,false);
+ assert.equal(f.docs.get('billingQuotes/'+q.quoteId).uid,'bob');assert.equal(f.docs.get('users/bob').plan,'free');
 });

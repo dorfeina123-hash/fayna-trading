@@ -1,20 +1,20 @@
-/* Shared draft catalog: browser preview and server eligibility use the same policy.
-   Prices are proposals only; this file cannot enable payment or migrate a user. */
+/* Shared launch catalog: browser preview and server eligibility use the same policy.
+   Monthly USD prices were chosen by the owner; this file cannot enable payment or migrate a user. */
 (function(root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.FaynaPlanModel = factory();
 })(typeof globalThis !== 'undefined' ? globalThis : this, function() {
   'use strict';
-  const VERSION = '2026-10-18-draft-2';
+  const VERSION = '2026-10-18-launch-monthly-1';
   const DAY_MS = 86400000;
   const common = { export_csv:true, backup:true };
   const freeFeatures = { ...common, calendar:false, stats_advanced:false, import_csv:true, export_pdf:false, reports:false, multi_accounts:false, drivers:false };
   const fullFeatures = { calendar:true, stats_advanced:true, import_csv:true, export_csv:true, export_pdf:true, reports:true, multi_accounts:true, drivers:true, backup:true };
   // null means no commercial cap; it survives JSON serialization without becoming zero.
   const plans = {
-    free: { label:'חינם מוגבל', monthlyAgorot:0, yearlyAgorot:0, accounts:1, newTradesPerMonth:30, features:freeFeatures, audience:'מסלול המשך מוגבל לאחר הניסיון' },
-    single: { label:'Fayna One', monthlyAgorot:7900, yearlyAgorot:79000, accounts:1, newTradesPerMonth:null, features:fullFeatures, audience:'כל היכולות לחשבון מסחר אחד' },
-    unlimited: { label:'Fayna Unlimited', monthlyAgorot:12900, yearlyAgorot:129000, accounts:null, newTradesPerMonth:null, features:fullFeatures, audience:'כל היכולות לחשבונות מסחר ללא הגבלה' },
+    free: { label:'חינם מוגבל', monthlyMinor:0, yearlyMinor:0, accounts:1, newTradesPerMonth:30, features:freeFeatures, audience:'מסלול המשך מוגבל לאחר הניסיון' },
+    single: { label:'Fayna One', monthlyMinor:1490, yearlyMinor:null, accounts:1, newTradesPerMonth:null, features:fullFeatures, audience:'כל היכולות לחשבון מסחר אחד' },
+    unlimited: { label:'Fayna Unlimited', monthlyMinor:2490, yearlyMinor:null, accounts:null, newTradesPerMonth:null, features:fullFeatures, audience:'כל היכולות לחשבונות מסחר ללא הגבלה' },
   };
   function deepFreeze(o) { Object.values(o).forEach(v=>{if(v && typeof v==='object')deepFreeze(v);}); return Object.freeze(o); }
   deepFreeze(plans);
@@ -44,7 +44,9 @@
   }
   function price(plan,cycle) {
     if (!Object.hasOwn(plans,plan) || !['monthly','yearly'].includes(cycle)) throw new Error('invalid_price_selection');
-    return plans[plan][cycle==='yearly'?'yearlyAgorot':'monthlyAgorot'];
+    const amount=plans[plan][cycle==='yearly'?'yearlyMinor':'monthlyMinor'];
+    if (amount===null) throw new Error('billing_cycle_unavailable');
+    return amount;
   }
-  return Object.freeze({version:VERSION,currency:'ILS',pricesApproved:false,trialDays:14,publicPlanIds:Object.freeze(['single','unlimited']),trialPlan:'unlimited',trialRequiresCard:false,autoChargeAfterTrial:false,plans,normalize,entitlement,trialRecord,price});
+  return Object.freeze({version:VERSION,merchantDisplayName:'Fayna Group',customerContactEmail:'dorfeina123@gmail.com',currency:'USD',pricesApproved:true,availableCycles:Object.freeze(['monthly']),trialDays:14,publicPlanIds:Object.freeze(['single','unlimited']),trialPlan:'unlimited',trialRequiresCard:false,autoChargeAfterTrial:false,plans,normalize,entitlement,trialRecord,price});
 });

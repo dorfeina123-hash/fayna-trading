@@ -1,6 +1,6 @@
 /* Existing Firebase Auth remains the sole identity source. No client billing writes. */
 window.FaynaSubscriptions = (() => {
-  let pending = false, cached = null;
+  let pending = false, cached = null, quotePending=false, workspaceVersion=null;
   function message(text) {
     const el = document.getElementById('subscription-server-status');
     if (el) el.textContent = text;
@@ -36,6 +36,33 @@ window.FaynaSubscriptions = (() => {
       const end=data.status==='trialing'?data.trialEndsAt:data.currentPeriodEnd;
       if (data.source==='managed' && end && now>=end) return {...data,plan:'free',status:data.status==='trialing'?'trial_expired':'free',trialDaysRemaining:0};
       return data;
+    },
+    showQuote: async plan => {
+      if(quotePending || !FaynaPlanModel.publicPlanIds.includes(plan))return;
+      const el=document.getElementById('billing-quote-'+plan);if(!el)return;
+      const uid=auth.currentUser?.uid;
+      if(!uid || !window.faynaBillingCallable){el.textContent='חיבור הסליקה בהכנה. הסכום בשקלים יוצג לפני אישור תשלום.';return;}
+      quotePending=true;el.textContent='בודק שער המרה וסכום בשקלים…';
+      try {
+        const response=await window.faynaBillingCallable({action:'getQuote',plan,cycle:'monthly'});
+        if(auth.currentUser?.uid!==uid)return;
+        const q=response.data;
+        if(q.plan!==plan||q.displayCurrency!=='USD'||q.settlementCurrency!=='ILS'||q.displayMinor!==FaynaPlanModel.price(plan,'monthly')||!Number.isSafeInteger(q.settlementMinor)||q.settlementMinor<=0||!Number.isSafeInteger(q.fxPublishedAt)||!Number.isSafeInteger(q.fxRateMillionths)||q.fxRateMillionths<=0)throw new Error('invalid_quote');
+        const amount=new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS'}).format(q.settlementMinor/100);
+        el.textContent=amount+' לחודש · שער דולר '+(q.fxRateMillionths/1000000)+' של בנק ישראל, מתאריך '+new Date(q.fxPublishedAt).toLocaleDateString('he-IL')+'. הצעה ל־10 דקות; לא בוצע חיוב.';
+      } catch(e){if(auth.currentUser?.uid===uid)el.textContent='לא ניתן לאמת כרגע את הסכום בשקלים. לא בוצע חיוב.';}
+      finally{quotePending=false;}
+    },
+    loadedWorkspace: (uid,revision) => { workspaceVersion={uid,revision:Number.isSafeInteger(revision)?revision:0}; },
+    saveWorkspace: async workspace => {
+      const uid=auth.currentUser?.uid;
+      if(!uid || !window.faynaBillingCallable)throw new Error('שרת שמירת החשבונות אינו מחובר');
+      if(workspaceVersion?.uid!==uid)throw new Error('יש לטעון את נתוני החשבון לפני שמירה');
+      const result=await window.faynaBillingCallable({action:'saveWorkspace',workspace,expectedRevision:workspaceVersion.revision});
+      if(auth.currentUser?.uid!==uid || result.data?.saved!==true)throw new Error('לא התקבל אישור שמירה');
+      workspaceVersion={uid,revision:result.data.workspaceRevision};
+      cached={uid,data:result.data,receivedAt:performance.now()};
+      return result.data;
     },
     refresh: () => call('status'),
     startTrial: async () => {

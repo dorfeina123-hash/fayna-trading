@@ -23,8 +23,12 @@ function fn(name){const a=html.indexOf('function '+name+'('),b=html.indexOf('\n}
  await page.addScriptTag({content:fn('startPayment')+'\n'+fn('submitReg')+'\n'+fn('cancelSubscription')+'\n'+fn('resumeSubscription')+'\n'+fn('canUse')});
  await page.evaluate(async()=>{startPayment('pro','monthly');await submitReg();await cancelSubscription();await resumeSubscription()});assert.equal(await page.evaluate(()=>writes),0);
  for(const width of [1440,390]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`subscription-${width}.png`});}
- await page.evaluate(()=>{_billCycle='yearly';renderPricing()});
- assert((await page.locator('#pricing-grid').textContent()).includes('790'));
+ await page.evaluate(()=>{_billCycle='yearly';renderPricing()});assert.equal(await page.locator('#cyc-y').isVisible(),false);
+ assert((await page.locator('#pricing-grid').textContent()).includes('14.90'));
+ await page.evaluate(()=>{window.faynaBillingCallable=async input=>({data:{plan:input.plan,displayCurrency:'USD',displayMinor:input.plan==='single'?1490:2490,settlementCurrency:'ILS',settlementMinor:4603,fxRateMillionths:3089000,fxPublishedAt:Date.now()}})});
+ await page.getByRole('button',{name:'בדיקת סכום החיוב בשקלים'}).first().click();
+ await page.waitForFunction(()=>document.getElementById('billing-quote-single').textContent.includes('46.03'));
+ assert((await page.locator('#billing-quote-single').textContent()).includes('לא בוצע חיוב'));
  await page.evaluate(()=>{_billCycle='monthly';window.faynaBillingCallable=async()=>({data:{source:'managed',plan:'pro',status:'trialing',trialDaysRemaining:14,trialEndsAt:Date.now()+14*86400000,serverNow:Date.now()}})});
  await page.getByRole('button',{name:'בדיקת מצב בשרת'}).click();await page.waitForFunction(()=>document.getElementById('my-sub-card').textContent.includes('נותרו 14'));
  assert.equal(await page.evaluate(()=>canUse('stats_advanced')),true);
