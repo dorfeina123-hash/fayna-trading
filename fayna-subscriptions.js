@@ -39,7 +39,7 @@ window.FaynaSubscriptions = (() => {
     },
     refresh: () => call('status'),
     startTrial: async () => {
-      if (await customConfirm('לבדוק זכאות ל־14 ימי Pro? ללא כרטיס וללא חיוב בסיום. בסיום מעבר לחינם תוך שמירת הנתונים. הזכאות הקיימת לא תוחלף בניסיון.')) await call('startTrial');
+      if (await customConfirm('לבדוק זכאות ל־14 ימי ניסיון עם כל היכולות וחשבונות ללא הגבלה? ללא כרטיס וללא חיוב בסיום. בסיום מעבר לחינם תוך שמירת הנתונים. הזכאות הקיימת לא תוחלף בניסיון.')) await call('startTrial');
     },
     requestCancellation: async () => {
       if (await customConfirm('לשלוח בקשת ביטול לבדיקה? פעולה זו אינה מבטלת חיוב אצל ספק סליקה.')) await call('requestCancellation');

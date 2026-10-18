@@ -17,14 +17,14 @@ function fn(name){const a=html.indexOf('function '+name+'('),b=html.indexOf('\n}
  await page.addScriptTag({content:`var _billCycle='monthly';var currentUser={uid:'alice',plan:'lifetime'};var auth={currentUser:{uid:'alice'}};var PLAN_ORDER=['free','basic','pro','premium'];var PLAN_META={free:{label:'חינם'},basic:{label:'בסיסי'},pro:{label:'מקצועי'},premium:{label:'פרימיום'}};var FEATURE_DEFS=[{key:'journal',label:'יומן מסחר'}],planFeatures={pro:{journal:true}};function _normPlan(p){return p==='lifetime'?'premium':p}function escHtml(s){return String(s).replace(/</g,'&lt;')}function customConfirm(){return Promise.resolve(true)}function showToast(t){window.lastToast=t}var writes=0;var db={collection(){writes++;throw Error('Unexpected write')}};`+fn('renderPricing')+'\n'+fn('renderMySub')});
  await page.addScriptTag({content:fs.readFileSync('functions/plan-model.js','utf8')});
  await page.addScriptTag({content:fs.readFileSync('fayna-subscriptions.js','utf8')});
- await page.evaluate(()=>renderPricing());assert.equal(await page.locator('#pricing-grid button:disabled').count(),4);
+ await page.evaluate(()=>renderPricing());assert.equal(await page.locator('#pricing-grid button:disabled').count(),2);
  await page.getByRole('button',{name:'בדיקת מצב בשרת'}).click();assert((await page.locator('#subscription-server-status').textContent()).includes('טרם חובר'));
  await page.getByRole('button',{name:'בקשת ביטול מנוי'}).click();await page.getByRole('button',{name:'בדיקת זכאות לניסיון של 14 יום'}).click();assert.equal(await page.evaluate(()=>writes),0);
  await page.addScriptTag({content:fn('startPayment')+'\n'+fn('submitReg')+'\n'+fn('cancelSubscription')+'\n'+fn('resumeSubscription')+'\n'+fn('canUse')});
  await page.evaluate(async()=>{startPayment('pro','monthly');await submitReg();await cancelSubscription();await resumeSubscription()});assert.equal(await page.evaluate(()=>writes),0);
  for(const width of [1440,390]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`subscription-${width}.png`});}
  await page.evaluate(()=>{_billCycle='yearly';renderPricing()});
- assert((await page.locator('#pricing-grid').textContent()).includes('490'));
+ assert((await page.locator('#pricing-grid').textContent()).includes('790'));
  await page.evaluate(()=>{_billCycle='monthly';window.faynaBillingCallable=async()=>({data:{source:'managed',plan:'pro',status:'trialing',trialDaysRemaining:14,trialEndsAt:Date.now()+14*86400000,serverNow:Date.now()}})});
  await page.getByRole('button',{name:'בדיקת מצב בשרת'}).click();await page.waitForFunction(()=>document.getElementById('my-sub-card').textContent.includes('נותרו 14'));
  assert.equal(await page.evaluate(()=>canUse('stats_advanced')),true);

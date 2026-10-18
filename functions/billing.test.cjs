@@ -48,12 +48,12 @@ const model = require('./plan-model.js');
 test('14 days means exactly 336 hours; expiry resolves to Free without mutation',()=>{
  const start=Date.parse('2026-10-18T10:00:00Z'),trial=model.trialRecord(start),before=JSON.stringify(trial);
  const end=start+14*86400000;assert.equal(trial.trialEndsAt,end);assert.equal(trial.autoRenew,false);
- assert.equal(model.entitlement(trial,'premium',start).plan,'pro');
+ assert.equal(model.entitlement(trial,'premium',start).plan,'unlimited');
  assert.equal(model.entitlement(trial,'premium',end-1).trialDaysRemaining,1);
  assert.equal(model.entitlement(trial,'premium',end).plan,'free');
  assert.equal(model.entitlement(trial,'premium',end).status,'trial_expired');
  assert.equal(JSON.stringify(trial),before);
- assert.equal(model.entitlement(null,'lifetime',end).plan,'premium');
+ assert.equal(model.entitlement(null,'lifetime',end).plan,'unlimited');
  assert.equal(model.entitlement({...trial,trialEndsAt:end+1},'pro',start).plan,'free');
  assert.equal(model.entitlement(trial,'pro',start-1).plan,'free');
 });
@@ -65,7 +65,7 @@ test('draft prices use integer agorot and annual totals; data export stays free'
  }
  assert.throws(()=>model.price('pro','weekly'));
  assert.throws(()=>model.price('__proto__','monthly'));
- assert(Object.isFrozen(model.plans.pro.features));
+ assert(Object.isFrozen(model.plans.single.features));
 });
 test('trial grant requires rollout, verified email, trusted eligibility and new Auth account',async()=>{
  const request={auth:{uid:'bob',token:{email_verified:true,fayna_trial_eligible:true}},data:{action:'startTrial',trialEndsAt:9999999999999}};
@@ -76,11 +76,21 @@ test('trial grant requires rollout, verified email, trusted eligibility and new 
  await assert.rejects(fixture({env,createdAt:'2025-12-31T23:59:59Z'}).billing(request),{code:'failed-precondition'});
  const f=fixture({env});const before=JSON.stringify(f.docs.get('users/bob'));
  const result=await f.billing(request),first=JSON.stringify(f.docs.get('subscriptions/bob'));
- assert.equal(result.plan,'pro');assert.equal(result.status,'trialing');assert.equal(result.billingEnabled,false);
+ assert.equal(result.plan,'unlimited');assert.equal(result.status,'trialing');assert.equal(result.billingEnabled,false);
  await f.billing(request);assert.equal(JSON.stringify(f.docs.get('subscriptions/bob')),first);
  assert.equal(JSON.stringify(f.docs.get('users/bob')),before);assert.equal(f.docs.size,4);
  // Deleting only the managed subscription cannot reset the one-time grant.
  f.docs.delete('subscriptions/bob');f.docs.set('users/bob',{plan:'pro'});const orphan=await f.billing(request);assert.equal(orphan.plan,'free');assert.equal(orphan.source,'managed');assert(!f.docs.has('subscriptions/bob'));
  const orphanStatus=await f.billing({...request,data:{action:'status'}});assert.equal(orphanStatus.plan,'free');
  await assert.rejects(fixture({env}).billing({...request,auth:{...request.auth,uid:'alice'}}),{code:'failed-precondition'});
+});
+
+test('two public plans have identical full features and differ only in account capacity',()=>{
+ assert.deepEqual([...model.publicPlanIds],['single','unlimited']);
+ assert.deepEqual(model.plans.single.features,model.plans.unlimited.features);
+ assert(Object.values(model.plans.single.features).every(Boolean));
+ assert.equal(model.plans.single.accounts,1);assert.equal(model.plans.unlimited.accounts,null);
+ assert.equal(model.plans.single.newTradesPerMonth,null);assert.equal(model.plans.unlimited.newTradesPerMonth,null);
+ assert.equal(JSON.parse(JSON.stringify(model.plans.unlimited)).accounts,null);
+ assert.equal(model.trialPlan,'unlimited');
 });

@@ -24770,15 +24770,17 @@ function renderPricing() {
   grid.dir = 'rtl';
   const model = typeof FaynaPlanModel !== 'undefined' ? FaynaPlanModel : null;
   if (!model) { grid.textContent='טוען את מודל החבילות…'; return; }
+  grid.style.gridTemplateColumns='repeat(2,minmax(0,1fr))';
   const annual = _billCycle === 'yearly';
   const money = value => new Intl.NumberFormat('he-IL',{style:'currency',currency:model.currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(value/100);
-  const trial = '<section class="price-card" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">14 ימי ניסיון ב־Pro</h2><p>למשתמשים חדשים זכאים, ללא כרטיס אשראי. בסיום עוברים למסלול חינמי ללא חיוב אוטומטי וללא מחיקת נתונים.</p><p>מודל החבילות והמחירים מוצעים לבדיקה. הניסיון טרם נפתח לציבור והרכישה אינה פעילה.</p></section>';
-  grid.innerHTML = trial + Object.entries(model.plans).map(([id,p]) => {
+  const trial = '<section class="price-card" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">14 ימי ניסיון עם כל היכולות וחשבונות ללא הגבלה</h2><p>למשתמשים חדשים זכאים, ללא כרטיס אשראי. בסיום עוברים למסלול חינמי ללא חיוב אוטומטי וללא מחיקת נתונים.</p><p>מודל החבילות והמחירים מוצעים לבדיקה. הניסיון טרם נפתח לציבור והרכישה אינה פעילה. שתי החבילות בתשלום כוללות אותן יכולות; ההבדל היחיד הוא מספר חשבונות המסחר.</p></section>';
+  grid.innerHTML = trial + model.publicPlanIds.map(id => {
+    const p=model.plans[id];
     const amount = model.price(id,annual?'yearly':'monthly');
     const price = id==='free' ? 'ללא תשלום' : money(amount)+(annual?' לשנה':' לחודש');
     const period = annual && id!=='free' ? `<p>${money(amount/12)} לחודש בממוצע · תשלום שנתי אחד</p>` : '';
-    const features = FEATURE_DEFS.map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
-    return `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}עד ${p.accounts} חשבונות · עד ${p.newTradesPerMonth.toLocaleString('he-IL')} עסקאות חדשות בחודש</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">${id==='free'?'מסלול ההמשך לאחר הניסיון':'הרכישה טרם נפתחה'}</button></section>`;
+    const features = FEATURE_DEFS.filter(f=>f.key!=='multi_accounts').map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
+    return `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong>${price}</strong>${period}<p>${id==='free'?'':'מחיר מוצע בלבד · '}${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">${id==='free'?'מסלול ההמשך לאחר הניסיון':'הרכישה טרם נפתחה'}</button></section>`;
   }).join('');
   renderMySub();
 }
@@ -25583,7 +25585,7 @@ function _planLimits() {
   if (managed?.source === 'managed') {
     const limits=FaynaPlanModel.plans[FaynaPlanModel.normalize(managed.plan)];
     // Monthly intake is a separate server quota, never a cap on saved history.
-    return {accounts:limits.accounts,trades:Infinity,ai:false};
+    return {accounts:limits.accounts===null?Infinity:limits.accounts,trades:Infinity,ai:false};
   }
   return PLAN_LIMITS[_normPlan(currentUser?.plan)] || PLAN_LIMITS.free;
 }

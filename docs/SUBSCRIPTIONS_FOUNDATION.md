@@ -12,7 +12,7 @@
 
 ## Implemented
 - Preserve existing profile plan and trading data; no live migration, trial assignment, charge or renewal has been performed. Managed trials resolve to Free at expiry without rewriting profile/trading data; legacy profiles retain their original rights.
-- Hebrew RTL pricing and subscription management. Research-based shared draft catalog: 14-day Pro trial, Free and three paid tiers (49/89/149 ILS monthly; ten monthly payments for an annual term). Prices are clearly proposals. Existing legacy feature policy is preserved. All legacy payment entry points fail closed, including Bit/Paybox override.
+- Hebrew RTL pricing and subscription management. Research-based shared draft catalog: 14-day full Unlimited trial, two public paid tiers with identical full features (One: 79 ILS/month, one active account; Unlimited: 129 ILS/month, unlimited active accounts; annual totals 790/1290). Both paid tiers have no trade-count cap. Free remains the limited internal post-trial fallback from the earlier instruction, not a third public pricing card. Prices are clearly proposals. Existing legacy feature policy is preserved. All legacy payment entry points fail closed, including Bit/Paybox override.
 - Firebase callable requiring Auth + App Check. Identity comes only from token uid. Status reads the user's own records. A repeated cancellation request uses one deterministic transactional document, does not alter access and is explicitly pending review.
 - Checkout always fails; webhook always returns 503 and writes nothing. Checkout has no activation flag, provider SDK, secret or payment link. Trial enrollment has a separate disabled-by-default rollout gate; it cannot enable billing.
 - subscriptions/{uid} is reserved for server-managed entitlements. subscriptionCancellationRequests/{uid} contains pending review requests; billingEvents and billingOperations reserved for verified events and idempotency.
@@ -27,11 +27,13 @@
 ## Trial model update — 2026-10-18
 See [Hebrew research and business proposal](SUBSCRIPTION_MODEL_HE.md) and `functions/plan-model.js` (shared by browser and server).
 
+- Revised proposal: two public plans only; see the Hebrew proposal for the TradeZella source and account semantics. All legacy rights remain unchanged.
+
 - Exact 14 x 24 hour trial from explicit first activation after verified email. `startTrial` requires `FAYNA_TRIALS_ENABLED=true`, a valid `FAYNA_TRIAL_COHORT_START`, and a trusted `fayna_trial_eligible=true` Auth custom claim. Cohort age is checked using Admin Auth creation metadata, not client profile timestamps. Default is disabled. Do not set production values yet.
 - An authorized server provisioning workflow must assign eligibility only after resolving invitations and legacy grants; it is not implemented here. Lifetime/premium/admin/dated legacy rights cannot be replaced by a trial via this endpoint.
 - Transaction creates server-owned subscription and private `trialGrants/{uid}` once. Repeat requests never extend it. A retained grant with missing subscription resolves to Free instead of regaining the default profile Pro rights. UID is not proof of one trial per human; account recreation abuse/retention policy remains open.
 - Trial expiry is computed on server status reads; no scheduled job or profile rewrite is required for the model. Browser managed feature previews use cached server identity and elapsed monotonic time, with no legacy feature-policy changes. These UI gates are not a security boundary.
-- Monthly trade-intake limits and active account selection are proposed, not fully enforced. All manual/import/cloud write paths need transactional server accounting and rules before rollout. Do not substitute a total history cap or remove old data.
+- Only the retained Free fallback has a proposed monthly trade-intake quota. Neither paid plan has a trade-count quota. Active-account selection and secure enforcement are not fully implemented. All manual/import/cloud write paths need transactional server accounting and rules before rollout. Do not substitute a total history cap or remove old data.
 - Server status/bootstrap still needs real SDK hookup and fail-closed managed authorization on reload/offline. Paid backend features must always query current authoritative access. No public trial rollout until these checks and the signup CREATE fix below are complete.
 
 ## Required next phase and launch blockers
@@ -44,7 +46,7 @@ See [Hebrew research and business proposal](SUBSCRIPTION_MODEL_HE.md) and `funct
 - Cancellation in this release is a request for review, not provider cancellation. There is no automatic notification/fulfillment worker; real self-service cancellation cannot launch until the provider adapter is complete.
 
 ## Verification performed
-- `node --test functions/billing.test.cjs`: 7 pass (auth/action/charge denial, own-user identity, repeat cancellation, preservation, rejected webhook, exact trial boundaries, immutable draft prices/export, gated one-time enrollment and orphaned grant fallback).
+- `node --test functions/billing.test.cjs`: 8 pass (auth/action/charge denial, own-user identity, repeat cancellation, preservation, rejected webhook, exact trial boundaries, immutable draft prices/export, gated one-time enrollment, orphaned grant fallback and identical full-feature two-tier policy).
 - `node tests/subscriptions.cjs`: actual repository billing HTML/CSS in offline browser fixture, desktop/mobile RTL, disabled purchase, unavailable-server message, zero client writes, proposed monthly/yearly catalog, managed trial/expiry state, cross-user cache isolation and managed feature gates; inline syntax, CSS balance, declaration preservation, no new duplicate IDs, index/v75 equality.
 - `node tests/finance-summary.cjs` and `node tests/data-export.cjs`: pass.
 - `node tests/home.cjs` fails 8 vs 14 style blocks. `node tests/workspace.cjs` fails 5 vs 3 KPI cards. Both reproduced against unchanged v74 baseline; not introduced by this change. Navigation test also pins an obsolete v56 equality and is not represented as passed.
