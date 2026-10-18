@@ -2343,6 +2343,10 @@ html[data-fayna-theme] :is(#exp-total,#cx-total){font-size:14px!important;color:
 html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;font-size:13px}
 @media(max-width:650px){html[data-fayna-theme] #recur-manager>div{padding:14px!important}html[data-fayna-theme] .tp .tbl td{padding:12px 8px}html[data-fayna-theme] :is(#efbar,#efbar2){padding:9px;gap:5px}html[data-fayna-theme] .tp .fb{padding:7px 9px}}
 </style><style id="ticker-motion-v68">html[data-fayna-theme] #fx-ticker.motion-enabled #fx-ticker-track{animation:fxTickerScroll var(--fx-dur,240s) linear infinite!important;animation-play-state:running!important}html[data-fayna-theme] #fx-ticker.locked #fx-ticker-track{animation-play-state:paused!important}</style><style id="logo-v69">img[src*="fayna-logo-gold.png"]{object-fit:contain!important;border-radius:8px!important}#auth-screen img[src*="fayna-logo-gold.png"]{width:160px!important;height:160px!important;border:0!important}.topnav img[src*="fayna-logo-gold.png"]{width:52px!important;height:52px!important}#wb-cover-img{height:100%!important;max-width:100%;object-fit:contain!important}</style></head>
+<script defer src="fayna-fx.js?v=74h1"></script>
+<script defer src="saas-finance-currency.js?v=74h1"></script>
+<script defer src="fayna-announce.js?v=74h1"></script>
+<script defer src="fayna-tradovate-repair.js?v=74h1"></script>
 <body>
 <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
 <div id="toast-container"></div>
@@ -3916,7 +3920,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <span id="cx-conv" style="font-size:11px;color:var(--t3);white-space:nowrap"></span>
       </div>
     </div>
-    <div class="fr"><label>שער דולר</label><input type="number" id="cx-rt" step="0.001" value="3.65" oninput="cxUpdateConv()" inputmode="decimal"></div>
+    <div class="fr"><label>שער דולר</label><input type="number" id="cx-rt" step="0.0001" value="" oninput="cxUpdateConv()" inputmode="decimal"></div>
     <div class="fr"><label>הערה</label><textarea id="cx-note" placeholder="פרטים נוספים..."></textarea></div>
     <div class="fax">
       <button class="bd2" id="cx-del" style="display:none" onclick="cxDel()">🗑</button>
@@ -7700,7 +7704,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <span id="cur-conv" style="font-size:11px;color:var(--t3);white-space:nowrap"></span>
       </div>
     </div>
-    <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.001" value="3.65" oninput="cWd()" inputmode="decimal"></div>
+    <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.0001" value="" oninput="cWd()" inputmode="decimal"></div>
     <div id="reg-f">
       <div class="fr"><label>חברה</label>
         <input type="text" id="f-co" list="f-co-list" placeholder="בחר או הקלד שם חברה..." autocomplete="off" onfocus="_refreshCompanyList()">
@@ -8041,8 +8045,13 @@ const HIST_RATES = {
   '2025-09':3.342,'2025-10':3.289,'2025-11':3.256,'2025-12':3.216,
   '2026-01':3.186,'2026-02':3.064,'2026-03':3.098,'2026-04':3.115,
   '2026-05':2.933,'2026-06':2.910,
+  /* v74h1: Jul–Oct 2026 monthly ECB averages (offline fallback only) */
+  '2026-07':3.033,'2026-08':2.991,'2026-09':3.032,'2026-10':3.073,
 };
 function histRate(d){
+  /* v74h1: real daily USD/ILS (ECB via fayna-fx.js) first; table only offline */
+  if(typeof window!=='undefined'&&window.FaynaFX){const r=window.FaynaFX.rate(String(d||''));if(r)return +r.toFixed(4);}
+  d=String(d||new Date().toISOString().slice(0,10));
   const k=d.slice(0,7);
   if(HIST_RATES[k])return HIST_RATES[k];
   const keys=Object.keys(HIST_RATES).sort();
@@ -11166,7 +11175,7 @@ function _homeModel(rows, period, now, netOf) {
   let run=0;const series=[0,...Object.values(daily).map(n=>+(run+=n).toFixed(2))];
   return {rows:clean,net:+net.toFixed(2),wins,losses,count:clean.length,winRate:detailed?wins/detailed*100:null,drawdown:+drawdown.toFixed(2),series,start,end,excluded:valid.length-clean.length};
 }
-function _homeMoney(value){return (value<0?'−':value>0?'+':'')+'$'+Math.abs(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function _homeMoney(value){return (value<0?'−':value>0?'+':'')+(typeof _fxSym==='function'?_fxSym():'$')+Math.abs(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function _homeSelectAccount(value){selectedAccounts=new Set([value]);renderAcctMenu();applyAcctFilter();}
 function _homeTrend(series) {
   const low=Math.min(...series),high=Math.max(...series),range=high-low||1;
@@ -11180,7 +11189,7 @@ function renderHome(){
   const selected=typeof selectedAccounts==='undefined'?new Set(['__all__']):selectedAccounts;
   const every=selected.has('__all__')||!selected.size;
   const rows=every?all:all.filter(t=>selected.has(t.acct));
-  const model=_homeModel(rows,_homePeriod,now,tradeNet);
+  const model=_homeModel(rows,_homePeriod,now,typeof _fxNet==='function'?_fxNet:tradeNet);
   const list=typeof accounts==='undefined'?[]:accounts;
   const shown=every?list:list.filter(a=>selected.has(a.id));
   const esc=v=>escHtml(String(v??''));
@@ -11189,11 +11198,11 @@ function renderHome(){
   const accountLabel=every?'כל החשבונות':shown.length===1?shown[0].name:shown.length+' חשבונות';
   const accountSelector='<label class="home-account-filter"><span>חשבון</span><select id="home-account-select" aria-label="סינון חשבון"><option value="__all__"'+(every?' selected':'')+'>כל החשבונות</option>'+(!every&&selected.size>1?'<option value="__selected__" selected disabled>'+esc(accountLabel)+'</option>':'')+list.map(a=>'<option value="'+esc(a.id)+'"'+(!every&&selected.size===1&&selected.has(a.id)?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label>';
   const recent=[...model.rows].reverse().slice(0,5);
-  const fees=model.rows.reduce((sum,t)=>sum+tradeComm(t),0);
+  const fees=model.rows.reduce((sum,t)=>sum+(typeof _fxConv==='function'?_fxConv(tradeComm(t),t.date):tradeComm(t)),0);
   const scopedTitle=periodTitle+' · '+accountLabel;
   const accountRows=shown.slice(0,3).map(a=>{
     const accountTrades=all.filter(t=>t.acct===a.id);
-    const value=accountTrades.reduce((sum,t)=>{const n=tradeNet(t);return sum+(Number.isFinite(n)?n:0);},0);
+    const value=accountTrades.reduce((sum,t)=>{const n=typeof _fxNet==='function'?_fxNet(t):tradeNet(t);return sum+(Number.isFinite(n)?n:0);},0);
     const goal=Number(a.goals?.pass?.target||a.goals?.withdrawal?.target)||0;
     const progress=goal?Math.max(0,Math.min(100,value/goal*100)):0;
     return '<div class="home-account"><div><strong>'+esc(a.name)+'</strong><small>'+accountTrades.length+' עסקאות · כל התקופה</small></div><b class="'+tone(value)+'" dir="ltr">'+_homeMoney(value)+'</b>'+(goal?'<div class="home-goal"><span>התקדמות ליעד '+Math.round(progress)+'%</span><progress max="100" value="'+progress+'" aria-label="התקדמות ליעד של '+esc(a.name)+'"></progress></div>':'')+'</div>';
@@ -11749,9 +11758,9 @@ function renderPNL(){
   pRows.forEach(r=>{
     if(pnlOn[r.key]){
       net+=r.sign*r.ils;
-      netUSD+=r.sign*(r.usd||r.ils/3.5);
-      if(r.sign<0){tC+=r.ils;tCusd+=(r.usd||r.ils/3.5);}
-      else{tI+=r.ils;tIusd+=(r.usd||r.ils/3.5);}
+      netUSD+=r.sign*(r.usd||r.ils/histRate(''));
+      if(r.sign<0){tC+=r.ils;tCusd+=(r.usd||r.ils/histRate(''));}
+      else{tI+=r.ils;tIusd+=(r.usd||r.ils/histRate(''));}
     }
   });
   const isP=net>=0;
@@ -11802,7 +11811,7 @@ function renderPNL(){
           <div style="display:flex;align-items:center;gap:10px">
             <div style="text-align:left">
               <div class="pnl-v" style="color:${r.col}">${r.sign>0?'+':'−'}${fmtILS(r.ils)}</div>
-              <div style="font-size:10px;color:var(--t3);font-family:'IBM Plex Mono',monospace">${r.sign>0?'+':'−'}$${(r.usd||r.ils/3.5).toFixed(2)}</div>
+              <div style="font-size:10px;color:var(--t3);font-family:'IBM Plex Mono',monospace">${r.sign>0?'+':'−'}$${(r.usd||r.ils/histRate('')).toFixed(2)}</div>
             </div>
             ${items.length?`<button onclick="_pnlOpen['${r.key}']=!_pnlOpen['${r.key}'];renderPNL()" style="padding:2px 7px;border:1px solid var(--border2);border-radius:4px;background:${open?'var(--bg4)':'transparent'};color:${open?'var(--t1)':'var(--t3)'};font-size:11px;cursor:pointer;font-family:inherit;min-width:26px" title="${open?'סגור':'פרט'}">${open?'−':'+'}</button>`:''}
           </div>
@@ -13498,9 +13507,9 @@ function pnlTabPDF() {
   let net=0, netUSD=0, tCils=0, tCusd=0, tIils=0, tIusd=0;
   pRows.forEach(r=>{
     if(pnlOn[r.key]){
-      net+=r.sign*r.ils; netUSD+=r.sign*(r.usd||r.ils/3.5);
-      if(r.sign<0){tCils+=r.ils;tCusd+=(r.usd||r.ils/3.5);}
-      else{tIils+=r.ils;tIusd+=(r.usd||r.ils/3.5);}
+      net+=r.sign*r.ils; netUSD+=r.sign*(r.usd||r.ils/histRate(''));
+      if(r.sign<0){tCils+=r.ils;tCusd+=(r.usd||r.ils/histRate(''));}
+      else{tIils+=r.ils;tIusd+=(r.usd||r.ils/histRate(''));}
     }
   });
   netUSD=+netUSD.toFixed(2);
@@ -13542,7 +13551,7 @@ function pnlTabPDF() {
     body += `<tr style="${on?'':'opacity:.5'}">
       <td>${r.sign>0?'➕':'➖'} <b>${r.lbl}</b></td>
       <td class="${r.sign>0?'pos':'neg'}">${r.sign>0?'+':'-'}₪${_rFmt(r.ils)}</td>
-      <td class="${r.sign>0?'pos':'neg'}">${r.sign>0?'+':'-'}$${(r.usd||r.ils/3.5).toFixed(2)}</td>
+      <td class="${r.sign>0?'pos':'neg'}">${r.sign>0?'+':'-'}$${(r.usd||r.ils/histRate('')).toFixed(2)}</td>
       <td>${on?'✅ כן':'☐ לא'}</td>
     </tr>`;
   });
@@ -14407,7 +14416,7 @@ function openEdit(ri){
   }
   setMT(r.type);
   if(r.type==='משיכה'){document.getElementById('f-wdco').value=r.company||'BULENOX';document.getElementById('f-wp').value=r.wdPct||20;document.getElementById('f-wnote').value=r.note||'';
-    if(r.wdFeeAmt!=null){_wdFeeMode='abs';document.getElementById('f-wf').value=r.currency==='ILS'?+(r.wdFeeAmt*(r.rate||3.65)).toFixed(2):r.wdFeeAmt;}else{_wdFeeMode='pct';document.getElementById('f-wf').value='';}}
+    if(r.wdFeeAmt!=null){_wdFeeMode='abs';document.getElementById('f-wf').value=r.currency==='ILS'?+(r.wdFeeAmt*(r.rate||histRate(r.date||''))).toFixed(2):r.wdFeeAmt;}else{_wdFeeMode='pct';document.getElementById('f-wf').value='';}}
   else{document.getElementById('f-co').value=r.company||'BULENOX';_setFormCat(r.cat||'מבחן');document.getElementById('f-pv').value=String(r.portVal||0);}
   cWd();document.getElementById('modal').classList.add('open');
 }
@@ -14475,7 +14484,7 @@ function _wdFeeCalc(usd,rt){
 }
 function cWd(){
   const raw=parseFloat(document.getElementById('f-am').value)||0;
-  const rt=parseFloat(document.getElementById('f-rt')?.value)||3.65;
+  const rt=parseFloat(document.getElementById('f-rt')?.value)||histRate(document.getElementById('f-dt')?.value||'');
   const usd = mCurrency==='ILS' ? raw/rt : raw;
   const ils = mCurrency==='ILS' ? raw : raw*rt;
   // Withdrawal calc
@@ -14863,7 +14872,7 @@ function cxSetCur(cur) {
 }
 function cxUpdateConv() {
   const raw = parseFloat(document.getElementById('cx-am').value)||0;
-  const rt  = parseFloat(document.getElementById('cx-rt').value)||3.65;
+  const rt  = parseFloat(document.getElementById('cx-rt').value)||histRate(document.getElementById('cx-dt')?.value||'');
   const conv = document.getElementById('cx-conv');
   if (!conv) return;
   if (raw > 0) conv.textContent = _cxCurrency==='ILS' ? `≈ $${(raw/rt).toFixed(2)}` : `≈ ₪${(raw*rt).toFixed(0)}`;
@@ -14898,7 +14907,7 @@ function cxClose() { document.getElementById('cx-modal').classList.remove('open'
 function cxSave() {
   const dt   = document.getElementById('cx-dt').value;
   const rawAm = parseFloat(document.getElementById('cx-am').value);
-  const rt   = parseFloat(document.getElementById('cx-rt').value)||3.65;
+  const rt   = parseFloat(document.getElementById('cx-rt').value)||histRate(document.getElementById('cx-dt')?.value||'');
   const desc = document.getElementById('cx-desc').value.trim();
   if(!dt||isNaN(rawAm)||rawAm<=0||!desc){showToast('נא למלא תאריך, תיאור וסכום','error');return;}
   const amUSD = _cxCurrency==='ILS' ? +(rawAm/rt).toFixed(2) : rawAm;
@@ -16194,7 +16203,22 @@ function toggleCurrency(btn) {
   showILS = !showILS;
   document.getElementById('currency-icon').textContent = showILS ? '₪' : '$';
   btn.classList.toggle('active', showILS);
+  btn.setAttribute('aria-pressed', String(showILS));
+  /* v74h1: the toggle used to change only the icon. Re-render with per-date conversion. */
+  try { if (typeof renderHome === 'function') renderHome(); } catch(e) {}
+  try { if (typeof renderTJ === 'function') renderTJ(); } catch(e) {}
+  if (showILS && typeof showToast === 'function') showToast('מוצג בשקלים לפי שער הדולר ביום כל עסקה (ביומן ובמסך הבית)', 'info');
 }
+/* v74h1: display helpers — a trade's USD net converted at the USD/ILS rate of its own date */
+function _fxOn(){ return typeof showILS !== 'undefined' && showILS; }
+function _fxConv(usd, date){ const n = Number(usd); return _fxOn() ? n * histRate(String(date||'')) : n; }
+function _fxNet(t){ return _fxConv(tradeNet(t), t && t.date); }
+function _fxSym(){ return _fxOn() ? '₪' : '$'; }
+window.addEventListener('fayna:fx-updated', () => {
+  try { if (typeof renderHome === 'function') renderHome(); } catch(e) {}
+  try { if (_fxOn() && typeof renderTJ === 'function') renderTJ(); } catch(e) {}
+  try { if (typeof financeRender === 'function' && document.getElementById('tp-biz')?.offsetParent) financeRender(); } catch(e) {}
+});
 
 // Date filter (simple)
 let dateFilter = 'all';
@@ -19776,12 +19800,16 @@ window.renderTJ = function renderTJ() {
 
   const tot = list.reduce((s,t)=>s+tradeNet(t), 0);
   const w   = list.filter(t=>tradeNet(t)>0);
-  const curRate = histRate(new Date().toISOString().slice(0,10));
+  /* v74h1: shekel value = each trade converted at the USD/ILS rate of its own date */
+  const totILS = list.reduce((s,t)=>s+tradeNet(t)*histRate(String(t.date||'')), 0);
+  const ils = typeof _fxOn==='function' && _fxOn();
+  const dTot = ils ? totILS : tot, dSym = ils ? '₪' : '$';
+  const dAvgW = w.length ? w.reduce((s,t)=>s+(ils?tradeNet(t)*histRate(String(t.date||'')):tradeNet(t)),0)/w.length : 0;
   document.getElementById('tj-m').innerHTML =
-    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L סה״כ $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*curRate).toFixed(0)}</div></div>`+
+    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L סה״כ ${dSym}</div><div class="mc-v ${dTot>=0?'cg':'cr'}">${dTot>=0?'+':''}${dSym}${dTot.toFixed(2)}</div><div class="mc-s" title="לפי שער הדולר ביום כל עסקה">${ils?'$'+tot.toFixed(2):'₪'+totILS.toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">סה״כ עסקאות</div></div>`+
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${list.length?(w.length/list.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W / ${list.length-w.length}L</div></div>`+
-    `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${tot>=0?'cg':'cr'}">${list.length?'$'+(tot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: $'+(w.reduce((s,t)=>s+tradeNet(t),0)/w.length).toFixed(1):''}</div></div>`;
+    `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${dTot>=0?'cg':'cr'}">${list.length?dSym+(dTot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: '+dSym+dAvgW.toFixed(1):''}</div></div>`;
 
   document.getElementById('tj-body').innerHTML = list.length ? list.map(t => {
     const ti  = tradesList.indexOf(t);
@@ -19822,7 +19850,7 @@ window.renderTJ = function renderTJ() {
       <td data-label="קנייה" class="mono" style="font-size:11px;color:var(--t3)">${buyHtml}</td>
       <td data-label="מכירה" class="mono" style="font-size:11px;color:var(--t3)">${sellHtml}</td>
       <td data-label="משך" style="color:#3a4252;font-size:11px">${t.dur}</td>
-      <td data-label="נטו $" class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px">${net>=0?'+':'−'}$${Math.abs(net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
+      <td data-label="נטו ${(typeof _fxSym==='function'?_fxSym():'$')}" class="mono ${net>=0?'tw':'tl'}" style="font-weight:700;font-size:13px"${typeof _fxOn==='function'&&_fxOn()?` title="$${net.toFixed(2)} × ${histRate(String(t.date||''))}"`:''}>${net>=0?'+':'−'}${typeof _fxSym==='function'?_fxSym():'$'}${Math.abs(typeof _fxNet==='function'?_fxNet(t):net).toFixed(2)}${t.commOverride!=null?`<span title="עמלה ידנית: $${t.commOverride}" style="font-size:9px;color:var(--go);margin-right:4px;cursor:help">✎</span>`:''}</td>
       <td data-label="אסטרטגיה"><div>${stratHtml}</div>${tagsHtml}</td>
       <td data-label="⭐" style="white-space:nowrap">${starsHtml}</td>
       <td data-label="" style="text-align:center">${imgHtml}</td>
