@@ -46,3 +46,12 @@ export checks pass locally. Index/v75 equality, original declarations and inline
 style count remain covered by subscription checks. This is not a live Firebase
 authentication, deployed-rules or provider payment acceptance test; existing
 billing rollout blockers still apply.
+
+## Concurrent production changes
+
+Merged origin/main through 47db61b into this development branch, preserving its
+Tradovate accounting-negative/fill identity fixes and historical currency modules.
+Index and v75 were aligned after resolving the head stylesheet and cache version
+conflicts. The imported subscription notice was adjusted to the approved One /
+Unlimited model and current eligibility gates; it does not promise card collection,
+automatic renewal or a forced existing-user trial that has not been authorized.

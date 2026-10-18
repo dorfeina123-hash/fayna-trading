@@ -1,0 +1,762 @@
+From 6871220b82950aac0bdfa927a7a13169255ea287 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 18 Oct 2026 10:36:50 +0300
+Subject: [PATCH] Port live hotfix v74h1 into v75 without touching guarded
+ inline code
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- fayna-currency-display.js wraps histRate, toggleCurrency, _homeMoney and
+  renderTJ at runtime (same pattern as saas-finance-currency.js), so
+  scripts/validate-app.cjs still passes
+- renderHome passes the display-currency net to _homeModel and
+  SaasDashboard.decorate; saas-dashboard formats ILS when ₪ is on
+- fayna-fx, fayna-import (Tradovate fix), announce and repair modules
+  identical to main; sw.js VERSION fayna-v75-ui5-fx1
+- docs: port notes for Codex, broker sync options research
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01DGeJKvynYfrJcdTknoBJfu
+---
+ docs/BROKER_SYNC_OPTIONS.md |  28 ++++++++++
+ docs/PORT_V74H1_TO_V75.md   |  26 ++++++++++
+ dor_trading_v75.html        |  12 +++--
+ fayna-announce.js           |  68 ++++++++++++++++++++++++
+ fayna-currency-display.js   | 101 ++++++++++++++++++++++++++++++++++++
+ fayna-fx.js                 | 100 +++++++++++++++++++++++++++++++++++
+ fayna-import.js             |  31 ++++++++---
+ fayna-tradovate-repair.js   |  59 +++++++++++++++++++++
+ index.html                  |  12 +++--
+ saas-dashboard.js           |   2 +-
+ saas-finance-currency.js    |   3 +-
+ sw.js                       |   2 +-
+ tests/fx.cjs                |  20 +++++++
+ tests/import-tradovate.cjs  |  62 ++++++++++++++++++++++
+ 14 files changed, 508 insertions(+), 18 deletions(-)
+ create mode 100644 docs/BROKER_SYNC_OPTIONS.md
+ create mode 100644 docs/PORT_V74H1_TO_V75.md
+ create mode 100644 fayna-announce.js
+ create mode 100644 fayna-currency-display.js
+ create mode 100644 fayna-fx.js
+ create mode 100644 fayna-tradovate-repair.js
+ create mode 100644 tests/fx.cjs
+ create mode 100644 tests/import-tradovate.cjs
+
+diff --git a/docs/BROKER_SYNC_OPTIONS.md b/docs/BROKER_SYNC_OPTIONS.md
+new file mode 100644
+index 0000000..9c1f7f1
+--- /dev/null
++++ b/docs/BROKER_SYNC_OPTIONS.md
+@@ -0,0 +1,28 @@
++# Automatic trade sync — options (research 2026-10-18)
++
++Goal: trades appear in Fayna without manual import. Accounts in scope: Bulenox, Apex, TakeProfit/MFFU (Rithmic) and Tradovate users.
++
++## 1. Tradovate official API (OAuth)
++- API access is a paid add-on (~$25/month reported by developers) and **OAuth credentials for third-party apps are issued only to approved NinjaTrader Ecosystem partners** (support answer relayed on Tradovate's forum, Jan 2026).
++- Developers report historical endpoints (`fill/list`, `fillPair/list`) returning empty arrays via OAuth while live endpoints work (Apr–May 2026); support points to a separate Reporting API for history.
++- Fit: good long-term for Tradovate users, but needs a partner application and real testing. No password storage (OAuth).
++Sources: community.tradovate.com threads "Third-Party OAuth Integration" and "How to retrieve historical fills/trades via OAuth".
++
++## 2. Rithmic R|Protocol API (server-side)
++- No OAuth: a server must log in with the user's **Rithmic username + password** (conflicts with our rule of never storing broker passwords).
++- Per-user API fees at several brokers/firms (e.g. ~$100/month add-on reported for Bulenox; $20–$125 elsewhere), API not available on demo/trial accounts, prop-firm rules vary (Apex restricts automation).
++- Fit: poor for a SaaS journal — cost per user, password custody, approval and prop-firm terms.
++Source: PickMyTrade blog "Rithmic Access Denied: API Access Level" (Sep 2026, vendor source — verify with each firm).
++
++## 3. Recommended: platform add-on ("Fayna Sync") + our server
++The trading platform the trader already uses (ATAS, NinjaTrader 8, Quantower …) is already connected to Rithmic/Tradovate and sees every fill. A small add-on inside it sends each execution to Fayna:
++- No broker password, no Rithmic/Tradovate API fees, works for every prop firm on that platform, real-time.
++- User pairs the add-on once with a revocable device token from Fayna settings; the server (already built: `server/`, tenant isolation, fill revisions, dedupe, preview/reconcile) receives fills at a new `/v1/ingest/fills` endpoint and maps them to the journal account.
++- Work: one add-on per platform (C# for ATAS and NinjaTrader), the ingest endpoint + pairing screen, and Firebase Blaze for hosting (already chosen for billing).
++- Limitation: syncs only while the platform runs on the trader's computer; history before installation still comes from file import.
++
++## 4. Keep file import as the baseline
++Already supports ATAS, Tradovate (fixed today), NinjaTrader, TopstepX, MT4/5, IBKR, Binance.
++
++## Decision needed
++Which platform do you and most clients execute in? That picks the first add-on.
+diff --git a/docs/PORT_V74H1_TO_V75.md b/docs/PORT_V74H1_TO_V75.md
+new file mode 100644
+index 0000000..ef331a5
+--- /dev/null
++++ b/docs/PORT_V74H1_TO_V75.md
+@@ -0,0 +1,26 @@
++# Port of live hotfix v74h1 into v75 (for Codex)
++
++Branch: `claude/port-v74h1-to-v75` (based on `codex/saas-foundation` @ `6124066`). Not merged.
++
++## What is live on main since 2026-10-18 (`0bf3042`)
++1. Real USD/ILS by date — `fayna-fx.js` (ECB via Frankfurter, cached; monthly table only offline).
++2. Finance ledger no longer drops USD rows in the ILS view — `saas-finance-currency.js` (Codex's module, note text updated).
++3. The ₪ toggle actually converts home + journal, per trade at its own date's rate.
++4. Tradovate import: `$(12.50)` was read as +12.50 (all losses became gains); partial fills with identical time/price/qty were deduped away. `fayna-tradovate-repair.js` offers (with confirmation) to fix already-imported trades.
++5. In-app subscription notice — `fayna-announce.js` (no email, no writes).
++
++## How it is done in v75 (respects `scripts/validate-app.cjs`)
++- The live hotfix edited inline code; in v75 the same behaviour comes from **`fayna-currency-display.js`**, which wraps `histRate`, `toggleCurrency`, `_homeMoney` and `renderTJ` at runtime (same pattern as `saas-finance-currency.js`). Inline scripts are unchanged except `renderHome` (allowed by the guard).
++- `renderHome` passes `netOf` (= `_fxNet` when ₪ is on) to `_homeModel` and to `SaasDashboard.decorate`.
++- `saas-dashboard.js` formats with ILS when ₪ is on.
++- `fayna-import.js`, `fayna-fx.js`, `fayna-announce.js`, `fayna-tradovate-repair.js` identical to main.
++- `sw.js` VERSION → `fayna-v75-ui5-fx1`.
++
++## Checks run
++`validate-app` ✓ · saas-dashboard, import-atas, chart-symbol, delete-trades, data-export, trade-markers, default-theme, finance-currency, finance-summary ✓ · new: `tests/import-tradovate.cjs`, `tests/fx.cjs` ✓.
++Browser (Chromium, real v75 HTML, Firebase stubbed, synthetic trades): ₪ toggle home/journal/rows equal live numbers; finance ILS keeps USD rows; announce → repair order; no page errors.
++Not run here: `tests/saas-browser.cjs` (needs Edge) and the emulator suite — please run them in CI.
++
++## Note for Codex
++- When v75 replaces v74 on main, keep these five modules and `fayna-currency-display.js`; do not reintroduce a fixed 3.65/3.5 rate.
++- Main's `index.html` (v74h1) had one CRLF style line normalised to LF by the hotfix tooling — whitespace only.
+diff --git a/dor_trading_v75.html b/dor_trading_v75.html
+index fdd9f0a..eea0070 100644
+--- a/dor_trading_v75.html
++++ b/dor_trading_v75.html
+@@ -2348,6 +2348,10 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
+ <script defer src="saas-finance-currency.js?v=75"></script>
+ <script defer src="saas-default-theme.js?v=75"></script>
+ </head>
++<script defer src="fayna-fx.js?v=75fx1"></script>
++<script defer src="fayna-currency-display.js?v=75fx1"></script>
++<script defer src="fayna-announce.js?v=75fx1"></script>
++<script defer src="fayna-tradovate-repair.js?v=75fx1"></script>
+ <body>
+ <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
+ <div id="toast-container"></div>
+@@ -11185,7 +11189,7 @@ function renderHome(){
+   const selected=typeof selectedAccounts==='undefined'?new Set(['__all__']):selectedAccounts;
+   const every=selected.has('__all__')||!selected.size;
+   const rows=every?all:all.filter(t=>selected.has(t.acct));
+-  const model=_homeModel(rows,_homePeriod,now,tradeNet);
++  const netOf=typeof _fxNet==='function'?_fxNet:tradeNet;const model=_homeModel(rows,_homePeriod,now,netOf);
+   const list=typeof accounts==='undefined'?[]:accounts;
+   const shown=every?list:list.filter(a=>selected.has(a.id));
+   const esc=v=>escHtml(String(v??''));
+@@ -11194,11 +11198,11 @@ function renderHome(){
+   const accountLabel=every?'כל החשבונות':shown.length===1?shown[0].name:shown.length+' חשבונות';
+   const accountSelector='<label class="home-account-filter"><span>חשבון</span><select id="home-account-select" aria-label="סינון חשבון"><option value="__all__"'+(every?' selected':'')+'>כל החשבונות</option>'+(!every&&selected.size>1?'<option value="__selected__" selected disabled>'+esc(accountLabel)+'</option>':'')+list.map(a=>'<option value="'+esc(a.id)+'"'+(!every&&selected.size===1&&selected.has(a.id)?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label>';
+   const recent=[...model.rows].reverse().slice(0,5);
+-  const fees=model.rows.reduce((sum,t)=>sum+tradeComm(t),0);
++  const fees=model.rows.reduce((sum,t)=>sum+(typeof _fxConv==='function'?_fxConv(tradeComm(t),t.date):tradeComm(t)),0);
+   const scopedTitle=periodTitle+' · '+accountLabel;
+   const accountRows=shown.slice(0,3).map(a=>{
+     const accountTrades=all.filter(t=>t.acct===a.id);
+-    const value=accountTrades.reduce((sum,t)=>{const n=tradeNet(t);return sum+(Number.isFinite(n)?n:0);},0);
++    const value=accountTrades.reduce((sum,t)=>{const n=netOf(t);return sum+(Number.isFinite(n)?n:0);},0);
+     const goal=Number(a.goals?.pass?.target||a.goals?.withdrawal?.target)||0;
+     const progress=goal?Math.max(0,Math.min(100,value/goal*100)):0;
+     return '<div class="home-account"><div><strong>'+esc(a.name)+'</strong><small>'+accountTrades.length+' עסקאות · כל התקופה</small></div><b class="'+tone(value)+'" dir="ltr">'+_homeMoney(value)+'</b>'+(goal?'<div class="home-goal"><span>התקדמות ליעד '+Math.round(progress)+'%</span><progress max="100" value="'+progress+'" aria-label="התקדמות ליעד של '+esc(a.name)+'"></progress></div>':'')+'</div>';
+@@ -11213,7 +11217,7 @@ function renderHome(){
+     <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="trades"><span class="home-shortcut-icon">↗</span><span><strong>יומן המסחר</strong><small>עסקאות ופרטים במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
+ <button class="ws-text-button ws-finance-link" data-home-nav="biz">מעבר לניהול הכספי העצמאי ←</button>
+     ${model.excluded?'<p class="home-muted" role="status">'+model.excluded+' עסקאות עם סכום לא תקין לא נכללו בסיכום. בדוק אותן ביומן.</p>':''}`;
+-  if(typeof SaasDashboard!=='undefined')SaasDashboard.decorate(root,model,rows,now,tradeNet);
++  if(typeof SaasDashboard!=='undefined')SaasDashboard.decorate(root,model,rows,now,netOf);
+   root.querySelectorAll('[data-home-nav]').forEach(b=>b.addEventListener('click',()=>swNav(b.dataset.homeNav)));
+   root.querySelector('#home-account-select')?.addEventListener('change',e=>_homeSelectAccount(e.target.value));
+   root.querySelectorAll('[data-home-period]').forEach(b=>b.addEventListener('click',()=>{_homePeriod=b.dataset.homePeriod;renderHome();root.querySelector('[data-home-period="'+_homePeriod+'"]').focus();}));
+diff --git a/fayna-announce.js b/fayna-announce.js
+new file mode 100644
+index 0000000..bda9046
+--- /dev/null
++++ b/fayna-announce.js
+@@ -0,0 +1,68 @@
++/* ═════════════════════════════════════════════════════════════════════
++   fayna-announce.js — v74 hotfix 1 (2026-10-18)
++   In-app notice to signed-in users about the upcoming subscription model.
++   Shown inside the site only: no email, no push, no broadcast, no writes
++   to Firestore. Dismissal is remembered per user in this browser.
++   Nothing about access or billing changes with this file.
++   ═════════════════════════════════════════════════════════════════════ */
++(function () {
++  'use strict';
++  var ID = 'billing-2026-10';
++  var TITLE = 'עדכון חשוב: Fayna Trading עוברת למודל מנויים';
++  var LINES = [
++    'בקרוב Fayna Trading תעבור למודל מנויים עם שתי חבילות: Basic ו-Pro.',
++    'כל מי שנרשם יקבל 14 ימי ניסיון מלאים. הניסיון מתחיל בהזנת אמצעי תשלום, ובסופו המנוי ממשיך בחבילה שבחרתם — אלא אם תבטלו. ביטול בלחיצה אחת, ובתקופת הניסיון ללא שום חיוב.',
++    'למשתמשים הקיימים: ביום ההשקה תקבלו 14 ימי ניסיון מלאים, ורק לאחר מכן תתבקשו לבחור חבילה.',
++    'נעדכן מראש על מועד ההשקה והמחירים. כרגע אין צורך לעשות דבר, ושום דבר לא יחויב בלי אישור מפורש שלכם.',
++  ];
++
++  function key() {
++    var uid = (typeof currentUser !== 'undefined' && currentUser && (currentUser.uid || currentUser.email)) || 'anon';
++    return 'fayna_announce_' + ID + '_' + uid;
++  }
++  function seen() { try { return localStorage.getItem(key()) === '1'; } catch (e) { return false; } }
++  function markSeen() { try { localStorage.setItem(key(), '1'); } catch (e) { /* private mode */ } }
++
++  function show() {
++    if (document.getElementById('fayna-announce')) return;
++    var box = document.createElement('section');
++    box.id = 'fayna-announce';
++    box.setAttribute('role', 'region');
++    box.setAttribute('aria-labelledby', 'fayna-announce-title');
++    box.dir = 'rtl';
++    box.style.cssText = 'position:fixed;z-index:9000;top:72px;left:50%;transform:translateX(-50%);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 96px);overflow:auto;'
++      + 'background:var(--bg2,#1a2533);color:var(--t1,#e6eff8);border:1px solid rgba(191,161,94,.55);border-radius:14px;'
++      + 'padding:18px 18px 14px;box-shadow:0 12px 40px rgba(0,0,0,.35);font-size:14px;line-height:1.65';
++    var h = document.createElement('h2');
++    h.id = 'fayna-announce-title';
++    h.textContent = TITLE;
++    h.style.cssText = 'margin:0 0 8px;font-size:16px;color:var(--go,#d8b25c)';
++    box.appendChild(h);
++    LINES.forEach(function (l) { var p = document.createElement('p'); p.textContent = l; p.style.margin = '0 0 6px'; box.appendChild(p); });
++    var btn = document.createElement('button');
++    btn.type = 'button';
++    btn.textContent = 'הבנתי';
++    btn.style.cssText = 'margin-top:8px;min-height:44px;padding:0 22px;border-radius:10px;border:0;background:#d8b25c;color:#1a1408;font:inherit;font-weight:700;cursor:pointer';
++    btn.addEventListener('click', function () { markSeen(); box.remove(); });
++    box.appendChild(btn);
++    document.body.appendChild(box);
++  }
++
++  function maybeShow() {
++    var signedIn = typeof currentUser !== 'undefined' && currentUser && (currentUser.uid || currentUser.email);
++    if (!signedIn || seen()) return false;
++    show();
++    return true;
++  }
++
++  if (typeof document === 'undefined') return;
++  var tries = 0;
++  var iv = setInterval(function () {
++    tries++;
++    var signedIn = false;
++    try { signedIn = typeof currentUser !== 'undefined' && !!currentUser; } catch (e) { /* not ready */ }
++    if (signedIn) { clearInterval(iv); maybeShow(); }
++    else if (tries > 150) clearInterval(iv);
++  }, 2000);
++  window.FaynaAnnounce = { show: show, maybeShow: maybeShow, TITLE: TITLE, LINES: LINES };
++})();
+diff --git a/fayna-currency-display.js b/fayna-currency-display.js
+new file mode 100644
+index 0000000..ef9e7c0
+--- /dev/null
++++ b/fayna-currency-display.js
+@@ -0,0 +1,101 @@
++/* ═════════════════════════════════════════════════════════════════════
++   fayna-currency-display.js — USD/ILS display layer (v75 port of v74h1)
++   ---------------------------------------------------------------------
++   Same behaviour as the v74 hotfix 1 on the live site, implemented as a
++   wrapper module so the inline application code stays untouched (Codex's
++   validate-app guard). Loaded with `defer`, i.e. after the inline scripts.
++
++   1. histRate(date)     → real daily ECB rate (fayna-fx.js) first, the
++                            built-in monthly table only offline.
++   2. toggleCurrency(btn) → the ₪ button used to change only the icon; now
++                            it re-renders home + journal in shekels.
++   3. Conversion is per trade, at the USD/ILS rate of the trade's own date.
++   4. Saved trades are never changed — display only.
++   ═════════════════════════════════════════════════════════════════════ */
++(function () {
++  'use strict';
++  if (typeof window === 'undefined') return;
++
++  var origHist = typeof window.histRate === 'function' ? window.histRate : null;
++  window.histRate = function (d) {
++    if (window.FaynaFX) { var r = window.FaynaFX.rate(String(d || '')); if (r) return +r.toFixed(4); }
++    return origHist ? origHist(String(d || new Date().toISOString().slice(0, 10))) : 3.0;
++  };
++
++  function on() { try { return typeof showILS !== 'undefined' && !!showILS; } catch (e) { return false; } }
++  function conv(usd, date) { var n = Number(usd); return on() ? n * window.histRate(String(date || '')) : n; }
++  function netOf(t) { return conv(tradeNet(t), t && t.date); }
++  function sym() { return on() ? '₪' : '$'; }
++  window._fxOn = on; window._fxConv = conv; window._fxNet = netOf; window._fxSym = sym;
++
++  if (typeof window._homeMoney === 'function') {
++    window._homeMoney = function (value) {
++      return (value < 0 ? '−' : value > 0 ? '+' : '') + sym() + Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
++    };
++  }
++
++  function rerender() {
++    try { if (typeof renderHome === 'function') renderHome(); } catch (e) { /* page not ready */ }
++    try { if (typeof renderTJ === 'function') renderTJ(); } catch (e) { /* page not ready */ }
++  }
++
++  var origToggle = window.toggleCurrency;
++  if (typeof origToggle === 'function') {
++    window.toggleCurrency = function (btn) {
++      origToggle.apply(this, arguments);
++      if (btn) btn.setAttribute('aria-pressed', String(on()));
++      rerender();
++      if (on() && typeof showToast === 'function') showToast('מוצג בשקלים לפי שער הדולר ביום כל עסקה (ביומן ובמסך הבית)', 'info');
++    };
++  }
++
++  /* Journal: the renderer prints USD. Post-process its own output from the
++     same trades (row ids carry the trade index), never from parsed text. */
++  function fixJournal() {
++    var body = document.getElementById('tj-body'), kpi = document.getElementById('tj-m');
++    if (!body || !kpi || typeof tradesList === 'undefined') return;
++    var rows = body.querySelectorAll('tr.tj-row[id^="tj-row-"]');
++    var totUSD = 0, totILS = 0, n = 0, wSum = 0, wN = 0, ils = on();
++    rows.forEach(function (tr) {
++      var t = tradesList[Number(tr.id.slice(7))]; if (!t) return;
++      var usd = Number(tradeNet(t)); if (!isFinite(usd)) return;
++      var rate = window.histRate(String(t.date || '')), shek = usd * rate;
++      totUSD += usd; totILS += shek; n++;
++      if (usd > 0) { wSum += ils ? shek : usd; wN++; }
++      if (ils) {
++        var cell = tr.querySelector('td[data-label^="נטו"]');
++        if (cell && cell.firstChild && cell.firstChild.nodeType === 3) {
++          cell.firstChild.nodeValue = (usd >= 0 ? '+' : '−') + '₪' + Math.abs(shek).toFixed(2);
++          cell.setAttribute('data-label', 'נטו ₪');
++          cell.title = '$' + usd.toFixed(2) + ' × ' + rate;
++        }
++      }
++    });
++    var cards = kpi.querySelectorAll('.mc');
++    if (cards[0]) {
++      var tot = ils ? totILS : totUSD, s = ils ? '₪' : '$';
++      var l = cards[0].querySelector('.mc-l'), v = cards[0].querySelector('.mc-v'), sub = cards[0].querySelector('.mc-s');
++      if (l) l.textContent = 'P&L סה״כ ' + s;
++      if (v) { v.textContent = (tot >= 0 ? '+' : '') + s + tot.toFixed(2); v.className = 'mc-v ' + (tot >= 0 ? 'cg' : 'cr'); }
++      if (sub) { sub.textContent = ils ? '$' + totUSD.toFixed(2) : '₪' + totILS.toFixed(0); sub.title = 'לפי שער הדולר ביום כל עסקה'; }
++    }
++    if (cards[3] && ils) {
++      var av = cards[3].querySelector('.mc-v'), as = cards[3].querySelector('.mc-s');
++      if (av) av.textContent = n ? '₪' + (totILS / n).toFixed(2) : '—';
++      if (as) as.textContent = wN ? 'avg W: ₪' + (wSum / wN).toFixed(1) : '';
++    }
++  }
++  var origTJ = window.renderTJ;
++  if (typeof origTJ === 'function') {
++    window.renderTJ = function () {
++      var r = origTJ.apply(this, arguments);
++      try { fixJournal(); } catch (e) { /* never break the journal */ }
++      return r;
++    };
++  }
++
++  window.addEventListener('fayna:fx-updated', function () {
++    rerender();
++    try { if (typeof financeRender === 'function' && document.getElementById('tp-biz') && document.getElementById('tp-biz').offsetParent) financeRender(); } catch (e) { /* ignore */ }
++  });
++})();
+diff --git a/fayna-fx.js b/fayna-fx.js
+new file mode 100644
+index 0000000..af7dd26
+--- /dev/null
++++ b/fayna-fx.js
+@@ -0,0 +1,100 @@
++/* ═════════════════════════════════════════════════════════════════════
++   fayna-fx.js — USD/ILS exchange rate by date (v74 hotfix 1, 2026-10-18)
++   ---------------------------------------------------------------------
++   Why: conversions used a hand-typed monthly table that stopped at
++   2026-06, and several forms defaulted to 3.65 (≈18% off in Oct 2026).
++
++   Source: Frankfurter (European Central Bank reference rates, free, no key,
++   CORS-enabled): https://api.frankfurter.dev/v1/<from>..<to>?from=USD&to=ILS
++   ECB publishes on business days; weekends/holidays use the previous
++   business day. Cached in localStorage and refreshed at most every 6 hours.
++
++   rate(date) order:
++     1. exact or previous published day (within 10 days) from the cache
++     2. monthly table HIST_RATES (index.html) — offline fallback
++     3. most recent known rate
++   Never mutates saved records: callers use a record's own saved rate first.
++   ═════════════════════════════════════════════════════════════════════ */
++(function (root) {
++  'use strict';
++  var KEY = 'fayna_fx_usdils_v1';
++  var API = 'https://api.frankfurter.dev/v1/';
++  var START = '2023-01-01';
++  var MAX_AGE = 6 * 3600 * 1000;
++  var days = {}; var sorted = []; var fetchedAt = 0; var source = 'table';
++
++  function iso(d) { return d.toISOString().slice(0, 10); }
++  function valid(r) { return typeof r === 'number' && isFinite(r) && r > 1 && r < 10; }
++
++  function load(obj) {
++    if (!obj || !obj.days) return false;
++    var next = {};
++    Object.keys(obj.days).forEach(function (k) { if (/^\d{4}-\d{2}-\d{2}$/.test(k) && valid(obj.days[k])) next[k] = obj.days[k]; });
++    if (!Object.keys(next).length) return false;
++    days = next; sorted = Object.keys(days).sort(); fetchedAt = obj.fetchedAt || 0; source = 'ecb';
++    return true;
++  }
++  try { load(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch (e) { /* private mode */ }
++
++  function table(d) {
++    var t = (typeof HIST_RATES !== 'undefined') ? HIST_RATES : null;
++    if (!t) return null;
++    if (valid(t[d.slice(0, 7)])) return t[d.slice(0, 7)];
++    var ks = Object.keys(t).sort(), best = null;
++    for (var i = 0; i < ks.length; i++) { if (ks[i] <= d.slice(0, 7)) best = t[ks[i]]; }
++    return valid(best) ? best : (valid(t[ks[ks.length - 1]]) ? t[ks[ks.length - 1]] : null);
++  }
++
++  /** Index of the last cached day ≤ d (binary search), or -1. */
++  function prevIdx(d) {
++    var lo = 0, hi = sorted.length - 1, ans = -1;
++    while (lo <= hi) { var mid = (lo + hi) >> 1; if (sorted[mid] <= d) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
++    return ans;
++  }
++
++  function rate(date) {
++    var d = String(date || '').slice(0, 10);
++    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) d = iso(new Date());
++    if (sorted.length) {
++      var i = prevIdx(d);
++      if (i >= 0) {
++        var gap = (Date.parse(d) - Date.parse(sorted[i])) / 864e5;
++        if (gap <= 10) return days[sorted[i]];
++        if (d > sorted[sorted.length - 1]) return days[sorted[sorted.length - 1]]; // today/future: latest
++      }
++    }
++    var t = table(d);
++    if (t) return t;
++    return sorted.length ? days[sorted[sorted.length - 1]] : 3.0;
++  }
++
++  function latest() { return rate(iso(new Date())); }
++
++  var inflight = null;
++  function refresh(force) {
++    if (inflight) return inflight;
++    if (!force && fetchedAt && Date.now() - fetchedAt < MAX_AGE) return Promise.resolve(false);
++    if (typeof fetch !== 'function') return Promise.resolve(false);
++    var url = API + START + '..' + iso(new Date()) + '?from=USD&to=ILS';
++    inflight = fetch(url, { cache: 'no-store' }).then(function (r) {
++      if (!r.ok) throw new Error('fx_http_' + r.status);
++      return r.json();
++    }).then(function (j) {
++      var out = {};
++      Object.keys((j && j.rates) || {}).forEach(function (k) { var v = j.rates[k] && j.rates[k].ILS; if (valid(v)) out[k] = v; });
++      if (!load({ days: out, fetchedAt: Date.now() })) throw new Error('fx_empty');
++      try { localStorage.setItem(KEY, JSON.stringify({ days: days, fetchedAt: fetchedAt })); } catch (e) { /* quota */ }
++      try { root.dispatchEvent(new CustomEvent('fayna:fx-updated', { detail: { latest: latest() } })); } catch (e) { /* old browsers */ }
++      return true;
++    }).catch(function () { return false; }).then(function (ok) { inflight = null; return ok; });
++    return inflight;
++  }
++
++  function info() {
++    return { source: source, fetchedAt: fetchedAt, lastDay: sorted.length ? sorted[sorted.length - 1] : null, latest: latest() };
++  }
++
++  root.FaynaFX = { rate: rate, latest: latest, refresh: refresh, info: info, _load: load };
++  if (typeof module !== 'undefined' && module.exports) module.exports = root.FaynaFX;
++  if (typeof document !== 'undefined') setTimeout(function () { refresh(false); }, 0);
++})(typeof window !== 'undefined' ? window : globalThis);
+diff --git a/fayna-import.js b/fayna-import.js
+index a37cf46..558a6ed 100644
+--- a/fayna-import.js
++++ b/fayna-import.js
+@@ -118,8 +118,11 @@ function num(v) {
+   if (v == null || v === '') return 0;
+   if (typeof v === 'number') return isFinite(v) ? v : 0;
+   let s = String(v).trim().replace(/[−–—]/g, '-').replace(/[\s  ]/g, '');
+-  const neg = /^\(.*\)$/.test(s);
+-  s = s.replace(/[()]/g, '').replace(/[$€£₪]/g, '').replace(/USD|EUR|ILS/gi, '');
++  // v74h1: strip currency marks BEFORE testing for accounting negatives.
++  // Tradovate writes losses as "$(12.50)" — the old order read them as +12.50.
++  s = s.replace(/[$€£₪]/g, '').replace(/USD|EUR|ILS/gi, '');
++  const neg = /^-?\(.*\)$/.test(s);
++  s = s.replace(/[()]/g, '');
+   const lastC = s.lastIndexOf(','), lastD = s.lastIndexOf('.');
+   if (lastC > -1 && lastD > -1) {
+     // המפריד העשרוני הוא זה שמופיע אחרון
+@@ -497,7 +500,10 @@ const FORMATS = [
+       const cQ = pick(h, ['qty', 'quantity']);
+       const cP = pick(h, ['pnl', 'P&L', 'profit']);
+       const cId = pick(h, ['id', 'positionId']);
+-      const out = [];
++      // v74h1: Performance export has buyFillId/sellFillId. Without them, two partial
++      // fills with the same time/price/qty looked identical and one was dropped.
++      const cBf = pick(h, ['buyFillId']), cSf = pick(h, ['sellFillId']);
++      const out = []; let mismatch = 0;
+       rows.forEach(r => {
+         const a = parseDT(r[cBt]), b = parseDT(r[cSt]);
+         const first = (a && b) ? (a.date + a.time <= b.date + b.time ? a : b) : (a || b);
+@@ -508,11 +514,17 @@ const FORMATS = [
+           pnl: cP ? r[cP] : null,
+           date: first.date, btime: first.time, stime: last ? last.time : '',
+           dur: durOf(first, last), dir: (a && b && a.date + a.time <= b.date + b.time) ? 'long' : 'short',
+-          extId: cId ? r[cId] : '', src: 'Tradovate',
++          extId: (cBf && cSf && r[cBf] && r[cSf]) ? `${r[cBf]}-${r[cSf]}` : (cId ? r[cId] : ''), src: 'Tradovate',
+         });
+-        if (t) out.push(t);
++        if (t) {
++          // P&L must have the sign of (sell − buy) for any pair of fills.
++          if (t.buy && t.sell && t.pnl && Math.sign(t.pnl) !== Math.sign(t.sell - t.buy)) mismatch++;
++          out.push(t);
++        }
+       });
+-      return { trades: out, warnings: [] };
++      const warnings = [];
++      if (mismatch) warnings.push(`${mismatch} שורות: סימן ה-P&L בקובץ לא תואם למחירי הקנייה/מכירה — כדאי לבדוק את הקובץ לפני הייבוא.`);
++      return { trades: out, warnings };
+     },
+   },
+ 
+@@ -713,10 +725,15 @@ function dedupe(trades, existingKeys, existingExtIds, keyFn) {
+   const seenK = new Set(existingKeys || []);
+   const seenE = new Set(existingExtIds || []);
+   const fresh = [], dupes = [];
++  const existingK = new Set(existingKeys || []);
+   trades.forEach(t => {
+     const e = t.extId ? (t.src || '') + '|' + t.extId : '';
+     const k = keyFn ? keyFn(t) : `${t.date}|${t.sym}|${t.buy}|${t.sell}|${(t.btime || '').slice(0, 5)}|${t.qty}`;
+-    if ((e && seenE.has(e)) || seenK.has(k)) { dupes.push(t); return; }
++    // v74h1: with a broker id, the id decides inside the file (partial fills can share
++    // time/price/qty); the content key still blocks re-importing trades already in the
++    // journal from an older import that had no id.
++    const dup = e ? (seenE.has(e) || existingK.has(k)) : seenK.has(k);
++    if (dup) { dupes.push(t); return; }
+     if (e) seenE.add(e);
+     seenK.add(k);
+     fresh.push(t);
+diff --git a/fayna-tradovate-repair.js b/fayna-tradovate-repair.js
+new file mode 100644
+index 0000000..86715f4
+--- /dev/null
++++ b/fayna-tradovate-repair.js
+@@ -0,0 +1,59 @@
++/* ═════════════════════════════════════════════════════════════════════
++   fayna-tradovate-repair.js — v74 hotfix 1 (2026-10-18)
++   ---------------------------------------------------------------------
++   Before v74h1 the importer read Tradovate losses written as "$(12.50)"
++   as +12.50. Trades already imported keep the wrong sign until fixed.
++
++   A trade is a candidate only if ALL hold:
++     - imported from Tradovate (t.src === 'Tradovate')
++     - both buy and sell prices exist
++     - P&L is non-zero and its sign contradicts (sell − buy)
++   For a pair of fills, P&L always has the sign of (sell − buy), so a
++   contradiction can only come from the sign bug.
++
++   Nothing changes without the user's confirmation. Asked once per session.
++   ═════════════════════════════════════════════════════════════════════ */
++(function () {
++  'use strict';
++  var ASKED = 'fayna_tv_sign_fix_v74h1_asked';
++
++  function candidates(list) {
++    return (list || []).filter(function (t) {
++      if (!t || t.src !== 'Tradovate') return false;
++      var b = Number(t.buy), s = Number(t.sell), p = Number(t.pnl);
++      if (!(b > 0) || !(s > 0) || !p || !isFinite(p) || b === s) return false;
++      return Math.sign(p) !== Math.sign(s - b);
++    });
++  }
++
++  async function check() {
++    var list = (typeof tradesList !== 'undefined') ? tradesList : [];
++    var c = candidates(list);
++    if (!c.length) return 0;
++    try { if (sessionStorage.getItem(ASKED)) return 0; sessionStorage.setItem(ASKED, '1'); } catch (e) { /* ignore */ }
++    var ask = typeof customConfirm === 'function'
++      ? customConfirm((c.length === 1 ? 'נמצאה עסקה אחת שיובאה' : 'נמצאו ' + c.length + ' עסקאות שיובאו') + ' מ-Tradovate עם סימן רווח/הפסד הפוך (הפסד נרשם כרווח), בגלל תקלה בייבוא שתוקנה היום. לתקן ' + (c.length === 1 ? 'אותה' : 'אותן') + ' עכשיו? שאר הנתונים לא ישתנו.')
++      : Promise.resolve(false);
++    if (!(await ask)) return 0;
++    c.forEach(function (t) { t.pnl = -Number(t.pnl); t.pnlSignFixed = 'v74h1'; });
++    try { if (typeof saveData === 'function') saveData(); } catch (e) { /* keep going */ }
++    try { if (typeof renderAll === 'function') renderAll(); } catch (e) { /* ignore */ }
++    if (typeof showToast === 'function') showToast(c.length === 1 ? 'עסקת Tradovate אחת תוקנה' : c.length + ' עסקאות Tradovate תוקנו', 'success');
++    return c.length;
++  }
++
++  var tries = 0;
++  var iv = typeof document === 'undefined' ? null : setInterval(function () {
++    tries++;
++    if (tries > 300) { clearInterval(iv); return; }
++    try {
++      // wait for the subscription notice (fayna-announce.js) to be closed first
++      if (tries > 2 && !document.getElementById('fayna-announce') && typeof currentUser !== 'undefined' && currentUser && typeof tradesList !== 'undefined' && tradesList.length) {
++        clearInterval(iv); check();
++      }
++    } catch (e) { clearInterval(iv); }
++  }, 2000);
++
++  if (typeof window !== 'undefined') window.FaynaTradovateRepair = { candidates: candidates, check: check };
++  if (typeof module !== 'undefined' && module.exports) module.exports = { candidates: candidates };
++})();
+diff --git a/index.html b/index.html
+index fdd9f0a..eea0070 100644
+--- a/index.html
++++ b/index.html
+@@ -2348,6 +2348,10 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
+ <script defer src="saas-finance-currency.js?v=75"></script>
+ <script defer src="saas-default-theme.js?v=75"></script>
+ </head>
++<script defer src="fayna-fx.js?v=75fx1"></script>
++<script defer src="fayna-currency-display.js?v=75fx1"></script>
++<script defer src="fayna-announce.js?v=75fx1"></script>
++<script defer src="fayna-tradovate-repair.js?v=75fx1"></script>
+ <body>
+ <h1 class="sr-only">Fayna Trading — יומן מסחר מקצועי לסוחרי פרופ</h1>
+ <div id="toast-container"></div>
+@@ -11185,7 +11189,7 @@ function renderHome(){
+   const selected=typeof selectedAccounts==='undefined'?new Set(['__all__']):selectedAccounts;
+   const every=selected.has('__all__')||!selected.size;
+   const rows=every?all:all.filter(t=>selected.has(t.acct));
+-  const model=_homeModel(rows,_homePeriod,now,tradeNet);
++  const netOf=typeof _fxNet==='function'?_fxNet:tradeNet;const model=_homeModel(rows,_homePeriod,now,netOf);
+   const list=typeof accounts==='undefined'?[]:accounts;
+   const shown=every?list:list.filter(a=>selected.has(a.id));
+   const esc=v=>escHtml(String(v??''));
+@@ -11194,11 +11198,11 @@ function renderHome(){
+   const accountLabel=every?'כל החשבונות':shown.length===1?shown[0].name:shown.length+' חשבונות';
+   const accountSelector='<label class="home-account-filter"><span>חשבון</span><select id="home-account-select" aria-label="סינון חשבון"><option value="__all__"'+(every?' selected':'')+'>כל החשבונות</option>'+(!every&&selected.size>1?'<option value="__selected__" selected disabled>'+esc(accountLabel)+'</option>':'')+list.map(a=>'<option value="'+esc(a.id)+'"'+(!every&&selected.size===1&&selected.has(a.id)?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label>';
+   const recent=[...model.rows].reverse().slice(0,5);
+-  const fees=model.rows.reduce((sum,t)=>sum+tradeComm(t),0);
++  const fees=model.rows.reduce((sum,t)=>sum+(typeof _fxConv==='function'?_fxConv(tradeComm(t),t.date):tradeComm(t)),0);
+   const scopedTitle=periodTitle+' · '+accountLabel;
+   const accountRows=shown.slice(0,3).map(a=>{
+     const accountTrades=all.filter(t=>t.acct===a.id);
+-    const value=accountTrades.reduce((sum,t)=>{const n=tradeNet(t);return sum+(Number.isFinite(n)?n:0);},0);
++    const value=accountTrades.reduce((sum,t)=>{const n=netOf(t);return sum+(Number.isFinite(n)?n:0);},0);
+     const goal=Number(a.goals?.pass?.target||a.goals?.withdrawal?.target)||0;
+     const progress=goal?Math.max(0,Math.min(100,value/goal*100)):0;
+     return '<div class="home-account"><div><strong>'+esc(a.name)+'</strong><small>'+accountTrades.length+' עסקאות · כל התקופה</small></div><b class="'+tone(value)+'" dir="ltr">'+_homeMoney(value)+'</b>'+(goal?'<div class="home-goal"><span>התקדמות ליעד '+Math.round(progress)+'%</span><progress max="100" value="'+progress+'" aria-label="התקדמות ליעד של '+esc(a.name)+'"></progress></div>':'')+'</div>';
+@@ -11213,7 +11217,7 @@ function renderHome(){
+     <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="trades"><span class="home-shortcut-icon">↗</span><span><strong>יומן המסחר</strong><small>עסקאות ופרטים במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
+ <button class="ws-text-button ws-finance-link" data-home-nav="biz">מעבר לניהול הכספי העצמאי ←</button>
+     ${model.excluded?'<p class="home-muted" role="status">'+model.excluded+' עסקאות עם סכום לא תקין לא נכללו בסיכום. בדוק אותן ביומן.</p>':''}`;
+-  if(typeof SaasDashboard!=='undefined')SaasDashboard.decorate(root,model,rows,now,tradeNet);
++  if(typeof SaasDashboard!=='undefined')SaasDashboard.decorate(root,model,rows,now,netOf);
+   root.querySelectorAll('[data-home-nav]').forEach(b=>b.addEventListener('click',()=>swNav(b.dataset.homeNav)));
+   root.querySelector('#home-account-select')?.addEventListener('change',e=>_homeSelectAccount(e.target.value));
+   root.querySelectorAll('[data-home-period]').forEach(b=>b.addEventListener('click',()=>{_homePeriod=b.dataset.homePeriod;renderHome();root.querySelector('[data-home-period="'+_homePeriod+'"]').focus();}));
+diff --git a/saas-dashboard.js b/saas-dashboard.js
+index e0f99bd..3d75227 100644
+--- a/saas-dashboard.js
++++ b/saas-dashboard.js
+@@ -15,7 +15,7 @@ function monthSummary(days,year,month){
+  return {net,count,activeDays};
+ }
+ function decorate(root,model,rows,now,netOf){
+- const data=summary(model.rows,netOf),money=n=>new Intl.NumberFormat('he-IL',{style:'currency',currency:'USD'}).format(n);
++ const data=summary(model.rows,netOf),money=n=>new Intl.NumberFormat('he-IL',{style:'currency',currency:(typeof _fxOn==='function'&&_fxOn())?'ILS':'USD'}).format(n);
+  const kpis=document.createElement('div');kpis.className='saas-kpis';
+  for(const [label,value] of [['תוצאה נטו',money(model.net)],['אחוז הצלחה',model.winRate===null?'—':model.winRate.toFixed(0)+'%'],['יחס סך רווחים להפסדים',data.factor===null?'—':data.factor.toFixed(2)],['יחס רווח/הפסד ממוצע',data.averageRatio===null?'—':data.averageRatio.toFixed(2)],['רשומות בתקופה',model.count]]){
+   const card=document.createElement('section'),small=document.createElement('span'),strong=document.createElement('strong');card.className='home-card';small.textContent=label;strong.textContent=value;card.append(small,strong);kpis.append(card);
+diff --git a/saas-finance-currency.js b/saas-finance-currency.js
+index 5794fc1..2229023 100644
+--- a/saas-finance-currency.js
++++ b/saas-finance-currency.js
+@@ -22,7 +22,8 @@ if(typeof window!=='undefined'){
+   const panel=document.getElementById('tp-biz');if(!panel)return;
+   let note=panel.querySelector('[data-currency-disclosure]');
+   if(!note){note=document.createElement('p');note.dataset.currencyDisclosure='';note.className='ws-muted';note.setAttribute('role','note');panel.append(note);}
+-  note.textContent='כל התנועות מוצגות ב'+(financeCurrency==='ILS'?'שקל':'דולר')+'. ההמרה לצורכי תצוגה בלבד: לפי שער שמור ברשומה, ובהיעדרו לפי השער ההיסטורי המשוער במערכת. זה אינו שער חי. הסכום והמטבע המקוריים נשמרים ללא שינוי.';
++  const fx=window.FaynaFX&&window.FaynaFX.info?window.FaynaFX.info():null;
++  note.textContent='כל התנועות מוצגות ב'+(financeCurrency==='ILS'?'שקל':'דולר')+'. ההמרה לצורכי תצוגה בלבד: לפי השער שנשמר ברשומה, ובהיעדרו לפי השער היציג של הבנק המרכזי האירופי (ECB) ביום התנועה'+(fx&&fx.source==='ecb'&&fx.lastDay?' (עודכן עד '+fx.lastDay+')':' — כרגע לא זמין, נעשה שימוש בממוצע חודשי')+'. הסכום והמטבע המקוריים נשמרים ללא שינוי.';
+  };
+ }
+ if(typeof module!=='undefined')module.exports={convertedRows};
+diff --git a/sw.js b/sw.js
+index bc75619..9d01e90 100644
+--- a/sw.js
++++ b/sw.js
+@@ -10,7 +10,7 @@
+        the network. Never cache API/auth traffic.
+    ═══════════════════════════════════════════════════════════════ */
+ 
+-const VERSION    = 'fayna-v75-ui5';
++const VERSION    = 'fayna-v75-ui5-fx1';
+ const SHELL      = `${VERSION}-shell`;
+ const ASSETS     = `${VERSION}-assets`;
+ const OFFLINE_URL = './index.html';
+diff --git a/tests/fx.cjs b/tests/fx.cjs
+new file mode 100644
+index 0000000..b11c886
+--- /dev/null
++++ b/tests/fx.cjs
+@@ -0,0 +1,20 @@
++// v74h1 — USD/ILS by date: cache, weekend/holiday fallback, offline table, never a fixed 3.65.
++const assert = require('node:assert/strict');
++globalThis.HIST_RATES = { '2026-06': 2.91, '2026-10': 3.073 };
++const store = {}; globalThis.localStorage = { getItem: (k) => store[k] ?? null, setItem: (k, v) => { store[k] = String(v); } };
++const FX = require('../fayna-fx.js');
++// offline: monthly table, then nearest earlier month, then latest
++assert.equal(FX.info().source, 'table');
++assert.equal(FX.rate('2026-10-05'), 3.073);
++assert.equal(FX.rate('2026-08-10'), 2.91);
++// with ECB days loaded
++FX._load({ days: { '2026-10-01': 3.0762, '2026-10-02': 3.0653, '2026-10-05': 3.0623, '2026-10-16': 3.0945 }, fetchedAt: 1 });
++assert.equal(FX.rate('2026-10-01'), 3.0762);
++assert.equal(FX.rate('2026-10-04'), 3.0653, 'weekend uses the previous business day');
++assert.equal(FX.rate('2026-10-12'), 3.0623, 'holiday gap ≤10 days uses the previous published day');
++assert.equal(FX.rate('2026-12-31'), 3.0945, 'future/today uses the latest published rate');
++assert.equal(FX.rate('2026-06-15'), 2.91, 'before the cached range → table');
++assert.equal(FX.rate('garbage') > 1, true);
++// invalid values are ignored
++assert.equal(FX._load({ days: { '2026-10-01': 0, 'x': 3 } }), false);
++console.log('USD/ILS rate checks passed');
+diff --git a/tests/import-tradovate.cjs b/tests/import-tradovate.cjs
+new file mode 100644
+index 0000000..fda76ec
+--- /dev/null
++++ b/tests/import-tradovate.cjs
+@@ -0,0 +1,62 @@
++// v74h1 — Tradovate Performance export regression (synthetic rows, Tradovate's real column layout).
++const assert = require('node:assert/strict');
++const { parseAny, dedupe, num } = require('../fayna-import.js')._core;
++
++// accounting negatives in every form brokers use
++assert.equal(num('$(12.50)'), -12.5);
++assert.equal(num('$(1,234.50)'), -1234.5);
++assert.equal(num('($12.50)'), -12.5);
++assert.equal(num('(12.50)'), -12.5);
++assert.equal(num('-$12.50'), -12.5);
++assert.equal(num('USD (7.25)'), -7.25);
++assert.equal(num('$1,234.50'), 1234.5);
++assert.equal(num('₪ 1.234,56'), 1234.56);
++assert.equal(num(''), 0);
++
++const H = 'symbol,_priceFormat,_priceFormatType,_tickSize,buyFillId,sellFillId,qty,buyPrice,sellPrice,pnl,boughtTimestamp,soldTimestamp,duration';
++const rows = [
++  'MNQZ6,-2,0,0.25,111,112,2,21000.25,21010.50,$41.00,10/14/2026 09:31:05,10/14/2026 09:35:10,4min 5sec',
++  // short: sold first at 21012, bought back at 21020 → loss
++  'MNQZ6,-2,0,0.25,113,114,1,21020.00,21012.00,$(16.00),10/14/2026 10:02:00,10/14/2026 10:01:00,1min',
++  'ESZ6,-2,0,0.25,115,116,1,5800.00,5790.00,$(500.00),10/15/2026 15:00:00,10/15/2026 15:05:00,5min',
++  // two partial fills of one order: same time, price, qty — different fill ids
++  'MESZ6,-2,0,0.25,201,301,1,5790.00,5795.00,$25.00,10/16/2026 11:00:00,10/16/2026 11:04:00,4min',
++  'MESZ6,-2,0,0.25,202,302,1,5790.00,5795.00,$25.00,10/16/2026 11:00:00,10/16/2026 11:04:00,4min',
++];
++const r = parseAny([H, ...rows].join('\n'), 'auto');
++assert.equal(r.format, 'tradovate');
++assert.deepEqual(r.trades.map((t) => t.pnl), [41, -16, -500, 25, 25], 'losses must stay negative');
++assert.deepEqual(r.trades.map((t) => t.dir), ['long', 'short', 'long', 'long', 'long']);
++assert.deepEqual(r.trades.map((t) => t.date), ['2026-10-14', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-16']);
++assert.deepEqual(r.trades.map((t) => t.extId), ['111-112', '113-114', '115-116', '201-301', '202-302']);
++assert.deepEqual(r.warnings, []);
++const total = r.trades.reduce((s, t) => s + t.pnl, 0);
++assert.equal(total, -425);
++
++// partial fills are both imported; re-importing the same file adds nothing
++const first = dedupe(r.trades, [], []);
++assert.equal(first.fresh.length, 5);
++const key = (t) => `${t.date}|${t.sym}|${t.buy}|${t.sell}|${(t.btime || '').slice(0, 5)}|${t.qty}`;
++const again = dedupe(r.trades, first.fresh.map(key), first.fresh.map((t) => `${t.src}|${t.extId}`), key);
++assert.equal(again.fresh.length, 0);
++// a journal imported earlier without ids still blocks a duplicate by content
++const legacy = dedupe(r.trades, [key(r.trades[0])], [], key);
++assert.equal(legacy.fresh.length, 4);
++
++// a file whose P&L sign contradicts its prices is flagged, not silently accepted
++const bad = parseAny([H, 'MNQZ6,-2,0,0.25,1,2,1,21000,21010,-20,10/14/2026 09:31:05,10/14/2026 09:35:10,4min'].join('\n'), 'auto');
++assert.equal(bad.warnings.length, 1);
++
++console.log('Tradovate import regression checks passed');
++
++// repair of trades imported before the fix: only Tradovate rows whose sign contradicts their prices
++const { candidates } = require('../fayna-tradovate-repair.js');
++const stored = [
++  { src: 'Tradovate', buy: 21020, sell: 21012, pnl: 16 },     // bug: loss stored as gain → candidate
++  { src: 'Tradovate', buy: 5800, sell: 5790, pnl: 500 },      // candidate
++  { src: 'Tradovate', buy: 21000.25, sell: 21010.5, pnl: 41 }, // correct
++  { src: 'Tradovate', buy: 0, sell: 0, pnl: 30 },              // manual-like, no prices → untouched
++  { src: 'ATAS', buy: 110, sell: 100, pnl: 10 },               // other broker → untouched
++];
++assert.equal(candidates(stored).length, 2);
++console.log('Tradovate repair candidate checks passed');
+-- 
+2.43.0
+

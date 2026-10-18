@@ -118,8 +118,11 @@ function num(v) {
   if (v == null || v === '') return 0;
   if (typeof v === 'number') return isFinite(v) ? v : 0;
   let s = String(v).trim().replace(/[−–—]/g, '-').replace(/[\s  ]/g, '');
-  const neg = /^\(.*\)$/.test(s);
-  s = s.replace(/[()]/g, '').replace(/[$€£₪]/g, '').replace(/USD|EUR|ILS/gi, '');
+  // v74h1: strip currency marks BEFORE testing for accounting negatives.
+  // Tradovate writes losses as "$(12.50)" — the old order read them as +12.50.
+  s = s.replace(/[$€£₪]/g, '').replace(/USD|EUR|ILS/gi, '');
+  const neg = /^-?\(.*\)$/.test(s);
+  s = s.replace(/[()]/g, '');
   const lastC = s.lastIndexOf(','), lastD = s.lastIndexOf('.');
   if (lastC > -1 && lastD > -1) {
     // המפריד העשרוני הוא זה שמופיע אחרון
@@ -497,7 +500,10 @@ const FORMATS = [
       const cQ = pick(h, ['qty', 'quantity']);
       const cP = pick(h, ['pnl', 'P&L', 'profit']);
       const cId = pick(h, ['id', 'positionId']);
-      const out = [];
+      // v74h1: Performance export has buyFillId/sellFillId. Without them, two partial
+      // fills with the same time/price/qty looked identical and one was dropped.
+      const cBf = pick(h, ['buyFillId']), cSf = pick(h, ['sellFillId']);
+      const out = []; let mismatch = 0;
       rows.forEach(r => {
         const a = parseDT(r[cBt]), b = parseDT(r[cSt]);
         const first = (a && b) ? (a.date + a.time <= b.date + b.time ? a : b) : (a || b);
@@ -508,11 +514,17 @@ const FORMATS = [
           pnl: cP ? r[cP] : null,
           date: first.date, btime: first.time, stime: last ? last.time : '',
           dur: durOf(first, last), dir: (a && b && a.date + a.time <= b.date + b.time) ? 'long' : 'short',
-          extId: cId ? r[cId] : '', src: 'Tradovate',
+          extId: (cBf && cSf && r[cBf] && r[cSf]) ? `${r[cBf]}-${r[cSf]}` : (cId ? r[cId] : ''), src: 'Tradovate',
         });
-        if (t) out.push(t);
+        if (t) {
+          // P&L must have the sign of (sell − buy) for any pair of fills.
+          if (t.buy && t.sell && t.pnl && Math.sign(t.pnl) !== Math.sign(t.sell - t.buy)) mismatch++;
+          out.push(t);
+        }
       });
-      return { trades: out, warnings: [] };
+      const warnings = [];
+      if (mismatch) warnings.push(`${mismatch} שורות: סימן ה-P&L בקובץ לא תואם למחירי הקנייה/מכירה — כדאי לבדוק את הקובץ לפני הייבוא.`);
+      return { trades: out, warnings };
     },
   },
 
@@ -713,10 +725,15 @@ function dedupe(trades, existingKeys, existingExtIds, keyFn) {
   const seenK = new Set(existingKeys || []);
   const seenE = new Set(existingExtIds || []);
   const fresh = [], dupes = [];
+  const existingK = new Set(existingKeys || []);
   trades.forEach(t => {
     const e = t.extId ? (t.src || '') + '|' + t.extId : '';
     const k = keyFn ? keyFn(t) : `${t.date}|${t.sym}|${t.buy}|${t.sell}|${(t.btime || '').slice(0, 5)}|${t.qty}`;
-    if ((e && seenE.has(e)) || seenK.has(k)) { dupes.push(t); return; }
+    // v74h1: with a broker id, the id decides inside the file (partial fills can share
+    // time/price/qty); the content key still blocks re-importing trades already in the
+    // journal from an older import that had no id.
+    const dup = e ? (seenE.has(e) || existingK.has(k)) : seenK.has(k);
+    if (dup) { dupes.push(t); return; }
     if (e) seenE.add(e);
     seenK.add(k);
     fresh.push(t);
