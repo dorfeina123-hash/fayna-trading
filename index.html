@@ -10881,6 +10881,7 @@ function renderFocusAccountsMap() {
   el.innerHTML = list.map(a => {
     _ensureAcctShape(a);
     const pnl = computeAcctNet(a.id);
+    const isActive = a.active!==false && a.archived!==true;
     const statusInfo = ACCT_STATUS_INFO[a.status] || null;
     const goalBar = _acctGoalMiniBar(a, pnl);
     return `<div class="focus-map-card ${a.id===_focusSelectedAcctId?'sel':''}" onclick="focusSelectAcct('${a.id}');document.getElementById('focus-acct-select').value='${a.id}'">
@@ -15749,6 +15750,7 @@ function renderAcctMenu() {
     const isSel = allSel || selectedAccounts.has(a.id);
     const hasGoals = a.goals && (a.goals.withdrawal?.target || a.goals.pass?.target || a.goals.burn?.limit || (a.goals.custom||[]).length);
     const goalBar = hasGoals ? _acctGoalMiniBar(a, pnl) : '';
+    const isActive = a.active!==false && a.archived!==true;
     const statusInfo = ACCT_STATUS_INFO[a.status] || null;
     const statusBadge = statusInfo ? `<span style="font-size:9px;color:${statusInfo.color};white-space:nowrap;margin-left:4px" title="שלב התיק">${statusInfo.label}</span>` : '';
     return `<div class="acct-item ${isSel?'checked':''}" onclick="acctToggle('${a.id}',this)" style="flex-wrap:wrap">
@@ -15762,7 +15764,9 @@ function renderAcctMenu() {
       <div class="acct-pnl ${pnl>=0?'cg':'cr'}" style="margin-right:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(0)}</div>
       <button onclick="event.stopPropagation();renameAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="שנה שם">✏️</button>
       <button onclick="event.stopPropagation();openAcctGoals('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="יעדי תיק">🎯</button>
-      <button onclick="event.stopPropagation();deleteAccount('${a.id}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px" title="העבר חשבון לארכיון">✕</button>
+      <span style="font-size:10px;color:var(--t3)">${isActive?'פעיל':'בארכיון'}</span>
+      ${isActive?`<button onclick="event.stopPropagation();deleteAccount('${a.id}')" class="bn" title="העבר חשבון לארכיון">ארכיון</button>`:`<button onclick="event.stopPropagation();restoreTradingAccount('${a.id}')" class="bn">הפעל חשבון</button>`}
+      <button onclick="event.stopPropagation();selectSoleTradingAccount('${a.id}')" class="bn" title="הפעל רק חשבון זה ושמור את שאר החשבונות בארכיון">בחר כחשבון יחיד</button>
       ${goalBar}
     </div>`;
   }).join('');
@@ -15875,6 +15879,7 @@ async function _newTradeAcct(ti) {
 async function bulkAssignAcct(acctId) {
   const acct = accounts.find(a=>a.id===acctId);
   if (!acct) return;
+  if(!_requireTradeAccount(acctId))return;
   const untagged = tradesList.filter(t=>!t.acct);
   if (!untagged.length) { showToast('כל העסקאות כבר משויכות לתיק','info'); return; }
   if (!await customConfirm(`לשייך ${untagged.length} עסקאות ללא שיוך לתיק "${acct.name}"?`)) return;
@@ -15942,6 +15947,24 @@ async function deleteAccount(id) {
   selectedAccounts.delete(id);if(!selectedAccounts.size)selectedAccounts.add('__all__');
   saveAccounts();renderAcctMenu();applyAcctFilter();renderAll();
   showToast('החשבון הועבר לארכיון; ההיסטוריה נשמרה','info');
+}
+
+async function restoreTradingAccount(id) {
+  const a=accounts.find(x=>x.id===id);if(!a)return;
+  if(a.active!==false && a.archived!==true)return;
+  if(!_canCreateTradingAccount())return;
+  a.active=true;a.archived=false;
+  saveAccounts();renderAcctMenu();renderAll();
+  showToast('החשבון חזר לפעילות; ההיסטוריה נשמרה','success');
+}
+
+async function selectSoleTradingAccount(id) {
+  const a=accounts.find(x=>x.id===id);if(!a)return;
+  if(!await customConfirm(`להפעיל רק את החשבון "${a.name}"? שאר החשבונות יועברו לארכיון וכל העסקאות יישמרו לצפייה.`))return;
+  accounts.forEach(x=>{x.active=x.id===id;x.archived=x.id!==id;});
+  selectedAccounts=new Set([id]);
+  saveAccounts();renderAcctMenu();applyAcctFilter();renderAll();
+  showToast('החשבון הפעיל נבחר; ההיסטוריה בשאר החשבונות נשמרה','success');
 }
 
 // Rename an existing account (and/or its account number) — updates everywhere the account is shown,

@@ -1,4 +1,4 @@
-# Subscription foundation — current audit and rollout state
+# Subscription foundation ג€” current audit and rollout state
 
 Updated 2026-10-18. Draft PR only; no application production deployment or live charge.
 
@@ -23,12 +23,12 @@ Repository rules are not evidence of deployed Firebase rules. No live Firebase u
 - Managed workspace writes: trusted token UID and server subscription determine account capacity, irrespective of client profile plan/price. All new or edited trades need an owned active account. Existing exact historical exceptions remain unchanged; duplicates of unassigned history do not bypass validation.
 - Direct managed td_accounts/td_tradesList browser writes denied by rules, including retained-grant/orphan cases. Server write is transactional and guarded by the workspace revision actually loaded from cloud; stale-device saves abort instead of replacing newer data.
 - Browser manual trade, daily summary, classic CSV, importer wizard and extension intake require an account. A sole active account is selected automatically; multiple accounts require a destination. All account factory paths used for inline/daily/add-account creation check capacity. Backups are checked before replacement. Deletion of account becomes archive to preserve trade references.
-- Existing excess accounts remain readable after downgrade. New trade writes are blocked until active accounts fit capacity. Archive/bulk selection UX still needs final staged acceptance testing.
+- Existing excess accounts remain readable after downgrade. New trade writes are blocked until active accounts fit capacity. The account menu now labels archived accounts, supports capacity-checked restoration and an explicit sole-account selection that archives other accounts without deleting history. Final staged acceptance testing remains.
 - Actual public Bank of Israel API fetched successfully by the backend rate helper. Quote endpoint ignores client amount/currency/uid and stores the exact quote server-side. Quote button displays settlement amount/source date; no provider request is made.
 
 ## Validation
 - 17 Node server/policy/FX tests pass: identity isolation, charge rejection, exact trial boundaries, enrollment conditions, account caps, historical preservation, immutable account ownership, quote rounding/source freshness and stale-save rejection.
-- 4 real-entry-function tests pass for manual trades/daily summary, destination ambiguity, inline capacity and archive preservation.
+- 6 real-entry-function tests pass for manual trades/daily summary, destination ambiguity, inline capacity and archive preservation.
 - Offline actual repository HTML/CSS browser tests pass for desktop/mobile RTL, both feature maps/PDF, USD monthly prices, hidden unapproved annual option, server quote display, legacy expiry/referral display, trial/expiry, cache identity and payment guards; syntax/CSS/declarations/IDs and index/v75 equality.
 - Existing finance-summary, data-export, ATAS import and bulk deletion regressions pass.
 - Original home/workspace tests have failures that also reproduce on v74 (style count 8 vs 14; KPI count 5 vs 3). They are not represented as passing.
@@ -40,7 +40,7 @@ Repository rules are not evidence of deployed Firebase rules. No live Firebase u
 3. Choose renewal FX policy: fixed ILS agreed at signup or recalculation on renewal, with explicit recurring amount/terms consent. Confirm tax presentation, cancellation/refund terms and transition for existing users. Initial display prices and ILS settlement choice alone are not authorization to charge.
 4. Secure signup/invite provisioning before eligibility assignment: old users CREATE permits self-selected profile plans; invites are consumed client-side. Do not deploy a restrictive create rule in isolation and break existing invited signups.
 5. Real staging SDK/Functions/App Check integration; managed startup/offline fail-closed entitlement bootstrap. UI gates are not server authorization. Old browser legacy writers stay until migration; managed cohorts must always use transactional saves.
-6. Resolve remaining bulk active-account selection/restore UI flows, Free monthly usage accounting, live authorized data inventory/backups, new billing collection export/deletion/retention and full staged acceptance tests.
+6. Staged acceptance of account selection/restore, Free monthly usage accounting, live authorized data inventory/backups, new billing collection export/deletion/retention and full staged acceptance tests.
 7. Explicit owner authorization before production billing/deployment. No assumption of approval from urgency or price selection.
 
 Sources: https://firebase.google.com/docs/functions/callable ; https://firebase.google.com/docs/firestore/security/test-rules-emulator ; https://www.boi.org.il/qawebsite/ ; https://developers.grow.business/discuss/688f5d52758134232e8e70a8

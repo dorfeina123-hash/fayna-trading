@@ -6,7 +6,7 @@ function setup(accts,selected=['__all__']){
  let saves=0,lastToast='';
  const elements=Object.fromEntries(Object.entries(values).map(([k,value])=>[k,{value,style:{}}]));elements['acct-picker']={style:{}};
  const c={FaynaAccountPolicy:require('../functions/account-policy.js'),document:{getElementById:id=>elements[id]},window:{_atDir:'long'},showToast:t=>lastToast=t,_getFuturesMultiplier:()=>50,tradeComm:()=>0,renderAll(){},renderTJ(){},renderAcctMenu(){},applyAcctFilter(){},closeAddTrade(){},closeManualEntry(){},saveData:()=>saves++,saveAccounts:()=>saves++,fmtD:x=>x,customConfirm:async()=>true,checkLimit:()=>false,canUse:()=>true,customPrompt:async()=> 'another',showUpgradeModal(){}};
- vm.createContext(c);vm.runInContext('let accounts='+JSON.stringify(accts)+';let tradesList=[];let selectedAccounts=new Set('+JSON.stringify(selected)+');let _meImg=null;'+['_activeTradingAccounts','_requireTradeAccount','_canCreateTradingAccount','saveAddTrade','saveManualEntry','_setTradeAcct','deleteAccount','_newTradeAcct'].map(fn).join('\n'),c);
+ vm.createContext(c);vm.runInContext('let accounts='+JSON.stringify(accts)+';let tradesList=[];let selectedAccounts=new Set('+JSON.stringify(selected)+');let _meImg=null;'+['_activeTradingAccounts','_requireTradeAccount','_canCreateTradingAccount','saveAddTrade','saveManualEntry','_setTradeAcct','deleteAccount','restoreTradingAccount','selectSoleTradingAccount','bulkAssignAcct','_newTradeAcct'].map(fn).join('\n'),c);
  return {c,elements,run:s=>vm.runInContext(s,c),saves:()=>saves,toast:()=>lastToast};
 }
 test('manual trade cannot be added without a real account; one available account binds automatically',()=>{
@@ -25,4 +25,19 @@ test('daily summary also binds to a real account',()=>{
 test('inline account creation cannot bypass capacity; archiving preserves trade references',async()=>{
  const f=setup([{id:'a',name:'main'}]);await f.run('_newTradeAcct(0)');assert.equal(f.run('accounts.length'),1);
  f.run("tradesList=[{acct:'a',pnl:10}]");await f.run("deleteAccount('a')");assert.equal(f.run('accounts.length'),1);assert.equal(f.run('accounts[0].active'),false);assert.equal(f.run('tradesList[0].acct'),'a');
+});
+
+test('choosing a sole active account archives others and retains every historical trade',async()=>{
+ const f=setup([{id:'a',name:'one'},{id:'b',name:'two',active:false,archived:true}]);
+ f.run("tradesList=[{acct:'a',pnl:10},{acct:'b',pnl:20}]");
+ await f.run("selectSoleTradingAccount('b')");
+ assert.equal(f.run("accounts.find(a=>a.id==='a').archived"),true);
+ assert.equal(f.run("accounts.find(a=>a.id==='b').active"),true);
+ assert.equal(f.run('tradesList.length'),2);
+ assert.equal(f.run("[...selectedAccounts][0]"),'b');
+});
+test('restoring an archived account respects capacity; bulk assignment rejects archived targets',async()=>{
+ const f=setup([{id:'a',name:'one'},{id:'b',name:'two',active:false,archived:true}]);
+ await f.run("restoreTradingAccount('b')");assert.equal(f.run('accounts[1].active'),false);
+ f.run("tradesList=[{pnl:10}]");await f.run("bulkAssignAcct('b')");assert.equal(f.run('tradesList[0].acct'),undefined);assert.equal(f.saves(),0);
 });
