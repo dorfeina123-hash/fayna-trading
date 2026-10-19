@@ -18,6 +18,12 @@ test('v2 backup includes original expense stores; merge is additive and idempote
  const data=recovery.backup(state);assert.equal(data.version,2);assert.equal(data.records[0],row);
  const incoming={...data,records:[{...row,amount:999},{...row,id:'two'}],businessNotes:{month:'old',other:'restored'},tradesList:[{id:'foreign'}]};
  const before=JSON.stringify(state),p=recovery.plan(state,incoming);assert.equal(p.totalAdded,1);assert.equal(p.data.records[0].amount,29);assert.equal(p.data.businessNotes.month,'current');assert.equal(p.data.businessNotes.other,'restored');assert.equal(p.data.tradesList,undefined);assert.equal(JSON.stringify(state),before);assert.equal(recovery.plan(p.data,incoming).totalAdded,0);
+ assert.equal(p.summary.records.conflicts,1);assert.equal(p.notesAdded,1);assert.equal(p.notesConflicts,1);assert.equal(p.changes[0].status,'conflict');
+});
+test('comparison ignores object key order and device copies exclude foreign and unknown ownership',()=>{
+ const row={id:'one',date:'2026-09-01',amount:9};const p=recovery.plan({records:[row]},{records:[{amount:9,date:'2026-09-01',id:'one'}]});assert.equal(p.summary.records.identical,1);assert.equal(p.changes.length,0);
+ const s=storage();s.setItem(recovery.SNAPSHOT_KEY,JSON.stringify([{version:1,at:1,ownerUid:'owner',values:{dor_records:JSON.stringify([row])}},{version:1,at:2,ownerUid:'foreign',values:{dor_records:'invalid'}},{version:1,at:3,ownerUid:null,values:{dor_records:'invalid'}}]));
+ const copies=recovery.ownedCopies(s,'owner');assert.equal(copies.length,1);assert.equal(copies[0].backup.records[0].id,'one');assert.deepEqual(recovery.ownedCopies(s,''),[]);
 });
 test('old original-expense exports and ledger v1 remain recoverable; invalid inputs never mutate',()=>{
  const state={records:[],customExpenses:[],recurringTemplates:[],businessEvents:[],businessNotes:{}};
@@ -42,9 +48,13 @@ test('failed cloud read keeps uploads blocked and source cache intact',async()=>
  const h=syncHarness({fail:true});await h.run('_cloudLoad()');h.run('_cloudSave();_silentSave(false)');assert.equal(h.writes.length,0);assert.equal(h.run('_cloudReadyUid'),null);assert.match(h.s.getItem('dor_records'),/local-copy/);
 });
 test('actual restore previews confirmation and backs up before additive writes; cancel changes nothing',async()=>{
- const actions=[],s=storage(),ctx={FaynaFinanceRecovery:recovery,localStorage:s,currentUser:{uid:'owner'},_cloudReadyUid:'owner',records:[{id:'kept',date:'2026-09-01',amount:8}],customExpenses:[],recurringTemplates:[],businessEvents:[],businessNotes:{},_preserveFinanceCache:()=>true,canUse:()=>true,customConfirm:async()=>false,workspaceDownload:()=>actions.push('backup'),saveData:()=>actions.push('save'),saveBizData:()=>actions.push('saveBiz'),renderAll(){},financeRender(){},showToast(){}};
+ const actions=[],s=storage(),ctx={FaynaFinanceRecovery:recovery,localStorage:s,currentUser:{uid:'owner'},_cloudReadyUid:'owner',records:[{id:'kept',date:'2026-09-01',amount:8}],customExpenses:[],recurringTemplates:[],businessEvents:[],businessNotes:{},_preserveFinanceCache:()=>true,canUse:()=>true,financeReviewRecovery:async()=>null,workspaceDownload:()=>actions.push('backup'),saveData:()=>actions.push('save'),saveBizData:()=>actions.push('saveBiz'),renderAll(){},financeRender(){},showToast(){}};
  vm.createContext(ctx);vm.runInContext(source('workspaceRestore'),ctx);
  const input={files:[{size:100,text:async()=>JSON.stringify({records:[{id:'added',date:'2026-09-02',amount:12}]})}],value:'selected'};
  ctx.input=input;await vm.runInContext("workspaceRestore(input,'finance')",ctx);assert.equal(ctx.records.length,1);assert.equal(actions.length,0);
- ctx.customConfirm=async()=>true;await vm.runInContext("workspaceRestore(input,'finance')",ctx);assert.equal(ctx.records.length,2);assert.equal(ctx.records[0].id,'kept');assert.deepEqual(actions,['backup','save','saveBiz']);assert.equal(input.value,'');
+ ctx.financeReviewRecovery=async d=>recovery.plan(ctx,d);await vm.runInContext("workspaceRestore(input,'finance')",ctx);assert.equal(ctx.records.length,2);assert.equal(ctx.records[0].id,'kept');assert.deepEqual(actions,['backup','save','saveBiz']);assert.equal(input.value,'');
+});
+test('changing account while a selected file is being read cannot open a recovery preview',async()=>{
+ let release,previews=0;const messages=[],ctx={currentUser:{uid:'owner'},canUse:()=>true,financeReviewRecovery:()=>previews++,showToast:t=>messages.push(t)};vm.createContext(ctx);vm.runInContext(source('workspaceRestore'),ctx);
+ ctx.input={files:[{size:100,text:()=>new Promise(r=>release=r)}],value:'selected'};const task=vm.runInContext("workspaceRestore(input,'finance')",ctx);ctx.currentUser={uid:'other'};release(JSON.stringify({records:[]}));await task;assert.equal(previews,0);assert(messages[0].includes('החשבון השתנה'));assert.equal(ctx.input.value,'');
 });
