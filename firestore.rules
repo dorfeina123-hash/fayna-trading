@@ -35,6 +35,11 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/subscriptions/$(uid))
           || exists(/databases/$(database)/documents/trialGrants/$(uid));
     }
+    function managedSignup() {
+      return request.auth != null
+          && 'fayna_managed_signup' in request.auth.token
+          && request.auth.token.fayna_managed_signup == true;
+    }
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
 
@@ -57,7 +62,7 @@ service cloud.firestore {
 
       // A user may create ONLY their own doc, may NOT self-assign admin,
       // and (v50) the email field must match the token; name must be sane.
-      allow create: if isOwner(uid)
+      allow create: if isOwner(uid) && !managedSignup()
                     && (isAdmin() || request.resource.data.isAdmin == false)
                     && createEmailOk()
                     && createNameOk();
@@ -83,8 +88,12 @@ service cloud.firestore {
     // ── invites/{email} : plan pre-assignment, consumed at registration ──
     match /invites/{email} {
       // A signed-in user may read/delete only the invite addressed to their email.
-      allow read, delete: if isAdmin()
+      allow read: if isAdmin()
                           || (isSignedIn() && request.auth.token.email == email);
+      // Managed signup consumes invitations on the server and retains the receipt.
+      allow delete: if isAdmin()
+                    || (isSignedIn() && request.auth.token.email == email
+                        && !managedSignup() && !('consumedBy' in resource.data));
       allow create, update: if isAdmin();
     }
 
