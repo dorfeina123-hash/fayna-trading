@@ -120,3 +120,15 @@ test('quotes take USD price and uid from trusted catalog and token, not client a
  assert.equal(q.displayMinor,1490);assert.equal(q.settlementMinor,4603);assert.equal(q.billingEnabled,false);
  assert.equal(f.docs.get('billingQuotes/'+q.quoteId).uid,'bob');assert.equal(f.docs.get('users/bob').plan,'free');
 });
+
+test('SaaS provisioning rejects unauthenticated calls and is disabled by default',async()=>{
+ const f=fixture(),before=JSON.stringify([...f.docs]);
+ await assert.rejects(f.provisionAccount({data:{name:'Alice'}}),{code:'unauthenticated'});
+ await assert.rejects(f.provisionAccount({auth:{uid:'alice'},data:{name:'Alice'}}),{code:'failed-precondition'});
+ assert.equal(JSON.stringify([...f.docs]),before);
+});
+
+test('enabled provisioning still requires a trusted server cohort claim',async()=>{
+ const f=fixture({env:{FAYNA_PROVISIONING_ENABLED:'true'}});
+ await assert.rejects(f.provisionAccount({auth:{uid:'alice'},data:{name:'Alice'}}),{code:'permission-denied'});
+});

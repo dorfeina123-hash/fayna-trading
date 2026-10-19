@@ -88,3 +88,20 @@ exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async reque
 exports.billingWebhook = onRequest({ maxInstances: 2 }, (_req, res) => {
   res.status(503).json({ error: 'billing_not_configured' });
 });
+
+// Staged SaaS signup. Disabled until the paired browser/rules rollout is accepted.
+exports.provisionAccount = onCall({ enforceAppCheck:true, maxInstances:5 }, async request=>{
+  if(!request.auth)throw new HttpsError('unauthenticated','יש להתחבר תחילה');
+  if(process.env.FAYNA_PROVISIONING_ENABLED!=='true')throw new HttpsError('failed-precondition','ההרשמה החדשה טרם נפתחה');
+  if(request.auth.token?.fayna_managed_signup!==true)throw new HttpsError('permission-denied','Managed signup cohort required');
+  try {
+    const record=await getAuth().getUser(request.auth.uid);
+    return await require('./provisioning.cjs').provision({db,uid:request.auth.uid,input:request.data,
+      authRecord:record,now:Date.now(),timestamp:FieldValue.serverTimestamp()});
+  } catch(e) {
+    if(['invalid_profile','untrusted_profile_field'].includes(e.code))throw new HttpsError('invalid-argument','פרטי פרופיל לא תקינים');
+    if(e.code==='verified_email_required')throw new HttpsError('permission-denied','יש לאמת את כתובת האימייל');
+    if(['invalid_invite','orphaned_entitlement'].includes(e.code))throw new HttpsError('failed-precondition','נדרשת בדיקה של הרשאות החשבון');
+    throw new HttpsError('unavailable','לא ניתן להשלים הרשמה כרגע. אפשר לנסות שוב');
+  }
+});

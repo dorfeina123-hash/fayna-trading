@@ -39,3 +39,16 @@ test('existing legacy sync remains permitted for own account only',async()=>{
  await assertFails(updateDoc(doc(db,'users','alice'),{td_tradesList:[]}));
  await assertFails(updateDoc(doc(db,'users','legacy'),{paymentStatus:'paid'}));
 });
+
+test('managed signup cannot create its profile or consume invites directly',async()=>{
+ await env.withSecurityRulesDisabled(async context=>{
+  await setDoc(doc(context.firestore(),'invites','cohort@example.com'),{email:'cohort@example.com',plan:'premium'});
+  await setDoc(doc(context.firestore(),'invites','consumed@example.com'),{email:'consumed@example.com',plan:'premium',consumedBy:'original'});
+ });
+ const db=env.authenticatedContext('cohort',{email:'cohort@example.com',email_verified:true,fayna_managed_signup:true}).firestore();
+ await assertFails(setDoc(doc(db,'users','cohort'),{email:'cohort@example.com',name:'Test',isAdmin:false,plan:'premium',status:'active'}));
+ await assertSucceeds(getDoc(doc(db,'invites','cohort@example.com')));
+ await assertFails(deleteDoc(doc(db,'invites','cohort@example.com')));
+ const consumed=env.authenticatedContext('recreated',{email:'consumed@example.com'}).firestore();
+ await assertFails(deleteDoc(doc(consumed,'invites','consumed@example.com')));
+});
