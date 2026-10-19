@@ -10207,7 +10207,7 @@ function _bizWithdrawalsInRange(matchFn) {
 
 function saveBizData() {
   if(!currentUser?.uid || _cloudReadyUid!==currentUser.uid){showToast('יש להמתין לסיום טעינת הנתונים לפני שמירה.','error');return;}
-  if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-saveBizData')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
+  if(!_preserveFinanceCache('before-saveBizData')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
   localStorage.setItem('dor_bizEvents', JSON.stringify(businessEvents));
   localStorage.setItem('dor_bizNotes',  JSON.stringify(businessNotes));
   if (typeof _cloudSave === 'function') _cloudSave();
@@ -15189,7 +15189,7 @@ function _updateUndoBtn() {
 
 function undoLast() {
   if(!currentUser?.uid || _cloudReadyUid!==currentUser.uid){showToast('יש להמתין לסיום טעינת הנתונים לפני שמירה.','error');return;}
-  if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-undoLast')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
+  if(!_preserveFinanceCache('before-undoLast')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
   if (!_undoStack.length) { showToast('אין פעולות לביטול'); return; }
   const snap = _undoStack.pop();
   try {
@@ -15227,7 +15227,7 @@ document.addEventListener('keydown', e => {
 
 function saveData() {
   if(!currentUser?.uid || _cloudReadyUid!==currentUser.uid){showToast('הנתונים עדיין לא נטענו מהענן. אין לשמור עד לסיום הטעינה.','error');return;}
-  if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-save')){showToast('לא ניתן לשמור עותק הגנה. יש לייצא גיבוי לפני המשך.','error');return;}
+  if(!_preserveFinanceCache('before-save')){showToast('לא ניתן לשמור עותק הגנה. יש לייצא גיבוי לפני המשך.','error');return;}
   try {
     _pushUndo();
     localStorage.setItem('dor_records', JSON.stringify(records));
@@ -15278,6 +15278,10 @@ document.addEventListener('keydown', e => {
 // ════════════════════════════════════════════════════
 //  CLOUD SYNC — Firebase Firestore
 // ════════════════════════════════════════════════════
+function _preserveFinanceCache(reason,requestedByUid) {
+  try { return typeof FaynaFinanceRecovery!=='undefined' && FaynaFinanceRecovery.capture(localStorage,requestedByUid||currentUser?.uid,reason); }
+  catch(e) { return false; }
+}
 let _cloudReadyUid = null; // Never upload a workspace before its cloud read succeeds.
 let _cloudSaveTimer = null;
 let _cloudSyncing   = false;
@@ -15342,7 +15346,7 @@ async function _cloudLoad() {
   if (!currentUser?.uid) return;
   const loadUid=currentUser.uid;
   _cloudReadyUid=null;
-  const preserveFinance=FaynaFinanceRecovery.capture(localStorage,loadUid,'before-cloud-load');
+  const preserveFinance=_preserveFinanceCache('before-cloud-load',loadUid);
   _updateSyncDot('syncing');
   try {
     const snap = await db.collection('users').doc(loadUid).get();
@@ -15467,7 +15471,7 @@ function importAll(inp) {
 // ── Auto-save: silent, no UI disruption ──
 function _silentSave(updateUI) {
   if (!currentUser?.uid || _cloudReadyUid!==currentUser.uid) return;
-  if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-local-save'))return;
+  if(!_preserveFinanceCache('before-local-save'))return;
   try {
     localStorage.setItem('dor_records',   JSON.stringify(records));
     localStorage.setItem('dor_recurring', JSON.stringify(recurringTemplates));
@@ -15767,7 +15771,7 @@ const ACCT_COLORS = ['#9089bd','#7295b8','#3d9970','#bfa15e','#c97272','#f472b6'
 
 function saveAccounts() {
   if(!currentUser?.uid || _cloudReadyUid!==currentUser.uid){showToast('יש להמתין לסיום טעינת הנתונים לפני שמירה.','error');return;}
-  if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-saveAccounts')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
+  if(!_preserveFinanceCache('before-saveAccounts')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return;}
   localStorage.setItem('dor_accounts', JSON.stringify(accounts));
   if (typeof _cloudSave === 'function') _cloudSave();
 }
@@ -26799,7 +26803,7 @@ function financeSave(form){
   if(i>=0)next[i]={...next[i],...row};else next.push(row);
   if(!financeCommit(next))return;document.getElementById('finance-modal').close();financeRender();showToast('התנועה נשמרה','success');
 }
-function financeCommit(next){if(!currentUser?.uid||_cloudReadyUid!==currentUser.uid){showToast('יש להמתין לסיום טעינת הנתונים לפני שמירה.','error');return false;}if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-ledger-save')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return false;}try{localStorage.setItem('dor_bizEvents',JSON.stringify(next));}catch(e){showToast('השמירה במכשיר נכשלה. נסה שוב לפני סגירת החלון.','error');return false;}businessEvents=next;if(typeof _cloudSave==='function')_cloudSave();return true;}
+function financeCommit(next){if(!currentUser?.uid||_cloudReadyUid!==currentUser.uid){showToast('יש להמתין לסיום טעינת הנתונים לפני שמירה.','error');return false;}if(!_preserveFinanceCache('before-ledger-save')){showToast('נדרש ייצוא גיבוי לפני המשך השמירה.','error');return false;}try{localStorage.setItem('dor_bizEvents',JSON.stringify(next));}catch(e){showToast('השמירה במכשיר נכשלה. נסה שוב לפני סגירת החלון.','error');return false;}businessEvents=next;if(typeof _cloudSave==='function')_cloudSave();return true;}
 function financeArchive(){const next=businessEvents.map(e=>e.id===financeEditId?{...e,archived:true}:e);if(financeCommit(next)){document.getElementById('finance-modal').close();financeRender();showToast('התנועה נשמרה בארכיון','info');}}
 function financeRestore(id){if(financeCommit(businessEvents.map(e=>String(e.id)===String(id)?{...e,archived:false}:e))){financeRender();financeLegacy();}}
 function financeLegacyData(){return {businessEvents:businessEvents.filter(e=>!['income','expense'].includes(e.type)||e.archived),records:typeof records==='undefined'?[]:records,customExpenses:typeof customExpenses==='undefined'?[]:customExpenses,accountWithdrawals:typeof accounts==='undefined'?[]:accounts.map(a=>({name:a.name,withdrawals:a.withdrawals||[]})).filter(a=>a.withdrawals.length)};}
@@ -26817,7 +26821,7 @@ async function workspaceRestore(input,kind){
       const recovery=FaynaFinanceRecovery.plan(before,d);
       if(!await customConfirm(`להוסיף ${recovery.totalAdded} רשומות כספיות חסרות מהגיבוי? רשומות והערות קיימות יישמרו; יומן המסחר לא ישתנה. לפני המיזוג ייוצא גיבוי של המצב הנוכחי.`))return;
       workspaceDownload('finance-before-recovery.json',JSON.stringify(FaynaFinanceRecovery.backup(before),null,2));
-      if(!FaynaFinanceRecovery.capture(localStorage,currentUser.uid,'before-recovery'))throw Error('לא ניתן לשמור עותק הגנה במכשיר');
+      if(!_preserveFinanceCache('before-recovery'))throw Error('לא ניתן לשמור עותק הגנה במכשיר');
       records=recovery.data.records;customExpenses=recovery.data.customExpenses;recurringTemplates=recovery.data.recurringTemplates;
       businessEvents=recovery.data.businessEvents;businessNotes=recovery.data.businessNotes;
       saveData();saveBizData();renderAll();financeRender();
