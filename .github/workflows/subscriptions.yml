@@ -17,6 +17,7 @@ jobs:
       - run: node tests/trade-account-entry.cjs
       - run: node --test tests/landing-entry.cjs
       - run: node --test tests/password-login.cjs
+      - run: node --test tests/finance-recovery.cjs
       - run: node tests/finance-summary.cjs
       - run: node tests/data-export.cjs
   security-rules:
