@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+node_modules/
+.env*
+!*.example
+outbox/
+*.token
+*.credentials.json
+client_secret*.json
+invoice-drafts/
