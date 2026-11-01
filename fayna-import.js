@@ -882,6 +882,7 @@ function runDedupe() {
   const ext = list.filter(t => t.extId).map(t => (t.src || '') + '|' + t.extId);
   const r = dedupe(UI.parsed.trades, keys, ext, keyFn);
   UI.fresh = r.fresh; UI.dupes = r.dupes;
+  UI.updates = typeof _backfillTrades === 'function' ? _backfillTrades(r.dupes, true) : 0;
 }
 
 /* ── מסך 2: תצוגה מקדימה + מיפוי ── */
@@ -954,8 +955,8 @@ function screenPreview() {
     </details>
 
     <div class="imp-actions">
-      <button type="button" class="imp-btn primary" id="imp-commit" ${UI.fresh.length ? '' : 'disabled'}>
-        אישור וייבוא ${UI.fresh.length} עסקאות
+      <button type="button" class="imp-btn primary" id="imp-commit" ${UI.fresh.length || UI.updates ? '' : 'disabled'}>
+        ${UI.fresh.length ? `אישור וייבוא ${UI.fresh.length} עסקאות` : ''}${UI.fresh.length && UI.updates ? ' ו' : ''}${UI.updates ? `השלמת כיוון ושעות ב־${UI.updates} עסקאות קיימות` : ''}
       </button>
       <button type="button" class="imp-btn ghost" id="imp-cancel">ביטול</button>
     </div>`;
@@ -974,7 +975,7 @@ function screenPreview() {
 
 /* ── כתיבה למערכת ── */
 function commit() {
-  if (!UI.fresh.length) return;
+  if (!UI.fresh.length && !UI.updates) return;
   const n = UI.fresh.length;
   const acct=typeof _requireTradeAccount==='function'?_requireTradeAccount(UI.acct):'';
   if(!acct){toast('יש לבחור חשבון מסחר לפני הייבוא','error');return;}
@@ -985,6 +986,7 @@ function commit() {
   });
   if (typeof tradesList === 'undefined') { toast('היומן אינו זמין — רענן את הדף ונסה שוב', 'error', 5000); return; }
   try {
+    if (UI.updates) _backfillTrades(UI.dupes);
     tradesList = tradesList.concat(batch);        // הצהרת let גלובלית — ראה ההערה למעלה
     if (typeof renderAll === 'function') renderAll();
     if (typeof saveData === 'function') saveData();
@@ -993,8 +995,8 @@ function commit() {
     return;
   }
   const gross = batch.reduce((s, t) => s + t.pnl, 0);
-  toast(`✅ יובאו ${n} עסקאות · גרוס ${fmtMoney(gross)}${UI.dupes.length ? ' · דולגו ' + UI.dupes.length + ' כפילויות' : ''}`, 'success', 6000);
-  UI.parsed = null; UI.map = null; UI.files = []; UI.fresh = []; UI.dupes = [];
+  toast(`✅ יובאו ${n} עסקאות · גרוס ${fmtMoney(gross)}${UI.updates ? ' · הושלמו ' + UI.updates + ' עסקאות קיימות' : ''}${UI.dupes.length ? ' · דולגו ' + UI.dupes.length + ' כפילויות' : ''}`, 'success', 6000);
+  UI.parsed = null; UI.map = null; UI.files = []; UI.fresh = []; UI.dupes = []; UI.updates = 0;
   screenPick();
 }
 
