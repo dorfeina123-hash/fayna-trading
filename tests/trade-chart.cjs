@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const {rootOf,tradeTimes,monthsFor,barAt}=require('../fayna-trade-chart.js');
+assert.equal(rootOf('MNQZ6@CME'),'MNQ');assert.equal(rootOf('nqz6'),'NQ');assert.equal(rootOf('MES1!'),'MES');assert.equal(rootOf('AAPL'),null);
+const atas={src:'ATAS Journal',date:'2026-10-23',btime:'16:15:44',stime:'16:16:29'};
+assert.equal(new Date(tradeTimes(atas).entry*1000).toISOString(),'2026-10-23T14:15:44.000Z','ATAS is a fixed UTC+2 clock');
+assert.equal(tradeTimes(atas).exit-tradeTimes(atas).entry,45);
+const overnight={...atas,btime:'23:50:00',stime:'00:10:00'};
+assert.equal(tradeTimes(overnight).exit-tradeTimes(overnight).entry,1200,'an exit past midnight moves to the next day');
+assert.equal(tradeTimes({...atas,stime:''}).exit,null);
+assert.deepEqual(monthsFor(Date.UTC(2026,9,31)/1000,Date.UTC(2026,10,1)/1000),['2026-10','2026-11']);
+assert.deepEqual(barAt([[100],[160]],170,60),[160]);assert.equal(barAt([[100]],170,60),null);
+console.log('Trade chart checks passed');
