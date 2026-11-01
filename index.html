@@ -2216,6 +2216,7 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 .ws-backups input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}.simple-details>p{font-size:13px;color:var(--t3);padding:12px}.simple-details textarea{width:100%;padding:12px;min-height:90px}.ws-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.clx-card{font:inherit;color:var(--t1)}
 #tj-table:not(.ws-expanded) :is(th,td):nth-child(3),#tj-table:not(.ws-expanded) :is(th,td):nth-child(6),#tj-table:not(.ws-expanded) :is(th,td):nth-child(7),#tj-table:not(.ws-expanded) :is(th,td):nth-child(8),#tj-table:not(.ws-expanded) :is(th,td):nth-child(9),#tj-table:not(.ws-expanded) :is(th,td):nth-child(11),#tj-table:not(.ws-expanded) :is(th,td):nth-child(12),#tj-table:not(.ws-expanded) :is(th,td):nth-child(13){display:none!important}
 #tj-body tr[id^=tj-row]{cursor:pointer}
+.adm-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--border);margin:0 0 18px;scrollbar-width:none}.adm-tabs button{flex-shrink:0;background:none;border:0;border-bottom:2px solid transparent;color:var(--t3);font:inherit;font-size:14px!important;font-weight:600;padding:10px 16px;cursor:pointer;border-radius:0!important}.adm-tabs button[aria-pressed=true]{color:var(--t1);border-bottom-color:var(--ac)}.adm-attention{margin-bottom:18px}.adm-attention h2{font-size:14px;font-weight:600;margin-bottom:10px}.adm-attention>div{display:flex;flex-wrap:wrap;gap:10px}.adm-attention :is(button,span){display:flex;align-items:baseline;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);background:var(--bg1);color:var(--t2);font:inherit;font-size:13px}.adm-attention button{cursor:pointer}.adm-attention b{font-size:18px;color:var(--t1)}.adm-attention p{padding:12px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);color:var(--t2);font-size:13px}.adm-visuals{display:grid;grid-template-columns:2fr 1fr;gap:18px}.adm-bars{display:flex;align-items:flex-end;gap:3px;height:110px}.adm-bars i{flex:1;min-width:2px;background:var(--ac);border-radius:2px 2px 0 0;opacity:.85}.adm-caption{margin-top:10px;font-size:12px;color:var(--t3)}.adm-plan{display:grid;grid-template-columns:90px 1fr 32px;align-items:center;gap:10px;padding:6px 0;font-size:12px;color:var(--t2)}.adm-plan div{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}.adm-plan i{display:block;height:100%;background:var(--ac)}.adm-plan b{text-align:end;color:var(--t1)}.adm-old{margin-bottom:18px;border:1px solid var(--border);border-radius:var(--fy-radius);padding:12px 16px}.adm-old summary{cursor:pointer;font-size:13px;color:var(--t2)}.adm-old>*:not(summary){margin-top:14px}@media(max-width:700px){.adm-visuals{grid-template-columns:1fr}}
 @media(min-width:769px){#tj-table td{white-space:nowrap;overflow-wrap:normal;padding-block:7px}#tj-table:not(.ws-expanded) :is(th,td):nth-child(3){display:table-cell}#tj-table .ws-direction{display:inline;margin:0 8px 0 0}}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
 #tp-stats:not(.simple-all-metrics) #ts-m>.mc:nth-child(n+5){display:none!important}#tp-stats>.ch{grid-template-columns:1fr!important}#tp-stats .stat-group-title{font-size:20px}.cal-day .dinfo:last-child{display:none}.cal-day .dinfo{font-size:11px!important}html[data-fayna-theme] .cal-day.win,html[data-fayna-theme] .cal-day.loss{background:var(--bg1)!important;border-color:var(--border)!important}.cal-day .dpnl{font-size:13px!important}.cal-day{min-height:85px}
 #pa-sidebar-stats,#pasnav-referral,#coach-streak-display,#coach-mentor-tasks{display:none!important}.pa-card{background:var(--bg1)!important;border-color:var(--border)!important;box-shadow:none!important}.pa-page-title{font-size:24px!important}#chat-fab{width:38px!important;height:38px!important;opacity:.8}.sn-icon,.mbn-icon{color:inherit}.home-shortcuts{gap:12px}.ws-insight{padding:18px 0;border-bottom:1px solid var(--border)}.ws-insight p{font-size:14px;color:var(--t1);margin-bottom:10px}.ws-insight small{display:block;color:var(--t3);font-size:12px}.ws-insight:last-child{border:0}
@@ -6242,7 +6243,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
 <!-- ADMIN -->
 <div class="tp" id="tp-admin">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+  <div data-admin-head style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div>
       <div style="font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px">🛡️ פאנל ניהול — Dor <span style="font-size:10px;background:rgba(144,137,189,.2);color:var(--pu);padding:2px 8px;border-radius:10px;border:1px solid rgba(144,137,189,.3)">ADMIN</span></div>
       <div style="font-size:10px;color:var(--t3);margin-top:3px">שליטה מלאה במערכת — שינויים מתעדכנים לכלל המשתמשים</div>
@@ -6254,7 +6255,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="mrow" id="admin-metrics" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px"></div>
 
   <!-- v20: GROWTH & REVENUE DASHBOARD -->
-  <div class="admin-section" style="margin-bottom:16px">
+  <div data-admin-tab="overview" class="admin-section" style="margin-bottom:16px">
     <div class="admin-section-title"><div class="dot" style="background:#22c55e"></div>📈 צמיחה והכנסות
       <button onclick="renderGrowthDash()" style="margin-right:auto;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--t2);cursor:pointer;font-family:inherit">🔄</button>
     </div>
@@ -6276,12 +6277,12 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- ACTIVITY CHART + ACTION LOG -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-    <div class="admin-section">
+  <div data-admin-empty style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div class="admin-section" data-admin-tab="overview">
       <div class="admin-section-title"><div class="dot" style="background:#7295b8"></div>כניסות משתמשים — 7 ימים אחרונים</div>
       <div class="adm-chart-wrap"><canvas id="adm-activity-canvas"></canvas></div>
     </div>
-    <div class="admin-section">
+    <div class="admin-section" data-admin-tab="system">
       <div class="admin-section-title" style="display:flex;align-items:center;gap:8px">
         <div class="dot" style="background:#9089bd"></div>פעולות אדמין
         <button onclick="renderAdminLogs()" style="margin-right:auto;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--t2);cursor:pointer;font-family:inherit">🔄</button>
@@ -6293,7 +6294,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- USER MANAGEMENT -->
-  <div class="admin-section" style="border-color:rgba(61,153,112,.2)">
+  <div data-admin-tab="users" class="admin-section" style="border-color:rgba(61,153,112,.2)">
     <div class="admin-section-title">
       <div class="dot" style="background:#3d9970"></div>ניהול משתמשים
       <span style="margin-right:auto"></span>
@@ -6304,7 +6305,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- INVITE USER -->
-    <div style="background:rgba(61,153,112,.06);border:1px solid rgba(61,153,112,.15);border-radius:8px;padding:12px 14px;margin-bottom:14px">
+    <div data-admin-old="＋ הוספה או הזמנה של משתמש" style="background:rgba(61,153,112,.06);border:1px solid rgba(61,153,112,.15);border-radius:8px;padding:12px 14px;margin-bottom:14px">
       <div style="font-size:12px;font-weight:600;color:var(--gr);margin-bottom:10px">✉️ הוסף / הזמן משתמש</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
         <div>
@@ -6369,7 +6370,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
 
   <!-- v39: autonomous agents -->
-  <div class="admin-section" style="border-color:rgba(34,197,94,.2)">
+  <div data-admin-tab="system" class="admin-section" style="border-color:rgba(34,197,94,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#22c55e"></div>🤖 סוכנים אוטונומיים
       <button class="fb" onclick="Agents.renderBoard()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
     </div>
@@ -6393,7 +6394,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div id="agent-board"><div style="font-size:11px;color:var(--t3);padding:8px">טוען…</div></div>
   </div>
   <!-- v45: BROADCAST -->
-  <div class="admin-section" style="border-color:rgba(59,130,246,.22)">
+  <div data-admin-tab="comms" class="admin-section" style="border-color:rgba(59,130,246,.22)">
     <div class="admin-section-title"><div class="dot" style="background:#3b82f6"></div>📢 שליחת התראה למשתמשים</div>
     <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px;line-height:1.6">
       ההתראה נשמרת כמסמך ונמסרת לכל משתמש בפעם הבאה שהוא פותח את המערכת — פעם אחת בלבד.
@@ -6430,7 +6431,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- v23: MAILING LIST & UNSUBSCRIBES -->
-  <div class="admin-section" style="border-color:rgba(239,68,68,.2)">
+  <div data-admin-tab="comms" class="admin-section" style="border-color:rgba(239,68,68,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#ef4444"></div>📧 ניהול רשימת תפוצה והסרות
       <button class="fb" onclick="renderMailingAdmin()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
     </div>
@@ -6491,7 +6492,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- LOGIN LOGS -->
-  <div class="admin-section" style="border-color:rgba(114,149,184,.2)">
+  <div data-admin-tab="system" class="admin-section" style="border-color:rgba(114,149,184,.2)">
     <div class="admin-section-title" style="margin-bottom:10px">
       <div class="dot" style="background:#7295b8"></div>לוג כניסות ופעילות (50 אחרונים)
       <button class="fb" id="logs-refresh-btn" onclick="refreshLoginLogs()" style="padding:3px 10px;font-size:10px;margin-right:auto">🔄 רענן</button>
@@ -6504,7 +6505,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- PRICING -->
-  <div class="admin-section">
+  <div class="admin-section" data-admin-tab="plans" data-admin-old="מחירון ישן (Basic, Pro, Premium) — לא מוצג ללקוחות, משמש רק להערכת MRR">
     <div class="admin-section-title"><div class="dot" style="background:#bfa15e"></div>עדכון מחירים + נראות חבילות</div>
     <!-- Free plan toggle -->
     <div class="admin-row">
@@ -6580,7 +6581,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- PLAN FEATURE PERMISSIONS MATRIX -->
-  <div class="admin-section" style="border-color:rgba(144,137,189,.2)">
+  <div data-admin-tab="plans" class="admin-section" style="border-color:rgba(144,137,189,.2)">
     <div class="admin-section-title"><div class="dot" style="background:#9089bd"></div>הרשאות לפי מנוי
       <span style="font-size:10px;color:var(--t3);font-weight:400;margin-right:8px">— מה כל חבילה יכולה לעשות</span>
       <button class="fb" onclick="renderFeatureMatrix()" style="padding:3px 8px;font-size:10px;margin-right:auto">🔄 רענן</button>
@@ -6611,9 +6612,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
   </div>
 
-  <!-- v20: UNIFIED PAYMENTS SECTION -->
-  <p role="note" style="padding:12px;border:1px solid var(--border2);border-radius:8px;color:var(--t1)">חיבור הסליקה בהכנה: ההגדרות והקישורים הישנים נשמרו לצורך בדיקה. שמירת קישור כאן אינה מפעילה גבייה ואינה מעדכנת זכאות. החבילות החדשות יופעלו דרך שרת מאובטח לאחר בחירת ספק ואישור המחירים.</p>
-  <div class="admin-section">
+  <!-- v20: UNIFIED PAYMENTS SECTION; the public plans come from functions/plan-model.js, not from here -->
+  <p role="note" data-admin-tab="plans" style="padding:12px;border:1px solid var(--border2);border-radius:8px;color:var(--t1)">חיבור הסליקה בהכנה: ההגדרות והקישורים הישנים נשמרו לצורך בדיקה. שמירת קישור כאן אינה מפעילה גבייה ואינה מעדכנת זכאות. החבילות החדשות יופעלו דרך שרת מאובטח לאחר בחירת ספק ואישור המחירים.</p>
+  <div class="admin-section" data-admin-tab="plans" data-admin-old="קישורי תשלום ישנים ותגמולי הפניות — לא מפעילים גבייה">
     <div class="admin-section-title"><div class="dot" style="background:#7295b8"></div>💳 תשלומים וסליקה</div>
 
     <!-- Primary: Israeli provider subscription links -->
@@ -6670,11 +6671,11 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   </div>
 
   <!-- SYSTEM SETTINGS -->
-  <div class="admin-section">
+  <div class="admin-section" data-admin-empty>
     <div class="admin-section-title"><div class="dot" style="background:#3d9970"></div>הגדרות מערכת</div>
 
     <!-- GUIDE PDF UPLOAD -->
-    <div style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+    <div data-admin-tab="system" data-admin-title="מדריך PDF למשתמשים חדשים" style="background:rgba(61,153,112,.07);border:1px solid rgba(61,153,112,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
       <div style="font-size:12px;font-weight:600;color:var(--gr);margin-bottom:10px;display:flex;align-items:center;gap:7px">📄 מדריך למשתמש — PDF במייל ברוכים הבאים</div>
       <div style="font-size:11px;color:var(--t2);margin-bottom:10px">העלה קובץ PDF שיישלח אוטומטית לכל משתמש חדש שנרשם.</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -6691,7 +6692,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- INSTAGRAM LINK SETTING -->
-    <div style="background:rgba(193,53,132,.07);border:1px solid rgba(193,53,132,.25);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+    <div data-admin-tab="system" data-admin-title="קישור אינסטגרם" style="background:rgba(193,53,132,.07);border:1px solid rgba(193,53,132,.25);border-radius:10px;padding:14px 16px;margin-bottom:16px">
       <div style="font-size:12px;font-weight:600;color:#e1306c;margin-bottom:8px;display:flex;align-items:center;gap:7px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         קישור אינסטגרם
@@ -6707,7 +6708,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- ADMIN CREDENTIALS CHANGE -->
-    <div style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+    <div data-admin-tab="system" data-admin-title="פרטי כניסת אדמין" style="background:rgba(144,137,189,.07);border:1px solid rgba(144,137,189,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px">
       <div style="font-size:12px;font-weight:600;color:var(--pu);margin-bottom:12px;display:flex;align-items:center;gap:7px">🔐 פרטי כניסת אדמין</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
@@ -6738,7 +6739,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- Banner / Broadcast -->
-    <div style="margin-bottom:12px">
+    <div data-admin-tab="comms" data-admin-title="בנר עליון, מייל ו־WhatsApp" style="margin-bottom:12px">
       <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:8px">📣 שליחת הודעה למשתמשים</label>
 
       <!-- Channel selector -->
@@ -6774,7 +6775,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- Contact settings -->
-    <div style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:6px">
+    <div data-admin-tab="system" data-admin-title="יצירת קשר בלשונית עזרה" style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:6px">
       <div style="font-size:11px;color:var(--bl);margin-bottom:12px;font-weight:500">📬 הגדרות יצירת קשר — כפתורים בלשונית עזרה</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
@@ -6812,7 +6813,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <!-- EmailJS -->
-    <div style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:14px">
+    <div data-admin-tab="system" data-admin-title="EmailJS: מיילים אוטומטיים" style="border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:14px">
       <div style="font-size:11px;color:var(--pu);margin-bottom:10px;font-weight:500">📧 EmailJS — מיילים אוטומטיים</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div><label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Service ID</label><input type="text" class="admin-input" id="adm-ejs-service" placeholder="service_..." style="width:100%"></div>
@@ -17675,6 +17676,7 @@ async function adminUploadGuidePDF(inp) {
 }
 
 async function renderAdminPanel() {
+  window.FaynaAdmin?.organize();
   await renderAdminMetrics();
   try { renderGrowthDash(); } catch(e){}
   try { renderMailingAdmin(); } catch(e){}
@@ -17703,6 +17705,7 @@ async function renderAdminPanel() {
   // Populate Instagram field
   const igInput = document.getElementById('instagram-url-input');
   if (igInput && window._instagramUrl) igInput.value = window._instagramUrl;
+  await window.FaynaAdmin?.refresh();
 }
 
 function _applyInstagramUrl(url) {
@@ -17857,7 +17860,7 @@ async function renderAdminMetrics() {
   const blocked= users.filter(u=>u.status==='blocked').length;
   const founding = users.filter(u=>u.foundingMember).length;
   let waitlistCount = '—';
-  try { const wl = await db.collection('waitlist').get(); waitlistCount = wl.size ?? (wl.docs?.length ?? '—'); } catch(e) {}
+  try { const wl = await db.collection('waitlist').get(); waitlistCount = wl.size ?? (wl.docs?.length ?? '—'); window._adminWaitlistCount = waitlistCount; } catch(e) {}
   const el = document.getElementById('admin-metrics');
   if (!el) return;
   el.style.gridTemplateColumns='repeat(8,1fr)';
@@ -27002,6 +27005,7 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="functions/account-policy.js"></script>
 <script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
+<script src="fayna-admin.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
 </body>
