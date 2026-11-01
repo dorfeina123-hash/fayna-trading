@@ -4736,14 +4736,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">רישום עסקאות, ייבוא קבצים ותצוגת לוח שנה במקום אחד</div></div>
     <div style="display:flex;gap:7px;align-items:center">
       <button onclick="openAddTrade()" class="btn-p" style="font-size:11px;padding:6px 13px">+ עסקה</button>
-      <button onclick="openManualEntry()" style="padding:6px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t1);font-family:inherit;font-weight:600">✍️ יומן ידני</button>
       <button id="tj-del-sel" onclick="tjDeleteSelected()" style="display:none;padding:6px 14px;background:rgba(194,88,88,.15);border:1px solid rgba(194,88,88,.4);border-radius:6px;cursor:pointer;font-size:11px;color:var(--re);font-family:inherit;font-weight:700">🗑 מחק נבחרות (<span id="tj-del-n">0</span>)</button>
-      <button id="tj-sel-mode-btn" onclick="tjToggleSelMode()" style="padding:6px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);font-family:inherit;font-weight:600;transition:all .2s">☑ בחר עסקאות</button>
-      <button type="button" class="bn" onclick="swNav('import')">ייבוא עסקאות</button>
-      <button type="button" class="bn" onclick="_openDataExport()">ייצוא נתונים</button>
       <div class="act-dd" id="actdd-tj">
         <button class="act-dd-btn" onclick="actDDToggle('actdd-tj',event)">⋯ עוד</button>
         <div class="act-dd-menu">
+          <button class="act-mi" onclick="openManualEntry()">✍️ יומן ידני</button>
+          <button class="act-mi" id="tj-sel-mode-btn" onclick="tjToggleSelMode()">☑ בחר עסקאות</button>
+          <button class="act-mi" onclick="swNav('import')">📥 ייבוא עסקאות</button>
+          <button class="act-mi" onclick="_openDataExport()">📤 ייצוא נתונים</button>
           <button class="act-mi" onclick="showReportMenu('trades',this)">📊 דוח P&amp;L</button>
           <button class="act-mi" onclick="exportCSV()">📤 ייצא CSV</button>
           <button class="act-mi" onclick="exportToExcel()">📊 ייצא Excel</button>
