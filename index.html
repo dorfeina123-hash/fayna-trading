@@ -2215,7 +2215,8 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 .ws-dialog{margin:auto;width:min(580px,calc(100vw - 24px));max-height:90vh;overflow:auto;background:var(--bg1);color:var(--t1);border:1px solid var(--border);border-radius:var(--fy-radius);padding:24px;font:inherit;direction:rtl}.ws-dialog::backdrop{background:#0008;backdrop-filter:blur(3px)}.ws-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.ws-trade-detail{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.ws-trade-detail dt{color:var(--t3);font-size:12px}.ws-trade-detail dd{font-size:14px;overflow-wrap:anywhere}.ws-theme-options{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.ws-theme-options button{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--t1);font:inherit;text-align:start}.ws-theme-options button[aria-pressed=true]{border-color:var(--ac)}.ws-theme-options small{color:var(--t3)}.ws-theme-dot{height:24px;width:48px;border-radius:6px}.ws-mint{background:linear-gradient(90deg,#111315 50%,#70dfbc 50%)}.ws-stone{background:linear-gradient(90deg,#f3f1ed 50%,#6b52b1 50%)}
 .ws-backups input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}.simple-details>p{font-size:13px;color:var(--t3);padding:12px}.simple-details textarea{width:100%;padding:12px;min-height:90px}.ws-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.clx-card{font:inherit;color:var(--t1)}
 #tj-table:not(.ws-expanded) :is(th,td):nth-child(3),#tj-table:not(.ws-expanded) :is(th,td):nth-child(6),#tj-table:not(.ws-expanded) :is(th,td):nth-child(7),#tj-table:not(.ws-expanded) :is(th,td):nth-child(8),#tj-table:not(.ws-expanded) :is(th,td):nth-child(9),#tj-table:not(.ws-expanded) :is(th,td):nth-child(11),#tj-table:not(.ws-expanded) :is(th,td):nth-child(12),#tj-table:not(.ws-expanded) :is(th,td):nth-child(13){display:none!important}
-#tj-body tr[id^=tj-row]{cursor:pointer}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
+#tj-body tr[id^=tj-row]{cursor:pointer}
+@media(min-width:769px){#tj-table td{white-space:nowrap;overflow-wrap:normal;padding-block:7px}#tj-table:not(.ws-expanded) :is(th,td):nth-child(3){display:table-cell}#tj-table .ws-direction{display:inline;margin:0 8px 0 0}}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
 #tp-stats:not(.simple-all-metrics) #ts-m>.mc:nth-child(n+5){display:none!important}#tp-stats>.ch{grid-template-columns:1fr!important}#tp-stats .stat-group-title{font-size:20px}.cal-day .dinfo:last-child{display:none}.cal-day .dinfo{font-size:11px!important}html[data-fayna-theme] .cal-day.win,html[data-fayna-theme] .cal-day.loss{background:var(--bg1)!important;border-color:var(--border)!important}.cal-day .dpnl{font-size:13px!important}.cal-day{min-height:85px}
 #pa-sidebar-stats,#pasnav-referral,#coach-streak-display,#coach-mentor-tasks{display:none!important}.pa-card{background:var(--bg1)!important;border-color:var(--border)!important;box-shadow:none!important}.pa-page-title{font-size:24px!important}#chat-fab{width:38px!important;height:38px!important;opacity:.8}.sn-icon,.mbn-icon{color:inherit}.home-shortcuts{gap:12px}.ws-insight{padding:18px 0;border-bottom:1px solid var(--border)}.ws-insight p{font-size:14px;color:var(--t1);margin-bottom:10px}.ws-insight small{display:block;color:var(--t3);font-size:12px}.ws-insight:last-child{border:0}
 @media(max-width:700px){.app-layout>.main{padding:16px 12px 90px!important}.ws-heading{align-items:flex-start;gap:12px}.ws-heading .home-primary{font-size:12px;padding:10px}.ws-kpis{gap:8px}.ws-kpis section{padding:14px 10px}.ws-kpis strong{font-size:20px}.ws-panel{padding:16px}.ws-period{margin-inline:0}.ws-toolbar{gap:10px}.ws-form-grid{grid-template-columns:1fr}.ws-table{font-size:12px}.ws-table :is(th,td):nth-child(3){display:none}.ws-table td,.ws-table th{padding:12px 6px}.ws-table td:first-child{font-size:11px}.ws-theme-options button{min-width:130px}.ws-dialog{padding:18px}.cal-day .dpnl{font-size:11px!important}.cal-day .dinfo{font-size:10px!important}.cal-day{min-height:65px}#tp-calc .clx-grid{grid-template-columns:1fr 1fr!important}#tp-trades .ws-toolbar{align-items:flex-end}}
@@ -13918,6 +13919,23 @@ function combinedReportPDF() {
   showToast('📋 דוח משולב PDF נפתח להדפסה','success');
 }
 
+// Fills fields older imports dropped, on trades already in the journal, from a re-imported report.
+// Prices, P&L, notes and anything the user edited stay as they are. dryRun only counts.
+function _backfillTrades(incoming, dryRun) {
+  const byKey={};
+  tradesList.forEach(t=>{(byKey[_tradeKey(t)]=byKey[_tradeKey(t)]||[]).push(t);});
+  const changed=new Set();
+  (incoming||[]).forEach(x=>{
+    (byKey[_tradeKey(x)]||[]).forEach(t=>{
+      ['dir','exitDate','stime'].forEach(k=>{
+        if(t[k]||!x[k])return;
+        changed.add(t);
+        if(!dryRun)t[k]=x[k];
+      });
+    });
+  });
+  return changed.size;
+}
 function _tradeKey(t) {
   return `${t.date}|${t.sym}|${(+t.buy).toFixed(2)}|${(+t.sell).toFixed(2)}|${(t.btime||'').slice(0,5)}|${t.qty}`;
 }
@@ -14178,6 +14196,7 @@ async function importCSV(inp){
           const journal=Import._core.parseAny(Import._core.workbookText(wb,XLSX),'auto');
           if(journal.format==='atas'){
             if(journal.warnings.length) showToast(journal.warnings.join(' '),'info',6000);
+            if(_backfillTrades(journal.trades)){renderAll();saveData();}
             _commitTrades(_dedupe(journal.trades),'ATAS Journal');
             return;
           }
@@ -22794,7 +22813,7 @@ function _tradeSchematic(t) {
   const stopLine=stop==null?'':`<line x1="${x0}" x2="${x1}" y1="${y(stop)}" y2="${y(stop)}" stroke="var(--re)" stroke-dasharray="6 5"/><text x="${W/2}" y="${y(stop)-6}" text-anchor="middle" font-size="12" fill="var(--re)">סטופ ${price(stop)}</text>`;
   let body;
   if (!dir) {
-    body=[['קנייה',t.buy],['מכירה',t.sell]].map(([n,v])=>`<line x1="${x0}" x2="${x1}" y1="${y(v)}" y2="${y(v)}" stroke="var(--t3)" stroke-dasharray="3 5"/>${label(x0-14,y(v),'end',n,price(v))}`).join('')+`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--t3)">כיוון לא ידוע, לכן סדר הכניסה והיציאה לא מוצג</text>`;
+    body=[['קנייה',t.buy],['מכירה',t.sell]].map(([n,v])=>`<line x1="${x0}" x2="${x1}" y1="${y(v)}" y2="${y(v)}" stroke="var(--t3)" stroke-dasharray="3 5"/>${label(x0-14,y(v),'end',n,price(v))}`).join('')+`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--t3)">כיוון לא שמור בעסקה: ייבא שוב את הדוח המקורי כדי להשלים אותו</text>`;
   } else {
     const entry=dir==='short'?t.sell:t.buy, exit=dir==='short'?t.buy:t.sell;
     const net=tradeNet(t), color=net>=0?'var(--gr)':'var(--re)', points=dir==='short'?entry-exit:exit-entry;
