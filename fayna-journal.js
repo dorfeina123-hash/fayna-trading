@@ -4,12 +4,12 @@
 window.FaynaJournal = (() => {
   const KEY = '__journal';
   const KINDS = [['setup', 'סטאפים'], ['tag', 'תגיות'], ['mistake', 'טעויות']];
-  let kind = 'setup', pageId = null, pageQuery = '';
+  let kind = 'setup', pageId = null, pageQuery = '', year = new Date().getFullYear();
   const esc = v => escHtml(String(v ?? ''));
   const money = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const tone = n => n > 0 ? 'cg' : n < 0 ? 'cr' : '';
   function read() {
-    try { const d = JSON.parse(businessNotes[KEY] || '{}'); return { labels: { setup: [], tag: [], mistake: [], ...d.labels }, pages: d.pages || [] }; }
+    try { const d = JSON.parse(businessNotes[KEY] || '{}'); return { ...d, labels: { setup: [], tag: [], mistake: [], ...d.labels }, pages: d.pages || [] }; }
     catch (e) { return { labels: { setup: [], tag: [], mistake: [] }, pages: [] }; }
   }
   function write(data) { businessNotes[KEY] = JSON.stringify(data); saveBizData(); }
@@ -68,6 +68,22 @@ window.FaynaJournal = (() => {
     el.innerHTML = list.map(a => { const r = _computeRiskDashboard(a); return `<section class="ws-panel"><h2>${esc(a.name)}</h2>${meter('היום', r.today)}${meter('השבוע', r.week)}${meter('החודש', r.month)}</section>`; }).join('') || '<p class="ws-muted">לא נמצאו חשבונות פעילים.</p>';
   }
 
+  function breakeven() { const d = read(); return { min: 0, max: 0, ...d.breakeven }; }
+  function resultOf(t) { const r = breakeven(), n = tradeNet(t); return n >= r.min && n <= r.max ? 'be' : n > 0 ? 'win' : 'loss'; }
+  async function editBreakeven() {
+    const r = breakeven(), value = await customPrompt('טווח ברייק־איוון בדולרים, מינימום ומקסימום, למשל: -5,5', `${r.min},${r.max}`);
+    if (value == null) return;
+    const [min, max] = value.split(',').map(Number);
+    if (!Number.isFinite(min) || !Number.isFinite(max) || min > 0 || max < 0) { showToast('נא להזין מינימום שלילי או 0 ומקסימום חיובי או 0', 'error'); return; }
+    const data = read(); data.breakeven = { min, max }; write(data); renderTJ();
+  }
+  function renderYear(delta = 0) {
+    year += delta;
+    const box = document.getElementById('jr-year-box'); if (!box) return;
+    const names = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'], trades = getActiveTrades();
+    box.innerHTML = `<div class="ws-toolbar"><button class="bn" aria-label="שנה קודמת" onclick="FaynaJournal.renderYear(-1)">‹</button><strong>${year}</strong><button class="bn" aria-label="שנה הבאה" onclick="FaynaJournal.renderYear(1)">›</button></div><div class="jr-year">${names.map((n, i) => { const s = summary(trades.filter(t => String(t.date).startsWith(`${year}-${String(i + 1).padStart(2, '0')}`))); return `<div class="jr-month">${n}${s.n ? `<b class="${tone(s.net)}">${money(s.net)}</b>${s.n} עסקאות` : '<br>אין עסקאות'}</div>`; }).join('')}</div>`;
+  }
+
   function renderSides() {
     const el = document.getElementById('side-stats-body'); if (!el) return;
     const trades = getActiveTrades().filter(t => !t.isManual), group = d => summary(trades.filter(t => _tradeDir(t) === d));
@@ -77,7 +93,7 @@ window.FaynaJournal = (() => {
 
   return {
     render(name) { ({ setups: renderSetups, notebook: renderNotebook, risk: renderRisk })[name]?.(); },
-    renderSides, addLabel, removeLabel, newPage, savePage, deletePage,
+    renderSides, renderYear, resultOf, editBreakeven, addLabel, removeLabel, newPage, savePage, deletePage,
     kind(k) { kind = k; renderSetups(); },
     open(id) { pageId = id; renderNotebook(); },
     search(q) {

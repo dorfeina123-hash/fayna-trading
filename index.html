@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<script>try{document.documentElement.dataset.faynaTheme=localStorage.getItem("fayna_theme")==="light"?"light":"dark";}catch(e){document.documentElement.dataset.faynaTheme="dark";}</script>
+<script>try{document.documentElement.dataset.faynaTheme=["light","violet"].includes(localStorage.getItem("fayna_theme"))?localStorage.getItem("fayna_theme"):"dark";}catch(e){document.documentElement.dataset.faynaTheme="dark";}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
@@ -2216,6 +2216,8 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 .ws-backups input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}.simple-details>p{font-size:13px;color:var(--t3);padding:12px}.simple-details textarea{width:100%;padding:12px;min-height:90px}.ws-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.clx-card{font:inherit;color:var(--t1)}
 #tj-table:not(.ws-expanded) :is(th,td):nth-child(3),#tj-table:not(.ws-expanded) :is(th,td):nth-child(6),#tj-table:not(.ws-expanded) :is(th,td):nth-child(7),#tj-table:not(.ws-expanded) :is(th,td):nth-child(8),#tj-table:not(.ws-expanded) :is(th,td):nth-child(9),#tj-table:not(.ws-expanded) :is(th,td):nth-child(11),#tj-table:not(.ws-expanded) :is(th,td):nth-child(12),#tj-table:not(.ws-expanded) :is(th,td):nth-child(13){display:none!important}
 #tj-body tr[id^=tj-row]{cursor:pointer}
+html[data-fayna-theme="violet"]{color-scheme:dark;--bg0:#1e1e1e;--bg1:#292930;--bg2:#232329;--bg3:#32323a;--bg4:#3c3c45;--t1:#fff;--t2:#c8c8d0;--t3:#9a9aa5;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.16);--ac:#a855f7;--bl:#a855f7;--fy-radius:12px}
+.jr-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;font-size:12px;color:var(--t2)}.jr-filters :is(input,select){padding:6px 8px;border:1px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--t1);font:inherit}.jr-year{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}.jr-month{padding:12px;border:1px solid var(--border);border-radius:var(--fy-radius);background:var(--bg1);font-size:12px;color:var(--t2)}.jr-month b{display:block;font-size:15px}
 .jr-title{font-size:20px;margin-bottom:14px}.jr-row{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}.jr-row small{color:var(--t3)}.jr-add{display:flex;gap:8px;margin:14px 0}.jr-add input,.jr-note input,.jr-note textarea{width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--t1);font:inherit;margin-bottom:8px}.jr-add input{margin:0;max-width:280px}.jr-note{display:grid;grid-template-columns:240px 1fr;gap:18px}.jr-page{display:block;width:100%;padding:9px;border:0;border-radius:8px;background:none;color:var(--t1);text-align:start;cursor:pointer;font:inherit}.jr-page[aria-current=true]{background:var(--bg3)}.jr-page small{display:block;color:var(--t3)}.jr-pager{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px}#tp-risk progress{width:100%;height:6px}@media(max-width:700px){.jr-note{grid-template-columns:1fr}.jr-row{grid-template-columns:1fr auto}}
 .adm-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--border);margin:0 0 18px;scrollbar-width:none}.adm-tabs button{flex-shrink:0;background:none;border:0;border-bottom:2px solid transparent;color:var(--t3);font:inherit;font-size:14px!important;font-weight:600;padding:10px 16px;cursor:pointer;border-radius:0!important}.adm-tabs button[aria-pressed=true]{color:var(--t1);border-bottom-color:var(--ac)}.adm-attention{margin-bottom:18px}.adm-attention h2{font-size:14px;font-weight:600;margin-bottom:10px}.adm-attention>div{display:flex;flex-wrap:wrap;gap:10px}.adm-attention :is(button,span){display:flex;align-items:baseline;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);background:var(--bg1);color:var(--t2);font:inherit;font-size:13px}.adm-attention button{cursor:pointer}.adm-attention b{font-size:18px;color:var(--t1)}.adm-attention p{padding:12px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);color:var(--t2);font-size:13px}.adm-visuals{display:grid;grid-template-columns:2fr 1fr;gap:18px}.adm-bars{display:flex;align-items:flex-end;gap:3px;height:110px}.adm-bars i{flex:1;min-width:2px;background:var(--ac);border-radius:2px 2px 0 0;opacity:.85}.adm-caption{margin-top:10px;font-size:12px;color:var(--t3)}.adm-plan{display:grid;grid-template-columns:90px 1fr 32px;align-items:center;gap:10px;padding:6px 0;font-size:12px;color:var(--t2)}.adm-plan div{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}.adm-plan i{display:block;height:100%;background:var(--ac)}.adm-plan b{text-align:end;color:var(--t1)}.adm-old{margin-bottom:18px;border:1px solid var(--border);border-radius:var(--fy-radius);padding:12px 16px}.adm-old summary{cursor:pointer;font-size:13px;color:var(--t2)}.adm-old>*:not(summary){margin-top:14px}@media(max-width:700px){.adm-visuals{grid-template-columns:1fr}}
 @media(min-width:769px){#tj-table td{white-space:nowrap;overflow-wrap:normal;padding-block:7px}#tj-table:not(.ws-expanded) :is(th,td):nth-child(3){display:table-cell}#tj-table .ws-direction{display:inline;margin:0 8px 0 0}}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
@@ -4712,6 +4714,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
 <!-- CALENDAR -->
 <div class="tp" id="tp-calendar">
+  <section class="ws-panel" id="jr-year-box"></section>
   <div class="cal-nav">
     <div style="display:flex;align-items:center;gap:10px">
       <button class="cal-btn" onclick="calPrev()">◀</button>
@@ -4757,6 +4760,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   </div>
   <div class="mrow" id="tj-m"></div>
   <input type="search" id="tj-q" aria-label="חיפוש לפי נכס" placeholder="חיפוש לפי נכס" oninput="tjQuery=this.value;tjPage=1;renderTJ()" style="max-width:240px;margin-bottom:8px">
+  <div class="jr-filters" role="group" aria-label="סינון מתקדם">
+    <label>סוג <select onchange="tjSide=this.value;tjPage=1;renderTJ()"><option value="">הכל</option><option value="long">לונג</option><option value="short">שורט</option><option value="unknown">ללא כיוון</option></select></label>
+    <label>תוצאה <select onchange="tjResult=this.value;tjPage=1;renderTJ()"><option value="">הכל</option><option value="win">רווח</option><option value="loss">הפסד</option><option value="be">ברייק־איוון</option></select></label>
+    <label>מתאריך <input type="date" onchange="tjFrom=this.value;tjPage=1;renderTJ()"></label>
+    <label>עד <input type="date" onchange="tjTo=this.value;tjPage=1;renderTJ()"></label>
+    <label>שורות <select onchange="tjSize=+this.value;tjPage=1;renderTJ()"><option>20</option><option selected>30</option><option>50</option><option>100</option></select></label>
+    <button type="button" class="bn" onclick="FaynaJournal.editBreakeven()">טווח ברייק־איוון</button>
+  </div>
   <div class="fbar">
     <button class="fb active" onclick="fTJ('all',this)">הכל</button>
     <button class="fb" onclick="fTJ('win',this)">רווח ✓</button>
@@ -14931,7 +14942,7 @@ function sw(name,btn){
   if(name==='overview')setTimeout(()=>{renderOV();renderFocusPanel();},50);
   if(name==='biz')setTimeout(renderBiz,50);
   if(name==='stats')setTimeout(renderStats,50);
-  if(name==='calendar')setTimeout(renderCal,50);
+  if(name==='calendar')setTimeout(()=>{renderCal();FaynaJournal.renderYear();},50);
   if(['setups','notebook','risk'].includes(name))setTimeout(()=>FaynaJournal.render(name),50);
   if(name==='trades')setTimeout(renderTJ,50);
   if(name==='coach')setTimeout(_coachRenderHome,50);
@@ -19947,7 +19958,7 @@ window.renderStats = function() {
 };
 
 // Replace renderTJ with extended version (use assignment to avoid hoisting)
-let tjStrat = 'all', tjQuery = '', tjPage = 1;
+let tjStrat = 'all', tjQuery = '', tjPage = 1, tjSize = 30, tjSide = '', tjResult = '', tjFrom = '', tjTo = '';
 let tjAcct  = '__all__';
 window.renderTJ = function renderTJ() {
   const allTrades = getActiveTrades();
@@ -19998,6 +20009,10 @@ window.renderTJ = function renderTJ() {
   if (tjStrat !== 'all') list = list.filter(t=>(t.strategy||'')===tjStrat);
   if (tjAcct  !== '__all__') list = list.filter(t=>t.acct===tjAcct);
   if (tjQuery) list = list.filter(t=>String(t.sym||'').toUpperCase().includes(tjQuery.toUpperCase()));
+  if (tjSide) list = list.filter(t=>(_tradeDir(t)||'unknown')===tjSide);
+  if (tjResult) list = list.filter(t=>FaynaJournal.resultOf(t)===tjResult);
+  if (tjFrom) list = list.filter(t=>t.date>=tjFrom);
+  if (tjTo) list = list.filter(t=>t.date<=tjTo);
   list.sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime));
 
   const tot = list.reduce((s,t)=>s+tradeNet(t), 0);
@@ -20013,9 +20028,9 @@ window.renderTJ = function renderTJ() {
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${list.length?(w.length/list.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W / ${list.length-w.length}L</div></div>`+
     `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${dTot>=0?'cg':'cr'}">${list.length?dSym+(dTot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: '+dSym+dAvgW.toFixed(1):''}</div></div>`;
 
-  const _tjPages=Math.max(1,Math.ceil(list.length/30));tjPage=Math.min(tjPage,_tjPages);
+  const _tjPages=Math.max(1,Math.ceil(list.length/tjSize));tjPage=Math.min(tjPage,_tjPages);
   document.getElementById('tj-pager').innerHTML=_tjPages>1?`<button class="bn" ${tjPage<2?'disabled':''} onclick="tjPage--;renderTJ()">הקודם</button><span>${tjPage} / ${_tjPages}</span><button class="bn" ${tjPage>=_tjPages?'disabled':''} onclick="tjPage++;renderTJ()">הבא</button>`:'';
-  document.getElementById('tj-body').innerHTML = list.length ? list.slice((tjPage-1)*30,tjPage*30).map(t => {
+  document.getElementById('tj-body').innerHTML = list.length ? list.slice((tjPage-1)*tjSize,tjPage*tjSize).map(t => {
     const ti  = tradesList.indexOf(t);
     const net = tradeNet(t);
     const acctObj  = t.acct ? accounts.find(a=>a.id===t.acct) : null;
@@ -22508,10 +22523,11 @@ try { if (sessionStorage.getItem('ft_g_redirect') === '1') _registering = true; 
 // Two persistent, device-local appearance choices. Storage may be unavailable.
 const THEME_INFO = {
   dark: {label:'גרפיט ומנטה',next:'light'},
-  light: {label:'אבן חמה',next:'dark'}
+  light: {label:'אבן חמה',next:'violet'},
+  violet: {label:'סגול כהה',next:'dark'}
 };
 function _applyTheme(mode) {
-  mode=mode==='light'?'light':'dark';
+  mode=THEME_INFO[mode]?mode:'dark';
   document.documentElement.dataset.faynaTheme=mode;
   document.body.classList.toggle('light-mode',mode==='light');
   document.body.classList.remove('contrast-mode');
