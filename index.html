@@ -22866,7 +22866,7 @@ async function _openTradeMarkers() {
   if(!trade) return;
   const symbol=_continuousSymbol(_tradeChartSymbol(trade.sym,trade.date));
   try {
-    if(typeof FaynaTradeMarkers==='undefined') await _loadModule('fayna-trade-markers.js?v=77');
+    if(typeof FaynaTradeMarkers==='undefined') await _loadModule('fayna-trade-markers.js?v=79');
     if(await FaynaTradeMarkers.quick(trade,symbol,_tradeDir(trade))) showToast('סימוני העסקה הועתקו. ב־TradingView: Pine Editor, הדבקה, Add to chart, ואז Alt+G ל־'+trade.date+' '+String(trade.btime||'').slice(0,5),'success',12000);
   } catch(e) { showToast('טעינת סימוני העסקה נכשלה. נסה שוב.','error'); }
 }
