@@ -34,7 +34,26 @@ if barstate.isfirst
     line.new(entryTime, entryPrice, exitTime, exitPrice, xloc=xloc.bar_time, color=color.gray, style=line.style_dashed)
 `;
 }
-function open(t,symbol){
+// Everything the trade already knows. Exit date: saved, else the same day when the clock moved forward.
+function defaults(t,dir){
+  const local=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const direction=t.dir==='long'||t.dir==='short'?t.dir:dir||'';
+  const exitDate=t.exitDate||(t.stime&&t.btime&&t.stime>=t.btime?t.date:'');
+  return {zone:zones.includes(local)?local:'',direction,qty:t.qty||'',
+    entryTime:t.date&&t.btime?t.date+'T'+t.btime:'',exitTime:exitDate&&t.stime?exitDate+'T'+t.stime:'',
+    entry:direction?(direction==='long'?t.buy:t.sell):'',exit:direction?(direction==='long'?t.sell:t.buy):''};
+}
+const chartUrl=symbol=>'https://www.tradingview.com/chart/?symbol='+encodeURIComponent(symbol)+'&interval=5';
+// One click: copies the markers and opens the real chart. Anything missing falls back to the form.
+async function quick(t,symbol,dir){
+  if(!t) return false;
+  let code;
+  try{code=build({...defaults(t,dir),symbol});}catch{open(t,symbol,dir);return false;}
+  window.open(chartUrl(symbol),'_blank','noopener');
+  try{await navigator.clipboard.writeText(code);}catch{open(t,symbol,dir);return false;}
+  return true;
+}
+function open(t,symbol,dir){
   if(!t) return;
   document.getElementById('fayna-marker-dialog')?.remove();
   const d=document.createElement('dialog');d.id='fayna-marker-dialog';d.dir='rtl';
@@ -59,19 +78,17 @@ function open(t,symbol){
     <p>נדרשת גישה ל־Pine Editor ולנתוני הנכס בחשבון TradingView. הסימונים מופיעים בגרף החיצוני, ולא בגרף המוטמע באתר.</p></section></form>`;
   const form=d.querySelector('form'),field=k=>form.elements.namedItem(k),status=d.querySelector('#marker-status'),result=d.querySelector('#marker-result');
   for(const el of d.querySelectorAll('input,select,textarea')) el.style.cssText+=';display:block;box-sizing:border-box;width:100%;margin-top:5px;padding:8px;background:var(--bg3,#292e32);color:inherit;border:1px solid var(--border2,#555);border-radius:7px;font:inherit';
-  field('symbol').value=symbol;field('qty').value=t.qty||'';
-  field('entryTime').value=t.date&&t.btime?t.date+'T'+t.btime:'';
-  // ATAS imports historically did not retain the closing date. Ask for it rather than assume same-day.
-  field('exitTime').value=t.exitDate&&t.stime?t.exitDate+'T'+t.stime:'';
-  if(t.dir==='long'||t.dir==='short')field('direction').value=t.dir;
+  const known=defaults(t,dir);
+  field('symbol').value=symbol;field('qty').value=known.qty;field('zone').value=known.zone;
+  field('entryTime').value=known.entryTime;field('exitTime').value=known.exitTime;field('direction').value=known.direction;
   const prices=()=>{const dir=field('direction').value;field('entry').value=dir?(dir==='long'?t.buy:t.sell):'';field('exit').value=dir?(dir==='long'?t.sell:t.buy):'';};prices();
   field('direction').addEventListener('change',prices);
   form.addEventListener('input',()=>{result.hidden=true;status.textContent='';});
-  form.addEventListener('submit',e=>{e.preventDefault();try{const o=Object.fromEntries(new FormData(form));d.querySelector('textarea').value=build(o);d.querySelector('#marker-link').href='https://www.tradingview.com/chart/?symbol='+encodeURIComponent(o.symbol);result.hidden=false;status.textContent='הסימונים מוכנים להעתקה.';}catch(err){status.textContent=err.message;result.hidden=true;}});
+  form.addEventListener('submit',e=>{e.preventDefault();try{const o=Object.fromEntries(new FormData(form));d.querySelector('textarea').value=build(o);d.querySelector('#marker-link').href=chartUrl(o.symbol);result.hidden=false;status.textContent='הסימונים מוכנים להעתקה.';}catch(err){status.textContent=err.message;result.hidden=true;}});
   d.querySelector('#marker-copy').onclick=async()=>{const area=d.querySelector('textarea');try{await navigator.clipboard.writeText(area.value);status.textContent='הקוד הועתק. פתח את הגרף והדבק ב־Pine Editor.';}catch{area.focus();area.select();status.textContent='בחר העתקה ידנית של הקוד המסומן.';}};
   d.querySelector('#marker-close').onclick=()=>d.close();d.addEventListener('close',()=>d.remove());
   document.body.appendChild(d);d.showModal();
 }
-if(typeof window!=='undefined')window.FaynaTradeMarkers={open,build};
-if(typeof module!=='undefined')module.exports={build,dateParts};
+if(typeof window!=='undefined')window.FaynaTradeMarkers={open,quick,build};
+if(typeof module!=='undefined')module.exports={build,dateParts,defaults};
 })();

@@ -22812,13 +22812,17 @@ function openTradeChart(ti) {
   document.body.style.overflow='hidden';
   _loadTradingViewChart(t.sym, t.date);
 }
+// The continuous contract: expired contracts need a paid TradingView plan, and a trade sits in the front month.
+function _continuousSymbol(symbol) {
+  return String(symbol).replace(/^((?:CME_MINI|CBOT_MINI|COMEX|NYMEX):[A-Z0-9]*?)[FGHJKMNQUVXZ]\d{4}$/,'$11!');
+}
 async function _openTradeMarkers() {
   const trade=tradesList[_tcmTradeIdx];
   if(!trade) return;
-  const symbol=_tradeChartSymbol(trade.sym,trade.date);
+  const symbol=_continuousSymbol(_tradeChartSymbol(trade.sym,trade.date));
   try {
-    if(typeof FaynaTradeMarkers==='undefined') await _loadModule('fayna-trade-markers.js?v=73');
-    FaynaTradeMarkers.open(trade,symbol);
+    if(typeof FaynaTradeMarkers==='undefined') await _loadModule('fayna-trade-markers.js?v=77');
+    if(await FaynaTradeMarkers.quick(trade,symbol,_tradeDir(trade))) showToast('סימוני העסקה הועתקו. ב־TradingView: Pine Editor, הדבקה, Add to chart, ואז Alt+G ל־'+trade.date+' '+String(trade.btime||'').slice(0,5),'success',12000);
   } catch(e) { showToast('טעינת סימוני העסקה נכשלה. נסה שוב.','error'); }
 }
 function closeTradeChart() {
@@ -22866,9 +22870,7 @@ function _loadTradingViewChart(sym, date) {
   const note=document.getElementById('tcm-chart-note');
   if(note){
     note.hidden=false;
-    note.textContent=(proxy?'גרף ייחוס '+proxy+': TradingView לא מאפשר להטמיע את '+exact+'. המחירים אינם מחירי החוזה. ':'')+'הגרף המוטמע מציג היסטוריה אחרונה ואינו יכול לקפוץ לתאריך העסקה. ';
-    const a=document.createElement('a');a.href='https://www.tradingview.com/chart/?symbol='+encodeURIComponent(exact);a.target='_blank';a.rel='noopener noreferrer';a.textContent='פתח את '+exact+' ב־TradingView';
-    note.appendChild(a);
+    note.textContent=(proxy?'זה לא גרף העסקה: מוצג ייחוס '+proxy+', כי TradingView לא מאפשר להטמיע חוזי '+exact.split(':')[1].replace(/[FGHJKMNQUVXZ]\d{4}$|1!$/,'')+'. ':'הגרף כאן מציג היסטוריה אחרונה בלבד. ')+'לגרף האמיתי עם הכניסה והיציאה לחץ על "פתח את העסקה ב־TradingView".';
   }
   const tv=document.getElementById('tcm-chart-tv'); const loading=document.getElementById('tcm-loading');
   if(!tv) return;
@@ -24148,7 +24150,7 @@ function _calcKey(e){
         <div class="tcm-stat"><span class="tcm-stat-lbl">כמות</span><span class="tcm-stat-val" id="tcm-qty">—</span></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
-        <button type="button" class="bn" onclick="_openTradeMarkers()">סמן עסקה ב־TradingView</button>
+        <button type="button" class="btn-p" onclick="_openTradeMarkers()">פתח את העסקה ב־TradingView</button>
         <input type="text" class="tcm-sym-input" id="tcm-sym-inp" placeholder="שנה סמל..." onkeydown="if(event.key==='Enter')_tcmReloadChart()" title="הקלד סמל TradingView">
         <button onclick="_tcmReloadChart()" style="padding:5px 10px;border-radius:7px;background:var(--ac);color:#fff;border:none;font-size:11px;cursor:pointer;font-family:inherit;font-weight:700">טען</button>
         <button class="cx" onclick="closeTradeChart()" style="font-size:22px;width:32px;height:32px">×</button>
