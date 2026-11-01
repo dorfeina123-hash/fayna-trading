@@ -10,4 +10,7 @@ assert(build({...base,exitTime:'2026-10-02T01:00:00'}).includes('2026, 10, 2, 1,
 for(const patch of [{zone:''},{direction:''},{qty:0},{entry:''},{entry:'1);bad'},{exitTime:''},{exitTime:'2026-09-30T12:00:00'},{symbol:'X"\nmalicious'}])assert.throws(()=>build({...base,...patch}));
 assert.throws(()=>dateParts('2026-02-30T12:00:00'));
 assert.throws(()=>dateParts('2026-10-01T25:00:00'));
+const known=require('../fayna-trade-markers.js').defaults({date:'2026-10-01',btime:'16:30:00',stime:'16:50:00',buy:100,sell:90,qty:2},'short');
+assert.equal(known.exitTime,'2026-10-01T16:50:00');assert.equal(known.entry,90);assert.equal(known.exit,100);
+assert.equal(require('../fayna-trade-markers.js').defaults({date:'2026-10-01',btime:'23:30:00',stime:'00:10:00',buy:1,sell:2}).exitTime,'','an overnight exit is not assumed');
 console.log('Pine generator: long/short, timestamps, overnight exit, coordinates, missing values and injection checks passed.');
