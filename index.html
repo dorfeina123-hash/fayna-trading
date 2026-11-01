@@ -3218,6 +3218,12 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div id="a11y-live" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <nav class="topnav" role="navigation" aria-label="ניווט ראשי">
+  <div class="trb-tools" role="toolbar" aria-label="פעולות וסינון">
+    <button type="button" class="trb-primary" onclick="addAccount()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>הוסף חשבון מסחר</span></button>
+    <button type="button" class="trb-btn" onclick="toggleAcctMenu(event)" aria-haspopup="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg><span>מסננים</span><svg class="trb-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+    <button type="button" class="trb-btn" id="trb-date" onclick="_trbDate(this)" aria-label="תקופה: כל הזמן"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg><span id="trb-date-txt">כל הזמן</span><svg class="trb-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+    <button type="button" class="trb-btn" id="trb-cur" onclick="_trbCurrency(this)" aria-pressed="false" aria-label="מטבע תצוגה: דולרים"><span class="trb-cur-sym" id="trb-cur-sym">$</span><span id="trb-cur-txt">דולרים</span><svg class="trb-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+  </div>
   <div class="logo" onclick="sw('overview',document.querySelector('.nt'))" style="cursor:pointer" title="חזור לסקירה"><div class="logo-icon">
     <img src="fayna-logo-gold.png" alt="Fayna" style="width:38px;height:38px;border-radius:50%;object-fit:cover;display:block"
          onerror="if(!this._h){this._h=1;this.src='https://dorfeina123-hash.github.io/fayna-trading/fayna-logo-gold.png';}else{this.style.display='none';document.getElementById('logo-fallback').style.display='flex';}" loading="lazy" decoding="async">
@@ -11346,7 +11352,7 @@ function renderGauges(opts){
 }
 
 /* v54 — compact home. Read-only presentation over the existing journal. */
-var _homePeriod = 'month';
+var _homePeriod = 'all';
 function _homeDate(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function _homeModel(rows, period, now, netOf) {
   const end=_homeDate(now), start=period==='today'?end:period==='month'?end.slice(0,7)+'-01':'';
@@ -11369,6 +11375,12 @@ function _homeTrend(series) {
 /* v91 — TradeReport-style home. Same data and filters as v54, new layout:
    KPI row with gauges, score radar, daily bars, equity curve, month calendar with
    weekly totals and recent trade cards. Presentation only; nothing is saved. */
+/* v93 — top bar controls (TradeReport layout). The period drives the home summary,
+   the currency button reuses the existing toggle, the filter opens the account menu. */
+var _TRB_PERIODS=[['all','כל הזמן'],['month','החודש'],['today','היום']];
+function _trbSyncDate(){const p=_TRB_PERIODS.find(x=>x[0]===_homePeriod)||_TRB_PERIODS[0];const t=document.getElementById('trb-date-txt');if(t)t.textContent=p[1];const b=document.getElementById('trb-date');if(b){b.setAttribute('aria-label','תקופה: '+p[1]);b.classList.toggle('active',p[0]!=='all');}}
+function _trbDate(){const i=_TRB_PERIODS.findIndex(x=>x[0]===_homePeriod);_homePeriod=_TRB_PERIODS[(i+1)%_TRB_PERIODS.length][0];_trbSyncDate();renderHome();}
+function _trbCurrency(btn){if(typeof toggleCurrency!=='function')return;const old=document.querySelector('.ftb-btn[onclick*="toggleCurrency"]')||btn;toggleCurrency(old);const ils=typeof _fxOn==='function'&&_fxOn();document.getElementById('trb-cur-sym').textContent=ils?'₪':'$';document.getElementById('trb-cur-txt').textContent=ils?'שקלים':'דולרים';btn.setAttribute('aria-pressed',String(ils));btn.setAttribute('aria-label','מטבע תצוגה: '+(ils?'שקלים':'דולרים'));}
 var _homeCalMonth = null;
 function _homeStats(rows, netOf) {
   let wins=0,losses=0,be=0,sumW=0,sumL=0;const daily={},count={};
@@ -11421,7 +11433,6 @@ function renderHome(){
   const tone=n=>n>0?'home-positive':n<0?'home-negative':'';
   const pct=v=>v===null||!Number.isFinite(v)?'—':v.toFixed(2)+'%';
   const accountLabel=every?'כל החשבונות':selected.size===1?(list.find(a=>selected.has(a.id))?.name||'חשבון'):selected.size+' חשבונות';
-  const accountSelector='<label class="home-account-filter"><span class="trh-sr">חשבון</span><select id="home-account-select" aria-label="סינון חשבון"><option value="__all__"'+(every?' selected':'')+'>כל החשבונות</option>'+(!every&&selected.size>1?'<option value="__selected__" selected disabled>'+esc(accountLabel)+'</option>':'')+list.map(a=>'<option value="'+esc(a.id)+'"'+(!every&&selected.size===1&&selected.has(a.id)?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label>';
   const periodTitle={today:'היום',month:'החודש',all:'כל התקופה'}[_homePeriod];
   const wr=st.wins+st.losses?st.wins/(st.wins+st.losses)*100:null;
   const dayRate=st.dW+st.dL?st.dW/(st.dW+st.dL)*100:null;
@@ -11460,7 +11471,7 @@ function renderHome(){
     return '<article class="trh-trade"><header><div><strong dir="ltr">'+esc(t.date.slice(8,10)+'/'+t.date.slice(5,7)+'/'+t.date.slice(0,4))+'</strong><small>'+days[dt.getDay()]+(t.btime?' · '+esc(String(t.btime).slice(0,5))+(t.stime?' ← '+esc(String(t.stime).slice(0,5)):''):'')+'</small>'+(acctName(t.acct)?'<small class="trh-acct"><i aria-hidden="true"></i>'+esc(acctName(t.acct))+'</small>':'')+'</div>'+(idx>=0&&!t.isManual?'<button type="button" class="trh-ghost" data-home-trade="'+idx+'">הצג פרטים</button>':'')+'</header>'
       +'<dl><div><dt>נכס</dt><dd>'+esc(t.sym||(t.isManual?'סיכום יום':'—'))+'</dd></div><div><dt>סוג עסקה</dt><dd class="'+(dir==='long'?'home-positive':dir==='short'?'home-negative':'')+'">'+(dir==='long'?'Long':dir==='short'?'Short':'—')+'</dd></div><div><dt>כמות</dt><dd>'+(t.qty?esc(t.qty)+' חוזים':'—')+'</dd></div><div><dt>כניסה</dt><dd dir="ltr">'+num(entry)+'</dd></div><div><dt>יציאה</dt><dd dir="ltr">'+num(exit)+'</dd></div><div><dt>תוצאה</dt><dd dir="ltr" class="'+tone(n)+'">'+_homeMoney(n)+'</dd></div></dl></article>';};
   root.innerHTML=`
-    <header class="trh-top"><h1>דף ראשי</h1><div class="trh-tools"><div class="home-period" role="group" aria-label="תקופת הסיכום">${[['today','היום'],['month','החודש'],['all','הכל']].map(([id,label])=>'<button type="button" data-home-period="'+id+'" aria-pressed="'+(_homePeriod===id)+'">'+label+'</button>').join('')}</div>${accountSelector}<button type="button" class="home-primary" data-home-action="add">＋ עסקה חדשה</button></div></header>
+    <h1 class="trh-sr">דף ראשי</h1>
     ${window.FaynaExperience?.onboarding(list,all)||''}
     <section class="trh-kpis" aria-label="מדדים מרכזיים">
       <div class="trh-card trh-kpi"><div class="trh-kpi-text"><span>P&amp;L נטו · ${esc(periodTitle)}</span><div class="trh-kpi-row"><strong class="home-total ${tone(model.net)}" dir="ltr">${_homeMoney(model.net)}</strong><em title="מספר רשומות">${model.count}</em></div></div><div class="trh-icon" aria-hidden="true">$</div></div>
@@ -11474,7 +11485,7 @@ function renderHome(){
       <div class="trh-card"><div class="trh-head"><h2>גרף רווח והפסד מצטבר</h2><span>Profit Factor: <b>${pfTxt}</b></span></div>${_homeEquity(st.days,st.daily)}</div>
     </section>
     <section class="trh-lower">
-      <div class="trh-card trh-recent"><div class="trh-head trh-head-col"><h2>עסקאות אחרונות</h2><span>${recent.length?'מציג '+recent.length+' עסקאות · '+esc(accountLabel):esc(accountLabel)}</span></div>${recent.length?'<div class="trh-trades">'+recent.map(card).join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות עדיין</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}<div class="trh-recent-foot"><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button><button type="button" class="home-link" data-home-action="accounts">ניהול חשבונות ←</button></div></div>
+      <div class="trh-card trh-recent"><div class="trh-head"><div class="trh-head-col"><h2>עסקאות אחרונות</h2><span>${recent.length?'מציג '+recent.length+' עסקאות · '+esc(accountLabel):esc(accountLabel)}</span></div><button type="button" class="home-primary trh-add" data-home-action="add">＋ עסקה חדשה</button></div>${recent.length?'<div class="trh-trades">'+recent.map(card).join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות עדיין</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}<div class="trh-recent-foot"><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button><button type="button" class="home-link" data-home-action="accounts">ניהול חשבונות ←</button></div></div>
       <div class="trh-card trh-cal"><div class="trh-cal-head"><div class="trh-month"><button type="button" data-home-cal="-1" aria-label="חודש קודם">›</button><strong>${monthNames[cm]} ${cy}</strong><button type="button" data-home-cal="1" aria-label="חודש הבא">‹</button></div><div class="trh-cal-stats"><div><small>רווח והפסד כולל</small><b dir="ltr" class="${tone(monthNet)}">${_homeMoney(monthNet).replace(/^\+/,'')}</b></div><div><small>סה״כ עסקאות</small><b>${monthTrades}</b></div><div><small>ימי מסחר</small><b>${calStats.days.length}</b></div></div></div>
         <div class="trh-cal-scroll"><div class="trh-cal-grid">${days.map(d=>'<div class="trh-dow">'+d+'</div>').join('')}<div class="trh-dow">סיכום שבועי</div>${calRows}</div></div></div>
     </section>
@@ -11485,6 +11496,7 @@ function renderHome(){
   root.querySelectorAll('[data-home-action]').forEach(b=>b.addEventListener('click',()=>b.dataset.homeAction==='add'?openAddTrade():openAcctGrid()));
   root.querySelectorAll('[data-home-cal]').forEach(b=>b.addEventListener('click',()=>{_homeCalMonth=new Date(cy,cm+Number(b.dataset.homeCal),1);renderHome();root.querySelector('[data-home-cal="'+b.dataset.homeCal+'"]').focus();}));
   root.querySelectorAll('[data-home-trade]').forEach(b=>b.addEventListener('click',()=>{if(typeof openTradeChart==='function')openTradeChart(+b.dataset.homeTrade);}));
+  _trbSyncDate();
 }
 
 function renderOV() {

@@ -292,3 +292,28 @@ html[data-fayna-theme="light"] .trl-grid svg{color:#9333ea}
 @media(prefers-reduced-motion:reduce){.trl *{transition:none!important}}
 .trl-kpis b,.trl-mini-table span,.trl-mini-fin b{direction:ltr;unicode-bidi:isolate}
 .trl-mini-table span{text-align:right}
+
+/* ── v93: slim top bar like TradeReport ─────────────────── */
+html[data-fayna-theme] #index-banner{display:none!important}
+html[data-fayna-theme] .topnav{min-height:64px!important;height:auto!important;padding:10px 20px!important;gap:10px!important;background:var(--bg0)!important;border-bottom:0!important;box-shadow:none!important}
+html[data-fayna-theme] .topnav :is(.logo,.nav-user-badge,.world-clocks,#ref-chip,.fayna-appearance,#nav-undo-btn){display:none!important}
+@media(min-width:901px){html[data-fayna-theme] .topnav .nav-active-lbl{display:none!important}}
+.trb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.trb-tools svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.trb-tools .trb-caret{width:14px;height:14px;opacity:.7}
+.trb-primary,.trb-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--t1)}
+.trb-primary{background:var(--bd);border:1px solid var(--tr-accent-line)}
+.trb-primary:hover{background:rgba(168,85,247,.25)}
+.trb-btn{background:var(--bg1);border:1px solid var(--border2)}
+.trb-btn:hover{border-color:var(--tr-accent-line)}
+.trb-btn.active,.trb-btn[aria-pressed="true"]{border-color:var(--tr-accent-line);background:var(--bd)}
+.trb-btn>svg:first-child{color:var(--ac)}
+.trb-cur-sym{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:var(--bd);color:var(--ac);font-weight:700;font-size:13px}
+/* right cluster: bell · sync status · save */
+html[data-fayna-theme] :is(#notif-bell-btn,#nav-save-btn,.hdr-more-btn){width:44px!important;height:44px!important;border-radius:12px!important;border:1px solid var(--border2)!important;background:var(--bg1)!important;color:var(--t1)!important;font-size:18px!important}
+html[data-fayna-theme] #nav-save-btn{background:var(--bd)!important;border-color:var(--tr-accent-line)!important;color:var(--ac)!important}
+html[data-fayna-theme] #notif-badge{top:-6px!important;left:-6px!important;min-width:20px!important;height:20px!important;line-height:20px!important;border-radius:10px!important;font-size:11px!important;background:#f45050!important}
+html[data-fayna-theme] #nav-status{font-size:14px!important;font-weight:500}
+.trh-recent>.trh-head{align-items:flex-start}
+#home-dashboard .trh-add{min-height:38px;padding:0 14px;font-size:13px;cursor:pointer;white-space:nowrap}
+@media(max-width:900px){.trb-tools{order:5;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.trb-primary span{display:none}.trb-primary,.trb-btn{min-height:40px;padding:0 12px;font-size:13px}html[data-fayna-theme] .topnav{flex-wrap:wrap!important;padding:8px 12px!important}}

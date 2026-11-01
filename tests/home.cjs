@@ -26,9 +26,9 @@ for(const style of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi))assert.e
  assert.equal(await page.locator('#home-dashboard h1').innerText(),'דף ראשי');
  assert.equal(await page.locator('.trh-kpis .trh-card').count(),4);assert.equal(await page.locator('.trh-charts .trh-card').count(),3);assert.equal(await page.locator('.trh-trade').count(),3);
  assert.equal(await page.locator('.home-total').innerText(),'+$690.00');
- await page.locator('#home-account-select').selectOption('a');assert.equal(await page.locator('.home-total').innerText(),'+$382.00');
- await page.locator('#home-account-select').selectOption('__all__');
- await page.getByRole('button',{name:'＋ עסקה חדשה',exact:true}).click();assert.equal(await page.evaluate(()=>tradeCalls),1);
+ await page.evaluate(()=>{selectedAccounts=new Set(['a']);renderHome()});assert.equal(await page.locator('.home-total').innerText(),'+$382.00');
+ await page.evaluate(()=>{selectedAccounts=new Set(['__all__']);renderHome()});
+ await page.locator('.trh-add').click();assert.equal(await page.evaluate(()=>tradeCalls),1);
  await page.locator('[data-home-action="accounts"]').click();assert.equal(await page.evaluate(()=>accountCalls),1);
  await page.locator('.trh-recent [data-home-nav="trades"]').click();assert.deepEqual(await page.evaluate(()=>navCalls),['trades']);
  assert.equal(await page.locator('#overview-top-widgets').isVisible(),false);
