@@ -21416,7 +21416,7 @@ const CHAT_KB = [
   { m:['חשבון מסחר','חשבונות','תיק','תיקים','הוסף חשבון','ארכיון','יעד','מגבלת הפסד'],
     r:'💼 **חשבונות מסחר:** הבורר **כל התיקים** למעלה מסנן את המסכים. בדף הבית **ניהול** מוסיף, עורך ומגדיר יעדים. חשבון שנמחק עובר לארכיון ועסקאותיו נשמרות.',
     c:['ייבוא עסקאות','מנויים'] },
-  { m:['גיבוי','backup','שחזור','restore','ייצוא נתונים','ייצוא','export','מחיקת נתונים','ניהול נתונים'],
+  { m:['גיבוי','לגבות','מגבים','backup','שחזור','restore','ייצוא נתונים','ייצוא','export','מחיקת נתונים','ניהול נתונים'],
     r:'💾 **נתונים וגיבוי:** הגדרות → נתונים וגיבוי: ייצוא, שחזור ומחיקה. מומלץ לגבות לפני מחיקה.',
     c:['ענן','דוחות'] },
   { m:['ענן','שמירה','נשמר','סינכרון','sync','מכשיר אחר','אבד','נעלם'],
@@ -21527,14 +21527,14 @@ function chatChip(text) {
 // Hebrew glues prefixes to words: "לייבא" and "ייבא" should meet, so words compare without them.
 function _chatStem(word) { return word.length > 3 ? word.replace(/^(?:ו|ה|ב|ל|מ|ש|כ)/, '') : word; }
 function _chatScore(item, lower, words) {
-  let score = 0;
+  let score = 0, partial = 0;
   for (const k of item.m) {
     const kw = k.toLowerCase();
     if (lower === kw) score += 100;
     else if (kw.length > 2 ? lower.includes(kw) : words.includes(kw)) score += kw.length * 3;
-    else for (const part of kw.split(' ')) if (part.length >= 3 && words.some(w => _chatStem(w) === _chatStem(part))) score += part.length;
+    else for (const part of kw.split(' ')) if (part.length >= 3 && words.some(w => _chatStem(w) === _chatStem(part))) partial = Math.max(partial, part.length);
   }
-  return score;
+  return score + partial;
 }
 function _chatRespond(msg) {
   const lower = msg.toLowerCase().replace(/[?!.,:;'"״׳]/g,' ').replace(/\s+/g,' ').trim(), words = lower.split(' ');
