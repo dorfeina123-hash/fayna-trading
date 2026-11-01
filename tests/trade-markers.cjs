@@ -13,4 +13,6 @@ assert.throws(()=>dateParts('2026-10-01T25:00:00'));
 const known=require('../fayna-trade-markers.js').defaults({date:'2026-10-01',btime:'16:30:00',stime:'16:50:00',buy:100,sell:90,qty:2},'short');
 assert.equal(known.exitTime,'2026-10-01T16:50:00');assert.equal(known.entry,90);assert.equal(known.exit,100);
 assert.equal(require('../fayna-trade-markers.js').defaults({date:'2026-10-01',btime:'23:30:00',stime:'00:10:00',buy:1,sell:2}).exitTime,'','an overnight exit is not assumed');
+assert.equal(require('../fayna-trade-markers.js').defaults({src:'ATAS Journal',date:'2026-10-23',btime:'16:15:44',stime:'16:16:29',buy:1,sell:2}).zone,'GMT+2','ATAS times are a fixed UTC+2');
+assert(build({...base,zone:'GMT+2'}).includes('timestamp("GMT+2", 2026, 10, 1, 9, 30, 22)'));
 console.log('Pine generator: long/short, timestamps, overnight exit, coordinates, missing values and injection checks passed.');

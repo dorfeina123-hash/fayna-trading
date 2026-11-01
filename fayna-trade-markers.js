@@ -1,6 +1,8 @@
 (function(){
 'use strict';
-const zones=['Asia/Jerusalem','America/New_York','America/Chicago','Etc/UTC'];
+const zones=['Asia/Jerusalem','America/New_York','America/Chicago','Etc/UTC','GMT+2'];
+// ATAS journals carry a fixed UTC+2 clock, an hour behind Israel during daylight saving time.
+const sourceZone=t=>t.src==='ATAS Journal'?'GMT+2':'';
 function dateParts(v){
   const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(v||'');
   if(!m) throw Error('יש למלא תאריך ושעה מלאים לכניסה וליציאה.');
@@ -39,7 +41,7 @@ function defaults(t,dir){
   const local=Intl.DateTimeFormat().resolvedOptions().timeZone;
   const direction=t.dir==='long'||t.dir==='short'?t.dir:dir||'';
   const exitDate=t.exitDate||(t.stime&&t.btime&&t.stime>=t.btime?t.date:'');
-  return {zone:zones.includes(local)?local:'',direction,qty:t.qty||'',
+  return {zone:sourceZone(t)||(zones.includes(local)?local:''),direction,qty:t.qty||'',
     entryTime:t.date&&t.btime?t.date+'T'+t.btime:'',exitTime:exitDate&&t.stime?exitDate+'T'+t.stime:'',
     entry:direction?(direction==='long'?t.buy:t.sell):'',exit:direction?(direction==='long'?t.sell:t.buy):''};
 }
@@ -64,7 +66,7 @@ function open(t,symbol,dir){
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px">
     <label>סימול TradingView<input name="symbol" required dir="ltr"></label>
     <label>כיוון<select name="direction" required><option value="">בחר כיוון</option><option value="long">Long — קנייה בכניסה</option><option value="short">Short — מכירה בכניסה</option></select></label>
-    <label>אזור זמן<select name="zone" required><option value="">בחר אזור זמן</option><option value="Asia/Jerusalem">ישראל</option><option value="America/New_York">ניו יורק</option><option value="America/Chicago">שיקגו</option><option value="Etc/UTC">UTC</option></select></label>
+    <label>אזור זמן<select name="zone" required><option value="">בחר אזור זמן</option><option value="Asia/Jerusalem">ישראל</option><option value="America/New_York">ניו יורק</option><option value="America/Chicago">שיקגו</option><option value="Etc/UTC">UTC</option><option value="GMT+2">UTC+2 (ATAS)</option></select></label>
     <label>כמות<input name="qty" type="number" step="any" required></label>
     <label>זמן כניסה<input name="entryTime" type="datetime-local" step="1" required></label>
     <label>זמן יציאה<input name="exitTime" type="datetime-local" step="1" required></label>
