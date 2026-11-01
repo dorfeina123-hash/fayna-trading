@@ -20041,7 +20041,7 @@ window.renderTJ = function renderTJ() {
       <td data-label="⭐" style="white-space:nowrap">${starsHtml}</td>
       <td data-label="" style="text-align:center">${imgHtml}</td>
       <td data-label="">
-        <button class="act" onclick="workspaceTradeDetails(${ti})" title="פרטי עסקה">פרטים</button><button class="act ed" onclick="openTradeAnnotate(${ti})" title="ערוך">עריכה</button>
+        ${t.isManual?'':`<button class="act-chart" onclick="event.stopPropagation();openTradeChart(${ti})" title="גרף העסקה">📈 גרף</button>`}<button class="act" onclick="workspaceTradeDetails(${ti})" title="פרטי עסקה">פרטים</button><button class="act ed" onclick="openTradeAnnotate(${ti})" title="ערוך">עריכה</button>
         <button class="act" onclick="delTrade(${ti})" title="מחק">🗑</button>
       </td>
     </tr>`;
@@ -22872,7 +22872,7 @@ async function _showTradeCandles(t) {
   if(note) note.hidden=true;
   let shown=null;
   try {
-    if(typeof FaynaTradeChart==='undefined') await _loadModule('fayna-trade-chart.js?v=80');
+    if(typeof FaynaTradeChart==='undefined') await _loadModule('fayna-trade-chart.js?v=81');
     if(run===_tcmCandleRun&&FaynaTradeChart.supports(t)){el.hidden=false;shown=await FaynaTradeChart.render(el,t,_tradeDir(t));}
   } catch(e) { console.warn('trade candles:',e.message); }
   if(run!==_tcmCandleRun){shown?.destroy();return;}
@@ -22882,7 +22882,7 @@ async function _showTradeCandles(t) {
   if(path) path.hidden=true;
   if(note){
     note.hidden=false;
-    note.textContent='נרות '+shown.symbol+' של '+shown.interval+' לפי החוזה הרציף (Yahoo), בשעון המחשב שלך.'+(_tradeDir(t)?'':' הכיוון לא שמור בעסקה: ייבא שוב את הדוח כדי לראות קנייה ומכירה.')+(shown.miss>5?' שים לב: מחיר הכניסה רחוק '+shown.miss.toFixed(2)+' נק׳ מהנר, בדוק את אזור הזמן של הדוח.':'');
+    note.textContent='נרות '+shown.symbol+' לפי החוזה הרציף (Yahoo), בשעון המחשב שלך.'+(_tradeDir(t)?'':' הכיוון לא שמור בעסקה: ייבא שוב את הדוח כדי לראות קנייה ומכירה.')+(shown.miss>5?' שים לב: מחיר הכניסה רחוק '+shown.miss.toFixed(2)+' נק׳ מהנר, בדוק את אזור הזמן של הדוח.':'');
   }
 }
 // The continuous contract: expired contracts need a paid TradingView plan, and a trade sits in the front month.
