@@ -22855,7 +22855,35 @@ function openTradeChart(ti) {
   const path=document.getElementById('tcm-trade-path'); if(path) path.innerHTML=_tradeSchematic(t);
   document.getElementById('trade-chart-modal').classList.add('open');
   document.body.style.overflow='hidden';
-  _loadTradingViewChart(t.sym, t.date);
+  _showTradeCandles(t);
+}
+let _tcmCandles=null,_tcmCandleRun=0;
+function _clearTradeCandles() {
+  _tcmCandleRun++;
+  if(_tcmCandles){_tcmCandles.destroy();_tcmCandles=null;}
+  const el=document.getElementById('tcm-candles'); if(el){el.hidden=true;el.innerHTML='';}
+}
+// Real candles with the trade on them when bars exist for its date; otherwise the embedded reference chart.
+async function _showTradeCandles(t) {
+  _clearTradeCandles();
+  const run=_tcmCandleRun,el=document.getElementById('tcm-candles'),note=document.getElementById('tcm-chart-note'),path=document.getElementById('tcm-trade-path'),loading=document.getElementById('tcm-loading');
+  const tv=document.getElementById('tcm-chart-tv'); if(tv) tv.innerHTML='';
+  if(path) path.hidden=false;
+  if(note) note.hidden=true;
+  let shown=null;
+  try {
+    if(typeof FaynaTradeChart==='undefined') await _loadModule('fayna-trade-chart.js?v=80');
+    if(run===_tcmCandleRun&&FaynaTradeChart.supports(t)){el.hidden=false;shown=await FaynaTradeChart.render(el,t,_tradeDir(t));}
+  } catch(e) { console.warn('trade candles:',e.message); }
+  if(run!==_tcmCandleRun){shown?.destroy();return;}
+  if(!shown){if(el)el.hidden=true;_loadTradingViewChart(t.sym,t.date);return;}
+  _tcmCandles=shown;
+  if(loading) loading.style.display='none';
+  if(path) path.hidden=true;
+  if(note){
+    note.hidden=false;
+    note.textContent='נרות '+shown.symbol+' של '+shown.interval+' לפי החוזה הרציף (Yahoo), בשעון המחשב שלך.'+(_tradeDir(t)?'':' הכיוון לא שמור בעסקה: ייבא שוב את הדוח כדי לראות קנייה ומכירה.')+(shown.miss>5?' שים לב: מחיר הכניסה רחוק '+shown.miss.toFixed(2)+' נק׳ מהנר, בדוק את אזור הזמן של הדוח.':'');
+  }
 }
 // The continuous contract: expired contracts need a paid TradingView plan, and a trade sits in the front month.
 function _continuousSymbol(symbol) {
@@ -22871,6 +22899,7 @@ async function _openTradeMarkers() {
   } catch(e) { showToast('טעינת סימוני העסקה נכשלה. נסה שוב.','error'); }
 }
 function closeTradeChart() {
+  _clearTradeCandles();
   document.getElementById('trade-chart-modal').classList.remove('open');
   document.body.style.overflow='';
   const tv=document.getElementById('tcm-chart-tv'); if(tv) tv.innerHTML='';
@@ -22879,6 +22908,7 @@ function _tcmReloadChart() {
   const inp=document.getElementById('tcm-sym-inp');
   const sym=(inp?inp.value.trim().toUpperCase():'');
   if(!sym) return;
+  _clearTradeCandles();
   _loadTradingViewChart(sym, tradesList[_tcmTradeIdx]?.date);
 }
 function _tradeChartSymbol(symbol, tradeDate) {
@@ -24203,7 +24233,7 @@ function _calcKey(e){
     </div>
     <div id="tcm-trade-path" style="flex-shrink:0;padding:6px 16px;border-bottom:1px solid var(--border)"></div>
     <div id="tcm-chart-note" role="note" hidden style="padding:6px 16px;font-size:11px;color:var(--t2);border-bottom:1px solid var(--border)"></div>
-    <div id="tcm-chart-area"><div class="tcm-loading" id="tcm-loading"><div class="tcm-spinner"></div><span>טוען גרף TradingView...</span></div><div id="tcm-chart-tv"></div></div>
+    <div id="tcm-chart-area" style="position:relative"><div id="tcm-candles" hidden style="position:absolute;inset:0;z-index:2;direction:ltr"></div><div class="tcm-loading" id="tcm-loading"><div class="tcm-spinner"></div><span>טוען גרף TradingView...</span></div><div id="tcm-chart-tv"></div></div>
     <div class="tcm-footer">
       <div class="tcm-metric"><span class="tcm-metric-lbl">תנועה %:</span><span class="tcm-metric-val" id="tcm-move">—</span></div>
       <div class="tcm-metric"><span class="tcm-metric-lbl">גולמי $:</span><span class="tcm-metric-val" id="tcm-gross">—</span></div>

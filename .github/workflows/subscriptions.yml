@@ -20,6 +20,7 @@ jobs:
       - run: node --test tests/finance-recovery.cjs
       - run: node tests/finance-summary.cjs
       - run: node tests/trade-calculations.cjs
+      - run: node tests/trade-chart.cjs
       - run: node tests/data-export.cjs
   security-rules:
     runs-on: ubuntu-latest
