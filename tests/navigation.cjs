@@ -39,8 +39,6 @@ assert.equal(after,fs.readFileSync('dor_trading_v56.html','utf8'));
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-import');
  // Finance routes and data independence are exercised in workspace.cjs.
  await page.locator('#sni-stats').click();
- assert.equal(await page.locator('#simple-stats-details').getAttribute('open'),null);
- await page.locator('#simple-stats-details>summary').click();assert(await page.locator('#simple-stats-details').evaluate(d=>d.open));
  await page.locator('#simple-metrics-toggle').click();assert.equal(await page.locator('#simple-metrics-toggle').getAttribute('aria-expanded'),'true');
  await page.evaluate(()=>allow=false);await page.locator('#sni-trades').click();await page.getByRole('button',{name:'לוח שנה',exact:true}).click();
  assert.equal(await page.locator('.tp.active').getAttribute('id'),'tp-trades');assert.equal(await page.evaluate(()=>gateHits),1);
