@@ -1,4 +1,4 @@
-/* Setups and tags, the notebook, risk limits and long/short statistics.
+/* Setups and tags, the notebook and long/short statistics.
    Saved as one string inside businessNotes, a field the cloud save, server allow-list
    and backups already carry, so no rule or schema changes. */
 window.FaynaJournal = (() => {
@@ -61,13 +61,6 @@ window.FaynaJournal = (() => {
     write(data); renderNotebook();
   }
 
-  function renderRisk() {
-    const el = document.getElementById('jr-risk'); if (!el) return;
-    const list = accounts.filter(a => a.active !== false && a.archived !== true);
-    const meter = (label, x) => `<div class="jr-row"><span>${label}</span><b class="${tone(x.pnl)}">${money(x.pnl)}</b><small>${x.limit ? `מגבלה ${money(x.limit)} · נוצל ${x.pct}%` : 'לא הוגדרה מגבלה'}</small></div>${x.limit ? `<progress max="100" value="${x.pct}" aria-label="ניצול ${label}"></progress>` : ''}`;
-    el.innerHTML = list.map(a => { const r = _computeRiskDashboard(a); return `<section class="ws-panel"><h2>${esc(a.name)}</h2>${meter('היום', r.today)}${meter('השבוע', r.week)}${meter('החודש', r.month)}</section>`; }).join('') || '<p class="ws-muted">לא נמצאו חשבונות פעילים.</p>';
-  }
-
   function breakeven() { const d = read(); return { min: 0, max: 0, ...d.breakeven }; }
   function resultOf(t) { const r = breakeven(), n = tradeNet(t); return n >= r.min && n <= r.max ? 'be' : n > 0 ? 'win' : 'loss'; }
   async function editBreakeven() {
@@ -103,7 +96,7 @@ window.FaynaJournal = (() => {
   }
 
   return {
-    render(name) { ({ setups: renderSetups, notebook: renderNotebook, risk: renderRisk })[name]?.(); },
+    render(name) { ({ setups: renderSetups, notebook: renderNotebook })[name]?.(); },
     renderSides, renderHomeExtras, renderYear, resultOf, editBreakeven, addLabel, removeLabel, newPage, savePage, deletePage,
     kind(k) { kind = k; renderSetups(); },
     open(id) { pageId = id; renderNotebook(); },
