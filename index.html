@@ -1876,8 +1876,8 @@ body.light-mode .card{background:#fff!important;border-color:rgba(0,0,0,.07)!imp
 .adm-chart-wrap{height:130px;position:relative}
 
 /* ── HOUR HEATMAP ── */
-.hour-hm-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin-top:8px}
-.hour-hm-cell{height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
+.hour-hm-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin-top:10px}@media(max-width:900px){.hour-hm-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.hour-hm-cell{min-height:68px;padding:8px 4px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-variant-numeric:tabular-nums;cursor:default;transition:transform .15s,box-shadow .15s;position:relative}
 .hour-hm-cell:hover{transform:scale(1.15);z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 
 /* ── RR BADGE ── */
@@ -4885,7 +4885,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <!-- HOUR HEATMAP -->
   <div class="card" style="margin-top:10px">
     <div class="ct"><div class="dot" style="background:#bfa15e"></div>מפת חום — Win Rate לפי שעה</div>
-    <div style="font-size:10px;color:var(--t3);margin-bottom:6px">ירוק = שעות חזקות, אדום = שעות חלשות. לחץ על תא לפרטים.</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:6px">ירוק = שעות חזקות, אדום = שעות חלשות. העבר את העכבר על תא לפרטים.</div>
     <div class="hour-hm-grid" id="hour-hm-grid"></div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:var(--t3)">
       <div style="width:12px;height:12px;border-radius:2px;background:rgba(199,95,95,.6)"></div><span>הפסד</span>
@@ -23578,14 +23578,14 @@ function renderHourHeatmap() {
   grid.innerHTML = Array.from({length:24}, (_,h) => {
     const d   = hourData[h];
     const wr  = d.total ? d.wins/d.total : null;
-    const opacity = d.total ? 0.2 + 0.8*(d.total/maxTrades) : 0.07;
-    const color = wr === null ? 'var(--bg4)' : wr >= 0.6 ? `rgba(61,153,112,${opacity})` : wr >= 0.4 ? `rgba(245,158,11,${opacity})` : `rgba(239,68,68,${opacity})`;
+    const opacity = d.total ? 0.35 + 0.5*(d.total/maxTrades) : 0.07;
+    const color = wr === null ? 'var(--bg2)' : wr >= 0.6 ? `rgba(61,153,112,${opacity})` : wr >= 0.4 ? `rgba(245,158,11,${opacity})` : `rgba(239,68,68,${opacity})`;
     const label = wr !== null ? `${(wr*100).toFixed(0)}%` : '—';
     const hStr  = String(h).padStart(2,'0') + ':00';
     return `<div class="hour-hm-cell" style="background:${color}" title="${hStr}: ${d.total} עסקאות, ${label} Win Rate">
-      <div style="font-size:9px;color:var(--t3)">${hStr}</div>
-      <div style="font-size:11px;font-weight:600;color:var(--t1)">${label}</div>
-      <div style="font-size:9px;color:var(--t3)">${d.total}x</div>
+      <div dir="ltr" style="font-size:11px;color:var(--t2)">${hStr}</div>
+      <div style="font-size:16px;font-weight:700;line-height:1.2;color:${d.total?'var(--t1)':'var(--t3)'}">${label}</div>
+      <div style="font-size:10px;color:var(--t2);min-height:14px">${d.total?d.total+' עסקאות':''}</div>
     </div>`;
   }).join('');
 }
