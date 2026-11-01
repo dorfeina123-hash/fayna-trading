@@ -2216,6 +2216,7 @@ html[data-fayna-theme] .home-shortcuts button{border-radius:var(--fy-radius);bac
 .ws-backups input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}.simple-details>p{font-size:13px;color:var(--t3);padding:12px}.simple-details textarea{width:100%;padding:12px;min-height:90px}.ws-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px}.clx-card{font:inherit;color:var(--t1)}
 #tj-table:not(.ws-expanded) :is(th,td):nth-child(3),#tj-table:not(.ws-expanded) :is(th,td):nth-child(6),#tj-table:not(.ws-expanded) :is(th,td):nth-child(7),#tj-table:not(.ws-expanded) :is(th,td):nth-child(8),#tj-table:not(.ws-expanded) :is(th,td):nth-child(9),#tj-table:not(.ws-expanded) :is(th,td):nth-child(11),#tj-table:not(.ws-expanded) :is(th,td):nth-child(12),#tj-table:not(.ws-expanded) :is(th,td):nth-child(13){display:none!important}
 #tj-body tr[id^=tj-row]{cursor:pointer}
+.jr-title{font-size:20px;margin-bottom:14px}.jr-row{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}.jr-row small{color:var(--t3)}.jr-add{display:flex;gap:8px;margin:14px 0}.jr-add input,.jr-note input,.jr-note textarea{width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--t1);font:inherit;margin-bottom:8px}.jr-add input{margin:0;max-width:280px}.jr-note{display:grid;grid-template-columns:240px 1fr;gap:18px}.jr-page{display:block;width:100%;padding:9px;border:0;border-radius:8px;background:none;color:var(--t1);text-align:start;cursor:pointer;font:inherit}.jr-page[aria-current=true]{background:var(--bg3)}.jr-page small{display:block;color:var(--t3)}.jr-pager{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px}#tp-risk progress{width:100%;height:6px}@media(max-width:700px){.jr-note{grid-template-columns:1fr}.jr-row{grid-template-columns:1fr auto}}
 .adm-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--border);margin:0 0 18px;scrollbar-width:none}.adm-tabs button{flex-shrink:0;background:none;border:0;border-bottom:2px solid transparent;color:var(--t3);font:inherit;font-size:14px!important;font-weight:600;padding:10px 16px;cursor:pointer;border-radius:0!important}.adm-tabs button[aria-pressed=true]{color:var(--t1);border-bottom-color:var(--ac)}.adm-attention{margin-bottom:18px}.adm-attention h2{font-size:14px;font-weight:600;margin-bottom:10px}.adm-attention>div{display:flex;flex-wrap:wrap;gap:10px}.adm-attention :is(button,span){display:flex;align-items:baseline;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);background:var(--bg1);color:var(--t2);font:inherit;font-size:13px}.adm-attention button{cursor:pointer}.adm-attention b{font-size:18px;color:var(--t1)}.adm-attention p{padding:12px 14px;border:1px solid var(--border);border-radius:var(--fy-radius);color:var(--t2);font-size:13px}.adm-visuals{display:grid;grid-template-columns:2fr 1fr;gap:18px}.adm-bars{display:flex;align-items:flex-end;gap:3px;height:110px}.adm-bars i{flex:1;min-width:2px;background:var(--ac);border-radius:2px 2px 0 0;opacity:.85}.adm-caption{margin-top:10px;font-size:12px;color:var(--t3)}.adm-plan{display:grid;grid-template-columns:90px 1fr 32px;align-items:center;gap:10px;padding:6px 0;font-size:12px;color:var(--t2)}.adm-plan div{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}.adm-plan i{display:block;height:100%;background:var(--ac)}.adm-plan b{text-align:end;color:var(--t1)}.adm-old{margin-bottom:18px;border:1px solid var(--border);border-radius:var(--fy-radius);padding:12px 16px}.adm-old summary{cursor:pointer;font-size:13px;color:var(--t2)}.adm-old>*:not(summary){margin-top:14px}@media(max-width:700px){.adm-visuals{grid-template-columns:1fr}}
 @media(min-width:769px){#tj-table td{white-space:nowrap;overflow-wrap:normal;padding-block:7px}#tj-table:not(.ws-expanded) :is(th,td):nth-child(3){display:table-cell}#tj-table .ws-direction{display:inline;margin:0 8px 0 0}}#tj-table td,#tj-table th{padding:13px 10px}#tj-table td{font-size:13px!important}#tp-trades>div:first-of-type{flex-wrap:wrap;gap:12px}#tp-trades>div:first-of-type>div:last-child{flex-wrap:wrap}#tp-trades #acct-fbar{display:none!important}#tp-trades .mrow{gap:12px}#tp-trades .mc-s{display:none}.mc-l,.mc-s,.ct,.stat-group-sub{font-size:12px!important}
 #tp-stats:not(.simple-all-metrics) #ts-m>.mc:nth-child(n+5){display:none!important}#tp-stats>.ch{grid-template-columns:1fr!important}#tp-stats .stat-group-title{font-size:20px}.cal-day .dinfo:last-child{display:none}.cal-day .dinfo{font-size:11px!important}html[data-fayna-theme] .cal-day.win,html[data-fayna-theme] .cal-day.loss{background:var(--bg1)!important;border-color:var(--border)!important}.cal-day .dpnl{font-size:13px!important}.cal-day{min-height:85px}
@@ -4724,6 +4725,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <!-- TRADES JOURNAL -->
+<div class="tp" id="tp-setups"><h1 class="jr-title">סטאפים ותגיות</h1><div class="ws-panel" id="jr-setups"></div></div>
+<div class="tp" id="tp-notebook"><h1 class="jr-title">מחברת</h1><div class="ws-panel" id="jr-notebook"></div></div>
+<div class="tp" id="tp-risk"><h1 class="jr-title">ניהול סיכונים</h1><div id="jr-risk"></div></div>
 <div class="tp" id="tp-trades">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <div><div style="font-size:15px;font-weight:600">יומן עסקאות</div><div style="font-size:10px;color:var(--t3);margin-top:2px">רישום עסקאות, ייבוא קבצים ותצוגת לוח שנה במקום אחד</div></div>
@@ -4752,6 +4756,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div style="margin-right:auto"></div>
   </div>
   <div class="mrow" id="tj-m"></div>
+  <input type="search" id="tj-q" aria-label="חיפוש לפי נכס" placeholder="חיפוש לפי נכס" oninput="tjQuery=this.value;tjPage=1;renderTJ()" style="max-width:240px;margin-bottom:8px">
   <div class="fbar">
     <button class="fb active" onclick="fTJ('all',this)">הכל</button>
     <button class="fb" onclick="fTJ('win',this)">רווח ✓</button>
@@ -4775,6 +4780,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </tr></thead>
       <tbody id="tj-body"></tbody>
     </table></div>
+    <div id="tj-pager" class="jr-pager"></div>
   </div>
 </div><!-- /tp-trades -->
 
@@ -4896,6 +4902,10 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="card">
     <div class="ct"><div class="dot" style="background:var(--pu)"></div>ביצועים לפי נכס</div>
     <div id="symbol-stats-body"></div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="dot" style="background:var(--pu)"></div>לונג מול שורט</div>
+    <div id="side-stats-body"></div>
   </div>
   <div class="card">
     <div class="ct"><div class="dot" style="background:var(--go)"></div>ביצועים לפי סטאפ כניסה</div>
@@ -14799,7 +14809,7 @@ async function _openImport() {
 
 /* v53: one navigation hierarchy, shared by desktop and mobile. */
 function _simpleGroup(name) {
-  const groups={overview:['overview','goals','lr'],trades:['trades','calendar','import','calc','ecal'],stats:['stats','merge'],biz:['biz','expenses','custom','withdrawals','pnl'],ai:['ai','coach'],personal:['personal','datamgr','billing'],help:['help','course','software','firms','news']};
+  const groups={overview:['overview','goals','lr'],trades:['trades','calendar','setups','notebook','risk','import','calc','ecal'],stats:['stats','merge'],biz:['biz','expenses','custom','withdrawals','pnl'],ai:['ai','coach'],personal:['personal','datamgr','billing'],help:['help','course','software','firms','news']};
   return Object.keys(groups).find(key=>groups[key].includes(name))||name;
 }
 function _simpleSync(name) {
@@ -14807,7 +14817,7 @@ function _simpleSync(name) {
   const titles={overview:'בית',trades:'יומן מסחר',stats:'ביצועים',biz:'ניהול כספי',ai:'תובנות',personal:'הגדרות',help:'עזרה ומשאבים'};
   const sections={
     overview:[],
-    trades:[['trades','עסקאות'],['calendar','לוח שנה'],['import','ייבוא עסקאות'],['calc','מחשבונים'],['ecal','יומן כלכלי']],
+    trades:[['trades','עסקאות'],['calendar','לוח שנה'],['setups','סטאפים ותגיות'],['notebook','מחברת'],['risk','ניהול סיכונים'],['import','ייבוא עסקאות'],['calc','מחשבונים'],['ecal','יומן כלכלי']],
     stats:[['stats','סיכום ביצועים'],['merge','השוואה ואיחוד אסטרטגיות']],
     biz:[['biz','סיכום'],['expenses','תנועות'],['pnl','דוחות']],
     ai:[['ai','תובנות מהיומן'],['coach','אימון ומשמעת']],
@@ -14922,6 +14932,7 @@ function sw(name,btn){
   if(name==='biz')setTimeout(renderBiz,50);
   if(name==='stats')setTimeout(renderStats,50);
   if(name==='calendar')setTimeout(renderCal,50);
+  if(['setups','notebook','risk'].includes(name))setTimeout(()=>FaynaJournal.render(name),50);
   if(name==='trades')setTimeout(renderTJ,50);
   if(name==='coach')setTimeout(_coachRenderHome,50);
   if(name==='billing')setTimeout(()=>{try{renderPricing();}catch(e){}},50);
@@ -19932,10 +19943,11 @@ window.renderStats = function() {
   renderSetupStats();
   renderMistakeStats();
   renderHourHeatmap();
+  window.FaynaJournal?.renderSides();
 };
 
 // Replace renderTJ with extended version (use assignment to avoid hoisting)
-let tjStrat = 'all';
+let tjStrat = 'all', tjQuery = '', tjPage = 1;
 let tjAcct  = '__all__';
 window.renderTJ = function renderTJ() {
   const allTrades = getActiveTrades();
@@ -19985,6 +19997,7 @@ window.renderTJ = function renderTJ() {
   if (typeof tjS !== 'undefined' && tjS !== 'all') list = list.filter(t=>t.sym===tjS);
   if (tjStrat !== 'all') list = list.filter(t=>(t.strategy||'')===tjStrat);
   if (tjAcct  !== '__all__') list = list.filter(t=>t.acct===tjAcct);
+  if (tjQuery) list = list.filter(t=>String(t.sym||'').toUpperCase().includes(tjQuery.toUpperCase()));
   list.sort((a,b)=>(b.date+b.btime).localeCompare(a.date+a.btime));
 
   const tot = list.reduce((s,t)=>s+tradeNet(t), 0);
@@ -20000,7 +20013,9 @@ window.renderTJ = function renderTJ() {
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${list.length?(w.length/list.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W / ${list.length-w.length}L</div></div>`+
     `<div class="mc"><div class="mc-l">ממוצע/עסקה</div><div class="mc-v ${dTot>=0?'cg':'cr'}">${list.length?dSym+(dTot/list.length).toFixed(2):'—'}</div><div class="mc-s">${w.length?'avg W: '+dSym+dAvgW.toFixed(1):''}</div></div>`;
 
-  document.getElementById('tj-body').innerHTML = list.length ? list.map(t => {
+  const _tjPages=Math.max(1,Math.ceil(list.length/30));tjPage=Math.min(tjPage,_tjPages);
+  document.getElementById('tj-pager').innerHTML=_tjPages>1?`<button class="bn" ${tjPage<2?'disabled':''} onclick="tjPage--;renderTJ()">הקודם</button><span>${tjPage} / ${_tjPages}</span><button class="bn" ${tjPage>=_tjPages?'disabled':''} onclick="tjPage++;renderTJ()">הבא</button>`:'';
+  document.getElementById('tj-body').innerHTML = list.length ? list.slice((tjPage-1)*30,tjPage*30).map(t => {
     const ti  = tradesList.indexOf(t);
     const net = tradeNet(t);
     const acctObj  = t.acct ? accounts.find(a=>a.id===t.acct) : null;
@@ -27006,6 +27021,7 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
 <script src="fayna-admin.js"></script>
+<script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
 </body>
