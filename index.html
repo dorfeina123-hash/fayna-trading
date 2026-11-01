@@ -3255,7 +3255,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <button type="button" class="mob-nt" id="mobile-simple-stats" onclick="swNav('stats')"><span class="sn-icon">📊</span><span class="sn-lbl">ביצועים</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-biz" onclick="swNav('biz')"><span class="sn-icon">💼</span><span class="sn-lbl">ניהול כספי</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-ai" onclick="swNav('ai')"><span class="sn-icon">💡</span><span class="sn-lbl">תובנות</span></button>
-<button type="button" class="mob-nt" id="mobile-simple-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button>
+<button type="button" class="mob-nt" id="mobile-simple-personal" onclick="swNav('personal')"><span class="sn-icon">⚙️</span><span class="sn-lbl">הגדרות</span></button><button type="button" class="mob-nt" id="mob-admin-btn" onclick="mobNavClose();swSide('admin')" style="display:none"><span class="sn-icon">🛡️</span><span class="sn-lbl">פאנל ניהול</span></button>
 <button type="button" class="mob-nt" id="mobile-simple-help" onclick="swNav('help')"><span class="sn-icon">❓</span><span class="sn-lbl">עזרה</span></button>
 <button class="mob-nt" onclick="mobNavClose()">✕ סגור תפריט</button>
 </div>
@@ -17000,6 +17000,7 @@ async function doLogout() {
   document.getElementById('nav-user-info').style.display='none';
   const lo = document.getElementById('nav-logout-btn'); if (lo) lo.style.display='none';
   const ab = document.getElementById('admin-nav-btn');  if (ab) ab.style.display='none';
+  const mab = document.getElementById('mob-admin-btn'); if (mab) mab.style.display='none';
 
   const emailEl = document.getElementById('login-email');
   const passEl  = document.getElementById('login-pass');
@@ -17405,6 +17406,7 @@ function showApp() {
   if (navLogout) navLogout.style.display='';
   if (currentUser.isAdmin) {
     const ab=document.getElementById('admin-nav-btn'); if(ab)ab.style.display='';
+    const mab=document.getElementById('mob-admin-btn'); if(mab)mab.style.display='';
     const as=document.getElementById('sn-admin-sep');  if(as)as.style.display='';
     const sb=document.getElementById('sp-btn-admin');   if(sb)sb.style.display='';
     const eb=document.getElementById('edit-mode-btn');  if(eb)eb.style.display='';
