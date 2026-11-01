@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {rootOf,tradeTimes,monthsFor,barAt}=require('../fayna-trade-chart.js');
+const {rootOf,tradeTimes,monthsFor,barAt,aggregate}=require('../fayna-trade-chart.js');
 assert.equal(rootOf('MNQZ6@CME'),'MNQ');assert.equal(rootOf('nqz6'),'NQ');assert.equal(rootOf('MES1!'),'MES');assert.equal(rootOf('AAPL'),null);
 const atas={src:'ATAS Journal',date:'2026-10-23',btime:'16:15:44',stime:'16:16:29'};
 assert.equal(new Date(tradeTimes(atas).entry*1000).toISOString(),'2026-10-23T14:15:44.000Z','ATAS is a fixed UTC+2 clock');
@@ -9,4 +9,5 @@ assert.equal(tradeTimes(overnight).exit-tradeTimes(overnight).entry,1200,'an exi
 assert.equal(tradeTimes({...atas,stime:''}).exit,null);
 assert.deepEqual(monthsFor(Date.UTC(2026,9,31)/1000,Date.UTC(2026,10,1)/1000),['2026-10','2026-11']);
 assert.deepEqual(barAt([[100],[160]],170,60),[160]);assert.equal(barAt([[100]],170,60),null);
+assert.deepEqual(aggregate([[900,10,12,9,11,1],[1200,11,15,10,14,2],[1500,14,14,8,9,3],[1800,9,10,9,10,4]],900),[[900,10,15,8,9,6],[1800,9,10,9,10,4]],'bars merge into the larger interval');
 console.log('Trade chart checks passed');

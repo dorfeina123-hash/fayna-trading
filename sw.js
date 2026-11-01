@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v80-trade-candles-20261101';
+const VERSION    = 'fayna-v81-chart-intervals-20261101';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
