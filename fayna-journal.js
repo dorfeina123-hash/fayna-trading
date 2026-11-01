@@ -84,6 +84,17 @@ window.FaynaJournal = (() => {
     box.innerHTML = `<div class="ws-toolbar"><button class="bn" aria-label="שנה קודמת" onclick="FaynaJournal.renderYear(-1)">‹</button><strong>${year}</strong><button class="bn" aria-label="שנה הבאה" onclick="FaynaJournal.renderYear(1)">›</button></div><div class="jr-year">${names.map((n, i) => { const s = summary(trades.filter(t => String(t.date).startsWith(`${year}-${String(i + 1).padStart(2, '0')}`))); return `<div class="jr-month">${n}${s.n ? `<b class="${tone(s.net)}">${money(s.net)}</b>${s.n} עסקאות` : '<br>אין עסקאות'}</div>`; }).join('')}</div>`;
   }
 
+  // Daily bars and the current month on the home screen, from the trades it already shows.
+  function renderHomeExtras(root, rows) {
+    const anchor = root.querySelector('.home-lower-grid'); if (!anchor) return;
+    const now = new Date(), prefix = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), days = {};
+    rows.filter(t => String(t.date).startsWith(prefix)).forEach(t => { days[t.date] = (days[t.date] || 0) + tradeNet(t); });
+    const keys = Object.keys(days).sort(), max = Math.max(...keys.map(k => Math.abs(days[k])), 1), count = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), first = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+    const bars = keys.map(k => `<i title="${esc(k)}: ${money(days[k])}" style="height:${Math.max(days[k] ? Math.abs(days[k]) / max * 50 : 0, 2)}%;background:var(--${days[k] >= 0 ? 'gr' : 're'});transform:translateY(${days[k] >= 0 ? '-50%' : '50%'})"></i>`).join('');
+    const cells = '<div></div>'.repeat(first) + Array.from({ length: count }, (_, i) => { const v = days[`${prefix}-${String(i + 1).padStart(2, '0')}`]; return `<div class="${v == null ? '' : v >= 0 ? 'w' : 'l'}">${i + 1}${v == null ? '' : `<b dir="ltr">${money(v)}</b>`}</div>`; }).join('');
+    anchor.insertAdjacentHTML('beforebegin', `<div class="jr-home"><section class="home-card"><div class="home-card-head"><h2>רווח יומי</h2><span>החודש</span></div>${keys.length ? `<div class="jr-bars">${bars}</div>` : '<p class="home-muted">אין עסקאות החודש</p>'}</section><section class="home-card"><div class="home-card-head"><h2>לוח חודשי</h2><span>החודש</span></div><div class="jr-cal">${cells}</div></section></div>`);
+  }
+
   function renderSides() {
     const el = document.getElementById('side-stats-body'); if (!el) return;
     const trades = getActiveTrades().filter(t => !t.isManual), group = d => summary(trades.filter(t => _tradeDir(t) === d));
@@ -93,7 +104,7 @@ window.FaynaJournal = (() => {
 
   return {
     render(name) { ({ setups: renderSetups, notebook: renderNotebook, risk: renderRisk })[name]?.(); },
-    renderSides, renderYear, resultOf, editBreakeven, addLabel, removeLabel, newPage, savePage, deletePage,
+    renderSides, renderHomeExtras, renderYear, resultOf, editBreakeven, addLabel, removeLabel, newPage, savePage, deletePage,
     kind(k) { kind = k; renderSetups(); },
     open(id) { pageId = id; renderNotebook(); },
     search(q) {
