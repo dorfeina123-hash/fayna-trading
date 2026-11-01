@@ -14873,7 +14873,6 @@ function _simpleDisclosure(parent,nodes,title,id){
 function _simpleInit(){
   const g=id=>document.getElementById(id);
   const stats=g('tp-stats');
-  if(stats){const first=stats.querySelector('.ch');const nodes=[];for(let n=first?.nextElementSibling;n;n=n.nextElementSibling)nodes.push(n);_simpleDisclosure(stats,nodes,'ניתוחים מפורטים ואסטרטגיות','simple-stats-details');}
   const overview=g('tp-overview');
   _simpleDisclosure(overview,['daily-tip-wrap','daily-checklist-card','ov-gauges','ov-row2','ov-row3','ov-row4','ov-row5'].map(g),'גרפים ופרטים נוספים','simple-overview-details');
   if(overview&&g('simple-overview-details')){
