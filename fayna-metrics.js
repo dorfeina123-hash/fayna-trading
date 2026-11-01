@@ -30,11 +30,12 @@
   const r2 = v => Math.round(v * 100) / 100;
   const safeDiv = (a, b) => (b === 0 ? null : a / b);   // null, never Infinity/NaN
 
-  /* Direction is not stored on a trade. It can be inferred from where the
-     stop sits relative to the fill prices: a long stops below, a short above.
+  /* Direction is stored on newer trades. On older ones it is inferred from where
+     the stop sits relative to the fill prices: a long stops below, a short above.
      Returns null when there is no stop — the caller must then treat any
      direction-dependent metric as unavailable rather than guessing. */
   function direction(t) {
+    if (t.dir === 'long' || t.dir === 'short') return t.dir;
     const sl = t.stopLoss;
     if (sl == null || sl === '' || isNaN(+sl)) return null;
     const stop = +sl, lo = Math.min(num(t.buy), num(t.sell)), hi = Math.max(num(t.buy), num(t.sell));

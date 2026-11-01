@@ -253,6 +253,7 @@ function mkTrade(o) {
   };
   if (o.fees != null && isFinite(num(o.fees))) t.commOverride = +Math.abs(num(o.fees)).toFixed(2);
   if (o.dir) t.dir = o.dir;                    // 'long' | 'short' — נשמר כשהברוקר מסר אותו
+  if (o.exitDate) t.exitDate = o.exitDate;     // תאריך היציאה, נדרש לסימון עסקה שחצתה חצות
   if (o.extId) t.extId = String(o.extId).slice(0, 64);
   if (o.src) t.src = o.src;
   return t;
@@ -284,7 +285,7 @@ const FORMATS = [
         const dir = volume < 0 ? 'short' : 'long';
         const t = mkTrade({sym: get('instrument'), qty: Math.abs(volume),
           ...fromEntryExit(dir, get('openprice'), get('closeprice')),
-          pnl, dir, date: a.date, btime: a.time, stime: b.time,
+          pnl, dir, date: a.date, btime: a.time, stime: b.time, exitDate: b.date,
           dur: durOf(a,b), notes: get('comment') || '', src: 'ATAS Journal'});
         // ATAS supplies monetary PnL separately from price PnL and ticks. Preserve zero too.
         t.pnl = +num(pnl).toFixed(2);
@@ -333,7 +334,7 @@ const FORMATS = [
         const t = mkTrade({
           sym: r[cSym], qty: r[cQ], buy: px.buy, sell: px.sell,
           pnl: cP ? r[cP] : null, fees: cF ? r[cF] : null,
-          date: a.date, btime: a.time, stime: b ? b.time : '',
+          date: a.date, btime: a.time, stime: b ? b.time : '', exitDate: b ? b.date : '',
           dur: durOf(a, b), dir, extId: cId ? r[cId] : '', src: 'TopstepX',
         });
         if (t) out.push(t);
@@ -376,7 +377,7 @@ const FORMATS = [
         const t = mkTrade({
           sym: r[cSym], qty: r[cQ], buy: px.buy, sell: px.sell,
           pnl: cP ? r[cP] : null, fees: cF ? r[cF] : null,
-          date: a.date, btime: a.time, stime: b ? b.time : '',
+          date: a.date, btime: a.time, stime: b ? b.time : '', exitDate: b ? b.date : '',
           dur: durOf(a, b), dir, extId: cId ? r[cId] : '', src: 'NinjaTrader 8',
         });
         if (t) out.push(t);
@@ -427,7 +428,7 @@ const FORMATS = [
         const t = mkTrade({
           sym: r[cSym], qty: r[cQ], buy: px.buy, sell: px.sell,
           pnl: cP ? r[cP] : null, fees: fees || null,
-          date: a.date, btime: a.time, stime: b ? b.time : '',
+          date: a.date, btime: a.time, stime: b ? b.time : '', exitDate: b ? b.date : '',
           dur: durOf(a, b), dir, extId: cId ? r[cId] : '', src: 'MetaTrader',
         });
         if (t) out.push(t);
@@ -512,7 +513,7 @@ const FORMATS = [
         const t = mkTrade({
           sym: r[cSym], qty: r[cQ], buy: r[cBp], sell: r[cSp],
           pnl: cP ? r[cP] : null,
-          date: first.date, btime: first.time, stime: last ? last.time : '',
+          date: first.date, btime: first.time, stime: last ? last.time : '', exitDate: last ? last.date : '',
           dur: durOf(first, last), dir: (a && b && a.date + a.time <= b.date + b.time) ? 'long' : 'short',
           extId: (cBf && cSf && r[cBf] && r[cSf]) ? `${r[cBf]}-${r[cSf]}` : (cId ? r[cId] : ''), src: 'Tradovate',
         });
@@ -618,7 +619,7 @@ function buildFromMap(rows, M, srcLabel) {
       buy, sell,
       pnl: M.pnl ? r[M.pnl] : null,
       fees: M.fees ? r[M.fees] : null,
-      date: a.date, btime: a.time, stime: b ? b.time : '',
+      date: a.date, btime: a.time, stime: b ? b.time : '', exitDate: b ? b.date : '',
       dur: durOf(a, b), dir: dir || undefined,
       strategy: M.strategy ? r[M.strategy] : '',
       notes: M.notes ? r[M.notes] : '',
@@ -980,7 +981,6 @@ function commit() {
   const batch = UI.fresh.map(t => {
     const c = Object.assign({}, t);
     if (acct) c.acct = acct;
-    delete c.dir;                    // אין שדה כיוון במודל העסקה של המערכת
     return c;
   });
   if (typeof tradesList === 'undefined') { toast('היומן אינו זמין — רענן את הדף ונסה שוב', 'error', 5000); return; }

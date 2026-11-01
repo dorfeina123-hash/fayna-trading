@@ -8069,10 +8069,12 @@ const HIST_RATES = {
   /* v74h1: Jul–Oct 2026 monthly ECB averages (offline fallback only) */
   '2026-07':3.033,'2026-08':2.991,'2026-09':3.032,'2026-10':3.073,
 };
+// Local calendar date. toISOString() is UTC, which is still yesterday until 02:00-03:00 in Israel.
+function _localToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function histRate(d){
   /* v74h1: real daily USD/ILS (ECB via fayna-fx.js) first; table only offline */
   if(typeof window!=='undefined'&&window.FaynaFX){const r=window.FaynaFX.rate(String(d||''));if(r)return +r.toFixed(4);}
-  d=String(d||new Date().toISOString().slice(0,10));
+  d=String(d||_localToday());
   const k=d.slice(0,7);
   if(HIST_RATES[k])return HIST_RATES[k];
   const keys=Object.keys(HIST_RATES).sort();
@@ -8102,7 +8104,7 @@ let commSettings = {
 let customSymbols = [];
 
 function _symBase(sym) {
-  return (sym||'').replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '').toUpperCase();
+  return String(sym||'').trim().toUpperCase().replace(/^.*:/,'').replace(/[@.].*$/,'').replace(/[FGHJKMNQUVXZ]\d{1,4}$/, '');
 }
 function _customSymbolFor(sym) {
   const base = _symBase(sym);
@@ -8120,9 +8122,9 @@ function _customSymbolFor(sym) {
 function _commRateFor(sym) {
   const cs = _customSymbolFor(sym);
   if (cs && cs.comm != null && !isNaN(cs.comm)) return +cs.comm;
-  return _isMicroContract(sym)
-    ? (commSettings.ratePerContract     || 1.58)
-    : (commSettings.ratePerContractFull || 3.98);
+  // A saved rate of 0 is a real rate (commission-free account), not a missing one.
+  const rate = _isMicroContract(sym) ? commSettings.ratePerContract : commSettings.ratePerContractFull;
+  return Number.isFinite(+rate) && rate !== null && rate !== '' ? +rate : (_isMicroContract(sym) ? 1.58 : 3.98);
 }
 
 // ── Symbol manager UI ──
@@ -8206,10 +8208,13 @@ function calibrateCommission() {
   if (!tradesList.length) { showToast('אין עסקאות — ייבא קודם','error'); return; }
 
   const gross         = +tradesList.reduce((s,t)=>s+t.pnl,0).toFixed(2);
-  const totalContracts= tradesList.reduce((s,t)=>s+t.qty,0);
+  // Trades with a manual commission or a custom-symbol rate keep theirs; the rate is solved over the rest.
+  const usesRate      = t => (t.commOverride===undefined||t.commOverride===null) && _customSymbolFor(t.sym)?.comm==null;
+  const fixedComm     = tradesList.filter(t=>!usesRate(t)).reduce((s,t)=>s+tradeComm(t),0);
+  const totalContracts= tradesList.filter(usesRate).reduce((s,t)=>s+t.qty,0);
   if (!totalContracts) { showToast('אין חוזים לחישוב','error'); return; }
 
-  const totalComm     = +(gross - platformNet).toFixed(2);
+  const totalComm     = +(gross - platformNet - fixedComm).toFixed(2);
   const rate          = +(totalComm / totalContracts).toFixed(4);
 
   if (rate <= 0 || rate > 100) {
@@ -8219,6 +8224,7 @@ function calibrateCommission() {
 
   // Apply the calibrated per-contract rate to BOTH micro and full slots so the journal's
   // total net matches the platform net exactly, regardless of the contract mix.
+  commSettings.enabled = true;
   commSettings.ratePerContract = rate;
   commSettings.ratePerContractFull = rate;
   const el = document.getElementById('comm-rate');
@@ -8230,7 +8236,7 @@ function calibrateCommission() {
   if (resEl) resEl.textContent = `✅ $${rate}/חוזה | ${totalContracts} חוזים | עמלות סה"כ $${totalComm}`;
 
   renderAll(); saveData();
-  showToast(`✅ עמלה כוילה: $${rate} לחוזה — נטו: $${totalNetPnl().toFixed(2)}`,'success',5000);
+  showToast(`✅ עמלה כוילה: $${rate} לחוזה — נטו: $${_origTotalNetPnl().toFixed(2)}`,'success',5000);
 }
 
 function _updateCommDisplay() {
@@ -8244,14 +8250,21 @@ function _updateCommDisplay() {
 }
 
 // ── Global futures multiplier ──
+const _FUTURES_MULT = {MNQ:2,NQ:20,MES:5,ES:50,MYM:0.5,YM:5,M2K:5,RTY:50,EMD:100,NKD:5,
+  MCL:100,CL:1000,NG:10000,MGC:10,GC:100,SIL:1000,SI:5000,MSI:50,MHG:2500,HG:25000,PL:50,PA:100,
+  M6E:12500,'6E':125000,M6B:6250,'6B':62500,M6A:10000,'6A':100000,'6C':100000,'6J':12500000,
+  ZB:1000,ZN:1000,ZF:1000,ZT:2000,ZC:50,ZS:50,ZW:50,BTC:5,MBT:0.1,ETH:50,MET:0.1};
+// Longest root first, and the root must end the base: CLOV is not CL, and SIL is not SI.
+function _futuresRoot(sym) {
+  const b = _symBase(sym);
+  return Object.keys(_FUTURES_MULT).sort((x,y)=>y.length-x.length)
+    .find(r => b.startsWith(r) && !/^[A-Z]/.test(b.slice(r.length))) || null;
+}
 function _getFuturesMultiplier(sym) {
   const cs = _customSymbolFor(sym);
   if (cs && cs.mult != null && !isNaN(cs.mult)) return +cs.mult;
-  const b = _symBase(sym);
-  const map = [['MNQ',2],['NQ',20],['MES',5],['ES',50],['MYM',0.5],['YM',5],
-               ['M2K',5],['RTY',50],['MCL',100],['CL',1000],['MGC',10],['GC',100]];
-  for(const[p,m] of map) if(b.startsWith(p)) return m;
-  return 1;
+  const root = _futuresRoot(sym);
+  return root ? _FUTURES_MULT[root] : 1;
 }
 
 // ── Manual Add Trade ──
@@ -8261,7 +8274,7 @@ function openAddTrade() {
   try {
     document.querySelectorAll('#add-trade-modal details').forEach(d=>d.open=false);
     window._atDir = 'long';
-    const today = new Date().toISOString().slice(0,10);
+    const today = _localToday();
     const now   = new Date().toTimeString().slice(0,5);
     const g = id => document.getElementById(id);
     _populateTradeAccountSelect();
@@ -8332,7 +8345,7 @@ function atCalcPnl() {
     setEl('at-comm-rate', hasManual ? 'ידנית ✎' : '$'+commRate+'/חוזה × '+qty);
     setEl('at-comm-val',  '−$'+comm.toFixed(2));
     setEl('at-net-val',   (net>=0?'+':'−')+'$'+Math.abs(net).toFixed(2), net>=0?'var(--gr)':'var(--re)');
-    setEl('at-mult-info', sym+' · $'+mult+'/נקודה'+(cs?' · '+(cs.name||cs.sym)+(cs.micro?' (מיקרו)':' (מלא)'):(micro?' · מיקרו':' · E-mini')));
+    setEl('at-mult-info', sym+' · $'+mult+'/נקודה'+(cs?' · '+(cs.name||cs.sym)+(cs.micro?' (מיקרו)':' (מלא)'):!_futuresRoot(sym)?' · ⚠ מכפיל לא מוכר: חשב לפי 1. בחוזה עתידי הוסף סימבול מותאם':(micro?' · מיקרו':' · E-mini')));
     if(prev) prev.style.display='block';
   } catch(err) { console.warn('atCalcPnl:', err); }
 }
@@ -8375,7 +8388,7 @@ function saveAddTrade() {
     const pnl   = +((sellPx-buyPx)*qty*mult).toFixed(2);
     const btime = (g('at-time').value||'09:30:00').length===5 ? g('at-time').value+':00' : (g('at-time').value||'09:30:00');
     const trade = {
-      sym, qty, buy:buyPx, sell:sellPx, pnl,
+      sym, qty, buy:buyPx, sell:sellPx, pnl, dir:isL?'long':'short',
       date, btime, stime:'',
       dur:      (g('at-dur').value||'').trim(),
       strategy: (g('at-strategy').value||'').trim(),
@@ -8428,7 +8441,7 @@ function meAcctSelectChange() {
 
 function openManualEntry() {
   try {
-    const today = new Date().toISOString().slice(0,10);
+    const today = _localToday();
     document.getElementById('me-date').value  = today;
     document.getElementById('me-pnl').value   = '';
     document.getElementById('me-count').value = '';
@@ -8884,7 +8897,7 @@ function clxRunAiCheck() {
 
 // ── BEHAVIOR ANOMALY DETECTION — compares today's pace/size to the trailing 30-day baseline ──
 function checkBehaviorAnomalies() {
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = _localToday();
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
   const cutoffStr = cutoff.toISOString().slice(0,10);
   const baseline = tradesList.filter(t => t.date >= cutoffStr && t.date < todayStr);
@@ -8991,7 +9004,7 @@ function removeChecklistItem(period, key) {
   saveChecklistItemsConfig();
   renderDailyChecklist();
 }
-function _dcTodayKey() { return new Date().toISOString().slice(0,10); }
+function _dcTodayKey() { return _localToday(); }
 function _dcEnsure(dateKey) {
   if (!dailyChecklist[dateKey]) dailyChecklist[dateKey] = { morning:{}, pre:{}, post:{}, evening:{} };
   ['morning','pre','post','evening'].forEach(p => { if (!dailyChecklist[dateKey][p]) dailyChecklist[dateKey][p] = {}; });
@@ -9218,7 +9231,7 @@ let habitLog = JSON.parse(localStorage.getItem('dor_habitLog') || 'null') || {};
 let lrNotes = JSON.parse(localStorage.getItem('dor_lrNotes') || 'null') || {};
 const LR_ICONS = ['✅','😴','🏃','💧','🥗','📖','👨‍👩‍👧','🧘','💼','🎯'];
 
-function _lrTodayKey() { return new Date().toISOString().slice(0,10); }
+function _lrTodayKey() { return _localToday(); }
 function _lrSave() {
   try {
     localStorage.setItem('dor_habits', JSON.stringify(habits));
@@ -10300,7 +10313,7 @@ function _isMicroContract(sym) {
   if (cs) return !!cs.micro;
   // Micro futures start with M but M2K is also micro; full E-minis: NQ, ES, YM, RTY, CL, GC...
   const base = _symBase(sym);
-  return ['MNQ','MES','MYM','M2K','MCL','MGC','MSI','MBT','MHG'].some(p => base.startsWith(p));
+  return ['MNQ','MES','MYM','M2K','MCL','MGC','MSI','MBT','MHG','SIL','M6E','M6B','M6A','MET'].some(p => base.startsWith(p));
 }
 function tradeComm(t) {
   if(t.commOverride !== undefined && t.commOverride !== null) return +t.commOverride;
@@ -10308,6 +10321,36 @@ function tradeComm(t) {
   return +(t.qty * _commRateFor(t.sym)).toFixed(2);
 }
 function tradeNet(t) { return +(t.pnl - tradeComm(t)).toFixed(2); }
+// Direction: the saved value, else the side of the stop. null when unknown; P&L cannot tell a long from a short.
+function _tradeDir(t) {
+  if (t.dir==='long'||t.dir==='short') return t.dir;
+  const stop=+t.stopLoss; if (!t.stopLoss||!isFinite(stop)) return null;
+  const lo=Math.min(t.buy,t.sell), hi=Math.max(t.buy,t.sell);
+  return stop<lo?'long':stop>hi?'short':null;
+}
+// R multiple: net P&L / dollars at risk. The entry of a short is its sell price.
+function _tradeR(t) {
+  const dir=_tradeDir(t), entry=dir==='short'?t.sell:t.buy;
+  if (!dir||!entry||!t.qty) return null;
+  const risk=Math.abs(entry-t.stopLoss)*t.qty*_getFuturesMultiplier(t.sym);
+  return risk>0?tradeNet(t)/risk:null;
+}
+// Every withdrawal in the shape of a withdrawal record: the log plus withdrawals saved on an account.
+function _wdRecords() {
+  const list=records.filter(r=>r.type==='משיכה');
+  (typeof accounts!=='undefined'&&Array.isArray(accounts)?accounts:[]).forEach(a=>{
+    (Array.isArray(a?.withdrawals)?a.withdrawals:[]).filter(Boolean).forEach(w=>{
+      const gross=Number(w.amount)||0,fee=Math.max(0,Number(w.fee)||0);
+      list.push({date:w.date,type:'משיכה',cat:'משיכה',company:a.name,amount:gross,wdGross:gross,wdFeeAmt:fee,wdNet:gross-fee,rate:histRate(w.date||''),note:w.note||''});
+    });
+  });
+  return list;
+}
+// Original shekel amount when the record was entered in ILS, otherwise USD at the record's rate.
+function _recILS(r) {
+  if (r.currency==='ILS'&&Number(r.amountILS)>0) return +r.amountILS;
+  return r.amount*(Number(r.rate)>0?r.rate:histRate(r.date));
+}
 // Daily net-P&L map keyed by date — shared helper for advanced stats (Sharpe/Sortino daily series)
 function dmapForStats(list) {
   const m = {};
@@ -10409,7 +10452,7 @@ let equityOvCh,dailyOvCh,catOvCh,radarCh,ddCh,scatterCh;
 // Animated counter
 // ── TRADER FOCUS MODE ──
 function _computeTodayStats() {
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = _localToday();
   const todayTrades = tradesList.filter(t => t.date === todayStr);
   const wins = todayTrades.filter(t=>tradeNet(t)>0);
   const losses = todayTrades.filter(t=>tradeNet(t)<0);
@@ -10456,14 +10499,10 @@ function _computeTradingScore(s) {
   }
   // 2) Risk/Reward (avg of today's trades that have a stopLoss recorded)
   let rrScore = 70; // neutral default when no stop-loss data exists yet
-  const withStop = s.todayTrades.filter(t => t.stopLoss && t.buy && Math.abs(t.buy - t.stopLoss) > 0);
-  if (withStop.length) {
-    const avgRR = withStop.reduce((sum,t) => {
-      const risk = Math.abs(t.buy - t.stopLoss);
-      const reward = Math.abs(tradeNet(t));
-      return sum + (risk>0 ? reward/risk : 0);
-    }, 0) / withStop.length;
-    rrScore = Math.max(0, Math.min(100, Math.round(avgRR * 50)));
+  const todayR = s.todayTrades.map(_tradeR).filter(r => r!=null && isFinite(r));
+  if (todayR.length) {
+    const avgR = todayR.reduce((sum,r) => sum+r, 0) / todayR.length;
+    rrScore = Math.max(0, Math.min(100, Math.round(avgR * 50)));
   }
   // 3) Trade-count adherence (soft default cap of 5/day if no custom limit exists)
   const tradeCountCap = 5;
@@ -10514,7 +10553,7 @@ function _computeRiskDashboard(acctOverride) {
   const acctList = (typeof accounts !== 'undefined' && accounts) ? accounts : [];
   const acct = acctOverride || acctList.find(a=>a.active) || acctList[0] || null;
   if (!acct) return null;
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = _localToday();
   const now = new Date();
   const weekStart = new Date(now); weekStart.setDate(now.getDate()-now.getDay()); weekStart.setHours(0,0,0,0);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -10567,7 +10606,7 @@ function _computeAcctHealthScore(a) {
   }
 
   // 4) Today's discipline on this specific account (plan-adherence, if tracked)
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = _localToday();
   const todayTrades = tradesList.filter(t=>t.acct===a.id && t.date===todayStr);
   const withPlanFlag = todayTrades.filter(t => t.followedPlan === true || t.followedPlan === false);
   const disciplineScore = withPlanFlag.length ? Math.round(withPlanFlag.filter(t=>t.followedPlan===true).length/withPlanFlag.length*100) : 80;
@@ -10742,7 +10781,7 @@ let _timerState = (() => {
     const s = JSON.parse(localStorage.getItem('dor_timerState') || 'null');
     if (s) return s;
   } catch(e){}
-  return { mode:'session', phase:'work', running:false, startTs:null, accumMs:0, workMin:25, breakMin:5, cycles:0, cyclesDate:new Date().toISOString().slice(0,10) };
+  return { mode:'session', phase:'work', running:false, startTs:null, accumMs:0, workMin:25, breakMin:5, cycles:0, cyclesDate:_localToday() };
 })();
 let _timerInterval = null;
 function _timerSave() { try { localStorage.setItem('dor_timerState', JSON.stringify(_timerState)); } catch(e){} }
@@ -10781,7 +10820,7 @@ function timerUpdateSettings() {
   _timerSave();
 }
 function _timerTick() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   if (_timerState.cyclesDate !== today) { _timerState.cycles = 0; _timerState.cyclesDate = today; }
   if (_timerState.mode === 'pomodoro') {
     const limitMs = (_timerState.phase==='work' ? _timerState.workMin : _timerState.breakMin) * 60000;
@@ -11023,7 +11062,7 @@ function _computeRulePeriodScore() {
 }
 
 function _computeRulesToday() {
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = _localToday();
   const day = { date:todayStr, trades: tradesList.filter(t=>t.date===todayStr) };
   let met=0, total=0;
   tradingRules.forEach(r => {
@@ -11258,10 +11297,10 @@ function renderHome(){
   root.innerHTML=`
     <header class="home-heading"><div><p class="home-eyebrow">FAYNA / HOME</p><h1>כל המסחר שלך. במבט אחד.</h1><p>תמונת מצב קצרה, והפעולה הבאה שלך.</p></div><button type="button" class="home-primary" data-home-action="add">＋ עסקה חדשה</button></header>
     ${window.FaynaExperience?.onboarding(list,all)||''}
-    <div class="home-filter"><div class="home-period" role="group" aria-label="תקופת הסיכום">${[['today','היום'],['month','החודש'],['all','הכל']].map(([id,label])=>'<button type="button" data-home-period="'+id+'" aria-pressed="'+(_homePeriod===id)+'">'+label+'</button>').join('')}</div>${accountSelector}<span class="home-scope">לפי העסקאות הרשומות ביומן · USD</span></div>
+    <div class="home-filter"><div class="home-period" role="group" aria-label="תקופת הסיכום">${[['today','היום'],['month','החודש'],['all','הכל']].map(([id,label])=>'<button type="button" data-home-period="'+id+'" aria-pressed="'+(_homePeriod===id)+'">'+label+'</button>').join('')}</div>${accountSelector}<span class="home-scope">לפי העסקאות הרשומות ביומן · ${typeof _fxOn==='function'&&_fxOn()?'ILS':'USD'}</span></div>
     <div class="home-top-grid"><section class="home-card home-performance"><div class="home-card-head"><h2>רווח והפסד נטו</h2><span>${esc(periodTitle)}</span></div><div class="home-total ${tone(model.net)}" dir="ltr">${_homeMoney(model.net)}</div><p class="home-muted">אחרי עמלות מסחר · לפני הוצאות ומשיכות</p><div class="home-trend ${tone(model.net)}">${model.count?_homeTrend(model.series):'<div class="home-empty-chart">העסקה הראשונה שלך תתחיל את התמונה.</div>'}</div><div class="home-chart-labels"><span>${esc(model.rows[0]?.date||model.start||'—')}</span><span>${esc(model.end)}</span></div></section>
-    <section class="home-card home-summary"><div class="home-card-head"><h2>המספרים החשובים</h2><span>${esc(periodTitle)}</span></div><div class="home-stat"><span>רשומות ביומן</span><strong>${model.count}</strong></div><div class="home-stat"><span>הצלחה בעסקאות מפורטות</span><strong>${model.winRate===null?'—':model.winRate.toFixed(0)+'%'}</strong></div><div class="home-stat"><span>ירידה מרבית מהשיא</span><strong dir="ltr">${model.count?_homeMoney(-model.drawdown):'—'}</strong></div><div class="home-stat"><span>עמלות מסחר</span><strong dir="ltr">$${Number.isFinite(fees)?fees.toFixed(2):'—'}</strong></div><button type="button" class="home-link" data-home-nav="stats">לניתוח הביצועים ←</button></section></div>
-    <div class="home-lower-grid"><section class="home-card"><div class="home-card-head"><div><h2>פעילות אחרונה</h2><span>${esc(scopedTitle)}</span></div><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button></div>${recent.length?'<div class="home-trades">'+recent.map(t=>'<div class="home-trade"><span class="home-symbol">'+esc(t.sym||'עסקה')+'</span><span class="home-trade-date">'+esc(t.date)+'<small>'+esc((t.btime||'').slice(0,5))+'</small></span><strong class="'+tone(tradeNet(t))+'" dir="ltr">'+_homeMoney(tradeNet(t))+'</strong></div>').join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות בתקופה הזו</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}</section>
+    <section class="home-card home-summary"><div class="home-card-head"><h2>המספרים החשובים</h2><span>${esc(periodTitle)}</span></div><div class="home-stat"><span>רשומות ביומן</span><strong>${model.count}</strong></div><div class="home-stat"><span>הצלחה בעסקאות מפורטות</span><strong>${model.winRate===null?'—':model.winRate.toFixed(0)+'%'}</strong></div><div class="home-stat"><span>ירידה מרבית מהשיא</span><strong dir="ltr">${model.count?_homeMoney(-model.drawdown):'—'}</strong></div><div class="home-stat"><span>עמלות מסחר</span><strong dir="ltr">${typeof _fxSym==='function'?_fxSym():'$'}${Number.isFinite(fees)?fees.toFixed(2):'—'}</strong></div><button type="button" class="home-link" data-home-nav="stats">לניתוח הביצועים ←</button></section></div>
+    <div class="home-lower-grid"><section class="home-card"><div class="home-card-head"><div><h2>פעילות אחרונה</h2><span>${esc(scopedTitle)}</span></div><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button></div>${recent.length?'<div class="home-trades">'+recent.map(t=>'<div class="home-trade"><span class="home-symbol">'+esc(t.sym||'עסקה')+'</span><span class="home-trade-date">'+esc(t.date)+'<small>'+esc((t.btime||'').slice(0,5))+'</small></span><strong class="'+tone(tradeNet(t))+'" dir="ltr">'+_homeMoney(typeof _fxNet==='function'?_fxNet(t):tradeNet(t))+'</strong></div>').join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות בתקופה הזו</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}</section>
     <section class="home-card"><div class="home-card-head"><div><h2>החשבונות שלך</h2><span>סיכום מסחר · כל התקופה</span></div><button type="button" class="home-link" data-home-action="accounts">ניהול ←</button></div>${accountRows||'<div class="home-empty"><strong>הכל מתחיל בחשבון הראשון</strong><p>רכז את העסקאות לפי חשבון מסחר.</p><button type="button" class="home-link" data-home-action="accounts">הוסף חשבון ←</button></div>'}${shown.length>3?'<button type="button" class="home-link" data-home-action="accounts">לעוד '+(shown.length-3)+' חשבונות ←</button>':''}</section></div>
     <nav class="home-shortcuts" aria-label="פעולות מהירות"><button type="button" data-home-nav="import"><span class="home-shortcut-icon">↓</span><span><strong>ייבוא עסקאות</strong><small>העבר את הדוח ליומן</small></span><span>←</span></button><button type="button" data-home-nav="trades"><span class="home-shortcut-icon">↗</span><span><strong>יומן המסחר</strong><small>עסקאות ופרטים במקום אחד</small></span><span>←</span></button><button type="button" data-home-nav="ai"><span class="home-shortcut-icon">✧</span><span><strong>תובנות מהמסחר</strong><small>ללמוד מהעסקאות שלך</small></span><span>←</span></button></nav>
 <button class="ws-text-button ws-finance-link" data-home-nav="biz">מעבר לניהול הכספי העצמאי ←</button>
@@ -11280,7 +11319,7 @@ function renderOV() {
   if (typeof checkTradingAlerts === 'function') checkTradingAlerts();
   if (typeof checkBehaviorAnomalies === 'function') checkBehaviorAnomalies();
   const exp = records.filter(r=>r.type==='הוצאה');
-  const wd  = records.filter(r=>r.type==='משיכה');
+  const wd  = _wdRecords();
   const tl  = tradesList;
   const netPnl  = totalNetPnl();
   const grossPnl = totalGrossPnl();
@@ -11371,7 +11410,7 @@ function renderOV() {
     const pnlEl = document.getElementById('zm-pnl');
     if(pnlEl) animCounter(pnlEl, netPnl, '$');
     const ilsEl = document.getElementById('zm-pnl-ils');
-    if(ilsEl) { const v = netPnl*(histRate(new Date().toISOString().slice(0,10))); ilsEl.textContent = (v>=0?'+':'')+Math.abs(v).toFixed(0); }
+    if(ilsEl) { const v = netPnl*(histRate(_localToday())); ilsEl.textContent = (v>=0?'+':'')+Math.abs(v).toFixed(0); }
     const wrEl = document.getElementById('zm-wr');
     if(wrEl) animCounter(wrEl, wr, '', '%');
     const pfEl = document.getElementById('zm-pf');
@@ -11403,7 +11442,7 @@ function renderOV() {
 
   // ── GAUGE ROW ──
   const beTrades = tl.length - wins.length - losses.length;
-  const ilsRate = histRate(new Date().toISOString().slice(0,10));
+  const ilsRate = histRate(_localToday());
   renderGauges({
     winPct: wr, winCount: wins.length, lossCount: losses.length, beCount: beTrades,
     dayWinPct: dwr, winDays, lossDays, beDays,
@@ -11684,7 +11723,7 @@ function _renderPeriodSummary(list,period){
   const cards=keys.map(k=>{
     const v=groups[k]||0;
     const bar=Math.round((v/maxVal)*100);
-    const isCur= period==='week'? k===new Date().toISOString().slice(0,10) :
+    const isCur= period==='week'? k===_localToday() :
                  period==='month'? k==='W'+Math.ceil(new Date().getDate()/7) :
                  period==='year'? k===new Date().toISOString().slice(0,7) : false;
     return `<div style="flex:1;min-width:44px;background:${isCur?'rgba(61,153,112,.1)':'var(--bg3)'};border:1px solid ${isCur?'rgba(61,153,112,.25)':'rgba(255,255,255,.05)'};border-radius:7px;padding:7px 8px;text-align:center">
@@ -11714,18 +11753,18 @@ function renderExp(){
   _renderPeriodSummary(list,expPeriod);
   const srt=[...list].sort((a,b)=>b.date.localeCompare(a.date));
   const tE=list.filter(r=>r.type==='הוצאה').reduce((s,r)=>s+r.amount,0);
-  const tEils=list.filter(r=>r.type==='הוצאה').reduce((s,r)=>s+(r.amount*r.rate),0);
+  const tEils=list.filter(r=>r.type==='הוצאה').reduce((s,r)=>s+_recILS(r),0);
   document.getElementById('exp-total').textContent='סה"כ: '+fmt(tE)+' = '+fmtILS(tEils);
   document.getElementById('exp-tbody').innerHTML=srt.length?srt.map(r=>{
     const ri=records.indexOf(r);
     return `<tr draggable="true" ondragstart="dStart(event,${ri})" ondragover="dOver(event)" ondrop="dDrop(event,${ri})" ondragleave="dLeave(event)" style="${r.done?'':'opacity:.6'}">
       <td><span class="dh">⠿</span></td>
-      <td><input type="checkbox" class="chk" ${r.done?'checked':''} onchange="records[${ri}].done=this.checked;renderExp()"></td>
+      <td><input type="checkbox" class="chk" ${r.done?'checked':''} onchange="records[${ri}].done=this.checked;renderExp();saveData()"></td>
       <td class="mono" style="font-size:11px;color:var(--t3);white-space:nowrap">${fmtD(r.date)}</td>
       <td style="color:var(--t2);white-space:nowrap">${r.company?escHtml(r.company):'—'}</td>
       <td><span class="cat ${catCls(r.cat)}" onclick="openCatP(${ri},event)">${r.cat||'—'} ▾</span></td>
       <td class="mono" style="color:var(--re);font-weight:600">$${r.amount.toFixed(2)}</td>
-      <td style="color:var(--t3);font-size:11px">${fmtILS(r.amount*r.rate)}</td>
+      <td style="color:var(--t3);font-size:11px">${fmtILS(_recILS(r))}</td>
       <td style="white-space:nowrap">${r.recurringId?'<span title="הוצאה חוזרת חודשית" style="font-size:11px;margin-left:4px">🔄</span>':''}<button class="act ed" onclick="openEdit(${ri})">✏️</button><button class="act" onclick="askDel(${ri})">🗑</button></td>
     </tr>`;
   }).join(''):`<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--t3)">אין רשומות</td></tr>`;
@@ -11736,7 +11775,7 @@ function fPeriod(p,b){expPeriod=p;document.querySelectorAll('#efbar2 .fb[data-p]
 function dStart(e,i){dragSrc=i;e.currentTarget.classList.add('dragging');}
 function dOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
 function dLeave(e){e.currentTarget.classList.remove('drag-over');}
-function dDrop(e,i){e.preventDefault();e.currentTarget.classList.remove('drag-over');if(dragSrc===null||dragSrc===i)return;const t=records[dragSrc];records.splice(dragSrc,1);records.splice(i<dragSrc?i:i,0,t);dragSrc=null;renderExp();}
+function dDrop(e,i){e.preventDefault();e.currentTarget.classList.remove('drag-over');if(dragSrc===null||dragSrc===i)return;const t=records[dragSrc];records.splice(dragSrc,1);records.splice(i<dragSrc?i:i,0,t);dragSrc=null;renderExp();saveData();}
 
 // WITHDRAWALS
 function renderWD(){
@@ -11769,13 +11808,13 @@ let pnlChart2;
 const _pnlOpen = {};
 function renderPNL(){
   const exp=records.filter(r=>r.type==='הוצאה');
-  const wd=records.filter(r=>r.type==='משיכה');
-  const byCat    = cats => exp.filter(r=>cats.includes(r.cat));
-  const byCatILS = cats => byCat(cats).reduce((s,r)=>s+(r.amount*r.rate),0);
+  const wd=_wdRecords().map(r=>({date:r.date,company:r.company,net:r.wdNet??r.amount,rate:Number(r.rate)>0?r.rate:histRate(r.date)}));
+  const byCat    = cats => exp.filter(r=>cats.includes(r.cat||'אחר'));
+  const byCatILS = cats => byCat(cats).reduce((s,r)=>s+_recILS(r),0);
   const byCatUSD = cats => byCat(cats).reduce((s,r)=>s+r.amount,0);
-  const wdNils=wd.reduce((s,r)=>s+((r.wdNet||r.amount)*r.rate),0);
+  const wdNils=wd.reduce((s,r)=>s+r.net*r.rate,0);
   const tP=tradesList.reduce((s,t)=>s+t.pnl,0);
-  const cxTotalILS = customExpenses.reduce((s,c)=>s+(c.amount*c.rate),0);
+  const cxTotalILS = customExpenses.reduce((s,c)=>s+_recILS(c),0);
   const cxTotalUSD = customExpenses.reduce((s,c)=>s+c.amount,0);
 
   // Standard category sets
@@ -11798,7 +11837,7 @@ function renderPNL(){
       customCat:cat
     })),
     {key:'הוצאות חופשיות',lbl:'הוצאות חופשיות ('+customExpenses.length+' פריטים)',ils:Math.round(cxTotalILS),usd:+cxTotalUSD.toFixed(2),sign:-1,col:'#c75f5f'},
-    {key:'משיכות נטו',lbl:'משיכות נטו (נוסטרו)',ils:Math.round(wdNils),usd:+wd.reduce((s,r)=>s+(r.wdNet||r.amount),0).toFixed(2),sign:+1,col:'var(--gr)'},
+    {key:'משיכות נטו',lbl:'משיכות נטו (נוסטרו)',ils:Math.round(wdNils),usd:+wd.reduce((s,r)=>s+r.net,0).toFixed(2),sign:+1,col:'var(--gr)'},
   ];
   // Ensure custom category keys default to ON in pnlOn
   pRows.forEach(r=>{ if(!(r.key in pnlOn)) pnlOn[r.key]=true; });
@@ -11829,9 +11868,9 @@ function renderPNL(){
     'תוכנות':         exp.filter(r=>['כלי','תוכנה'].includes(r.cat)),
     'מנויים':         exp.filter(r=>r.cat==='מנוי'),
     'ציוד':           exp.filter(r=>r.cat==='ציוד'),
-    'שונות':          exp.filter(r=>['אחר','שונות','קורס'].includes(r.cat)),
+    'שונות':          exp.filter(r=>['אחר','שונות','קורס'].includes(r.cat||'אחר')),
     'הוצאות חופשיות': customExpenses.map(c=>({date:c.date,company:c.desc||c.category,amount:c.amount,rate:c.rate||1,cat:c.category})),
-    'משיכות נטו':     wd.map(r=>({date:r.date,company:r.company||'משיכה',amount:r.wdNet||r.amount,rate:r.rate||1,cat:'משיכה',sign:1})),
+    'משיכות נטו':     wd.map(r=>({date:r.date,company:r.company||'משיכה',amount:r.net,rate:r.rate,cat:'משיכה',sign:1})),
   };
   // Add custom category items
   customCatNames.forEach(cat => { catItems['__custom__'+cat] = exp.filter(r=>r.cat===cat); });
@@ -12162,7 +12201,7 @@ function _coachFirstName() {
 }
 
 function coachStartSession(type) {
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const qs = COACH_QUESTIONS[type]||COACH_QUESTIONS.day_open;
   if (!qs.length) { showToast('שאלות לא נמצאו לסוג זה','error'); return; }
   _coachSession = { id:'cs_'+Date.now(), date:today, type, answers:{}, startedAt:Date.now() };
@@ -12405,7 +12444,7 @@ function coachShowHistory() {
 }
 
 function _coachRenderHome() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const dow   = new Date().getDay();
   const fn    = _coachFirstName();
   const profile = _buildCoachProfile();
@@ -12484,7 +12523,7 @@ function _coachRenderHome() {
 // ── Coach gentle nudge (once per day if no check-in done) ──
 function _coachNudge() {
   if (window._coachQuiet !== false) return;   // v30: pop-up disabled
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const already = coachSessions.some(s => s.date===today && s.type==='daily');
   if (already) return; // already done today
   const dismissed = localStorage.getItem('coach_nudge_'+today);
@@ -12536,7 +12575,7 @@ function _coachNudgeDismiss(auto) {
   el.style.animation = 'toastOut .3s ease both';
   setTimeout(() => el.remove(), 320);
   if (!auto) { // only persist dismiss if user clicked, not auto
-    const today = new Date().toISOString().slice(0,10);
+    const today = _localToday();
     localStorage.setItem('coach_nudge_'+today, '1');
   }
 }
@@ -12561,7 +12600,7 @@ function renderCal(){
   const mn=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
   document.getElementById('cal-title').textContent=mn[calMonth]+' '+calYear;
   const daily={};
-  tradesList.forEach(t=>{
+  getActiveTrades().forEach(t=>{
     const[ty,tm,td]=t.date.split('-');
     if(parseInt(ty)===calYear&&parseInt(tm)-1===calMonth){
       if(!daily[td])daily[td]={pnl:0,trades:0,wins:0};
@@ -12572,7 +12611,7 @@ function renderCal(){
   const tradeDays=Object.keys(daily).length;
   document.getElementById('cal-stats').innerHTML=
     `<span style="color:var(--t2)">Monthly stats:</span>`+
-    `<span class="mono ${totalPnl>=0?'tw':'tl'}" style="font-weight:600;background:${totalPnl>=0?'rgba(49,110,80,.4)':'rgba(110,45,45,.4)'};padding:2px 8px;border-radius:12px">${totalPnl>=0?'+':'-'}$${Math.abs(totalPnl).toFixed(2)}</span>`+`<span style="color:var(--t3);font-size:10px"> = ₪${Math.abs(totalPnl*(histRate(new Date().toISOString().slice(0,10)))).toFixed(0)}</span>`+
+    `<span class="mono ${totalPnl>=0?'tw':'tl'}" style="font-weight:600;background:${totalPnl>=0?'rgba(49,110,80,.4)':'rgba(110,45,45,.4)'};padding:2px 8px;border-radius:12px">${totalPnl>=0?'+':'-'}$${Math.abs(totalPnl).toFixed(2)}</span>`+`<span style="color:var(--t3);font-size:10px"> = ₪${Math.abs(totalPnl*(histRate(_localToday()))).toFixed(0)}</span>`+
     `<span style="color:var(--t3)">${tradeDays} days</span>`;
   const today=new Date();const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   const firstDay=new Date(calYear,calMonth,1).getDay();
@@ -12676,7 +12715,7 @@ function renderTJ(){
   const w=list.filter(t=>tradeNet(t)>0);
   const loss=list.filter(t=>tradeNet(t)<0);
   const tradeDays=new Set(list.map(t=>t.date)).size;
-  const rate=histRate(new Date().toISOString().slice(0,10));
+  const rate=histRate(_localToday());
   document.getElementById('tj-m').innerHTML=
     `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*rate).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">עסקאות</div><div class="mc-v cb">${list.length}</div><div class="mc-s">${tradeDays} ימי מסחר</div></div>`+
@@ -12761,7 +12800,7 @@ function exportCSV() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
-  a.download = 'trades_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = 'trades_' + _localToday() + '.csv';
   a.click();
   showToast(`✅ יוצאו ${list.length} עסקאות`, 'success');
 }
@@ -12796,7 +12835,7 @@ function exportExpensesCSV() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
-  a.download = 'expenses_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = 'expenses_' + _localToday() + '.csv';
   a.click();
   showToast(`✅ יוצאו ${records.length} רשומות`, 'success');
 }
@@ -12938,7 +12977,7 @@ function _buildTradesReport(period) {
     Math.min(...list.map(t=>tradeNet(t))).toFixed(2)
   ));
 
-  const fname = `report_trades_${periodNames[period]}_${new Date().toISOString().slice(0,10)}.csv`;
+  const fname = `report_trades_${periodNames[period]}_${_localToday()}.csv`;
   _dlCsv(lines, fname);
   showToast(`✅ דוח עסקאות ${periodNames[period]} הורד`, 'success');
 }
@@ -12953,9 +12992,9 @@ function _buildExpensesReport(period) {
   const now  = new Date().toLocaleString('he-IL', { dateStyle:'short', timeStyle:'short' });
   const expOnly  = records.filter(r=>r.type==='הוצאה');
   // NOTE: only משיכות = income (not הכנסה records which are internal entries)
-  const wdOnlyR  = records.filter(r=>r.type==='משיכה');
+  const wdOnlyR  = _wdRecords();
   const totalExp = expOnly.reduce((s,r)=>s+r.amount, 0);
-  const totalWdr = wdOnlyR.reduce((s,r)=>s+(r.wdNet||r.amount), 0);
+  const totalWdr = wdOnlyR.reduce((s,r)=>s+(r.wdNet??r.amount), 0);
 
   const groups = {};
   records.forEach(r => {
@@ -13015,7 +13054,7 @@ function _buildExpensesReport(period) {
     records.filter(r=>r.type==='הוצאה').length
   ));
 
-  const fname = `report_expenses_${periodNames[period]}_${new Date().toISOString().slice(0,10)}.csv`;
+  const fname = `report_expenses_${periodNames[period]}_${_localToday()}.csv`;
   _dlCsv(lines, fname);
   showToast(`✅ דוח הוצאות ${periodNames[period]} הורד`, 'success');
 }
@@ -13038,7 +13077,7 @@ function dmDetailedCSV() {
   if (!canUse('export_csv')) { showUpgradeModal('export_csv'); return; }
   const lines = [];
   const now   = new Date().toLocaleString('he-IL', { dateStyle:'short', timeStyle:'short' });
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const sorted = tradesList.slice().sort((a,b)=>a.date.localeCompare(b.date));
 
   lines.push(_row('FAYNA TRADING — דוח מפורט מלא'));
@@ -13089,11 +13128,11 @@ function dmDetailedCSV() {
     ));
   });
   const expOnly = records.filter(r=>r.type==='הוצאה');
-  const wdOnly  = records.filter(r=>r.type==='משיכה'); // only משיכות = income
+  const wdOnly  = _wdRecords(); // only משיכות = income
   lines.push(_blank());
   lines.push(_row(
     'סה"כ הוצאות $', _rFmt(expOnly.reduce((s,r)=>s+r.amount,0)),
-    'סה"כ משיכות (הכנסה) $', _rFmt(wdOnly.reduce((s,r)=>s+(r.wdNet||r.amount),0))
+    'סה"כ משיכות (הכנסה) $', _rFmt(wdOnly.reduce((s,r)=>s+(r.wdNet??r.amount),0))
   ));
 
   _dlCsv(lines, `detailed_report_${today}.csv`);
@@ -13105,7 +13144,7 @@ function dmSummaryCSV() {
   if (!canUse('export_csv')) { showUpgradeModal('export_csv'); return; }
   const lines = [];
   const now   = new Date().toLocaleString('he-IL', { dateStyle:'short', timeStyle:'short' });
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const nets  = tradesList.map(t=>tradeNet(t));
   const wins  = tradesList.filter(t=>tradeNet(t)>0);
   const losses= tradesList.filter(t=>tradeNet(t)<0);
@@ -13116,7 +13155,7 @@ function dmSummaryCSV() {
   const grossLoss = Math.abs(losses.reduce((s,t)=>s+tradeNet(t),0));
   const expOnly   = records.filter(r=>r.type==='הוצאה');
   // only משיכות count as income
-  const wdOnly    = records.filter(r=>r.type==='משיכה');
+  const wdOnly    = _wdRecords();
   const cats      = ['מבחן','לייב','ריסט','כלי','קורס','אחר'];
 
   lines.push(_row('FAYNA TRADING — דוח מסכם'));
@@ -13195,7 +13234,7 @@ function dmSummaryCSV() {
   // ── Expense summary ──
   lines.push(_row('═══ סיכום הוצאות ═══'));
   const totExpAmt = expOnly.reduce((s,r)=>s+r.amount,0);
-  const totWdAmt  = wdOnly.reduce((s,r)=>s+(r.wdNet||r.amount),0);
+  const totWdAmt  = wdOnly.reduce((s,r)=>s+(r.wdNet??r.amount),0);
   lines.push(_row('סה"כ הוצאות $', _rFmt(totExpAmt)));
   lines.push(_row('סה"כ משיכות (הכנסה) $', _rFmt(totWdAmt)));
   lines.push(_row('נטו הוצאות/משיכות $', _rFmt(totWdAmt - totExpAmt)));
@@ -13304,7 +13343,7 @@ function dmDetailedPDF() {
   const totalNet  = nets.reduce((s,n)=>s+n,0);
   const totalComm = sorted.reduce((s,t)=>s+tradeComm(t),0);
   const expOnly = records.filter(r=>r.type==='הוצאה');
-  const wdOnly2 = records.filter(r=>r.type==='משיכה'); // only משיכות = income
+  const wdOnly2 = _wdRecords(); // only משיכות = income
 
   let body = '';
 
@@ -13368,7 +13407,7 @@ function dmDetailedPDF() {
     </tr>`;
   });
   const totExpAmt  = expOnly.reduce((s,r)=>s+r.amount,0);
-  const totWdAmt2  = wdOnly2.reduce((s,r)=>s+(r.wdNet||r.amount),0);
+  const totWdAmt2  = wdOnly2.reduce((s,r)=>s+(r.wdNet??r.amount),0);
   const expNetAmt  = totWdAmt2 - totExpAmt;
   body += `<tr>
     <td colspan="6"><b>סה"כ</b></td>
@@ -13395,10 +13434,10 @@ function dmSummaryPDF() {
   const grossWins= wins.reduce((s,t)=>s+tradeNet(t),0);
   const grossLoss= Math.abs(losses.reduce((s,t)=>s+tradeNet(t),0));
   const expOnly  = records.filter(r=>r.type==='הוצאה');
-  const wdOnly   = records.filter(r=>r.type==='משיכה'); // only משיכות = income
+  const wdOnly   = _wdRecords(); // only משיכות = income
   const cats     = ['מבחן','לייב','ריסט','כלי','קורס','אחר'];
   const totExp   = expOnly.reduce((s,r)=>s+r.amount,0);
-  const totWd    = wdOnly.reduce((s,r)=>s+(r.wdNet||r.amount),0); // withdrawals = income
+  const totWd    = wdOnly.reduce((s,r)=>s+(r.wdNet??r.amount),0); // withdrawals = income
 
   let body = '';
 
@@ -13528,12 +13567,12 @@ function pnlTabPDF() {
 
   // Recompute P&L rows exactly like renderPNL()
   const exp     = records.filter(r=>r.type==='הוצאה');
-  const wd      = records.filter(r=>r.type==='משיכה');
-  const byCat    = cats => exp.filter(r=>cats.includes(r.cat));
-  const byCatILS = cats => byCat(cats).reduce((s,r)=>s+(r.amount*r.rate),0);
+  const wd      = _wdRecords();
+  const byCat    = cats => exp.filter(r=>cats.includes(r.cat||'אחר'));
+  const byCatILS = cats => byCat(cats).reduce((s,r)=>s+_recILS(r),0);
   const byCatUSD = cats => byCat(cats).reduce((s,r)=>s+r.amount,0);
-  const wdNils  = wd.reduce((s,r)=>s+((r.wdNet||r.amount)*r.rate),0);
-  const cxTotalILS = customExpenses.reduce((s,c)=>s+(c.amount*c.rate),0);
+  const wdNils  = wd.reduce((s,r)=>s+((r.wdNet??r.amount)*r.rate),0);
+  const cxTotalILS = customExpenses.reduce((s,c)=>s+_recILS(c),0);
   const cxTotalUSD = customExpenses.reduce((s,c)=>s+c.amount,0);
 
   const pRows=[
@@ -13550,7 +13589,7 @@ function pnlTabPDF() {
     {key:'הוצאות חופשיות', lbl:'הוצאות חופשיות ('+customExpenses.length+' פריטים)',
      ils:Math.round(cxTotalILS), usd:+cxTotalUSD.toFixed(2), sign:-1},
     {key:'משיכות נטו', lbl:'משיכות נטו (נוסטרו)',
-     ils:Math.round(wdNils), usd:+wd.reduce((s,r)=>s+(r.wdNet||r.amount),0).toFixed(2), sign:+1},
+     ils:Math.round(wdNils), usd:+wd.reduce((s,r)=>s+(r.wdNet??r.amount),0).toFixed(2), sign:+1},
   ];
 
   let net=0, netUSD=0, tCils=0, tCusd=0, tIils=0, tIusd=0;
@@ -13662,11 +13701,11 @@ function expensesTabPDF() {
   if (!canUse('export_pdf')) { showUpgradeModal('export_pdf'); return; }
 
   const expOnly = records.filter(r=>r.type==='הוצאה');
-  const wdOnly  = records.filter(r=>r.type==='משיכה');
+  const wdOnly  = _wdRecords();
   const allRecs = records.slice().sort((a,b)=>a.date.localeCompare(b.date));
   const cats    = ['מבחן','לייב','ריסט','כלי','קורס','אחר'];
   const totExp  = expOnly.reduce((s,r)=>s+r.amount,0);
-  const totWdR  = wdOnly.reduce((s,r)=>s+(r.wdNet||r.amount),0);
+  const totWdR  = wdOnly.reduce((s,r)=>s+(r.wdNet??r.amount),0);
 
   let body = '';
 
@@ -13738,11 +13777,11 @@ function combinedReportPDF() {
 
   const now      = new Date().toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'});
   const expOnly  = records.filter(r=>r.type==='הוצאה');
-  const wdOnly   = records.filter(r=>r.type==='משיכה');
+  const wdOnly   = _wdRecords();
   const allRecs  = records.slice().sort((a,b)=>a.date.localeCompare(b.date));
   const cats     = ['מבחן','לייב','ריסט','כלי','קורס','אחר'];
   const totExp   = expOnly.reduce((s,r)=>s+r.amount,0);
-  const totWdC   = wdOnly.reduce((s,r)=>s+(r.wdNet||r.amount),0);
+  const totWdC   = wdOnly.reduce((s,r)=>s+(r.wdNet??r.amount),0);
   const nets     = tradesList.map(t=>tradeNet(t));
   const wins     = tradesList.filter(t=>tradeNet(t)>0);
   const losses   = tradesList.filter(t=>tradeNet(t)<0);
@@ -13972,16 +14011,7 @@ function _parseRithmicCSV(text) {
         iUT=col('Update Time (IDT)'), iCT=col('Create Time (IDT)');
 
   // Point multiplier per futures symbol (custom symbols first, then longest-prefix wins)
-  function getMult(sym) {
-    const cs = _customSymbolFor(sym);
-    if (cs && cs.mult != null && !isNaN(cs.mult)) return +cs.mult;
-    const b = sym.replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '').toUpperCase();
-    const map = [['MNQ',2],['NQ',20],['MES',5],['ES',50],['MYM',0.5],['YM',5],
-                 ['M2K',5],['RTY',50],['MCL',100],['CL',1000],['MGC',10],['GC',100],
-                 ['MSI',50],['SI',5000],['MBT',5],['BTC',5]];
-    for(const[p,m] of map) if(b.startsWith(p)) return m;
-    return 1;
-  }
+  const getMult = _getFuturesMultiplier;
 
   // Collect Filled orders
   const fills=[];
@@ -14021,9 +14051,9 @@ function _parseRithmicCSV(text) {
       const t1=new Date(entryT.replace(' ','T')), t2=new Date(exitT.replace(' ','T'));
       const secs=Math.round(Math.abs(t2-t1)/1000);
       const dur=secs<60?secs+'s':secs<3600?Math.floor(secs/60)+'m'+(secs%60?':'+String(secs%60).padStart(2,'0'):''):'';
-      trades.push({sym,qty:mq,buy:buyPx,sell:sellPx,pnl,
+      trades.push({sym,qty:mq,buy:buyPx,sell:sellPx,pnl,dir:leg.side==='B'?'long':'short',
         date:entryT.slice(0,10),btime:entryT.slice(11,19)||'00:00:00',
-        stime:exitT.slice(11,19)||'',dur});
+        stime:exitT.slice(11,19)||'',exitDate:exitT.slice(0,10),dur});
       leg.qty-=mq; rem-=mq;
       if(leg.qty===0) q.shift();
     }
@@ -14214,7 +14244,9 @@ window.addEventListener('message', e => {
 // STATS
 let eqCh,dCh,dowCh,hourCh,rmultCh;
 function renderStats(){
-  const tl=tradesList;
+  const all=getActiveTrades();
+  // A daily summary is one day's total, not one trade: it stays in net P&L and the curves, out of per-trade ratios.
+  const tl=all.filter(t=>!t.isManual);
   const w=tl.filter(t=>tradeNet(t)>0),l=tl.filter(t=>tradeNet(t)<0);
   const tot=totalNetPnl();
   const grossTot=totalGrossPnl();
@@ -14226,7 +14258,7 @@ function renderStats(){
   const best=tl.length?Math.max(...tl.map(t=>tradeNet(t))):0;
   const worst=tl.length?Math.min(...tl.map(t=>tradeNet(t))):0;
   document.getElementById('ts-m').innerHTML=
-    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*(histRate(new Date().toISOString().slice(0,10)))).toFixed(0)}</div></div>`+
+    `<div class="mc" style="border-color:${tot>=0?'rgba(61,153,112,.3)':'rgba(199,95,95,.3)'}"><div class="mc-l">P&L נטו $</div><div class="mc-v ${tot>=0?'cg':'cr'}">${tot>=0?'+':''}$${tot.toFixed(2)}</div><div class="mc-s">₪${(tot*(histRate(_localToday()))).toFixed(0)}</div></div>`+
     `<div class="mc"><div class="mc-l">ברוטו / עמלות</div><div class="mc-v" style="font-size:14px">$${grossTot.toFixed(0)} / <span class="cr">$${commTot.toFixed(0)}</span></div><div class="mc-s">${tl.length} עסקאות</div></div>`+
     `<div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v cb">${tl.length?(w.length/tl.length*100).toFixed(1):0}%</div><div class="mc-s">${w.length}W/${l.length}L</div></div>`+
     `<div class="mc"><div class="mc-l">Profit Factor</div><div class="mc-v cy">${isFinite(pf)?pf.toFixed(2):'∞'}</div></div>`+
@@ -14236,24 +14268,22 @@ function renderStats(){
 
   // ── Advanced metrics: Expectancy, Kelly %, Sharpe, Sortino (on the daily $ P&L series), R-Multiple ──
   const winRate = tl.length ? w.length/tl.length : 0;
-  const expectancy = winRate*avgW + (1-winRate)*avgL; // avgL is already negative
+  const expectancy = tl.length ? (avgW*w.length + avgL*l.length)/tl.length : 0; // avgL is already negative; scratches count as zero
+  const decided = w.length + l.length;
+  const kellyWin = decided ? w.length/decided : 0;
   const rr = avgL!==0 ? Math.abs(avgW/avgL) : (avgW>0?Infinity:0);
-  const kellyPct = isFinite(rr) && rr>0 ? Math.max(-100, Math.min(100, (winRate - (1-winRate)/rr)*100)) : null;
-  const dailyPnls = Object.values(dmapForStats(tl));
+  const kellyPct = isFinite(rr) && rr>0 ? Math.max(-100, Math.min(100, (kellyWin - (1-kellyWin)/rr)*100)) : null;
+  const dailyPnls = Object.values(dmapForStats(all));
   const mean = dailyPnls.length ? dailyPnls.reduce((a,b)=>a+b,0)/dailyPnls.length : 0;
   const variance = dailyPnls.length ? dailyPnls.reduce((s,v)=>s+Math.pow(v-mean,2),0)/dailyPnls.length : 0;
   const stdDev = Math.sqrt(variance);
   const sharpe = stdDev>0 ? (mean/stdDev)*Math.sqrt(252) : null;
   const downside = dailyPnls.filter(v=>v<0);
-  const downsideDev = downside.length ? Math.sqrt(downside.reduce((s,v)=>s+v*v,0)/downside.length) : 0;
+  const downsideDev = downside.length ? Math.sqrt(downside.reduce((s,v)=>s+v*v,0)/dailyPnls.length) : 0; // over all days, not only losing ones
   const sortino = downsideDev>0 ? (mean/downsideDev)*Math.sqrt(252) : null;
 
   // R-Multiple: only trades with a recorded stop-loss and known futures multiplier can get a real $-risk denominator
-  const withRisk = tl.filter(t => t.stopLoss && t.buy && Math.abs(t.buy-t.stopLoss)>0 && t.qty);
-  const rMultiples = withRisk.map(t => {
-    const riskDollars = Math.abs(t.buy - t.stopLoss) * t.qty * _getFuturesMultiplier(t.sym);
-    return riskDollars>0 ? tradeNet(t)/riskDollars : null;
-  }).filter(r => r!=null && isFinite(r));
+  const rMultiples = tl.map(_tradeR).filter(r => r!=null && isFinite(r));
   const avgR = rMultiples.length ? rMultiples.reduce((a,b)=>a+b,0)/rMultiples.length : null;
 
   // ── Edge Score (0-100) — one combined number for "is there a real statistical edge here", averaging
@@ -14298,23 +14328,23 @@ function renderStats(){
     if (rmultCh) rmultCh.destroy();
     rmultCh = _safeChart(rmultCanvas, { type:'bar', data:{ labels:bins, datasets:[{ data:counts, backgroundColor:bins.map((_,i)=>i<3?'rgba(199,95,95,.6)':'rgba(61,153,112,.6)'), borderRadius:4 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ ticks:{color:'#767f8e',font:{size:9}}, grid:{display:false} }, y:{ ticks:{color:'#767f8e',font:{size:9},stepSize:1}, grid:{color:'rgba(255,255,255,0.04)'} } } } });
   }
-  const ch=[...tl].sort((a,b)=>(a.date+a.btime).localeCompare(b.date+b.btime));
+  const ch=[...all].sort((a,b)=>(a.date+a.btime).localeCompare(b.date+b.btime));
   let cum=0;const eq=ch.map(t=>{cum+=tradeNet(t);return+cum.toFixed(2);});
   if(eqCh)eqCh.destroy();
   eqCh=_safeChart(document.getElementById('eqchart'),{type:'line',data:{labels:ch.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3d9970',backgroundColor:'rgba(61,153,112,0.07)',borderWidth:1.5,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxTicksLimit:10},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
-  const dmap={};tl.forEach(t=>{dmap[t.date]=(dmap[t.date]||0)+tradeNet(t);});
+  const dmap={};all.forEach(t=>{dmap[t.date]=(dmap[t.date]||0)+tradeNet(t);});
   const dk=Object.keys(dmap).sort();const dd2=dk.map(k=>+dmap[k].toFixed(2));
   if(dCh)dCh.destroy();
   dCh=_safeChart(document.getElementById('dchart'),{type:'bar',data:{labels:dk.map(d=>{const[y,m,dd]=d.split('-');return dd+'/'+m;}),datasets:[{data:dd2,backgroundColor:dd2.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#767f8e',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:8},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   const srt=[...tl].sort((a,b)=>tradeNet(b)-tradeNet(a));
-  const rf=t=>`<tr><td data-label="תאריך" class="mono" style="font-size:10px;color:var(--t3)">${fmtD(t.date)}</td><td data-label="שעה" style="color:var(--t3);font-size:10px">${t.btime.slice(0,5)}</td><td data-label="נטו $" class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
+  const rf=t=>`<tr><td data-label="תאריך" class="mono" style="font-size:10px;color:var(--t3)">${fmtD(t.date)}</td><td data-label="שעה" style="color:var(--t3);font-size:10px">${(t.btime||'').slice(0,5)}</td><td data-label="נטו $" class="mono ${tradeNet(t)>=0?'tw':'tl'}" style="font-weight:600">${fmt(tradeNet(t))}</td></tr>`;
   document.getElementById('top10').innerHTML=srt.slice(0,10).map(rf).join('');
   document.getElementById('bot10').innerHTML=srt.slice(-10).reverse().map(rf).join('');
 
   // Day of week analysis
   const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   const dowData={};
-  tl.forEach(t=>{
+  all.forEach(t=>{
     const dow=safeParse(t.date).getDay();
     if(!dowData[dow])dowData[dow]={pnl:0,trades:0,wins:0};
     const net=tradeNet(t);
@@ -14324,16 +14354,17 @@ function renderStats(){
   const dowVals=dowKeys.map(d=>+dowData[d].pnl.toFixed(2));
   if(dowCh)dowCh.destroy();
   dowCh=_safeChart(document.getElementById('dowChart'),{type:'bar',data:{labels:dowKeys.map(d=>days[d]),datasets:[{data:dowVals,backgroundColor:dowVals.map(v=>v>=0?'rgba(61,153,112,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
-  const rate=histRate(new Date().toISOString().slice(0,10));
+  const rate=histRate(_localToday());
   document.getElementById('dow-tbody').innerHTML=dowKeys.map(d=>{
     const dd=dowData[d];const avg=dd.trades?dd.pnl/dd.trades:0;const wr=dd.trades?(dd.wins/dd.trades*100).toFixed(0):0;
-    return `<tr><td data-label="יום" style="font-weight:500">${days[d]}</td><td data-label="עסקאות">${dd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">₪${fmtILS(dd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="יום" style="font-weight:500">${days[d]}</td><td data-label="עסקאות">${dd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${dd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${dd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">${fmtILS(dd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 
   // Hour of day analysis
   const hourData={};
   tl.forEach(t=>{
-    const hr=parseInt(t.btime.split(':')[0]);
+    const hr=parseInt((t.btime||'').split(':')[0]);
+    if(isNaN(hr))return;
     if(!hourData[hr])hourData[hr]={pnl:0,trades:0,wins:0};
     const net=tradeNet(t);
     hourData[hr].pnl+=net;hourData[hr].trades++;if(net>0)hourData[hr].wins++;
@@ -14344,7 +14375,7 @@ function renderStats(){
   hourCh=_safeChart(document.getElementById('hourChart'),{type:'bar',data:{labels:hrKeys.map(h=>h+':00'),datasets:[{data:hrVals,backgroundColor:hrVals.map(v=>v>=0?'rgba(114,149,184,.6)':'rgba(199,95,95,.6)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${c.raw.toFixed(2)}`}}},scales:{x:{ticks:{color:'#767f8e',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#767f8e',font:{size:9},callback:v=>(v<0?'-$':'$')+Math.abs(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
   document.getElementById('hour-tbody').innerHTML=hrKeys.map(h=>{
     const hd=hourData[h];const avg=hd.trades?hd.pnl/hd.trades:0;const wr=hd.trades?(hd.wins/hd.trades*100).toFixed(0):0;
-    return `<tr><td data-label="שעה" style="font-weight:500">${h}:00–${h+1}:00</td><td data-label="עסקאות">${hd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">₪${fmtILS(hd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
+    return `<tr><td data-label="שעה" style="font-weight:500">${h}:00–${h+1}:00</td><td data-label="עסקאות">${hd.trades}</td><td data-label="Win %" class="${parseFloat(wr)>=50?'cg':'cr'}">${wr}%</td><td data-label="P&L $" class="mono ${hd.pnl>=0?'cg':'cr'}" style="font-weight:600">$${hd.pnl.toFixed(2)}</td><td data-label="P&L ₪" style="color:var(--t3)">${fmtILS(hd.pnl*rate)}</td><td data-label="ממוצע" class="mono" style="color:var(--t3)">$${avg.toFixed(2)}</td></tr>`;
   }).join('');
 }
 
@@ -14435,7 +14466,7 @@ function openAdd(ft){
   editI=-1;
   document.getElementById('mtitle').innerHTML='הוספת רשומה <button class="cx" onclick="cModal()">×</button>';
   document.getElementById('del-btn').style.display='none';
-  const today=new Date().toISOString().slice(0,10);
+  const today=_localToday();
   document.getElementById('f-dt').value=today;
   document.getElementById('f-am').value='';
   document.getElementById('f-note').value='';
@@ -14556,7 +14587,7 @@ function cWd(){
 function saveRec(){
   const dt=document.getElementById('f-dt').value;
   const rawAm=parseFloat(document.getElementById('f-am').value);
-  const rt=parseFloat(document.getElementById('f-rt').value)||histRate(dt||new Date().toISOString().slice(0,10));
+  const rt=parseFloat(document.getElementById('f-rt').value)||histRate(dt||_localToday());
   if(!dt||isNaN(rawAm)||rawAm<=0){showToast('נא למלא תאריך וסכום','error');return;}
   const amUSD = mCurrency==='ILS' ? +(rawAm/rt).toFixed(2) : rawAm;
 
@@ -14589,7 +14620,7 @@ function saveRec(){
   else{r.company=document.getElementById('f-co').value;r.cat=_getFormCat();r.portVal=parseInt(document.getElementById('f-pv').value)||0;r.note=document.getElementById('f-note').value;}
   if(editI>=0)records[editI]=r;else records.push(r);
   cModal();renderAll();
-  if(mType==='משיכה'){try{saveData();}catch(e){console.warn('saveData',e);}}
+  try{saveData();}catch(e){console.warn('saveData',e);}
 }
 function delFromM(){if(editI<0)return;const _ri=editI;cModal();askDel(_ri);}
 let _di=-1;
@@ -14599,7 +14630,7 @@ function cCfm(){document.getElementById('cfm').classList.remove('open');_di=-1;}
 // CAT PICKER
 let _ci=-1;
 function openCatP(ri,e){e.stopPropagation();_ci=ri;const p=document.getElementById('cpick');p.style.top=(e.clientY+7)+'px';p.style.right=(window.innerWidth-e.clientX+7)+'px';p.style.left='auto';p.classList.add('open');}
-function setCat(c){if(_ci>=0){records[_ci].cat=c;renderAll();}_ci=-1;document.getElementById('cpick').classList.remove('open');}
+function setCat(c){if(_ci>=0){records[_ci].cat=c;renderAll();saveData();}_ci=-1;document.getElementById('cpick').classList.remove('open');}
 document.addEventListener('click',()=>{document.getElementById('cpick').classList.remove('open');_ci=-1;});
 
 // TABS
@@ -14932,7 +14963,7 @@ function cxUpdateConv() {
 }
 function openCX(i) {
   _cxEditI = (i !== undefined) ? i : -1;
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   if(_cxEditI >= 0) {
     const c = customExpenses[_cxEditI];
     document.getElementById('cx-cat').value = c.category;
@@ -14969,13 +15000,19 @@ function cxSave() {
   if (_cxCurrency==='ILS') { c.currency='ILS'; c.amountILS=rawAm; }
   if(_cxEditI>=0) customExpenses[_cxEditI]=c; else customExpenses.push(c);
   cxClose();renderAll();
+  try{saveData();}catch(e){console.warn('saveData',e);}
 }
 let _cxDelI=-1;
 function cxAskDel(i){_cxDelI=i;document.getElementById('cfm-msg').textContent='למחוק: '+customExpenses[i].desc+'?';document.getElementById('cfm').classList.add('open');}
 // Override doCfm to handle both records and custom expenses
+// A month deleted by hand is remembered on its template, so applyRecurring does not bring it back.
+function _skipRecurringMonth(r) {
+  const tmpl=r?.recurringId&&recurringTemplates.find(x=>x.id===r.recurringId);
+  if(tmpl)tmpl.skipMonths=[...new Set([...(tmpl.skipMonths||[]),String(r.date).slice(0,7)])];
+}
 function doCfm(){
   if(_cxDelI>=0){customExpenses.splice(_cxDelI,1);_cxDelI=-1;cCfm();renderAll();try{saveData();}catch(e){console.warn('saveData',e);}return;}
-  if(_di>=0){records.splice(_di,1);_di=-1;cCfm();renderAll();try{saveData();}catch(e){console.warn('saveData',e);}}
+  if(_di>=0){_skipRecurringMonth(records[_di]);records.splice(_di,1);_di=-1;cCfm();renderAll();try{saveData();}catch(e){console.warn('saveData',e);}}
 }
 function cxDel(){if(_cxEditI>=0){cxClose();cxAskDel(_cxEditI);}}
 
@@ -14998,7 +15035,7 @@ function applyRecurring() {
       const m = String(cur.getMonth()+1).padStart(2,'0');
       const d = String(Math.min(tmpl.recurDay, new Date(y, cur.getMonth()+1, 0).getDate())).padStart(2,'0');
       const dateStr = `${y}-${m}-${d}`;
-      const already = records.some(r => r.recurringId === tmpl.id && r.date.startsWith(`${y}-${m}`));
+      const already = (tmpl.skipMonths||[]).includes(`${y}-${m}`) || records.some(r => r.recurringId === tmpl.id && r.date.startsWith(`${y}-${m}`));
       if(!already) {
         records.push({
           id: uid(), date: dateStr, type: 'הוצאה',
@@ -15444,7 +15481,7 @@ function exportAll() {
   const data = { records, tradesList, customExpenses, pnlOn, commSettings, customSymbols, recurringTemplates, exported: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'dor_trading_backup_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+  a.download = 'dor_trading_backup_' + _localToday() + '.json'; a.click();
 }
 function importAll(inp) {
   if (!canUse('backup')) { showUpgradeModal('backup'); inp.value=''; return; }
@@ -15707,7 +15744,7 @@ function renderDM() {
     {lbl:'עסקאות מסחר',val:tradesList.length+' עסקאות',col:tradesList.length?'cg':'t3'},
     {lbl:'הוצאות נוסטרו',val:exp.length+' רשומות | $'+tExp.toFixed(2),col:exp.length?'cy':'t3'},
     {lbl:'הוצאות חופשיות',val:customExpenses.length+' פריטים',col:'t2'},
-    {lbl:'משיכות',val:wds.length+' | נטו: $'+wds.reduce((s,r)=>s+(r.wdNet||r.amount),0).toFixed(2),col:'cp'},
+    {lbl:'משיכות',val:wds.length+' | נטו: $'+wds.reduce((s,r)=>s+(r.wdNet??r.amount),0).toFixed(2),col:'cp'},
     {lbl:'P&L נטו כולל',val:'$'+netPnl.toFixed(2),col:netPnl>=0?'cg':'cr'},
     {lbl:'גיבוי אחרון',val:localStorage.getItem('dor_saved')||'לא נשמר',col:'t3'},
   ].map(r=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
@@ -15786,7 +15823,7 @@ function renderAcctMenu() {
   const list = document.getElementById('acct-list');
   if (!list) return;
 
-  const totalNet = totalNetPnl();
+  const totalNet = _origTotalNetPnl(); // this row is always "all accounts"
   const allPnlEl = document.getElementById('acct-all-pnl');
   if (allPnlEl) { allPnlEl.textContent = (totalNet>=0?'+':'')+'$'+totalNet.toFixed(2); allPnlEl.className='acct-pnl '+(totalNet>=0?'cg':'cr'); }
 
@@ -15947,16 +15984,18 @@ document.addEventListener('click', e => {
 const _origTotalNetPnl = totalNetPnl;
 const _origTotalGrossPnl = totalGrossPnl;
 window.totalNetPnl = function() {
-  if (!window._filteredTrades) return _origTotalNetPnl();
-  return +window._filteredTrades.reduce((s,t)=>s+tradeNet(t),0).toFixed(2);
+  return +getActiveTrades().reduce((s,t)=>s+tradeNet(t),0).toFixed(2);
 };
 window.totalGrossPnl = function() {
-  if (!window._filteredTrades) return _origTotalGrossPnl();
-  return +window._filteredTrades.reduce((s,t)=>s+t.pnl,0).toFixed(2);
+  return +getActiveTrades().reduce((s,t)=>s+t.pnl,0).toFixed(2);
 };
-// Override tradesList access in stats/TJ to use filtered
+window.totalComm = function() {
+  return +getActiveTrades().reduce((s,t)=>s+tradeComm(t),0).toFixed(2);
+};
+// The trades the account selector currently shows, read fresh so new trades appear at once
 function getActiveTrades() {
-  return window._filteredTrades || tradesList;
+  const every = selectedAccounts.has('__all__') || !selectedAccounts.size;
+  return every ? tradesList : tradesList.filter(t => selectedAccounts.has(t.acct));
 }
 
 // Shared account-object factory — every creation path (add-account, inline-picker, manual-entry) uses this
@@ -15971,7 +16010,7 @@ function _newAccountObject(name, number) {
     company: '',            // חברת פרופ / סוג תיק
     accountSize: null,      // גודל חשבון התחלתי
     balance: null,          // יתרת חשבון נוכחית (מתעדכן ידנית)
-    openDate: new Date().toISOString().slice(0,10), // תאריך פתיחת התיק
+    openDate: _localToday(), // תאריך פתיחת התיק
     plannedWithdrawal: null,// סכום משיכה ראשון מתוכנן
     status: 'evaluation',   // evaluation | passed | funded | pending_withdrawal | withdrawn
     withdrawals: [],        // [{id,date,amount,note}]
@@ -16136,7 +16175,7 @@ function openAcctGoals(id) {
   document.getElementById('ag-pass-deadline').value = a.goals.pass.deadline || '';
   document.getElementById('ag-pass-buffer').value   = a.goals.pass.buffer || '';
   document.getElementById('ag-burn-limit').value    = a.goals.burn.limit || '';
-  document.getElementById('ag-wd-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('ag-wd-date').value = _localToday();
   document.getElementById('ag-wd-amount').value = '';
   document.getElementById('ag-wd-note').value = '';
   _agRenderCustomList();
@@ -17065,7 +17104,7 @@ function ecalStars(impactOrEvent) {
 }
 
 async function _fetchEcalEvents(forceRefresh) {
-  const todayKey = new Date().toISOString().slice(0, 10) + '_' + ecalMinImpact();  // v43: cache per filter level
+  const todayKey = _localToday() + '_' + ecalMinImpact();  // v43: cache per filter level
   // Use localStorage cache — valid only for today
   if (!forceRefresh) {
     try {
@@ -17792,7 +17831,7 @@ async function udpClearPerms() {
 
 async function renderAdminMetrics() {
   const users = await _getUsers();
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const todayN = users.filter(u=>{ const d=u.registeredAt?.toDate?u.registeredAt.toDate():new Date(u.registeredAt||0); return d.toISOString().startsWith(today); }).length;
   const active = users.filter(u=>u.status!=='blocked').length;
   const paid   = users.filter(u=>u.plan==='pro'||u.plan==='lifetime').length;
@@ -19355,7 +19394,7 @@ const DAILY_TIPS = [
 let currentTipIdx = 0;
 
 function _getTodayTipIdx() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const saved = localStorage.getItem('dor_tip_idx');
   const savedDate = localStorage.getItem('dor_tip_date');
   if (savedDate === today && saved !== null) return parseInt(saved);
@@ -19369,7 +19408,7 @@ function _getTodayTipIdx() {
 function renderTip(offset) {
   const wrap = document.getElementById('daily-tip-wrap');
   if (!wrap) return;
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   if (localStorage.getItem('dor_tip_dismissed') === today && offset === undefined) { wrap.innerHTML=''; return; }
   if (offset !== undefined) currentTipIdx = ((offset % DAILY_TIPS.length) + DAILY_TIPS.length) % DAILY_TIPS.length;
   const tip = DAILY_TIPS[currentTipIdx];
@@ -19390,7 +19429,7 @@ function renderTip(offset) {
 }
 
 function dismissTip() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   localStorage.setItem('dor_tip_dismissed', today);
   const wrap = document.getElementById('daily-tip-wrap');
   if (wrap) { wrap.style.opacity='0'; wrap.style.transition='opacity .3s'; setTimeout(()=>{wrap.innerHTML='';wrap.style.opacity='';wrap.style.transition='';},300); }
@@ -19491,11 +19530,14 @@ function _updateRR(t) {
   const rrEl   = document.getElementById('ta-rr-display');
   if (!stopEl || !rrEl) return;
   const stop  = parseFloat(stopEl.value);
-  const entry = parseFloat(t?.entry || (tradesList[_taIdx]?.entry) || 0);
-  const exit  = parseFloat(t?.exit  || (tradesList[_taIdx]?.exit)  || 0);
-  if (!stop || !entry || !exit) { rrEl.textContent = ''; return; }
+  const trade = t || tradesList[_taIdx];
+  if (!stop || !trade?.buy || !trade?.sell) { rrEl.textContent = ''; return; }
+  const dir = _tradeDir({...trade, stopLoss:stop});
+  if (!dir) { rrEl.textContent = 'כיוון לא ידוע'; return; }
+  const entry  = dir==='short' ? trade.sell : trade.buy;
+  const exit   = dir==='short' ? trade.buy  : trade.sell;
   const risk   = Math.abs(entry - stop);
-  const reward = Math.abs(exit  - entry);
+  const reward = dir==='short' ? entry - exit : exit - entry; // negative on a losing trade
   if (!risk) { rrEl.textContent = ''; return; }
   const rr = (reward/risk).toFixed(2);
   const pos = reward >= risk;
@@ -19712,7 +19754,7 @@ document.getElementById('ta-modal').addEventListener('click', e => { if(e.target
 // ── STRATEGY STATS ──
 function renderStrategyStats() {
   const stratMap = {};
-  tradesList.forEach(t => {
+  getActiveTrades().forEach(t => {
     const s = t.strategy && t.strategy.trim() ? t.strategy.trim() : null;
     if (!s) return;
     if (!stratMap[s]) stratMap[s] = {pnl:0, trades:0, wins:0, starsSum:0, starsN:0};
@@ -19749,7 +19791,7 @@ function renderStrategyStats() {
         return `<tr>
           <td data-label="אסטרטגיה">
             <div style="display:flex;align-items:center;gap:8px">
-              <span class="strat-badge" style="max-width:160px">${k}</span>
+              <span class="strat-badge" style="max-width:160px">${escHtml(k)}</span>
               <div style="flex:1;max-width:80px;background:var(--bg4);border-radius:2px;height:3px;overflow:hidden">
                 <div style="width:${barW}%;height:100%;background:${d.pnl>=0?'var(--gr)':'var(--re)'};border-radius:2px"></div>
               </div>
@@ -19798,7 +19840,7 @@ function _renderGroupedPerfTable(elId, groupMap, emptyMsg, colLabel) {
 
 function renderSymbolStats() {
   const map = {};
-  tradesList.forEach(t => {
+  getActiveTrades().forEach(t => {
     const s = (t.sym || '').trim();
     if (!s) return;
     if (!map[s]) map[s] = {pnl:0, trades:0, wins:0};
@@ -19811,7 +19853,7 @@ function renderSymbolStats() {
 
 function renderSetupStats() {
   const map = {};
-  tradesList.forEach(t => {
+  getActiveTrades().forEach(t => {
     const s = (t.setupType || '').trim();
     if (!s) return;
     if (!map[s]) map[s] = {pnl:0, trades:0, wins:0};
@@ -19825,12 +19867,12 @@ function renderSetupStats() {
 function renderMistakeStats() {
   const body = document.getElementById('mistake-stats-body');
   if (!body) return;
-  const withPlanFlag = tradesList.filter(t => t.followedPlan === true || t.followedPlan === false);
+  const withPlanFlag = getActiveTrades().filter(t => t.followedPlan === true || t.followedPlan === false);
   const offPlan = withPlanFlag.filter(t => t.followedPlan === false);
   const offPlanPct = withPlanFlag.length ? Math.round(offPlan.length/withPlanFlag.length*100) : null;
   // Recurring mistakes — group identical free-text mistake entries (trimmed, case-insensitive)
   const mistakeMap = {};
-  tradesList.forEach(t => {
+  getActiveTrades().forEach(t => {
     const m = (t.mistake || '').trim();
     if (!m) return;
     const key = m.toLowerCase();
@@ -22754,16 +22796,15 @@ function openTradeChart(ti) {
   const pnlEl = document.getElementById('tcm-pnl');
   pnlEl.textContent = (net>=0?'+':'')+'$'+net.toFixed(2);
   pnlEl.style.color = net>=0?'var(--gr)':'var(--re)';
-  const isLong = (t.buy <= t.sell) ? net >= 0 : net < 0;
+  const dir = _tradeDir(t);
   const dirEl = document.getElementById('tcm-dir');
-  dirEl.textContent = isLong?'LONG':'SHORT';
-  dirEl.style.background = isLong?'rgba(39,160,101,.15)':'rgba(194,88,88,.15)';
-  dirEl.style.color      = isLong?'var(--gr)':'var(--re)';
+  dirEl.textContent = dir?dir.toUpperCase():'כיוון לא ידוע';
+  dirEl.style.background = dir==='long'?'rgba(39,160,101,.15)':dir==='short'?'rgba(194,88,88,.15)':'var(--bg3)';
+  dirEl.style.color      = dir==='long'?'var(--gr)':dir==='short'?'var(--re)':'var(--t3)';
   const move = ((Math.abs(t.sell-t.buy)/t.buy)*100).toFixed(2);
   const moveEl = document.getElementById('tcm-move');
   if (moveEl) { moveEl.textContent = (t.sell>t.buy?'+':'-')+move+'%'; moveEl.style.color=t.sell>t.buy?'var(--gr)':'var(--re)'; }
-  const gross = Math.abs(t.sell-t.buy)*(t.qty||1);
-  const grossEl = document.getElementById('tcm-gross'); if(grossEl) grossEl.textContent='$'+gross.toFixed(2);
+  const grossEl = document.getElementById('tcm-gross'); if(grossEl) grossEl.textContent=fmt(t.pnl);
   const commEl = document.getElementById('tcm-comm'); if(commEl) commEl.textContent='$'+(tradeComm?tradeComm(t).toFixed(2):'—');
   const stratEl = document.getElementById('tcm-strat'); if(stratEl) stratEl.textContent=t.strategy||'—';
   const inp = document.getElementById('tcm-sym-inp'); if(inp) inp.value=t.sym||'';
@@ -22794,10 +22835,11 @@ function _tcmReloadChart() {
 function _tradeChartSymbol(symbol, tradeDate) {
   const raw=String(symbol||'').trim().toUpperCase();
   if(raw.includes(':')) return raw;
-  const match=/^(MNQ|NQ|MES|ES)(?:([FGHJKMNQUVXZ])(\d{1,4})|(1!))?(?:@CME)?$/.exec(raw);
+  const match=/^(MNQ|NQ|MES|ES|M2K|RTY|MYM|YM|MGC|GC|SIL|SI|HG|MCL|CL|NG)(?:([FGHJKMNQUVXZ])(\d{1,4})|(1!))?(?:@\w+)?$/.exec(raw);
   if(!match) return raw;
   const root=match[1];
-  if(!match[2]) return 'CME_MINI:'+root+'1!';
+  const exchange={MYM:'CBOT_MINI',YM:'CBOT_MINI',MGC:'COMEX',GC:'COMEX',SIL:'COMEX',SI:'COMEX',HG:'COMEX',MCL:'NYMEX',CL:'NYMEX',NG:'NYMEX'}[root]||'CME_MINI';
+  if(!match[2]) return exchange+':'+root+'1!';
   const digits=match[3];
   let year=Number(digits);
   if(digits.length<4){
@@ -22807,13 +22849,27 @@ function _tradeChartSymbol(symbol, tradeDate) {
     if(year<reference-span/2) year+=span;
     if(year>reference+span/2) year-=span;
   }
-  return 'CME_MINI:'+root+match[2]+year;
+  return exchange+':'+root+match[2]+year;
 }
 
+// TradingView refuses CME, CBOT, COMEX and NYMEX symbols inside embedded widgets ("only available on TradingView").
+// The embed falls back to a CFD on the same underlying; the exact contract stays one click away.
+function _embedProxySymbol(symbol) {
+  const root=/^(?:CME_MINI|CBOT_MINI|COMEX|NYMEX):(MNQ|NQ|MES|ES|MYM|YM|M2K|RTY|MGC|GC|SIL|SI|MCL|CL)/.exec(symbol)?.[1];
+  return {MNQ:'OANDA:NAS100USD',NQ:'OANDA:NAS100USD',MES:'OANDA:SPX500USD',ES:'OANDA:SPX500USD',MYM:'OANDA:US30USD',YM:'OANDA:US30USD',M2K:'OANDA:US2000USD',RTY:'OANDA:US2000USD',MGC:'OANDA:XAUUSD',GC:'OANDA:XAUUSD',SIL:'OANDA:XAGUSD',SI:'OANDA:XAGUSD',MCL:'OANDA:WTICOUSD',CL:'OANDA:WTICOUSD'}[root]||null;
+}
 function _loadTradingViewChart(sym, date) {
-  sym=_tradeChartSymbol(sym,date);
+  const exact=_tradeChartSymbol(sym,date),proxy=_embedProxySymbol(exact);
+  sym=proxy||exact;
   const symbolInput=document.getElementById('tcm-sym-inp');
-  if(symbolInput) symbolInput.value=sym;
+  if(symbolInput) symbolInput.value=exact;
+  const note=document.getElementById('tcm-chart-note');
+  if(note){
+    note.hidden=false;
+    note.textContent=(proxy?'גרף ייחוס '+proxy+': TradingView לא מאפשר להטמיע את '+exact+'. המחירים אינם מחירי החוזה. ':'')+'הגרף המוטמע מציג היסטוריה אחרונה ואינו יכול לקפוץ לתאריך העסקה. ';
+    const a=document.createElement('a');a.href='https://www.tradingview.com/chart/?symbol='+encodeURIComponent(exact);a.target='_blank';a.rel='noopener noreferrer';a.textContent='פתח את '+exact+' ב־TradingView';
+    note.appendChild(a);
+  }
   const tv=document.getElementById('tcm-chart-tv'); const loading=document.getElementById('tcm-loading');
   if(!tv) return;
   tv.innerHTML=''; if(loading) loading.style.display='flex';
@@ -22824,7 +22880,7 @@ function _loadTradingViewChart(sym, date) {
   const doLoad=()=>{
     if(loading) loading.style.display='none';
     try {
-      new TradingView.widget({autosize:true,symbol:sym,interval:'5',timezone:'America/New_York',theme,style:'1',
+      new TradingView.widget({autosize:true,symbol:sym,interval:'5',timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York',theme,style:'1',
         locale:'he_IL',toolbar_bg:theme==='dark'?'#0b0f16':'#ffffff',enable_publishing:false,
         withdateranges:true,hide_side_toolbar:false,allow_symbol_change:true,save_image:false,
         container_id:cId,range:'1M',studies:['Volume@tv-basicstudies','VWAP@tv-basicstudies'],
@@ -22864,7 +22920,7 @@ function _checkMobileInstall() {
 }
 function _updateStreak() {
   try {
-    const uid=currentUser?.uid||'guest', key='fayna_streak_'+uid, today=new Date().toISOString().slice(0,10);
+    const uid=currentUser?.uid||'guest', key='fayna_streak_'+uid, today=_localToday();
     let d=JSON.parse(localStorage.getItem(key)||'{}');
     if(d.lastDate===today) return d;
     const yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
@@ -22875,7 +22931,7 @@ function _updateStreak() {
 function _showReturnToast() {
   try {
     const uid=currentUser?.uid||'guest', data=JSON.parse(localStorage.getItem('fayna_streak_'+uid)||'{}');
-    const today=new Date().toISOString().slice(0,10), key='fayna_rt_'+uid;
+    const today=_localToday(), key='fayna_rt_'+uid;
     if(localStorage.getItem(key)===today) return;
     localStorage.setItem(key,today);
     const n=data.count||1;
@@ -23280,7 +23336,7 @@ async function setDailyGoal() {
 function renderDailyGoal() {
   const el = document.getElementById('daily-goal-widget');
   if (!el) return;
-  const today = new Date().toISOString().slice(0,10);
+  const today = _localToday();
   const todayPnl = tradesList.filter(t => (t.date||'').slice(0,10) === today).reduce((s,t) => s+tradeNet(t), 0);
   if (!_dailyGoal) {
     el.innerHTML = `<div style="font-size:11px;color:var(--t3);margin-bottom:4px">🎯 יעד יומי</div>
@@ -23400,7 +23456,8 @@ function renderHourHeatmap() {
   if (!grid) return;
   const hourData = {};
   for (let h=0; h<24; h++) hourData[h] = {wins:0, total:0};
-  tradesList.forEach(t => {
+  getActiveTrades().forEach(t => {
+    if (t.isManual) return;
     const h = parseInt((t.btime||'00:00').slice(0,2), 10);
     if (isNaN(h)) return;
     hourData[h].total++;
@@ -23533,7 +23590,7 @@ async function exportToExcel() {
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'עסקאות');
-  XLSX.writeFile(wb, `fayna-trades-${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, `fayna-trades-${_localToday()}.xlsx`);
   showToast('✅ קובץ Excel הורד!');
 }
 
@@ -24097,6 +24154,7 @@ function _calcKey(e){
         <button class="cx" onclick="closeTradeChart()" style="font-size:22px;width:32px;height:32px">×</button>
       </div>
     </div>
+    <div id="tcm-chart-note" role="note" hidden style="padding:6px 16px;font-size:11px;color:var(--t2);border-bottom:1px solid var(--border)"></div>
     <div id="tcm-chart-area"><div class="tcm-loading" id="tcm-loading"><div class="tcm-spinner"></div><span>טוען גרף TradingView...</span></div><div id="tcm-chart-tv"></div></div>
     <div class="tcm-footer">
       <div class="tcm-metric"><span class="tcm-metric-lbl">תנועה %:</span><span class="tcm-metric-val" id="tcm-move">—</span></div>
@@ -24482,7 +24540,7 @@ function exportMyData() {
   const blob = new Blob([JSON.stringify(dump, null, 2)], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `fayna-my-data-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `fayna-my-data-${_localToday()}.json`;
   a.click(); URL.revokeObjectURL(a.href);
   showToast('הנתונים שלך הורדו 📦','success');
 }
@@ -25511,7 +25569,7 @@ function _ccWeekStats() {
 }
 function _ccTodayMood() {
   try {
-    const today = new Date().toISOString().slice(0,10);
+    const today = _localToday();
     const s = (coachSessions||[]).filter(x => (x.date||'').slice(0,10) === today).pop();
     if (!s) return null;
     const m = s.answers?.morning_mood ?? s.answers?.mood;
@@ -26206,7 +26264,7 @@ Agents.register({
     if (!risk?.today?.limit) return { summary: 'לא הוגדר סטופ יומי' };
 
     const pct = risk.today.pct;
-    const key = 'fx_risk_notified_' + new Date().toISOString().slice(0, 10);
+    const key = 'fx_risk_notified_' + _localToday();
     let sent = {};
     try { sent = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
 
@@ -26347,7 +26405,7 @@ Agents.register({
     if (broken.length) issues.push(broken.length + ' רשומות חסרות שדות');
 
     if (issues.length) {
-      const key = 'fx_integrity_' + new Date().toISOString().slice(0, 10);
+      const key = 'fx_integrity_' + _localToday();
       if (!localStorage.getItem(key)) {
         localStorage.setItem(key, '1');
         ctx.notify('system', '🧹 נמצאו בעיות בנתונים',
@@ -26373,7 +26431,7 @@ Agents.register({
     const hour = new Date().getHours();
     if (hour < 22) return { summary: 'ממתין לסיום יום המסחר' };
 
-    const key = 'fx_insight_' + new Date().toISOString().slice(0, 10);
+    const key = 'fx_insight_' + _localToday();
     if (localStorage.getItem(key)) return { summary: 'כבר נשלח היום' };
 
     let a; try { a = _aiAnalyze(); } catch (e) { return; }
@@ -26569,7 +26627,7 @@ Agents.register({
     if (!ctx.user?.isAdmin || !digestEmailEnabled()) return { summary: 'משלוח יומי כבוי' };
 
     const hour = parseInt(localStorage.getItem('fx_digest_hour') || '21', 10);
-    const key  = 'fx_digest_' + new Date().toISOString().slice(0, 10);
+    const key  = 'fx_digest_' + _localToday();
     if (localStorage.getItem(key)) return { summary: 'נשלח כבר היום' };
     if (new Date().getHours() < hour) return { summary: 'ממתין לשעה ' + hour + ':00' };
 
