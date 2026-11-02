@@ -3275,24 +3275,25 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <button id="ref-chip" onclick="openReferralPanel()" title="הזמן חברים וקבל חודש Pro חינם">🎁 <span>הזמן חברים</span></button>
     <div class="fayna-appearance" role="group" aria-label="מראה האתר"><button type="button" data-fayna-mode="light" aria-pressed="false" title="אבן חמה — מצב בהיר" onclick="setFaynaTheme('light')">בהיר</button><button type="button" data-fayna-mode="dark" aria-pressed="true" title="גרפיט ומנטה — מצב כהה" onclick="setFaynaTheme('dark')">כהה</button></div>
     <!-- Notification bell -->
-    <button id="notif-bell-btn" onclick="toggleNotifPanel(event)" title="התראות" style="position:relative;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-size:15px;flex-shrink:0">
-      🔔<span id="notif-badge" style="display:none;position:absolute;top:-3px;left:-3px;background:var(--re);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px"></span>
+    <button id="notif-bell-btn" onclick="toggleNotifPanel(event)" title="התראות" aria-label="התראות" style="position:relative;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-size:15px;flex-shrink:0">
+      <svg class="trb-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span id="notif-badge" style="display:none;position:absolute;top:-3px;left:-3px;background:var(--re);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px"></span>
     </button>
-    <span id="nav-status" aria-live="polite" style="font-size:10.5px;color:var(--t3);white-space:nowrap;flex-shrink:0"></span>
-    <button id="nav-save-btn" onclick="navSave()" title="שמור (Ctrl+S)" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--t3);cursor:pointer;font-size:13px;flex-shrink:0;transition:all .25s">💾</button>
+    <button type="button" id="nav-status" class="trb-sync" onclick="navSave()" title="שמור עכשיו (Ctrl+S)" aria-live="polite"></button>
+    <button id="nav-save-btn" onclick="navSave()" title="שמור (Ctrl+S)" aria-label="שמור" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--t3);cursor:pointer;font-size:13px;flex-shrink:0;transition:all .25s"><svg class="trb-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2zM8 3v5h7V3M8 21v-7h8v7"/></svg></button>
     <button id="nav-undo-btn" onclick="undoLast()" title="בטל פעולה אחרונה (Ctrl+Z)" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;flex-shrink:0;transition:all .2s;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
     <!-- ⋯ overflow menu: theme, ticker, PWA, instagram, tour, logout -->
     <div class="hdr-more" id="hdr-more">
-      <button class="hdr-more-btn" onclick="toggleHdrMore(event)" title="עוד אפשרויות">⋯</button>
+      <button class="hdr-more-btn" onclick="toggleHdrMore(event)" title="החשבון שלי ואפשרויות" aria-label="החשבון שלי ואפשרויות" aria-haspopup="true"><span class="trb-avatar" id="trb-avatar" aria-hidden="true">FT</span></button>
       <div class="hdr-more-menu" id="hdr-more-menu">
+        <div class="trb-menu-user" id="trb-menu-user"><span class="trb-avatar" id="trb-avatar-lg" aria-hidden="true">FT</span><div><b id="trb-menu-name">—</b><small id="trb-menu-plan"></small></div></div>
         <button class="hdr-mi theme-toggle" id="theme-toggle-btn" onclick="cycleTheme()" title="ערכת נושא: Dark Professional (לחץ להחלפה)">☀️ ערכת נושא</button>
-        <button class="hdr-mi" id="ticker-toggle-mi" onclick="toggleTicker()">📈 הסתר טיקר מדדים</button>
-        <button class="hdr-mi" id="pwa-install-btn" onclick="installPWA()" title="התקן אפליקציה">📲 התקן אפליקציה</button>
-        <a class="hdr-mi" id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading">📷 אינסטגרם</a>
-        <button class="hdr-mi" onclick="startTour()" title="סיור מודרך">❔ סיור מודרך</button>
-        <button class="hdr-mi" id="edit-mode-btn" onclick="toggleEditMode();toggleHdrMore(event)" title="מצב עריכה חופשית" style="display:none">✏️ מצב עריכה</button>
+        <button class="hdr-mi" id="ticker-toggle-mi" onclick="toggleTicker()">הסתר טיקר מדדים</button>
+        <button class="hdr-mi" id="pwa-install-btn" onclick="installPWA()" title="התקן אפליקציה">התקן אפליקציה</button>
+        <a class="hdr-mi" id="nav-instagram-btn" href="https://www.instagram.com/faynatrading?igsh=MXR5dTg2NGcxM3B4" target="_blank" rel="noopener" title="@faynatrading">אינסטגרם</a>
+        <button class="hdr-mi" onclick="startTour()" title="סיור מודרך">סיור מודרך</button>
+        <button class="hdr-mi" id="edit-mode-btn" onclick="toggleEditMode();toggleHdrMore(event)" title="מצב עריכה חופשית" style="display:none">מצב עריכה</button>
         <div class="hdr-more-sep"></div>
-        <button class="hdr-mi" id="nav-logout-btn" style="display:none;color:var(--t3)" onclick="doLogout()">🚪 יציאה</button>
+        <button class="hdr-mi" id="nav-logout-btn" style="display:none;color:var(--t3)" onclick="doLogout()">יציאה מהחשבון</button>
       </div>
     </div>
     <!-- Hamburger for mobile -->
@@ -11381,6 +11382,12 @@ var _TRB_PERIODS=[['all','כל הזמן'],['month','החודש'],['today','הי�
 function _trbSyncDate(){const p=_TRB_PERIODS.find(x=>x[0]===_homePeriod)||_TRB_PERIODS[0];const t=document.getElementById('trb-date-txt');if(t)t.textContent=p[1];const b=document.getElementById('trb-date');if(b){b.setAttribute('aria-label','תקופה: '+p[1]);b.classList.toggle('active',p[0]!=='all');}}
 function _trbDate(){const i=_TRB_PERIODS.findIndex(x=>x[0]===_homePeriod);_homePeriod=_TRB_PERIODS[(i+1)%_TRB_PERIODS.length][0];_trbSyncDate();renderHome();}
 function _trbCurrency(btn){if(typeof toggleCurrency!=='function')return;const old=document.querySelector('.ftb-btn[onclick*="toggleCurrency"]')||btn;toggleCurrency(old);const ils=typeof _fxOn==='function'&&_fxOn();document.getElementById('trb-cur-sym').textContent=ils?'₪':'$';document.getElementById('trb-cur-txt').textContent=ils?'שקלים':'דולרים';btn.setAttribute('aria-pressed',String(ils));btn.setAttribute('aria-label','מטבע תצוגה: '+(ils?'שקלים':'דולרים'));}
+/* v95: user avatar + menu header mirror the (hidden) user badge text */
+(function(){function initials(n){const w=String(n||'').replace(/[^\p{L}\p{N}\s]/gu,' ').trim().split(/\s+/).filter(Boolean);return w.length?(w[0][0]+(w[1]?w[1][0]:'')).toUpperCase():'FT';}
+function sync(){const u=typeof currentUser!=='undefined'&&currentUser?String(currentUser.name||currentUser.displayName||'').trim():'';const t=(document.getElementById('nav-user-name-text')?.textContent||'').trim(),fromText=t&&t!=='—'?(t.includes(',')?t.split(',').pop().trim():t):'';const name=u||fromText;const plan=(document.getElementById('nav-plan-badge')?.textContent||'').replace(/[^\p{L}\s]/gu,'').trim();
+['trb-avatar','trb-avatar-lg'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=initials(name);});const nm=document.getElementById('trb-menu-name');if(nm)nm.textContent=name||'Fayna Trading';const pl=document.getElementById('trb-menu-plan');if(pl)pl.textContent=plan;}
+function start(){sync();const o=new MutationObserver(sync);['nav-user-name-text','nav-plan-badge'].forEach(id=>{const e=document.getElementById(id);if(e)o.observe(e,{childList:true,characterData:true,subtree:true});});}
+if(typeof document==='undefined')return;if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();})();
 var _homeCalMonth = null;
 function _homeStats(rows, netOf) {
   let wins=0,losses=0,be=0,sumW=0,sumL=0;const daily={},count={};
@@ -15534,10 +15541,10 @@ let _cloudSaveAgain = false;
 function _updateSyncDot(status) {
   const dot = document.getElementById('nav-status');
   if (!dot) return;
-  if      (status === 'syncing') { dot.textContent = '↑ שומר…'; dot.style.color = '#bfa15e'; }
-  else if (status === 'synced')  { dot.textContent = '☁ מסונכרן'; dot.style.color = '#3d9970'; }
-  else if (status === 'error')   { dot.textContent = '● לא מחובר'; dot.style.color = '#c75f5f'; }
-  else                           { dot.textContent = '● live'; dot.style.color = 'var(--t3)'; }
+  /* v95: plain words; the coloured dot comes from CSS via data-state */
+  const map = {syncing:'שומר…', synced:'נשמר', error:'לא מחובר'};
+  dot.dataset.state = map[status] ? status : 'live';
+  dot.textContent = map[status] || 'מחובר';
 }
 
 function _cloudSave() {
@@ -27177,6 +27184,6 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=94">
+<link rel="stylesheet" href="fayna-tr-theme.css?v=95">
 </body>
 </html>
