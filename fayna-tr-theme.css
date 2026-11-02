@@ -488,3 +488,7 @@ html[data-fayna-theme] .sidenav img.sn-brand-img{width:clamp(72px,5vw,108px)!imp
 .trh-pf-kpi{flex-direction:column;align-items:center;gap:4px;padding:6px 10px;border-radius:12px}
 .trh-pf-kpi small{font-size:clamp(10px,.55vw,13px)}
 .trh-pf-kpi b{font-size:clamp(18px,1.15vw,30px);padding:2px 10px}
+/* v101: Profit Factor — small and quiet inside the ratio card */
+#home-dashboard .trh-pf-kpi{flex-direction:row;align-items:baseline;gap:6px;padding:0;border:0!important;background:none!important;border-radius:0;align-self:flex-start;margin-top:2px}
+#home-dashboard .trh-pf-kpi small{font-size:clamp(11px,.6vw,13px);color:var(--t3);font-weight:500;letter-spacing:0}
+#home-dashboard .trh-pf-kpi b{font-size:clamp(13px,.72vw,16px);font-weight:600;padding:0;background:none!important;color:var(--t2)!important;border-radius:0}
