@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v93-slim-topbar-20261101';
+const VERSION    = 'fayna-v94-css-cache-fix-20261102';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
@@ -27,7 +27,7 @@ const PRECACHE = [
   './index.html',
   './manifest.json',
   './fayna-experience.css',
-  './fayna-tr-theme.css',
+  './fayna-tr-theme.css?v=94',
   './fayna-experience.js',
   './fayna-finance-recovery.js',
   './fayna-finance-recovery-ui.js',
@@ -52,9 +52,11 @@ const NEVER_CACHE = [
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL);
-    await cache.addAll(PRECACHE).catch(() => {
+    /* v94: bypass the browser's HTTP cache so a new release never precaches yesterday's file */
+    const fresh = u => new Request(u, { cache: 'reload' });
+    await cache.addAll(PRECACHE.map(fresh)).catch(() => {
       /* a single missing file must not abort the whole install */
-      return Promise.all(PRECACHE.map(u => cache.add(u).catch(() => {})));
+      return Promise.all(PRECACHE.map(u => cache.add(fresh(u)).catch(() => {})));
     });
     await self.skipWaiting();
   })());
