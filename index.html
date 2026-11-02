@@ -17818,6 +17818,8 @@ async function sendWelcomeWA(users) {
 
 function _renderWelcomeBadge(count) {
   let badge = document.getElementById('_welcome-badge');
+  /* v108: the welcome-greeting banner was removed from the admin panel at the owner's request. */
+  if (badge) badge.remove(); return;
   if (!count) { if(badge) badge.remove(); return; }
   if (!badge) {
     badge = document.createElement('div'); badge.id = '_welcome-badge';
