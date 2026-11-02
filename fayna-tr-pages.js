@@ -261,3 +261,36 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
   window.addEventListener('load', install);
 })();
+
+/* v105 — settings in the TradeReport layout: tabs on top, profile card with the photo.
+   Moves existing nodes only (ids and handlers unchanged); adds two shortcut tabs. */
+(function () {
+  'use strict';
+  if (typeof document === 'undefined') return;
+  function init() {
+    const layout = document.querySelector('#tp-personal .pa-layout'); if (!layout || layout.classList.contains('trset')) return;
+    layout.classList.add('trset');
+    const nav = layout.querySelector('.pa-sidebar-nav');
+    const rename = { 'pasnav-profile': 'הפרופיל שלי', 'pasnav-security': 'אבטחה וסיסמה', 'pasnav-notif': 'התראות', 'pasnav-connections': 'חיבורים', 'pasnav-referral': 'הזמנת חברים' };
+    Object.entries(rename).forEach(([id, label]) => { const b = document.getElementById(id); if (!b) return; [...b.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).forEach(n => n.remove()); b.appendChild(document.createTextNode(label)); b.setAttribute('role', 'tab'); });
+    if (nav) {
+      nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', 'הגדרות');
+      const extra = [['trset-accounts', 'חשבונות מסחר', 'M3 7h18v13H3zM3 11h18M8 3v4M16 3v4', () => { if (typeof openAcctGrid === 'function') openAcctGrid(); }],
+        ['trset-billing', 'מנוי ותשלומים', 'M3 6h18v12H3zM3 10h18M7 15h4', () => { if (typeof swNav === 'function') swNav('billing'); }]];
+      extra.forEach(([id, label, path, fn]) => { if (document.getElementById(id)) return; const b = document.createElement('button'); b.type = 'button'; b.className = 'pa-snav-btn trset-link'; b.id = id; b.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg>${label}`; b.addEventListener('click', fn); nav.insertBefore(b, document.getElementById('pasnav-notif')); });
+    }
+    const prof = document.getElementById('pa-profile'), card = prof?.querySelector('.pa-card');
+    const av = document.getElementById('pa-avatar-circle'), nm = document.getElementById('pa-sidebar-name'), em = document.getElementById('pa-sidebar-email');
+    if (card && av && !document.getElementById('trset-head')) {
+      const head = document.createElement('div'); head.id = 'trset-head'; head.className = 'trset-head';
+      const txt = document.createElement('div'); txt.className = 'trset-head-txt';
+      const t = document.createElement('h2'); t.textContent = 'הפרופיל שלי';
+      const s = document.createElement('p'); s.textContent = 'נהלו את הפרטים האישיים ואת הגדרות החשבון. לחיצה על התמונה מחליפה אותה.';
+      txt.append(t, s); if (nm) txt.appendChild(nm); if (em) txt.appendChild(em);
+      av.setAttribute('role', 'button'); av.setAttribute('tabindex', '0'); av.setAttribute('aria-label', 'החלפת תמונת פרופיל');
+      av.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); av.click(); } });
+      head.append(av, txt); card.prepend(head);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
