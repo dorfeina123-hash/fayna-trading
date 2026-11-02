@@ -381,3 +381,6 @@ html[data-fayna-theme] .app-layout>.main{padding:clamp(12px,1vw,28px) clamp(14px
 /* public landing grows with the screen too */
 .trl-wrap{max-width:clamp(1180px,72vw,1640px)}
 .trl-frame{max-width:clamp(1060px,64vw,1560px)}
+/* v97: profile photo in the avatar */
+.trb-avatar.has-photo{background:var(--bg2);padding:0;overflow:hidden}
+.trb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}

@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 const html=fs.readFileSync('index.html','utf8'),base=fs.readFileSync('dor_trading_v74.html','utf8');
 for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi))if(!m[1].includes('src=')&&!m[1].includes('ld+json'))new vm.Script(m[2]);
-assert.equal(html,fs.readFileSync('dor_trading_v96.html','utf8'));
+assert.equal(html,fs.readFileSync('dor_trading_v97.html','utf8'));
 const declarations=s=>new Set([...s.matchAll(/^(?:async )?(?:function|let|const|var)\s+(\w+)/gm)].map(m=>m[1]));
 assert.deepEqual([...declarations(base)].filter(n=>!declarations(html).has(n)),[]);
 const styles=s=>[...s.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];assert.equal(styles(base).length,styles(html).length);

@@ -11385,7 +11385,7 @@ function _trbCurrency(btn){if(typeof toggleCurrency!=='function')return;const ol
 /* v95: user avatar + menu header mirror the (hidden) user badge text */
 (function(){function initials(n){const w=String(n||'').replace(/[^\p{L}\p{N}\s]/gu,' ').trim().split(/\s+/).filter(Boolean);return w.length?(w[0][0]+(w[1]?w[1][0]:'')).toUpperCase():'FT';}
 function sync(){const u=typeof currentUser!=='undefined'&&currentUser?String(currentUser.name||currentUser.displayName||'').trim():'';const t=(document.getElementById('nav-user-name-text')?.textContent||'').trim(),fromText=t&&t!=='—'?(t.includes(',')?t.split(',').pop().trim():t):'';const name=u||fromText;const plan=(document.getElementById('nav-plan-badge')?.textContent||'').replace(/[^\p{L}\s]/gu,'').trim();
-['trb-avatar','trb-avatar-lg'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=initials(name);});const nm=document.getElementById('trb-menu-name');if(nm)nm.textContent=name||'Fayna Trading';const pl=document.getElementById('trb-menu-plan');if(pl)pl.textContent=plan;}
+window._trbAvatarRender=function(){const cu=typeof currentUser!=='undefined'?currentUser:null;const photo=cu?String(cu.photoData||cu.photoURL||''):'';const nm=cu?String(cu.name||cu.displayName||'').trim():'';['trb-avatar','trb-avatar-lg'].forEach(id=>{const e=document.getElementById(id);if(!e)return;if(photo&&/^(data:image\/|https:\/\/)/.test(photo)){let im=e.querySelector('img');if(!im){e.textContent='';im=document.createElement('img');im.alt='';im.decoding='async';e.appendChild(im);}if(im.getAttribute('src')!==photo)im.src=photo;e.classList.add('has-photo');}else{e.classList.remove('has-photo');e.textContent=initials(nm||name);}});};window._trbAvatarRender();const nm=document.getElementById('trb-menu-name');if(nm)nm.textContent=name||'Fayna Trading';const pl=document.getElementById('trb-menu-plan');if(pl)pl.textContent=plan;}
 function start(){sync();const o=new MutationObserver(sync);['nav-user-name-text','nav-plan-badge'].forEach(id=>{const e=document.getElementById(id);if(e)o.observe(e,{childList:true,characterData:true,subtree:true});});}
 if(typeof document==='undefined')return;if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();})();
 var _homeCalMonth = null;
@@ -22722,6 +22722,7 @@ function _getInitials(name) {
 }
 
 function _updateNavAvatar() {
+  try { if (typeof _trbAvatarRender === 'function') _trbAvatarRender(); } catch(e) {}
   const el = document.getElementById('nav-avatar');
   if (!el || !currentUser) return;
   el.style.display = '';
@@ -27184,6 +27185,6 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=96">
+<link rel="stylesheet" href="fayna-tr-theme.css?v=97">
 </body>
 </html>
