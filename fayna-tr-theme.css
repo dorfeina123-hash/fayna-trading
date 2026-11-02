@@ -340,3 +340,44 @@ html[data-fayna-theme] .hdr-more-menu{min-width:220px;border-radius:12px!importa
 html[data-fayna-theme] .hdr-mi{border-radius:8px!important;min-height:40px;font-size:13.5px!important}
 html[data-fayna-theme] #ticker-toggle-mi{display:none!important}
 html[data-fayna-theme] #nav-logout-btn{color:var(--re)!important}
+
+/* ── v96: fluid layout — fill any screen, scale up on large ones ── */
+html[data-fayna-theme] .app-layout>.main,html[data-fayna-theme] .main{max-width:none!important;margin-inline:0!important}
+html[data-fayna-theme] .main>.tp,html[data-fayna-theme] .main>.simple-section-nav,html[data-fayna-theme] #home-dashboard{max-width:none!important;margin-inline:0!important;width:auto!important}
+html[data-fayna-theme] .app-layout>.main{padding:clamp(12px,1vw,28px) clamp(14px,1.2vw,32px) 28px!important}
+@media(min-width:901px){
+  html[data-fayna-theme] .sidenav:not(.sn-closed){width:clamp(220px,12.5vw,290px)!important}
+  html[data-fayna-theme] .sn-item{font-size:clamp(14px,.82vw,18px)!important;min-height:clamp(44px,2.6vw,58px)!important}
+  html[data-fayna-theme] .sn-toggle-logo{font-size:clamp(17px,.95vw,22px)!important}
+}
+#home-dashboard,.trh-kpis,.trh-charts,.trh-lower{gap:clamp(12px,.75vw,22px)}
+.trh-card{padding:clamp(14px,.9vw,24px) clamp(16px,1vw,26px);border-radius:clamp(16px,1vw,24px)}
+.trh-kpi{min-height:clamp(92px,5.6vw,140px)}
+.trh-kpi span,.trh-kpi-col>.trh-kpi-row>span{font-size:clamp(13px,.72vw,17px)}
+.trh-kpi strong{font-size:clamp(20px,1.3vw,34px)}
+.trh-icon{width:clamp(38px,2.2vw,54px);height:clamp(38px,2.2vw,54px);font-size:clamp(18px,1vw,24px)}
+.trh-gauge svg{width:clamp(84px,4.8vw,124px);height:clamp(48px,2.75vw,71px)}
+.trh-counts{font-size:clamp(11px,.6vw,14px)}
+.trh-ratio{height:clamp(6px,.35vw,9px)}
+.trh-head h2{font-size:clamp(15px,.85vw,21px)}
+.trh-head span{font-size:clamp(12px,.65vw,15px)}
+.trh-charts>.trh-card{min-height:clamp(290px,17vw,480px)}
+.trh-plot,.trh-plot svg{min-height:clamp(170px,11vw,340px)}
+.trh-yaxis,.trh-xaxis{font-size:clamp(11px,.6vw,14px)}
+.trh-radar{max-width:clamp(320px,22vw,560px);height:clamp(180px,12vw,340px)}
+.trh-score strong{font-size:clamp(24px,1.4vw,38px)}
+.trh-lower{grid-template-columns:minmax(clamp(290px,21vw,480px),auto) minmax(0,1fr);align-items:stretch}
+.trh-recent{min-height:0}
+.trh-trades{flex:1 1 auto;contain:size;min-height:360px;max-height:none;overflow-y:auto}
+.trh-trade header strong{font-size:clamp(15px,.8vw,19px)}
+.trh-trade dd{font-size:clamp(13px,.72vw,17px)}.trh-trade dt{font-size:clamp(12px,.62vw,15px)}
+.trh-cal-grid{gap:clamp(6px,.45vw,12px)}
+.trh-day,.trh-week{min-height:clamp(78px,5.2vw,150px)}
+.trh-day b,.trh-week b{font-size:clamp(14px,.85vw,22px)}
+.trh-dnum,.trh-dow{font-size:clamp(12px,.62vw,15px)}
+.trh-month strong{font-size:clamp(15px,.8vw,20px)}
+.trh-cal-stats b{font-size:clamp(15px,.8vw,20px)}
+@media(max-width:1280px){.trh-lower{grid-template-columns:1fr}.trh-trades{contain:none;min-height:0}}
+/* public landing grows with the screen too */
+.trl-wrap{max-width:clamp(1180px,72vw,1640px)}
+.trl-frame{max-width:clamp(1060px,64vw,1560px)}
