@@ -294,3 +294,56 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* v107 — sign-in / sign-up / sign-out in the TradeReport layout.
+   Login and registration logic (doLogin, doRegister, doGoogleAuth, doForgotPassword,
+   doLogout) is unchanged; only the arrangement of the existing elements changes.
+   _trLogout() adds a confirmation for the explicit logout buttons only, so automatic
+   sign-outs (inactivity, account deletion) behave as before. */
+(function () {
+  'use strict';
+  if (typeof document === 'undefined') return;
+  window._trLogout = async function () {
+    try { document.getElementById('hdr-more')?.classList.remove('open'); } catch (e) {}
+    const ok = typeof customConfirm === 'function' ? await customConfirm('האם אתה בטוח שברצונך להתנתק מהמערכת?', { danger: true, okText: 'התנתק', cancelText: 'ביטול' }) : true;
+    if (ok && typeof doLogout === 'function') doLogout();
+  };
+  const TEXT = { login: ['התחברות למערכת', 'הזינו את הפרטים שלכם כדי להיכנס לחשבון'], register: ['הרשמה למערכת', 'כמה פרטים ואתם בפנים. ההיסטוריה שלכם נשמרת בענן.'] };
+  function divider() { const d = document.createElement('div'); d.className = 'trauth-or'; d.innerHTML = '<span>או</span>'; return d; }
+  function moveGoogleUp(form) {
+    if (!form || form.dataset.trauth) return; form.dataset.trauth = '1';
+    const g = [...form.children].find(el => el.tagName === 'BUTTON' && /doGoogleAuth/.test(el.getAttribute('onclick') || ''));
+    const oldOr = g?.previousElementSibling;
+    if (g) { g.classList.add('trauth-google'); form.prepend(divider()); form.prepend(g); }
+    if (oldOr && /או/.test(oldOr.textContent) && oldOr.querySelector('span')) oldOr.remove();
+  }
+  function init() {
+    const box = document.querySelector('#auth-screen > .auth-box'); if (!box || box.classList.contains('trauth')) return;
+    box.classList.add('trauth');
+    const col = document.createElement('div'); col.className = 'trauth-form';
+    while (box.firstChild) col.appendChild(box.firstChild);
+    const art = document.createElement('aside'); art.className = 'trauth-art'; art.setAttribute('aria-hidden', 'true');
+    art.innerHTML = `<div class="trauth-art-in"><img src="fayna-logo-gold.png" alt="" class="trauth-logo" decoding="async"><h2>יותר בהירות.<br>יותר שליטה במסחר.</h2><p>יומן מסחר בעברית: עסקאות, חשבונות, הוצאות וסטטיסטיקה במקום אחד.</p>
+      <div class="trauth-chips"><span><b>73.2%</b>אחוז הצלחה</span><span><b>1.92</b>יחס רווח/הפסד</span><span><b>+$6.1k</b>P&amp;L נטו</span></div><small>נתונים להמחשה בלבד</small></div>`;
+    box.append(col, art);
+    const head = document.createElement('div'); head.className = 'trauth-head';
+    const title = box.querySelector('.fy-auth-title'), copy = box.querySelector('.fy-auth-copy'), logo = box.querySelector('.auth-logo');
+    if (logo) head.appendChild(logo); if (title) head.appendChild(title); if (copy) head.appendChild(copy);
+    const back = box.querySelector('.fy-auth-back'); (back || col.firstChild) ? col.insertBefore(head, back ? back.nextSibling : col.firstChild) : col.appendChild(head);
+    const insta = document.getElementById('auth-instagram-wrap'); if (insta) col.appendChild(insta);
+    moveGoogleUp(document.getElementById('auth-login-form'));
+    moveGoogleUp(document.getElementById('auth-register-form'));
+    const sw = (form, text, link, target) => { const el = document.getElementById(form); if (!el || el.querySelector('.trauth-switch')) return; const p = document.createElement('p'); p.className = 'trauth-switch'; p.innerHTML = `${text} <button type="button">${link}</button>`; p.querySelector('button').addEventListener('click', () => authShowTab(target)); el.appendChild(p); };
+    sw('auth-login-form', 'אין לך משתמש עדיין?', 'הירשם עכשיו', 'register');
+    sw('auth-register-form', 'כבר רשום למערכת?', 'התחבר עכשיו', 'login');
+    const reg = document.getElementById('reg-btn'); if (reg) reg.textContent = 'הרשמה';
+    const prev = window.authShowTab;
+    if (typeof prev === 'function' && !prev._tr) {
+      const w = function (tab) { prev.apply(this, arguments); const t = TEXT[tab] || TEXT.login; if (title) title.textContent = t[0]; if (copy) copy.textContent = t[1]; };
+      w._tr = true; window.authShowTab = w; try { authShowTab = w; } catch (e) {}
+    }
+    const active = document.getElementById('auth-register-form')?.style.display !== 'none' ? 'register' : 'login';
+    if (title) title.textContent = TEXT[active][0]; if (copy) copy.textContent = TEXT[active][1];
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

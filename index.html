@@ -3293,7 +3293,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <button class="hdr-mi" onclick="startTour()" title="סיור מודרך">סיור מודרך</button>
         <button class="hdr-mi" id="edit-mode-btn" onclick="toggleEditMode();toggleHdrMore(event)" title="מצב עריכה חופשית" style="display:none">מצב עריכה</button>
         <div class="hdr-more-sep"></div>
-        <button class="hdr-mi" id="nav-logout-btn" style="display:none;color:var(--t3)" onclick="doLogout()">יציאה מהחשבון</button>
+        <button class="hdr-mi" id="nav-logout-btn" style="display:none;color:var(--t3)" onclick="_trLogout()">יציאה מהחשבון</button>
       </div>
     </div>
     <!-- Hamburger for mobile -->
@@ -6350,7 +6350,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div style="font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px">🛡️ פאנל ניהול — Dor <span style="font-size:10px;background:rgba(144,137,189,.2);color:var(--pu);padding:2px 8px;border-radius:10px;border:1px solid rgba(144,137,189,.3)">ADMIN</span></div>
       <div style="font-size:10px;color:var(--t3);margin-top:3px">שליטה מלאה במערכת — שינויים מתעדכנים לכלל המשתמשים</div>
     </div>
-    <button class="admin-logout" onclick="doLogout()">🚪 יציאה</button>
+    <button class="admin-logout" onclick="_trLogout()">🚪 יציאה</button>
   </div>
 
   <!-- METRICS SUMMARY -->
@@ -27206,10 +27206,10 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
-<script src="fayna-tr-pages.js?v=105"></script>
+<script src="fayna-tr-pages.js?v=107b"></script>
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-tr-ecal.js?v=104"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=106">
+<link rel="stylesheet" href="fayna-tr-theme.css?v=107b">
 </body>
 </html>
