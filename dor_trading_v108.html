@@ -17233,14 +17233,26 @@ let _ecalDayTimers     = [];   // setTimeout handles for today's alerts
 let _ecalMidnightTimer = null;
 let _ecalCache         = [];
 
+/* v108: the ForexFactory feed has no CORS headers and the public proxies used before
+   (corsproxy.io, allorigins) stopped working, so the calendar showed nothing and the
+   alerts had no events. Sources now, in order, each with a timeout:
+     1. our own hourly mirror in the market-data branch (.github/workflows/ecal.yml);
+     2. r.jina.ai as a read-only fallback for the current week;
+     3. the feed itself, in case it ever allows CORS.
+   ForexFactory only publishes the current week; last week comes from the mirror. */
 async function _ffFetch(week) {
   const url = 'https://nfs.faireconomy.media/ff_calendar_' + week + '.json';
-  const proxies = [
-    () => fetch('https://corsproxy.io/?' + encodeURIComponent(url)).then(r => { if(!r.ok) throw 0; return r.json(); }),
-    () => fetch(url, { cache:'no-cache' }).then(r => r.json()),
-    () => fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url)).then(r=>r.json()).then(j=>JSON.parse(j.contents)),
+  const get = (u, ms = 9000) => { const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
+    return fetch(u, { signal: ac.signal, cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }).finally(() => clearTimeout(t)); };
+  const parse = txt => { const i = txt.indexOf('['), j = txt.lastIndexOf(']'); if (i < 0 || j < i) throw new Error('no data'); return JSON.parse(txt.slice(i, j + 1)); };
+  const fresh = list => week !== 'thisweek' || list.some(e => { const d = _ffParseDate(e.date); return d && d.getTime() > Date.now() - 2 * 864e5; });
+  const sources = [
+    () => get('https://raw.githubusercontent.com/dorfeina123-hash/fayna-trading/market-data/ecal/' + week + '.json'),
   ];
-  for (const p of proxies) { try { const d = await p(); if (Array.isArray(d)) return d; } catch(e) { continue; } }
+  if (week === 'thisweek') sources.push(() => get('https://r.jina.ai/' + url, 15000), () => get(url, 6000));
+  for (const src of sources) {
+    try { const d = parse(await src()); if (Array.isArray(d) && d.length && fresh(d)) return d; } catch (e) { continue; }
+  }
   return [];
 }
 
@@ -27211,7 +27223,7 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-tr-pages.js?v=107b"></script>
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
-<script src="fayna-tr-ecal.js?v=104"></script>
+<script src="fayna-tr-ecal.js?v=108"></script>
 <link rel="stylesheet" href="fayna-tr-theme.css?v=107b">
 </body>
 </html>

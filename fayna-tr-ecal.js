@@ -14,9 +14,11 @@
   const CUR_COLOR = { USD: '#3b82f6', EUR: '#1d4ed8', GBP: '#be123c', AUD: '#0f766e', JPY: '#dc2626', CAD: '#ef4444', CHF: '#e11d48', NZD: '#111827', CNY: '#b91c1c' };
   const IMP = [['Low', 'נמוכה'], ['Medium', 'בינונית'], ['High', 'גבוהה']];
   const DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-  const WEEKS = [['lastweek', 'שבוע שעבר'], ['thisweek', 'שבוע נוכחי'], ['nextweek', 'שבוע הבא']];
+  /* ForexFactory publishes only the current week; last week comes from our hourly mirror. */
+  const WEEKS = [['lastweek', 'שבוע שעבר'], ['thisweek', 'שבוע נוכחי']];
   let pref = { imp: ['High'], cur: ['USD'], week: 'thisweek' };
   try { pref = { ...pref, ...JSON.parse(localStorage.getItem(PREF) || '{}') }; } catch (e) {}
+  if (!WEEKS.some(w => w[0] === pref.week)) pref.week = 'thisweek';
   const save = () => { try { localStorage.setItem(PREF, JSON.stringify(pref)); } catch (e) {} };
   let data = {}, loading = {};
 
@@ -47,7 +49,7 @@
   const two = n => String(n).padStart(2, '0');
   function table(list) {
     const rows = rowsFor(list);
-    if (!rows.length) return `<div class="tre-empty">${list.length ? 'אין אירועים שמתאימים לסינון. נסו להוסיף רמת השפעה או מטבע.' : 'לא הצלחנו לטעון את היומן לשבוע הזה. נסו שוב מאוחר יותר.'}</div>`;
+    if (!rows.length) return `<div class="tre-empty">${list.length ? 'אין אירועים שמתאימים לסינון. נסו להוסיף רמת השפעה או מטבע.' : (pref.week === 'lastweek' ? 'הנתונים של השבוע שעבר עדיין לא נשמרו. הם יופיעו כאן מהשבוע הבא.' : 'לא הצלחנו לטעון את היומן כרגע. לחצו על רענון או נסו שוב בעוד כמה דקות.')}</div>`;
     const now = Date.now(); let next = rows.find(r => new Date(r.d).getTime() > now && r.i !== 'Holiday');
     let html = '', day = '';
     rows.forEach(r => {

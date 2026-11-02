@@ -1,0 +1,27 @@
+name: Mirror economic calendar
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-data
+  cancel-in-progress: false
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: market-data
+          path: market-data
+      - run: python3 scripts/fetch_ecal.py market-data
+      - name: Save
+        working-directory: market-data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --quiet || { git commit -q -m 'Update economic calendar'; git pull -q --rebase && git push -q; }
