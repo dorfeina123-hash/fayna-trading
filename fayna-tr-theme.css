@@ -606,3 +606,46 @@ html[data-fayna-theme] .sidenav img.sn-brand-img{width:clamp(72px,5vw,108px)!imp
 @media(max-width:1280px){.trb-cgrid{grid-template-columns:1fr 1fr}.trb-wide{grid-column:1/-1}}
 @media(max-width:900px){.trb-kgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.trb-cgrid{grid-template-columns:1fr}}
+
+/* ── v104: economic calendar (TradeReport style) ────────── */
+#tre-root{display:flex;flex-direction:column;gap:clamp(12px,.8vw,18px)}
+.tre-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.tre-head h1{margin:0;font-size:clamp(20px,1.2vw,28px);font-weight:700}
+.tre-head p{margin:2px 0 0;font-size:13px;color:var(--t3)}
+.tre-head .trx-ib svg,.tre-note svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tre-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px;background:var(--bg1);border:1px solid var(--border);border-radius:var(--fy-radius);padding:clamp(12px,.8vw,18px)}
+.tre-fgroup{display:flex;flex-direction:column;gap:8px;min-width:0}
+.tre-fgroup>span{font-size:13px;font-weight:600;color:var(--t2)}
+.tre-seg{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px;flex-wrap:wrap}
+.tre-seg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 10px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--t3);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.tre-seg button[aria-pressed="true"]{background:var(--bd);border-color:var(--tr-accent-line);color:var(--t1);font-weight:600}
+.tre-seg i{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tre-dot.tre-High{background:var(--re)}.tre-dot.tre-Medium{background:#f59e0b}.tre-dot.tre-Low{background:#facc15}
+.tre-weeks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;max-width:560px;width:100%;margin-inline:auto;background:var(--bg1);border:1px solid var(--border);border-radius:12px;padding:4px}
+.tre-weeks button{min-height:40px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--t2);font:inherit;font-size:14px;cursor:pointer}
+.tre-weeks button[aria-selected="true"]{background:var(--bd);border-color:var(--tr-accent-line);color:var(--t1);font-weight:600}
+.tre-card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--fy-radius);overflow:hidden}
+.tre-scroll{overflow-x:auto}
+.tre-table{width:100%;min-width:760px;border-collapse:collapse;font-size:clamp(13px,.72vw,16px)}
+.tre-table th{font-size:12px;font-weight:500;color:var(--t3);padding:12px 14px;text-align:start;border-bottom:1px solid var(--border);white-space:nowrap}
+.tre-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-variant-numeric:tabular-nums}
+.tre-table td[dir=ltr]{text-align:right}
+.tre-table tr.tre-day td{background:var(--bg2);color:var(--t2);font-weight:700;font-size:13px;text-align:center;padding:9px 14px}
+.tre-table tr.tre-day.today td{color:var(--t1);background:var(--bd)}
+.tre-table tr.tre-day b{display:inline-block;margin-inline-start:8px;padding:1px 8px;border-radius:999px;background:var(--ac);color:#1f1b23;font-size:11px}
+.tre-table tr.past td{opacity:.5}
+.tre-table tr.next td{background:rgba(168,85,247,.07)}
+.tre-time{white-space:nowrap;font-weight:600}.tre-time small{display:block;color:var(--ac);font-size:11px;font-weight:600}
+.tre-cur{display:inline-flex;align-items:center;gap:6px;font-weight:600}.tre-cur i{width:10px;height:10px;border-radius:50%}
+.tre-imp{display:inline-block;padding:2px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.tre-imp.tre-High{background:var(--rd);color:var(--re);border-color:rgba(244,80,80,.35)}
+.tre-imp.tre-Medium{background:rgba(245,158,11,.14);color:#f59e0b;border-color:rgba(245,158,11,.35)}
+.tre-imp.tre-Low{background:rgba(250,204,21,.12);color:#eab308;border-color:rgba(250,204,21,.3)}
+.tre-imp.tre-Holiday{background:var(--bg3);color:var(--t2)}
+.tre-title{font-weight:500;text-align:right}
+.tre-act{font-weight:700}
+.tre-empty,.tre-loading{padding:48px 16px;text-align:center;color:var(--t3);font-size:14px}
+.tre-note{display:flex;align-items:center;gap:8px;margin:0;font-size:12px;color:var(--t3)}
+.tre-note svg{color:var(--ac);flex-shrink:0}
+.tre-legacy{margin-top:16px}
+@media(max-width:900px){.tre-filters{grid-template-columns:1fr}.tre-seg button{flex:0 0 auto}}
