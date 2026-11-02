@@ -384,3 +384,7 @@ html[data-fayna-theme] .app-layout>.main{padding:clamp(12px,1vw,28px) clamp(14px
 /* v97: profile photo in the avatar */
 .trb-avatar.has-photo{background:var(--bg2);padding:0;overflow:hidden}
 .trb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+/* v99: gold logo at the top of the sidebar */
+html[data-fayna-theme] .sn-toggle-row{align-items:center!important;justify-content:space-between!important;padding:clamp(14px,1vw,22px) clamp(12px,.8vw,18px)!important;min-height:0!important}
+html[data-fayna-theme] .sn-toggle-logo{display:flex;align-items:center;font-size:0!important}
+html[data-fayna-theme] .sidenav img.sn-brand-img{width:clamp(72px,5vw,108px)!important;height:clamp(72px,5vw,108px)!important;object-fit:contain!important;border-radius:14px!important;display:block}
