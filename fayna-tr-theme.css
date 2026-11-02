@@ -388,3 +388,103 @@ html[data-fayna-theme] .app-layout>.main{padding:clamp(12px,1vw,28px) clamp(14px
 html[data-fayna-theme] .sn-toggle-row{align-items:center!important;justify-content:space-between!important;padding:clamp(14px,1vw,22px) clamp(12px,.8vw,18px)!important;min-height:0!important}
 html[data-fayna-theme] .sn-toggle-logo{display:flex;align-items:center;font-size:0!important}
 html[data-fayna-theme] .sidenav img.sn-brand-img{width:clamp(72px,5vw,108px)!important;height:clamp(72px,5vw,108px)!important;object-fit:contain!important;border-radius:14px!important;display:block}
+
+/* ── v100: trade journal (TradeReport style) ────────────── */
+.trx-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--bg1);border:1px solid var(--border);border-radius:var(--fy-radius);padding:clamp(12px,.8vw,20px) 0;margin-bottom:14px}
+.trx-kpis>div{display:flex;align-items:center;gap:12px;padding:0 clamp(14px,1.2vw,28px)}
+.trx-kpis>div+div{border-inline-start:1px solid var(--border)}
+.trx-kico{width:clamp(36px,2.2vw,48px);height:clamp(36px,2.2vw,48px);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--gd);color:var(--gr);flex-shrink:0}
+.trx-kico svg,.trx-ib svg,.trx-doc svg,.trx-sec h3 svg,.trx-chart-empty svg,.trx-edit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.trx-kpis small{display:block;font-size:clamp(12px,.65vw,15px);color:var(--t3)}
+.trx-kpis b{font-size:clamp(18px,1.1vw,28px);font-weight:700;font-variant-numeric:tabular-nums}
+#tj-table.trx-table{border-collapse:separate;border-spacing:0;width:100%}
+#tj-table.trx-table th{font-size:12px!important;color:var(--t3)!important;font-weight:500!important;padding:14px 12px!important;text-align:center;white-space:nowrap;background:transparent!important;border-bottom:1px solid var(--border)!important}
+#tj-table.trx-table td{padding:14px 12px!important;text-align:center;font-size:clamp(13px,.72vw,16px);color:var(--t1);border-bottom:1px solid var(--border)!important;vertical-align:middle;font-variant-numeric:tabular-nums}
+#tj-table.trx-table td small{display:block;font-size:11px;color:var(--t3);margin-top:2px}
+#tj-table.trx-table tr.trx-row{cursor:pointer;transition:background .12s}
+#tj-table.trx-table tr.trx-row:hover{background:rgba(168,85,247,.06)!important}
+#tj-table.trx-table tr.trx-row:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+.trx-pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.trx-pill-win{background:var(--gd);color:var(--gr);border-color:rgba(74,222,128,.25)}
+.trx-pill-loss{background:var(--rd);color:var(--re);border-color:rgba(244,80,80,.3)}
+.trx-pill-be{background:var(--bg3);color:var(--t2);border-color:var(--border2)}
+.trx-asset{display:inline-flex;align-items:center;gap:10px;text-align:start}
+.trx-asset b{font-weight:700}.trx-asset small{display:inline!important;margin:0 4px 0 0!important;color:var(--t3)}
+.trx-logo{position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;letter-spacing:-.2px;flex-shrink:0;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18);font-family:var(--fy-font)}
+.trx-logo b{font-weight:800;line-height:1}
+.trx-logo i{position:absolute;top:-4px;inset-inline-start:-4px;min-width:14px;height:14px;border-radius:7px;background:#fff;color:#1f1b23;font-size:9px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--bg1)}
+.trx-logo-man{background:var(--yd);color:var(--go);font-size:13px}
+.trx-acct{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);cursor:pointer;white-space:nowrap}
+.trx-acct i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.trx-add-acct{background:none;border:1px dashed var(--border2);color:var(--t3);border-radius:6px;padding:2px 8px;font:inherit;font-size:12px;cursor:pointer}
+.trx-net{font-weight:700}
+.trx-doc{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;background:var(--bd);color:var(--ac)}
+.trx-doc svg{width:14px;height:14px}
+.trx-dash{color:var(--t3)}
+.trx-actions{white-space:nowrap}
+.trx-ib{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--t3);cursor:pointer;font:inherit;font-size:18px}
+.trx-ib:hover:not(:disabled){background:var(--bg3);color:var(--t1);border-color:var(--border2)}
+.trx-ib:disabled{opacity:.3;cursor:default}
+.trx-ib-del:hover:not(:disabled){color:var(--re)}
+.trx-empty{padding:40px!important;color:var(--t3)!important}
+.trx-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 4px;font-size:13px;color:var(--t3)}
+.trx-pager>div{display:flex;gap:4px}
+.trx-pg{min-width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:var(--bg1);color:var(--t2);font:inherit;cursor:pointer}
+.trx-pg.on{background:var(--bd);border-color:var(--tr-accent-line);color:var(--t1);font-weight:700}
+.trx-pg:disabled{opacity:.35;cursor:default}
+.trx-pager select{margin-inline-start:6px;min-height:34px;padding:0 8px}
+/* detail dialog */
+.trx-dialog{width:min(1600px,96vw);height:min(920px,92vh);max-width:none;max-height:none;padding:0;border:1px solid var(--border2);border-radius:16px;background:var(--bg0);color:var(--t1);overflow:hidden;font-family:var(--fy-font)}
+.trx-dialog::backdrop{background:rgba(5,4,8,.72);backdrop-filter:blur(3px)}
+.trx-dialog[open]{display:flex;flex-direction:column}
+.trx-dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.trx-dh-title{display:flex;align-items:center;gap:12px}
+.trx-dh-title .trx-logo{width:38px;height:38px;font-size:12px}
+.trx-dh h2{margin:0;font-size:18px;font-weight:700}.trx-dh small{color:var(--t3);font-size:12px}
+.trx-dh-tools{display:flex;align-items:center;gap:6px}
+.trx-pos{font-size:12px;color:var(--t3);min-width:52px;text-align:center}
+.trx-edit{min-height:36px!important;padding:0 12px!important;font-size:13px!important;margin-inline:6px}
+.trx-body{flex:1;min-height:0;display:grid;grid-template-columns:clamp(340px,28vw,460px) minmax(0,1fr)}
+.trx-panel{border-inline-end:1px solid var(--border);overflow-y:auto;padding:12px;background:var(--bg0)}
+.trx-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:12px;position:sticky;top:0;z-index:1}
+.trx-tabs button{min-height:34px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--t2);font:inherit;font-size:13px;cursor:pointer}
+.trx-tabs button[aria-selected="true"]{background:var(--bd);border-color:var(--tr-accent-line);color:var(--t1);font-weight:600}
+.trx-sec{background:var(--bg1);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.trx-sec h3{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:14px;font-weight:700}
+.trx-sec h3 svg{color:var(--ac)}
+.trx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin:0}
+.trx-grid3{grid-template-columns:repeat(3,1fr)}.trx-grid1{grid-template-columns:1fr}
+.trx-grid dt{font-size:12px;color:var(--t3);margin-bottom:2px}
+.trx-grid dd{margin:0;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;word-break:break-word}
+.trx-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trx-two .trx-sec{margin-bottom:10px}
+.trx-stop h3{color:var(--re)}.trx-target h3{color:var(--gr)}
+.trx-stars{color:var(--go)!important;letter-spacing:1px}.trx-dim{opacity:.25}
+.trx-imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trx-imgs button{padding:0;border:1px solid var(--border2);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:zoom-in;aspect-ratio:16/10}
+.trx-imgs img{width:100%;height:100%;object-fit:cover;display:block}
+.trx-none{margin:0;color:var(--t3);font-size:13px}
+.trx-tags{display:flex;flex-wrap:wrap;gap:6px}.trx-tags span{padding:3px 10px;border-radius:999px;background:var(--bd);border:1px solid var(--tr-accent-line);font-size:12px}
+.trx-notes{margin:0;white-space:pre-wrap;font-size:14px;line-height:1.7;color:var(--t2)}
+.trx-chart{min-width:0;min-height:0;background:var(--bg1);position:relative}
+.trx-chart>div{height:100%}
+.trx-chart-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);text-align:center;padding:20px}
+.trx-chart-empty svg{width:40px;height:40px;color:var(--ac);opacity:.6}
+@media(max-width:1100px){.trx-kpis{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:14px}.trx-kpis>div:nth-child(3){border-inline-start:0}}
+@media(max-width:900px){.trx-dialog{width:100vw;height:100dvh;border-radius:0}.trx-body{grid-template-columns:1fr;grid-template-rows:minmax(260px,42vh) auto;overflow-y:auto}.trx-chart{order:-1}.trx-panel{border:0;overflow:visible}.trx-edit span{display:none}}
+@media(max-width:700px){#tj-table.trx-table td{text-align:start}}
+/* v100: Profit Factor badge on the home equity card */
+.trh-pf{display:inline-flex;align-items:center;gap:8px;padding:4px 6px 4px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--border2);line-height:1}
+.trh-pf small{font-size:clamp(11px,.6vw,14px);color:var(--t3);font-weight:600;letter-spacing:.2px}
+.trh-pf b{font-size:clamp(20px,1.25vw,32px);font-weight:800;font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:9px;background:var(--bg3);color:var(--t1)}
+.trh-pf-good{border-color:rgba(74,222,128,.3)}.trh-pf-good b{background:var(--gd);color:var(--gr)}
+.trh-pf-mid{border-color:rgba(250,204,21,.3)}.trh-pf-mid b{background:var(--yd);color:var(--go)}
+.trh-pf-bad{border-color:rgba(244,80,80,.3)}.trh-pf-bad b{background:var(--rd);color:var(--re)}
+.trh-charts .trh-head{align-items:center}
+@media(min-width:769px){#tj-table.trx-table :is(th,td):not(:first-child){display:table-cell!important}#tj-table.trx-table :is(th,td):first-child:not([style*="table-cell"]){display:none}}
+#tj-m:has(.trx-kpis){display:block!important;grid-template-columns:none!important;width:100%}
+/* v100: Profit Factor sits inside the win/loss ratio card */
+.trh-ratio-main{display:flex;flex-direction:column;gap:4px;min-width:0}
+.trh-pf-kpi{flex-direction:column;align-items:center;gap:4px;padding:6px 10px;border-radius:12px}
+.trh-pf-kpi small{font-size:clamp(10px,.55vw,13px)}
+.trh-pf-kpi b{font-size:clamp(18px,1.15vw,30px);padding:2px 10px}
