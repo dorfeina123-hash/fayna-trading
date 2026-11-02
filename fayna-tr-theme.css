@@ -674,3 +674,8 @@ html[data-fayna-theme] .trset-head-txt .pa-sidebar-email{font-size:12px!importan
 html[data-fayna-theme] .ws-theme-dot.ws-mint{background:linear-gradient(90deg,#1f1b23 50%,#c084fc 50%)!important}
 html[data-fayna-theme] .ws-theme-dot.ws-stone{background:linear-gradient(90deg,#f1f5f9 50%,#9333ea 50%)!important}
 html[data-fayna-theme] .ws-theme-options button[aria-pressed="true"],html[data-fayna-theme] .ws-theme-options button.active{border-color:var(--tr-accent-line)!important;background:var(--bd)!important}
+/* v106: no "saved" chip or save button in the top bar — saving is automatic (Ctrl+S still works).
+   The chip only appears when the connection is lost. */
+html[data-fayna-theme] .topnav .trb-sync:not([data-state="error"]){display:none!important}
+html[data-fayna-theme] .topnav .trb-sync[data-state="error"]{display:inline-flex!important}
+html[data-fayna-theme] .topnav #nav-save-btn{display:none!important}
