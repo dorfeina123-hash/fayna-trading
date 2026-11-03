@@ -9,7 +9,7 @@
   --t1:#ffffff;--t2:#d9d7de;--t3:#a8a6ae;
   --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.12);
   --ac:#c084fc;--bl:#c084fc;--bd:rgba(168,85,247,.15);--pu:#c084fc;--pd:rgba(168,85,247,.15);
-  --gr:#4ade80;--gd:rgba(16,185,129,.18);--re:#f45050;--rd:rgba(244,80,80,.16);--go:#facc15;--yd:rgba(250,204,21,.14);
+  --gr:#4ade80;--gd:rgba(16,185,129,.18);--re:#f86666;--rd:rgba(244,80,80,.16);--go:#facc15;--yd:rgba(250,204,21,.14);
   --fy-on-accent:#ffffff;--fy-font:'Rubik','Heebo',system-ui,sans-serif;--fy-radius:20px;
   --tr-accent-line:rgba(192,132,252,.3);--tr-win-bg:#1d3a31;--tr-win-bd:#2b6a53;--tr-loss-bg:#46232a;--tr-loss-bd:#7d2f39;
   --depth-3:0 18px 48px rgba(0,0,0,.35)
@@ -20,7 +20,7 @@ html[data-fayna-theme="light"],html[data-fayna-theme="light"] body.light-mode{
   --t1:#18151c;--t2:#3f3b46;--t3:#5f5b66;
   --border:#e5e7eb;--border2:#d4d4dc;
   --ac:#9333ea;--bl:#9333ea;--bd:rgba(168,85,247,.10);--pu:#9333ea;--pd:rgba(168,85,247,.10);
-  --gr:#15803d;--gd:rgba(22,163,74,.12);--re:#dc2626;--rd:rgba(220,38,38,.10);--go:#a16207;--yd:rgba(234,179,8,.14);
+  --gr:#166534;--gd:rgba(22,163,74,.12);--re:#b91c1c;--rd:rgba(220,38,38,.10);--go:#a16207;--yd:rgba(234,179,8,.14);
   --fy-on-accent:#ffffff;--fy-font:'Rubik','Heebo',system-ui,sans-serif;--fy-radius:20px;
   --tr-accent-line:rgba(147,51,234,.28);--tr-win-bg:#e7f6ee;--tr-win-bd:#9fd9b8;--tr-loss-bg:#fdecec;--tr-loss-bd:#f3b1b1;
   --depth-3:0 18px 48px rgba(24,21,28,.10)
@@ -723,3 +723,39 @@ html[data-fayna-theme] #cd-modal #cd-ok-btn[style*="var(--re)"]{background:var(-
 html[data-fayna-theme] #cd-modal :is(#cd-ok-btn,#cd-cancel-btn){min-width:96px;min-height:40px}
 @media(max-width:900px){#auth-screen .trauth-head .auth-logo img[src*="fayna-logo-gold.png"]{width:72px!important;height:72px!important}}
 #auth-screen img.trauth-logo[src*="fayna-logo-gold.png"]{width:clamp(110px,9vw,150px)!important;height:clamp(110px,9vw,150px)!important}
+
+/* v109 — compliance dialogs, consent controls and cancellation */
+.fyc-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(10,8,14,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.fyc-box{background:var(--bg1,#292930);color:var(--t1,#f4f1f8);border:1px solid var(--border2,rgba(255,255,255,.14));border-radius:18px;max-width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:28px 26px;box-shadow:0 30px 80px rgba(0,0,0,.5);font-family:var(--fy-font,inherit)}
+.fyc-box:focus{outline:none}
+.fyc-box h2{font-size:20px;margin:0 0 10px}
+.fyc-box p{font-size:14.5px;line-height:1.7;color:var(--t2,#d4cfdc);margin:0 0 12px}
+.fyc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.fyc-actions button,.fyc-cancel button{min-height:44px;padding:10px 22px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.fyc-primary{background:var(--ac,#c084fc);color:#1b1320;border:0}
+.fyc-ghost{background:transparent;color:var(--t1,#fff);border:1px solid var(--border2,rgba(255,255,255,.24))}
+.fyc-danger{background:transparent;color:var(--re,#f45050);border:1px solid currentColor}
+.fyc-actions button:focus-visible,.fyc-cancel button:focus-visible,.fyc-consent input:focus-visible,.auth-consent input:focus-visible{outline:3px solid var(--ac,#c084fc);outline-offset:2px}
+.fyc-msg{font-size:13px;color:var(--t2,#d4cfdc);min-height:1em}
+.fyc-cancel{margin-top:16px;padding-top:14px;border-top:1px solid var(--border,rgba(255,255,255,.1));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.fyc-cancel small{font-size:12.5px;color:var(--t2,#d4cfdc);line-height:1.6}
+.fyc-consent label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.fyc-consent input,.auth-consent input{width:20px;height:20px;margin-top:2px;flex-shrink:0;accent-color:var(--ac,#c084fc)}
+.fyc-consent span b{display:block;font-size:14px;color:var(--t1)}
+.fyc-consent span small{display:block;font-size:12.5px;color:var(--t2);margin-top:3px;line-height:1.6}
+.auth-consent{display:flex;gap:10px;align-items:flex-start;margin:4px 0 10px;cursor:pointer;font-size:12.5px;line-height:1.6;color:var(--t2)}
+.auth-legal{font-size:12px;color:var(--t2);margin:0 0 12px;line-height:1.6}
+.auth-legal a{color:var(--ac,#c084fc);text-decoration:underline}
+.fyc-doc{max-width:none}
+
+/* v109 — accessibility (IS 5568 / WCAG 2.x AA contrast and names) */
+html:not([data-fayna-theme="light"]) :is(.trx-pill-loss,.tre-imp.tre-High,.trh-c-l){color:#ff8585}
+.trh-counts .trh-c-w{color:var(--gr)!important}
+.pa-btn-save{color:#1b1320!important}
+html[data-fayna-theme] #cd-modal #cd-ok-btn[style*="var(--re)"]{background:#c62828!important;color:#fff!important}
+.fyc-danger{color:var(--re)}
+#pa-email{color:var(--t2)!important;opacity:1!important}
+.trh-cal-scroll:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+html[data-fayna-theme="light"] .trs-blue{color:#1d4ed8!important}
+.tre-day.today td b{color:#1b1320!important}
+html[data-fayna-theme="light"] .tre-day.today td b{color:#fff!important}

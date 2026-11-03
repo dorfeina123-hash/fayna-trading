@@ -1,7 +1,14 @@
 rules_version = '2';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Fayna Trading — Firestore Security Rules  (v52)
+//  Fayna Trading — Firestore Security Rules  (v109)
+//
+//  v109 (Israeli privacy-law review): one ruleset for every collection the app uses.
+//  The referral, mailing, waitlist, broadcast and push collections from the old
+//  merged file are folded in and tightened: the do-not-contact list is no longer
+//  readable by every user, login logs must belong to the writer, public request
+//  forms accept only their own fields, and a public opt-out record lets the
+//  unsubscribe link in marketing mail work without signing in.
 //
 //  THIS is the real security boundary. The Firebase API key in the HTML is public
 //  by design; nothing that runs in the browser can be trusted. These server-side
@@ -96,7 +103,9 @@ service cloud.firestore {
 
     // ── loginLogs/{id} : login/register activity ──
     match /loginLogs/{id} {
-      allow create: if isSignedIn();  // a user logs their own activity
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['uid','email','name','action','timestamp','ua']);
       allow read, update, delete: if isAdmin();
     }
 
@@ -117,6 +126,91 @@ service cloud.firestore {
     match /billingQuotes/{id} { allow read, write: if false; }
     match /billingEvents/{id} { allow read, write: if false; }
     match /billingOperations/{id} { allow read, write: if false; }
+
+    // ── referrals: who invited whom ──
+    match /referrals/{refereeUid} {
+      allow create, update: if isOwner(refereeUid);
+      allow read: if isSignedIn()
+                  && ( resource.data.referrerUid == request.auth.uid
+                       || request.auth.uid == refereeUid
+                       || isAdmin() );
+      allow delete: if isOwner(refereeUid) || isAdmin();
+    }
+    // Short invite code → uid. Read before sign-in to resolve a code; exposes only a uid.
+    match /refCodes/{code} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    // Anonymous click counter on an invite link
+    match /refClicks/{code} {
+      allow read: if isSignedIn();
+      allow create, update: if request.resource.data.keys().hasOnly(['count','last']);
+      allow delete: if isAdmin();
+    }
+
+    // ── marketing consent ──
+    // Do-not-contact list, keyed by e-mail. Holds other people's addresses, so only
+    // the admin may list it; a user may check or add only their own address.
+    match /dnc/{emailKey} {
+      allow read:   if isAdmin()
+                    || (isSignedIn() && request.auth.token.email.lower() == emailKey);
+      allow create: if isAdmin()
+                    || (isSignedIn() && request.auth.token.email.lower() == emailKey);
+      allow update, delete: if isAdmin();
+    }
+    // Opt-out from the link in a marketing e-mail. Works without signing in (the law
+    // requires a simple way to refuse); it can only ever switch marketing OFF.
+    match /unsubscribes/{uid} {
+      allow create, update: if uid.size() <= 64
+                            && request.resource.data.keys().hasOnly(['uid','at','via'])
+                            && request.resource.data.uid == uid;
+      allow read:   if isAdmin() || isOwner(uid);
+      allow delete: if isAdmin() || isOwner(uid);
+    }
+    // Mailing audit trail — append only
+    match /mailingLogs/{id} {
+      allow create: if isSignedIn();
+      allow read:   if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── requests from the site ──
+    match /billing_requests/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['type','plan','cycle','uid','email','provider','createdAt'])
+                    && (request.resource.data.uid == null || isOwner(request.resource.data.uid));
+      allow read, update, delete: if isAdmin();
+    }
+    match /waitlist/{id} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── visual builder: published design is public, written by admin ──
+    match /site_design/{doc} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+    match /site_design_versions/{id} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── broadcasts (admin → users); users may only bump the counters ──
+    match /broadcasts/{id} {
+      allow read:   if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+                    || (isSignedIn()
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['delivered', 'read'])
+                        && request.resource.data.delivered >= resource.data.delivered
+                        && request.resource.data.read      >= resource.data.read);
+    }
+
+    // Web Push subscriptions live under the user document
+    match /users/{uid}/pushSubs/{doc} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
 
     // ── deny everything not explicitly allowed above ──
     match /{document=**} { allow read, write: if false; }

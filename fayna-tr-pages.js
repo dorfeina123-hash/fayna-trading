@@ -43,7 +43,8 @@
     const r = rootOf(s), f = FAMILY.find(([re]) => re.test(r));
     const look = f ? f[1] : { t: (r || '?').slice(0, 2), bg: '#4b4f5c' };
     const micro = /^M(?!ET$)/.test(r) && f && r.length > 2 && !/^(MBT)$/.test(r);
-    return `<span class="trx-logo" style="background:${look.bg}" aria-hidden="true"><b>${esc(look.t)}</b>${micro ? '<i>M</i>' : ''}</span>`;
+    const ink = (() => { const h = String(look.bg).replace('#', ''); if (h.length !== 6) return '#fff'; const c = [0, 2, 4].map(i => { const v = parseInt(h.slice(i, i + 2), 16) / 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); const L = .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; return (1.05 / (L + .05)) >= 4.5 ? '#fff' : '#1b1320'; })();
+    return `<span class="trx-logo" style="background:${look.bg};color:${ink}" aria-hidden="true"><b>${esc(look.t)}</b>${micro ? '<i>M</i>' : ''}</span>`;
   }
   function assetCell(t) {
     const r = rootOf(t.sym), full = String(t.sym || '').toUpperCase();
@@ -272,9 +273,12 @@
     layout.classList.add('trset');
     const nav = layout.querySelector('.pa-sidebar-nav');
     const rename = { 'pasnav-profile': 'הפרופיל שלי', 'pasnav-security': 'אבטחה וסיסמה', 'pasnav-notif': 'התראות', 'pasnav-connections': 'חיבורים', 'pasnav-referral': 'הזמנת חברים' };
-    Object.entries(rename).forEach(([id, label]) => { const b = document.getElementById(id); if (!b) return; [...b.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).forEach(n => n.remove()); b.appendChild(document.createTextNode(label)); b.setAttribute('role', 'tab'); });
+    Object.entries(rename).forEach(([id, label]) => { const b = document.getElementById(id); if (!b) return; [...b.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).forEach(n => n.remove()); b.appendChild(document.createTextNode(label)); });
     if (nav) {
-      nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', 'הגדרות');
+      nav.setAttribute('role', 'navigation'); nav.setAttribute('aria-label', 'הגדרות');
+      const mark = () => nav.querySelectorAll('.pa-snav-btn').forEach(b => b.classList.contains('active') ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+      nav.querySelectorAll('[role="tab"]').forEach(b => { b.removeAttribute('role'); b.removeAttribute('aria-selected'); });
+      mark(); new MutationObserver(mark).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
       const extra = [['trset-accounts', 'חשבונות מסחר', 'M3 7h18v13H3zM3 11h18M8 3v4M16 3v4', () => { if (typeof openAcctGrid === 'function') openAcctGrid(); }],
         ['trset-billing', 'מנוי ותשלומים', 'M3 6h18v12H3zM3 10h18M7 15h4', () => { if (typeof swNav === 'function') swNav('billing'); }]];
       extra.forEach(([id, label, path, fn]) => { if (document.getElementById(id)) return; const b = document.createElement('button'); b.type = 'button'; b.className = 'pa-snav-btn trset-link'; b.id = id; b.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg>${label}`; b.addEventListener('click', fn); nav.insertBefore(b, document.getElementById('pasnav-notif')); });

@@ -2447,7 +2447,7 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
 
  <section class="trl-cta"><div class="trl-wrap"><h2>מוכן לראות את המסחר שלך בבהירות?</h2><p>מתחילים בכמה דקות. בלי אקסלים ובלי חישובים ידניים.</p><button type="button" class="trl-btn" data-fy-auth="register">מתחילים תקופת ניסיון</button></div></section>
 
- <footer class="trl-footer"><div class="trl-wrap"><div class="trl-foot-cols"><div><a class="trl-brand" href="#" data-fy-anchor="fy-public-top"><img src="fayna-logo-gold.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>Fayna Trading</span></a><p>תיעוד וניתוח ביצועים לסוחרי פרופ, בעברית. Fayna Group.</p></div><div><b>קישורים מהירים</b><a href="#fy-features" data-fy-anchor="fy-features">פיצ'רים</a><a href="#fy-public-plans" data-fy-anchor="fy-public-plans">מסלולים</a><a href="#fy-public-faq" data-fy-anchor="fy-public-faq">שאלות נפוצות</a></div><div><b>צור קשר</b><a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a><a href="https://www.instagram.com/faynatrading" target="_blank" rel="noopener noreferrer">@faynatrading</a></div></div><p class="trl-risk">גילוי סיכונים: מסחר בחוזים עתידיים ובמט"ח כרוך בסיכון משמעותי ואינו מתאים לכל משקיע. ניתן להפסיד את כל ההשקעה ואף יותר ממנה. ביצועי עבר אינם מעידים על תוצאות עתידיות. Fayna Trading היא כלי לתיעוד וניתוח בלבד ואינה מספקת ייעוץ השקעות.</p><p class="trl-copy">© 2026 Fayna Trading · אין הבטחה לתשואה</p></div></footer>
+ <footer class="trl-footer"><div class="trl-wrap"><div class="trl-foot-cols"><div><a class="trl-brand" href="#" data-fy-anchor="fy-public-top"><img src="fayna-logo-gold.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>Fayna Trading</span></a><p>תיעוד וניתוח ביצועים לסוחרי פרופ, בעברית. Fayna Group.</p></div><div><b>קישורים מהירים</b><a href="#fy-features" data-fy-anchor="fy-features">פיצ'רים</a><a href="#fy-public-plans" data-fy-anchor="fy-public-plans">מסלולים</a><a href="#fy-public-faq" data-fy-anchor="fy-public-faq">שאלות נפוצות</a></div><div><b>מידע משפטי</b><a href="#" onclick="FaynaCompliance.showDoc('privacy');return false">מדיניות פרטיות</a><a href="#" onclick="FaynaCompliance.showDoc('terms');return false">תנאי שימוש</a><a href="#" onclick="FaynaCompliance.showDoc('accessibility');return false">הצהרת נגישות</a></div><div><b>צור קשר</b><a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a><a href="https://www.instagram.com/faynatrading" target="_blank" rel="noopener noreferrer">@faynatrading</a></div></div><p class="trl-risk">גילוי סיכונים: מסחר בחוזים עתידיים ובמט"ח כרוך בסיכון משמעותי ואינו מתאים לכל משקיע. ניתן להפסיד את כל ההשקעה ואף יותר ממנה. ביצועי עבר אינם מעידים על תוצאות עתידיות. Fayna Trading היא כלי לתיעוד וניתוח בלבד ואינה מספקת ייעוץ השקעות.</p><p class="trl-copy">© 2026 Fayna Trading · אין הבטחה לתשואה</p></div></footer>
 </section>
 
   <div class="auth-box">
@@ -2521,15 +2521,15 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
     <!-- REGISTER -->
     <div id="auth-register-form" style="display:none">
       <div class="auth-field">
-        <label>שם מלא</label>
+        <label for="reg-name">שם מלא</label>
         <input type="text" id="reg-name" placeholder="ישראל ישראלי" dir="rtl" autocomplete="name">
       </div>
       <div class="auth-field">
-        <label>אימייל</label>
+        <label for="reg-email">אימייל</label>
         <input type="email" inputmode="email" autocomplete="email" id="reg-email" placeholder="your@email.com" dir="ltr" autocomplete="email">
       </div>
       <div class="auth-field">
-        <label>טלפון</label>
+        <label for="reg-phone">טלפון</label>
         <input type="tel" inputmode="tel" autocomplete="tel" id="reg-phone" placeholder="05X-XXXXXXX" dir="ltr" autocomplete="tel">
       </div>
       <div class="auth-field">
@@ -2539,6 +2539,11 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
           <button type="button" onclick="_togglePwd('reg-pass','eye-reg')" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px;padding:0;line-height:1" id="eye-reg">👁</button>
         </div>
       </div>
+      <label class="auth-consent" for="reg-marketing">
+        <input type="checkbox" id="reg-marketing">
+        <span>אני מסכים/ה לקבל מ־Fayna Trading עדכונים ודיוור שיווקי בדוא"ל ובוואטסאפ. אפשר להסיר את עצמך בכל עת. (לא חובה)</span>
+      </label>
+      <p class="auth-legal">בהרשמה את/ה מאשר/ת את <a href="#" onclick="window.FaynaCompliance&&FaynaCompliance.showDoc('terms');return false">תנאי השימוש</a> ואת <a href="#" onclick="window.FaynaCompliance&&FaynaCompliance.showDoc('privacy');return false">מדיניות הפרטיות</a>.</p>
       <button class="auth-submit" onclick="doRegister()" id="reg-btn">הרשמה חינמית 🚀</button>
       <div class="auth-msg" id="reg-msg"></div>
       <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
@@ -3219,7 +3224,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
 <nav class="topnav" role="navigation" aria-label="ניווט ראשי">
   <div class="trb-tools" role="toolbar" aria-label="פעולות וסינון">
-    <button type="button" class="trb-primary" onclick="addAccount()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>הוסף חשבון מסחר</span></button>
+    <button type="button" class="trb-primary" onclick="addAccount()" aria-label="הוספת חשבון מסחר"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>הוסף חשבון מסחר</span></button>
     <button type="button" class="trb-btn" onclick="toggleAcctMenu(event)" aria-haspopup="true"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg><span>מסננים</span><svg class="trb-caret" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
     <button type="button" class="trb-btn" id="trb-date" onclick="_trbDate(this)" aria-label="תקופה: כל הזמן"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg><span id="trb-date-txt">כל הזמן</span><svg class="trb-caret" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
     <button type="button" class="trb-btn" id="trb-cur" onclick="_trbCurrency(this)" aria-pressed="false" aria-label="מטבע תצוגה: דולרים"><span class="trb-cur-sym" id="trb-cur-sym">$</span><span id="trb-cur-txt">דולרים</span><svg class="trb-caret" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
@@ -3406,7 +3411,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <div class="pa-stat-row"><span class="pa-stat-lbl">Win Rate</span><span class="pa-stat-val" id="pa-stat-wr">—</span></div>
         <div class="pa-stat-row"><span class="pa-stat-lbl">P&amp;L כולל</span><span class="pa-stat-val" id="pa-stat-pnl">—</span></div>
       </div>
-      <div class="pa-sidebar-nav">
+      <div class="pa-sidebar-nav" role="navigation" aria-label="הגדרות">
         <button class="pa-snav-btn active" id="pasnav-profile" onclick="paTab('profile',this)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           פרופיל
@@ -3456,20 +3461,20 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <div class="pa-card">
           <div class="pa-card-title">פרטים אישיים</div>
           <div class="pa-field">
-            <label>שם מלא</label>
+            <label for="pa-name">שם מלא</label>
             <input type="text" id="pa-name" placeholder="ישראל ישראלי">
           </div>
           <div class="pa-field">
-            <label>כתובת מייל</label>
+            <label for="pa-email">כתובת מייל</label>
             <input type="text" id="pa-email" readonly>
             <div class="pa-hint">לא ניתן לשנות את כתובת המייל</div>
           </div>
           <div class="pa-field">
-            <label>טלפון</label>
+            <label for="pa-phone">טלפון</label>
             <input type="tel" inputmode="tel" autocomplete="tel" id="pa-phone" placeholder="050-0000000" dir="ltr">
           </div>
           <div class="pa-field">
-            <label>ביו</label>
+            <label for="pa-bio">ביו</label>
             <textarea id="pa-bio" placeholder="כמה מילים על הסגנון והמטרות שלך..." style="height:70px;resize:vertical"></textarea>
           </div>
           <div class="pa-actions">
@@ -3484,11 +3489,11 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <div class="pa-card">
           <div class="pa-card-title">שינוי סיסמה</div>
           <div class="pa-field">
-            <label>סיסמה נוכחית</label>
+            <label for="pa-old-pass">סיסמה נוכחית</label>
             <input type="password" id="pa-old-pass" placeholder="הסיסמה הנוכחית" dir="ltr">
           </div>
           <div class="pa-field">
-            <label>סיסמה חדשה</label>
+            <label for="pa-new-pass">סיסמה חדשה</label>
             <input type="password" id="pa-new-pass" placeholder="לפחות 6 תווים" dir="ltr">
           </div>
           <div class="pa-actions">
@@ -4004,14 +4009,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="cx-modal">
   <div class="modal">
     <h3>הוספת הוצאה חופשית <button class="cx" onclick="cxClose()">×</button></h3>
-    <div class="fr"><label>קטגוריה</label>
+    <div class="fr"><label for="cx-cat">קטגוריה</label>
       <select id="cx-cat">
         <option>עמלות מסחר</option><option>תוכנה</option><option>קורס</option>
         <option>ציוד</option><option>מנוי</option><option>אחר</option>
       </select>
     </div>
-    <div class="fr"><label>תיאור</label><input type="text" id="cx-desc" placeholder="תאר את ההוצאה..."></div>
-    <div class="fr"><label>תאריך</label><input type="date" id="cx-dt"></div>
+    <div class="fr"><label for="cx-desc">תיאור</label><input type="text" id="cx-desc" placeholder="תאר את ההוצאה..."></div>
+    <div class="fr"><label for="cx-dt">תאריך</label><input type="date" id="cx-dt"></div>
     <div class="fr">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <label style="margin:0">סכום</label>
@@ -4026,8 +4031,8 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <span id="cx-conv" style="font-size:11px;color:var(--t3);white-space:nowrap"></span>
       </div>
     </div>
-    <div class="fr"><label>שער דולר</label><input type="number" id="cx-rt" step="0.0001" value="" oninput="cxUpdateConv()" inputmode="decimal"></div>
-    <div class="fr"><label>הערה</label><textarea id="cx-note" placeholder="פרטים נוספים..."></textarea></div>
+    <div class="fr"><label for="cx-rt">שער דולר</label><input type="number" id="cx-rt" step="0.0001" value="" oninput="cxUpdateConv()" inputmode="decimal"></div>
+    <div class="fr"><label for="cx-note">הערה</label><textarea id="cx-note" placeholder="פרטים נוספים..."></textarea></div>
     <div class="fax">
       <button class="bd2" id="cx-del" style="display:none" onclick="cxDel()">🗑</button>
       <button class="bn" onclick="cxClose()">ביטול</button>
@@ -4041,19 +4046,19 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="modal" style="width:min(420px,calc(100vw - 16px))">
     <h3>ערוך הוצאה חוזרת <button class="cx" onclick="closeRecurEdit()">×</button></h3>
     <input type="hidden" id="re-id">
-    <div class="fr"><label>שם כלי / שירות</label><input type="text" id="re-tool" placeholder="לדוגמה: TradingView Pro"></div>
-    <div class="fr"><label>חברה</label><input type="text" id="re-company" placeholder="שם החברה"></div>
+    <div class="fr"><label for="re-tool">שם כלי / שירות</label><input type="text" id="re-tool" placeholder="לדוגמה: TradingView Pro"></div>
+    <div class="fr"><label for="re-company">חברה</label><input type="text" id="re-company" placeholder="שם החברה"></div>
     <div class="g2">
-      <div class="fr"><label>סכום חודשי ($)</label><input type="number" id="re-amount" step="0.01" min="0" placeholder="0.00" inputmode="decimal"></div>
-      <div class="fr"><label>יום בחודש</label><input type="number" id="re-day" min="1" max="28" placeholder="1–28" inputmode="decimal"></div>
+      <div class="fr"><label for="re-amount">סכום חודשי ($)</label><input type="number" id="re-amount" step="0.01" min="0" placeholder="0.00" inputmode="decimal"></div>
+      <div class="fr"><label for="re-day">יום בחודש</label><input type="number" id="re-day" min="1" max="28" placeholder="1–28" inputmode="decimal"></div>
     </div>
-    <div class="fr"><label>קטגוריה</label>
+    <div class="fr"><label for="re-cat">קטגוריה</label>
       <select id="re-cat">
         <option>כלי</option><option>קורס</option><option>מבחן</option><option>לייב</option><option>ריסט</option><option>אחר</option>
       </select>
     </div>
-    <div class="fr"><label>תאריך סיום (אופציונלי)</label><input type="date" id="re-end"></div>
-    <div class="fr"><label>הערה</label><textarea id="re-note" placeholder="הערה..."></textarea></div>
+    <div class="fr"><label for="re-end">תאריך סיום (אופציונלי)</label><input type="date" id="re-end"></div>
+    <div class="fr"><label for="re-note">הערה</label><textarea id="re-note" placeholder="הערה..."></textarea></div>
     <div class="fax">
       <button class="bn" onclick="closeRecurEdit()">ביטול</button>
       <button class="bs" onclick="saveRecurringEdit()">💾 שמור שינויים</button>
@@ -4068,15 +4073,15 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
     <!-- Row 1: date + time + account -->
     <div class="g2">
-      <div class="fr"><label>תאריך *</label><input type="date" id="at-date"></div>
-      <div class="fr"><label>שעת כניסה</label><input type="time" id="at-time" step="1"></div>
+      <div class="fr"><label for="at-date">תאריך *</label><input type="date" id="at-date"></div>
+      <div class="fr"><label for="at-time">שעת כניסה</label><input type="time" id="at-time" step="1"></div>
     </div>
 
     <div class="fr"><label for="at-acct">חשבון מסחר *</label><select id="at-acct" required></select></div>
     <!-- Row 2: symbol + qty + direction -->
     <div style="display:grid;grid-template-columns:1fr 80px;gap:8px">
       <div class="fr">
-        <label>סימול *</label>
+        <label for="at-sym">סימול *</label>
         <input type="text" id="at-sym" list="at-sym-list" placeholder="NQM6, MNQM6, ESM6..." autocomplete="off" oninput="atCalcPnl()">
         <datalist id="at-sym-list">
           <option value="MNQM6">MNQM6 — Micro NQ</option>
@@ -4089,7 +4094,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
           <option value="RTYM6">RTYM6 — E-mini Russell</option>
         </datalist>
       </div>
-      <div class="fr"><label>כמות</label><input type="number" id="at-qty" value="1" min="1" step="1" oninput="atCalcPnl()" inputmode="decimal"></div>
+      <div class="fr"><label for="at-qty">כמות</label><input type="number" id="at-qty" value="1" min="1" step="1" oninput="atCalcPnl()" inputmode="decimal"></div>
     </div>
 
     <!-- Direction toggle -->
@@ -4154,16 +4159,16 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <!-- Extra details -->
     <div class="g2">
       <div class="fr">
-        <label>אסטרטגיה</label>
+        <label for="at-strategy">אסטרטגיה</label>
         <input type="text" id="at-strategy" list="at-strat-list" placeholder="Breakout, Scalp...">
         <datalist id="at-strat-list"></datalist>
       </div>
       <div class="fr">
-        <label>משך (אופציונלי)</label>
+        <label for="at-dur">משך (אופציונלי)</label>
         <input type="text" id="at-dur" placeholder="3m:25 / 45s / 1h">
       </div>
     </div>
-    <div class="fr"><label>הערה (אופציונלי)</label><textarea id="at-notes" placeholder="תיאור העסקה, תנאי שוק..."></textarea></div>
+    <div class="fr"><label for="at-notes">הערה (אופציונלי)</label><textarea id="at-notes" placeholder="תיאור העסקה, תנאי שוק..."></textarea></div>
     </details>
 
     <div class="fax">
@@ -4180,25 +4185,25 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div style="font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.5">במקום להעלות קובץ עסקאות מלא — רשום כמה הרווחת/הפסדת היום (וכמה עסקאות, אם ידוע). זה נכנס לכל הסטטיסטיקות, לוח השנה והגרפים בדיוק כמו יום רגיל.</div>
 
     <div class="g2">
-      <div class="fr"><label>תאריך *</label><input type="date" id="me-date"></div>
+      <div class="fr"><label for="me-date">תאריך *</label><input type="date" id="me-date"></div>
       <div class="fr">
-        <label>תיק</label>
+        <label for="me-acct">תיק</label>
         <select id="me-acct" onchange="meAcctSelectChange()" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)"></select>
         <input type="text" id="me-acct-new" placeholder="שם התיק החדש..." style="display:none;width:100%;margin-top:6px;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
       </div>
     </div>
 
     <div class="fr">
-      <label>💰 P&amp;L נטו ליום ($) *</label>
+      <label for="me-pnl">💰 P&amp;L נטו ליום ($) *</label>
       <input type="number" id="me-pnl" step="0.01" placeholder="לדוגמה: 245.50 או -120" style="width:100%;padding:8px 10px;font-size:14px;font-weight:700;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)" dir="ltr" inputmode="decimal">
     </div>
 
     <div class="g2">
-      <div class="fr"><label>מס' עסקאות (אופציונלי)</label><input type="number" id="me-count" min="0" step="1" placeholder="לדוגמה: 4" inputmode="decimal"></div>
-      <div class="fr"><label>אילו עסקאות (אופציונלי)</label><input type="text" id="me-which" placeholder="לדוגמה: NQ, ES"></div>
+      <div class="fr"><label for="me-count">מס' עסקאות (אופציונלי)</label><input type="number" id="me-count" min="0" step="1" placeholder="לדוגמה: 4" inputmode="decimal"></div>
+      <div class="fr"><label for="me-which">אילו עסקאות (אופציונלי)</label><input type="text" id="me-which" placeholder="לדוגמה: NQ, ES"></div>
     </div>
 
-    <div class="fr"><label>הערה (אופציונלי)</label><textarea id="me-notes" placeholder="הקשר, מה קרה היום..." style="height:55px;resize:vertical"></textarea></div>
+    <div class="fr"><label for="me-notes">הערה (אופציונלי)</label><textarea id="me-notes" placeholder="הקשר, מה קרה היום..." style="height:55px;resize:vertical"></textarea></div>
 
     <div class="fr">
       <label>📸 צילום מסך של הפלטפורמה (אופציונלי) — נזהה סכום אוטומטית</label>
@@ -4228,9 +4233,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">📋 פרטי תיק</div>
     <div class="g2">
-      <div class="fr"><label>חברת פרופ / סוג תיק</label><input type="text" id="ag-company" placeholder="לדוגמה: Apex, Topstep, אישי"></div>
+      <div class="fr"><label for="ag-company">חברת פרופ / סוג תיק</label><input type="text" id="ag-company" placeholder="לדוגמה: Apex, Topstep, אישי"></div>
       <div class="fr">
-        <label>שלב התיק</label>
+        <label for="ag-status">שלב התיק</label>
         <select id="ag-status" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)">
           <option value="evaluation">🧪 אתגר / Evaluation</option>
           <option value="passed">✅ עבר אתגר</option>
@@ -4242,28 +4247,28 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </div>
     </div>
     <div class="g2">
-      <div class="fr"><label>גודל חשבון התחלתי ($)</label><input type="number" id="ag-acct-size" step="1" placeholder="לדוגמה: 25000" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"></div>
-      <div class="fr"><label>תאריך פתיחת התיק</label><input type="date" id="ag-open-date"></div>
+      <div class="fr"><label for="ag-acct-size">גודל חשבון התחלתי ($)</label><input type="number" id="ag-acct-size" step="1" placeholder="לדוגמה: 25000" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"></div>
+      <div class="fr"><label for="ag-open-date">תאריך פתיחת התיק</label><input type="date" id="ag-open-date"></div>
     </div>
-    <div class="fr"><label>💰 יתרת חשבון נוכחית ($)</label><input type="number" id="ag-balance" step="1" placeholder="לדוגמה: 26400" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"><div id="ag-balance-note" style="font-size:10px;color:var(--t3);margin-top:4px"></div></div>
-    <div class="fr"><label>סכום משיכה ראשון מתוכנן ($)</label><input type="number" id="ag-planned-withdrawal" step="1" placeholder="לדוגמה: 1000" dir="ltr" inputmode="decimal"></div>
+    <div class="fr"><label for="ag-balance">💰 יתרת חשבון נוכחית ($)</label><input type="number" id="ag-balance" step="1" placeholder="לדוגמה: 26400" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"><div id="ag-balance-note" style="font-size:10px;color:var(--t3);margin-top:4px"></div></div>
+    <div class="fr"><label for="ag-planned-withdrawal">סכום משיכה ראשון מתוכנן ($)</label><input type="number" id="ag-planned-withdrawal" step="1" placeholder="לדוגמה: 1000" dir="ltr" inputmode="decimal"></div>
 
     <div id="ag-progress-summary" style="margin:14px 0"></div>
 
     <div class="fr">
-      <label>💸 יעד למשיכה ($)</label>
+      <label for="ag-withdrawal">💸 יעד למשיכה ($)</label>
       <input type="number" id="ag-withdrawal" step="1" placeholder="לדוגמה: 2000" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1)" dir="ltr" inputmode="decimal">
     </div>
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🚀 יעד למעבר (Combine / שלב הבא)</div>
     <div class="g2">
-      <div class="fr"><label>יעד רווח ($)</label><input type="number" id="ag-pass-target" step="1" placeholder="לדוגמה: 3000" dir="ltr" inputmode="decimal"></div>
-      <div class="fr"><label>יעד תאריך</label><input type="date" id="ag-pass-deadline"></div>
+      <div class="fr"><label for="ag-pass-target">יעד רווח ($)</label><input type="number" id="ag-pass-target" step="1" placeholder="לדוגמה: 3000" dir="ltr" inputmode="decimal"></div>
+      <div class="fr"><label for="ag-pass-deadline">יעד תאריך</label><input type="date" id="ag-pass-deadline"></div>
     </div>
-    <div class="fr"><label>יעד באפר / כרית ביטחון ($)</label><input type="number" id="ag-pass-buffer" step="1" placeholder="לדוגמה: 500 מעל הדראודאון המקסימלי" dir="ltr" inputmode="decimal"></div>
+    <div class="fr"><label for="ag-pass-buffer">יעד באפר / כרית ביטחון ($)</label><input type="number" id="ag-pass-buffer" step="1" placeholder="לדוגמה: 500 מעל הדראודאון המקסימלי" dir="ltr" inputmode="decimal"></div>
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">🔥 יעד/סף שריפה</div>
-    <div class="fr"><label>הפסד מקסימלי מותר ($, מספר חיובי)</label><input type="number" id="ag-burn-limit" step="1" placeholder="לדוגמה: 1500" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"></div>
+    <div class="fr"><label for="ag-burn-limit">הפסד מקסימלי מותר ($, מספר חיובי)</label><input type="number" id="ag-burn-limit" step="1" placeholder="לדוגמה: 1500" dir="ltr" oninput="_agLiveBalancePreview()" inputmode="decimal"></div>
 
     <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px">➕ יעדים מותאמים אישית</div>
     <div id="ag-custom-list"></div>
@@ -4306,13 +4311,13 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="clx-modal-goal" onclick="if(event.target===this)clxClose('goal')">
   <div class="modal" style="width:min(480px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>🎯 מחשבון יעד שנתי <button class="cx" onclick="clxClose('goal')">×</button></h3>
-    <div class="clx-input-row"><label>יעד שנתי (₪)</label><input type="number" id="clx-g-annual" value="1000000" oninput="clxCalcGoal()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>שער דולר (₪)</label><input type="number" id="clx-g-rate" value="3.7" step="0.01" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-annual">יעד שנתי (₪)</label><input type="number" id="clx-g-annual" value="1000000" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-rate">שער דולר (₪)</label><input type="number" id="clx-g-rate" value="3.7" step="0.01" oninput="clxCalcGoal()" inputmode="decimal"></div>
     <div class="clx-checkbox-row"><input type="checkbox" id="clx-g-friday" onchange="clxCalcGoal()"><label for="clx-g-friday">כולל יום שישי</label></div>
-    <div class="clx-input-row"><label>עסקאות ביום</label><input type="number" id="clx-g-tday" value="3" oninput="clxCalcGoal()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>כמות תיקים</label><input type="number" id="clx-g-acc" value="1" oninput="clxCalcGoal()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-g-wr" value="50" oninput="clxCalcGoal()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>יחס R:R</label><input type="number" id="clx-g-rr" value="2" step="0.1" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-tday">עסקאות ביום</label><input type="number" id="clx-g-tday" value="3" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-acc">כמות תיקים</label><input type="number" id="clx-g-acc" value="1" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-wr">אחוז הצלחה (%)</label><input type="number" id="clx-g-wr" value="50" oninput="clxCalcGoal()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-g-rr">יחס R:R</label><input type="number" id="clx-g-rr" value="2" step="0.1" oninput="clxCalcGoal()" inputmode="decimal"></div>
     <div class="clx-result-big">
       <div class="clx-result-label">יעד שנתי בדולר</div>
       <div class="clx-result-num" id="clx-g-r-annual">$0</div>
@@ -4332,7 +4337,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="clx-modal-rr" onclick="if(event.target===this)clxClose('rr')">
   <div class="modal" style="width:min(560px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>📊 טבלת סיכון/סיכוי <button class="cx" onclick="clxClose('rr')">×</button></h3>
-    <div class="clx-input-row"><label>יחידת סיכון ($)</label><input type="number" id="clx-rr-unit" value="200" oninput="clxBuildRR()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-rr-unit">יחידת סיכון ($)</label><input type="number" id="clx-rr-unit" value="200" oninput="clxBuildRR()" inputmode="decimal"></div>
     <div id="clx-rr-container"></div>
   </div>
 </div>
@@ -4341,9 +4346,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="clx-modal-contracts" onclick="if(event.target===this)clxClose('contracts')">
   <div class="modal" style="width:min(480px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>📐 נקודות / חוזים <button class="cx" onclick="clxClose('contracts')">×</button></h3>
-    <div class="clx-input-row"><label>סיכון ($)</label><input type="number" id="clx-c-risk" value="200" oninput="clxCalcContracts()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>נקודות סטופ</label><input type="number" id="clx-c-pts" value="10" oninput="clxCalcContracts()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>שווי נקודה ($) — NQ=20, ES=50</label><input type="number" id="clx-c-pv" value="20" step="0.01" oninput="clxCalcContracts()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-c-risk">סיכון ($)</label><input type="number" id="clx-c-risk" value="200" oninput="clxCalcContracts()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-c-pts">נקודות סטופ</label><input type="number" id="clx-c-pts" value="10" oninput="clxCalcContracts()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-c-pv">שווי נקודה ($) — NQ=20, ES=50</label><input type="number" id="clx-c-pv" value="20" step="0.01" oninput="clxCalcContracts()" inputmode="decimal"></div>
     <div class="clx-result-big">
       <div class="clx-result-label">מספר חוזים</div>
       <div class="clx-result-num" id="clx-c-res">0</div>
@@ -4362,8 +4367,8 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="modal" style="width:min(520px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>🔄 הצלחה חלופית <button class="cx" onclick="clxClose('altwr')">×</button></h3>
     <div class="clx-note">אם אחוז ההצלחה שלך משתנה — מה יחס ה-R:R שתצטרך כדי לשמור על אותה תוחלת?</div>
-    <div class="clx-input-row"><label>אחוז הצלחה נוכחי (%)</label><input type="number" id="clx-aw-wr" value="45" oninput="clxCalcAltWR()" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>יחס R:R נוכחי</label><input type="number" id="clx-aw-rr" value="4" step="0.1" oninput="clxCalcAltWR()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-aw-wr">אחוז הצלחה נוכחי (%)</label><input type="number" id="clx-aw-wr" value="45" oninput="clxCalcAltWR()" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-aw-rr">יחס R:R נוכחי</label><input type="number" id="clx-aw-rr" value="4" step="0.1" oninput="clxCalcAltWR()" inputmode="decimal"></div>
     <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">R:R הנדרש לפי אחוז הצלחה</div>
     <div id="clx-aw-container"></div>
   </div>
@@ -4373,10 +4378,10 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="clx-modal-consistency" onclick="if(event.target===this)clxClose('consistency')">
   <div class="modal" style="width:min(480px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>🎲 מחשבון עקביות <button class="cx" onclick="clxClose('consistency')">×</button></h3>
-    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-con-wr" value="58" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>רווח ממוצע ($)</label><input type="number" id="clx-con-win" value="300" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>הפסד ממוצע ($)</label><input type="number" id="clx-con-loss" value="200" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>מספר עסקאות</label><input type="number" id="clx-con-n" value="500" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-con-wr">אחוז הצלחה (%)</label><input type="number" id="clx-con-wr" value="58" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-con-win">רווח ממוצע ($)</label><input type="number" id="clx-con-win" value="300" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-con-loss">הפסד ממוצע ($)</label><input type="number" id="clx-con-loss" value="200" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-con-n">מספר עסקאות</label><input type="number" id="clx-con-n" value="500" inputmode="decimal"></div>
     <button class="clx-btn" onclick="clxRunConsistency()">▶ הרץ סימולציה</button>
     <div id="clx-con-results" style="display:none">
       <div class="clx-results-grid" style="margin-top:14px">
@@ -4394,14 +4399,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg clx-mc" id="clx-modal-mc" onclick="if(event.target===this)clxClose('mc')">
   <div class="modal" style="width:min(520px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>🏦 שרידות תיק ממומן <button class="cx" onclick="clxClose('mc')" style="color:#e5e7eb">×</button></h3>
-    <div class="clx-input-row"><label>אחוז הצלחה (%)</label><input type="number" id="clx-mc-wr" value="50" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>יחס R:R</label><input type="number" id="clx-mc-rr" value="2" step="0.1" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>סיכון לעסקה ($)</label><input type="number" id="clx-mc-risk" value="100" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>דראודאון מקסימלי ($)</label><input type="number" id="clx-mc-dd" value="2000" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>סף משיכה ($)</label><input type="number" id="clx-mc-target" value="3000" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>מספר עסקאות</label><input type="number" id="clx-mc-trades" value="500" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-wr">אחוז הצלחה (%)</label><input type="number" id="clx-mc-wr" value="50" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-rr">יחס R:R</label><input type="number" id="clx-mc-rr" value="2" step="0.1" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-risk">סיכון לעסקה ($)</label><input type="number" id="clx-mc-risk" value="100" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-dd">דראודאון מקסימלי ($)</label><input type="number" id="clx-mc-dd" value="2000" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-target">סף משיכה ($)</label><input type="number" id="clx-mc-target" value="3000" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="clx-mc-trades">מספר עסקאות</label><input type="number" id="clx-mc-trades" value="500" inputmode="decimal"></div>
     <div class="clx-input-row">
-      <label>סוג דראודאון</label>
+      <label for="clx-mc-ddtype">סוג דראודאון</label>
       <select id="clx-mc-ddtype"><option value="static">קבוע (Static)</option><option value="trailing">נגרר (Trailing)</option></select>
     </div>
     <button class="clx-btn" onclick="clxRunMC()">▶ הרץ סימולציה (1,000 תיקים)</button>
@@ -4425,16 +4430,16 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg clx-mc" id="clx-modal-aicheck" onclick="if(event.target===this)clxClose('aicheck')">
   <div class="modal" style="width:min(480px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>🤖 בדיקת עסקה עם AI <button class="cx" onclick="clxClose('aicheck')" style="color:#e5e7eb">×</button></h3>
-    <div class="clx-input-row"><label>נכס</label><input type="text" id="aic-sym" placeholder="MNQ, ES..." dir="ltr"></div>
+    <div class="clx-input-row"><label for="aic-sym">נכס</label><input type="text" id="aic-sym" placeholder="MNQ, ES..." dir="ltr"></div>
     <div class="clx-input-row">
-      <label>כיוון</label>
+      <label for="aic-dir">כיוון</label>
       <select id="aic-dir"><option value="long">Long</option><option value="short">Short</option></select>
     </div>
-    <div class="clx-input-row"><label>מחיר כניסה</label><input type="number" id="aic-entry" step="0.01" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>סטופ לוס</label><input type="number" id="aic-stop" step="0.01" inputmode="decimal"></div>
-    <div class="clx-input-row"><label>יעד (Target)</label><input type="number" id="aic-target" step="0.01" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="aic-entry">מחיר כניסה</label><input type="number" id="aic-entry" step="0.01" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="aic-stop">סטופ לוס</label><input type="number" id="aic-stop" step="0.01" inputmode="decimal"></div>
+    <div class="clx-input-row"><label for="aic-target">יעד (Target)</label><input type="number" id="aic-target" step="0.01" inputmode="decimal"></div>
     <div class="clx-input-row">
-      <label>סטאפ כניסה</label>
+      <label for="aic-setup">סטאפ כניסה</label>
       <select id="aic-setup">
         <option value="">— לא צויין —</option>
         <option value="FVG">FVG</option><option value="IFVG">IFVG</option>
@@ -4504,7 +4509,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
   <div class="modal" style="width:min(440px,calc(100vw - 16px));max-height:92vh;overflow-y:auto">
     <h3>+ תנועה חדשה <button class="cx" onclick="bizCloseAdd()">×</button></h3>
     <div class="fr">
-      <label>סוג תנועה</label>
+      <label for="biz-type">סוג תנועה</label>
       <select id="biz-type" onchange="bizTypeChange()" style="width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--t1)">
         <option value="income">💵 הכנסה</option>
         <option value="expense">💸 הוצאה</option>
@@ -4515,14 +4520,14 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       </select>
       <div style="font-size:10px;color:var(--t3);margin-top:4px">💡 משיכות מנוהלות דרך 🎯 יעדי התיק הספציפי (בתפריט "כל התיקים")</div>
     </div>
-    <div class="fr"><label>תאריך</label><input type="date" id="biz-date"></div>
-    <div class="fr" id="biz-amount-row"><label>סכום ($)</label><input type="number" id="biz-amount" step="0.01" placeholder="0" inputmode="decimal"></div>
+    <div class="fr"><label for="biz-date">תאריך</label><input type="date" id="biz-date"></div>
+    <div class="fr" id="biz-amount-row"><label for="biz-amount">סכום ($)</label><input type="number" id="biz-amount" step="0.01" placeholder="0" inputmode="decimal"></div>
     <div class="fr" id="biz-acct-row" style="display:none">
-      <label>תיק קשור (אופציונלי)</label>
+      <label for="biz-acct">תיק קשור (אופציונלי)</label>
       <select id="biz-acct" style="width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--t1)"></select>
       <div style="font-size:10px;color:var(--t3);margin-top:4px" id="biz-acct-hint"></div>
     </div>
-    <div class="fr"><label>הערה (אופציונלי)</label><input type="text" id="biz-note" placeholder="הערה..."></div>
+    <div class="fr"><label for="biz-note">הערה (אופציונלי)</label><input type="text" id="biz-note" placeholder="הערה..."></div>
     <div class="fax">
       <button class="bn" onclick="bizCloseAdd()">ביטול</button>
       <button class="bs" onclick="bizSaveEvent()">💾 שמור</button>
@@ -4665,9 +4670,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="pg-modal" onclick="if(event.target===this)pgCloseAdd()">
   <div class="modal" style="width:min(440px,calc(100vw - 16px))">
     <h3>🎯 יעד אישי <button class="cx" onclick="pgCloseAdd()">×</button></h3>
-    <div class="fr"><label>שם היעד</label><input type="text" id="pg-name" class="fi" placeholder="לדוג׳: לרוץ 5 ק״מ, לחסוך 10,000₪..."></div>
+    <div class="fr"><label for="pg-name">שם היעד</label><input type="text" id="pg-name" class="fi" placeholder="לדוג׳: לרוץ 5 ק״מ, לחסוך 10,000₪..."></div>
     <div class="fr">
-      <label>קטגוריה</label>
+      <label for="pg-category">קטגוריה</label>
       <select id="pg-category" class="fi">
         <option value="fitness">💪 כושר</option>
         <option value="financial">💰 פיננסי</option>
@@ -4675,13 +4680,13 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <option value="personal">🌱 אישי</option>
       </select>
     </div>
-    <div class="fr"><label>תאריך יעד</label><input type="date" id="pg-date" class="fi"></div>
+    <div class="fr"><label for="pg-date">תאריך יעד</label><input type="date" id="pg-date" class="fi"></div>
     <div class="fr">
-      <label>התקדמות (%)</label>
+      <label for="pg-progress">התקדמות (%)</label>
       <input type="range" id="pg-progress" min="0" max="100" value="0" oninput="document.getElementById('pg-progress-lbl').textContent=this.value+'%'">
       <div style="text-align:center;font-size:13px;font-weight:600;margin-top:4px" id="pg-progress-lbl">0%</div>
     </div>
-    <div class="fr"><label>משימות קשורות (אחת בכל שורה)</label><textarea id="pg-tasks" style="height:60px"></textarea></div>
+    <div class="fr"><label for="pg-tasks">משימות קשורות (אחת בכל שורה)</label><textarea id="pg-tasks" style="height:60px"></textarea></div>
     <div class="fax">
       <button class="bn" onclick="pgCloseAdd()">ביטול</button>
       <button class="bs" onclick="pgSave()">💾 שמור</button>
@@ -4693,9 +4698,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 <div class="modal-bg" id="rule-modal" onclick="if(event.target===this)ruleCloseAdd()">
   <div class="modal" style="width:min(440px,calc(100vw - 16px))">
     <h3>📏 חוק מסחר <button class="cx" onclick="ruleCloseAdd()">×</button></h3>
-    <div class="fr"><label>שם החוק</label><input type="text" id="rule-label" class="fi" placeholder="לדוג׳: התחלת יום עד השעה 14:30"></div>
+    <div class="fr"><label for="rule-label">שם החוק</label><input type="text" id="rule-label" class="fi" placeholder="לדוג׳: התחלת יום עד השעה 14:30"></div>
     <div class="fr">
-      <label>סוג חוק</label>
+      <label for="rule-type">סוג חוק</label>
       <select id="rule-type" class="fi" onchange="_ruleUpdateTypeUI()">
         <option value="time_start">שעת התחלת מסחר</option>
         <option value="pct_field">אחוז עסקאות עומד בתנאי</option>
@@ -4703,9 +4708,9 @@ pre,code{white-space:pre-wrap;word-break:break-word}
         <option value="max_loss_day">הפסד מקסימלי ליום ($)</option>
       </select>
     </div>
-    <div class="fr" id="rule-row-time"><label>עד השעה</label><input type="time" id="rule-threshold-time" class="fi" value="14:30"></div>
+    <div class="fr" id="rule-row-time"><label for="rule-threshold-time">עד השעה</label><input type="time" id="rule-threshold-time" class="fi" value="14:30"></div>
     <div class="fr" id="rule-row-field">
-      <label>שדה לבדיקה</label>
+      <label for="rule-field">שדה לבדיקה</label>
       <select id="rule-field" class="fi">
         <option value="strategy">קישור לתוכנית מסחר (Playbook)</option>
         <option value="stopLoss">הזנת סטופ-לוס</option>
@@ -6184,10 +6189,10 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <!-- Registration form -->
     <div class="zcl" id="reg-form-wrap" style="max-width:min(480px,calc(100vw - 16px));margin:0 auto;display:none">
       <div class="zcl-title"><div class="zcl-title-left"><div class="dot" style="background:var(--go)"></div>פרטי הרשמה</div></div>
-      <div class="fr"><label>שם מלא *</label><input type="text" id="billing-reg-name" placeholder="ישראל ישראלי"></div>
-      <div class="fr"><label>אימייל *</label><input type="email" inputmode="email" autocomplete="email" id="billing-reg-email" placeholder="israel@email.com"></div>
-      <div class="fr"><label>טלפון *</label><input type="tel" inputmode="tel" autocomplete="tel" id="billing-reg-phone" placeholder="050-0000000"></div>
-      <div class="fr"><label>חבילה</label><input type="text" id="reg-plan" readonly style="color:var(--go)"></div>
+      <div class="fr"><label for="billing-reg-name">שם מלא *</label><input type="text" id="billing-reg-name" placeholder="ישראל ישראלי"></div>
+      <div class="fr"><label for="billing-reg-email">אימייל *</label><input type="email" inputmode="email" autocomplete="email" id="billing-reg-email" placeholder="israel@email.com"></div>
+      <div class="fr"><label for="billing-reg-phone">טלפון *</label><input type="tel" inputmode="tel" autocomplete="tel" id="billing-reg-phone" placeholder="050-0000000"></div>
+      <div class="fr"><label for="reg-plan">חבילה</label><input type="text" id="reg-plan" readonly style="color:var(--go)"></div>
       <div style="background:var(--bg4);border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:11px;color:var(--t3)">
         🔒 הפרטים מאובטחים ומוצפנים. לאחר ההרשמה תועבר לעמוד תשלום מאובטח של Stripe.
       </div>
@@ -6292,7 +6297,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <div class="udp-field">
         <label>שינוי חבילה</label>
         <div style="display:flex;gap:8px;margin-top:2px">
-          <select id="udp-plan-sel" style="flex:1;padding:7px 10px;border-radius:6px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--t1);font-family:inherit">
+          <select id="udp-plan-sel" aria-label="מסלול המשתמש" style="flex:1;padding:7px 10px;border-radius:6px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--t1);font-family:inherit">
             <option value="free">Free</option>
             <option value="pro">Pro</option>
             <option value="lifetime">Lifetime</option>
@@ -7570,70 +7575,82 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <section class="legal-doc lg-sub" id="lg-privacy" role="tabpanel" aria-labelledby="lg-tab-privacy" tabindex="0">
     <h2>מדיניות פרטיות</h2>
     <div class="legal-updated">עודכן לאחרונה: <span class="legal-date"></span></div>
-    <p>Fayna Trading ("המערכת", "אנחנו") מכבדת את פרטיותך. מדיניות זו מסבירה אילו נתונים נאספים, מדוע, כיצד הם נשמרים ומהן זכויותיך.</p>
+    <p>Fayna Trading ("המערכת", "אנחנו") מכבדת את פרטיותך. מדיניות זו מסבירה אילו נתונים נאספים, למה, מי מקבל אותם, איפה הם נשמרים ומהן זכויותיך לפי חוק הגנת הפרטיות, התשמ"א־1981.</p>
 
-    <h3>1. אילו נתונים נאספים</h3>
+    <h3>1. מי אחראי על המידע</h3>
+    <p>המערכת מופעלת על ידי Fayna Group (להלן "בעל השליטה במאגר"). לכל פנייה בנושא פרטיות: <a class="legal-mail" href="#"></a>.</p>
+
+    <h3>2. אילו נתונים נאספים</h3>
     <ul>
-      <li><b>פרטי חשבון</b> — שם, כתובת דוא"ל וטלפון שמסרת בעת ההרשמה.</li>
-      <li><b>נתוני מסחר שהזנת</b> — עסקאות, הוצאות, משיכות, תיקים, יעדים, הערות וצילומי מסך שהעלית.</li>
-      <li><b>נתוני שימוש</b> — מועדי כניסה, מספר כניסות ופעילות אחרונה, לצורכי אבטחה ותמיכה.</li>
-      <li><b>העדפות</b> — ערכת נושא, הגדרות נגישות ובחירות תצוגה, הנשמרות במכשירך.</li>
-      <li><b>מקור הרשמה</b> — אם הגעת דרך קישור הזמנה של משתמש אחר, נשמר מזהה ההפניה.</li>
+      <li><b>פרטי חשבון</b>: שם, כתובת דוא"ל וטלפון שמסרת בהרשמה, ותמונת פרופיל אם העלית.</li>
+      <li><b>נתוני מסחר שהזנת</b>: עסקאות, חשבונות מסחר, הוצאות, הכנסות ומשיכות, יעדים, הערות, תיעוד רגשי וצילומי מסך.</li>
+      <li><b>נתוני שימוש ואבטחה</b>: מועדי כניסה ויציאה, מספר כניסות, סוג הדפדפן וכתובת IP (נרשמת אצל ספק האחסון).</li>
+      <li><b>הסכמה לדיוור</b>: האם הסכמת לקבל עדכונים שיווקיים, מתי ואיך, וכן בקשות הסרה.</li>
+      <li><b>מקור הרשמה</b>: אם הגעת דרך קישור הזמנה של משתמש אחר, נשמר מזהה ההפניה.</li>
+      <li><b>העדפות</b>: ערכת נושא, הגדרות נגישות ובחירות תצוגה, הנשמרות במכשירך.</li>
     </ul>
-    <p>איננו אוספים פרטי אשראי. תשלומים, ככל שיתבצעו, מעובדים אצל ספק סליקה חיצוני שאינו מעביר אלינו את פרטי הכרטיס.</p>
+    <p>אינך חייב/ת על פי חוק למסור לנו מידע. בלי שם ודוא"ל לא ניתן לפתוח חשבון; טלפון, תמונה ונתוני מסחר נמסרים לפי בחירתך. איננו אוספים פרטי כרטיס אשראי. תשלומים, כשיופעלו, יעובדו אצל ספק סליקה מורשה שאינו מעביר אלינו את פרטי הכרטיס.</p>
 
-    <h3>2. מדוע הנתונים נאספים</h3>
+    <h3>3. למה הנתונים משמשים</h3>
     <ul>
-      <li>הפעלת המערכת והצגת הנתונים שלך בלבד.</li>
+      <li>הפעלת המערכת והצגת הנתונים שלך, לך בלבד.</li>
       <li>שמירה וסנכרון בין המכשירים שלך.</li>
       <li>אבטחת החשבון וזיהוי שימוש חריג.</li>
       <li>תמיכה טכנית ומענה לפניות.</li>
-      <li>שליחת עדכונים תפעוליים — בכפוף להסכמתך ולזכותך להסיר את עצמך בכל עת.</li>
+      <li>הודעות שירות הכרחיות (למשל איפוס סיסמה או שינוי במנוי).</li>
+      <li>דיוור שיווקי בדוא"ל ובוואטסאפ, <b>רק אם הסכמת לכך במפורש</b>. כל הודעה כזו מסומנת "פרסומת" וכוללת דרך פשוטה להסרה.</li>
     </ul>
+    <p>איננו מוכרים מידע אישי, איננו משתמשים בו לפרסום של צד שלישי, ואיננו מקבלים לגביך החלטות אוטומטיות בעלות השפעה משפטית.</p>
 
-    <h3>3. כיצד הנתונים נשמרים</h3>
-    <p>הנתונים נשמרים בשירותי Google Firebase (Firestore ו-Authentication), בהצפנה במעבר (HTTPS/TLS) ובמנוחה. הגישה מוגבלת באמצעות כללי הרשאה המאפשרים לכל משתמש לגשת אך ורק לנתונים שלו. סיסמאות אינן נשמרות אצלנו כלל — הן מנוהלות ומוצפנות על ידי Firebase Authentication ואינן חשופות לנו בשום שלב.</p>
-
-    <h3>4. עוגיות ואחסון מקומי</h3>
-    <p>המערכת עושה שימוש בעוגיות ובאחסון מקומי (localStorage) בשלוש רמות:</p>
+    <h3>4. מי מקבל את המידע</h3>
+    <p>המידע נשמר ומעובד אצל ספקים שפועלים עבורנו, ורק במידה הנדרשת לשירות:</p>
     <ul>
-      <li><b>הכרחיות</b> — שמירת מצב ההתחברות והאבטחה. פועלות תמיד ואינן ניתנות לכיבוי.</li>
-      <li><b>העדפות</b> — ערכת נושא, נגישות ותצוגה. פועלות רק לאחר הסכמתך.</li>
-      <li><b>סטטיסטיקה</b> — מדידת שימוש אנונימית. אינה מופעלת ללא הסכמה מפורשת.</li>
+      <li><b>Google Firebase</b> (Google LLC): אחסון הנתונים, הזדהות וקבצים.</li>
+      <li><b>Web3Forms</b>: העברת פניות מטופס יצירת הקשר ועדכונים פנימיים לבעל האתר (שם, דוא"ל ותוכן הפנייה).</li>
+      <li><b>EmailJS</b>: משלוח דוא"ל, כשהשירות מופעל.</li>
+      <li><b>Google Fonts ו־TradingView</b>: טעינת גופנים וגרפים. ספקים אלה מקבלים את כתובת ה־IP של הדפדפן שלך בעת הטעינה.</li>
+      <li><b>ספק סליקה</b>: בעת הפעלת מנויים בתשלום, לצורך החיוב בלבד.</li>
     </ul>
-    <p>ניתן לשנות את הבחירה בכל עת דרך הקישור "הגדרות עוגיות" בתחתית העמוד.</p>
+    <p>מידע עשוי להימסר גם אם נידרש לכך על פי דין או צו של רשות מוסמכת.</p>
 
-    <h3>5. שירותי צד שלישי</h3>
+    <h3>5. העברת מידע לחו"ל</h3>
+    <p>שרתי Google Firebase ושאר הספקים נמצאים מחוץ לישראל (בעיקר בארה"ב ובאיחוד האירופי). ההעברה נעשית בהתאם לתקנות הגנת הפרטיות (העברת מידע אל מאגרי מידע שמחוץ לגבולות המדינה), לספקים המתחייבים להגנה על המידע.</p>
+
+    <h3>6. אבטחה</h3>
+    <p>הנתונים מוצפנים במעבר (HTTPS/TLS) ובמנוחה. כללי הרשאה בשרת מאפשרים לכל משתמש לגשת רק לנתונים שלו, ומפתחות סודיים אינם נשמרים בקוד שרץ בדפדפן. סיסמאות מנוהלות ומוצפנות על ידי Firebase Authentication ואינן גלויות לנו. אנו פועלים לפי תקנות הגנת הפרטיות (אבטחת מידע), התשע"ז־2017. אם יתרחש אירוע אבטחה חמור, נדווח עליו כנדרש בחוק.</p>
+
+    <h3>7. כמה זמן נשמר המידע</h3>
+    <p>נתוני החשבון והמסחר נשמרים כל עוד החשבון פעיל, ונמחקים מהמערכת כשהחשבון נמחק. עותקים עשויים להישאר לזמן קצר בגיבויים של ספק האחסון. רישומי כניסה נשמרים לצורכי אבטחה בלבד. רשימת ההסרה מדיוור נשמרת גם אחרי מחיקת חשבון, כדי שלא נשלח אליך שוב בטעות.</p>
+
+    <h3>8. עוגיות ואחסון מקומי</h3>
     <ul>
-      <li><b>Google Firebase</b> — אחסון נתונים, הזדהות וקבצים.</li>
-      <li><b>TradingView</b> — הצגת גרפים ונתוני שוק (רכיבים מוטמעים).</li>
-      <li><b>EmailJS / Web3Forms</b> — משלוח הודעות דוא"ל תפעוליות.</li>
-      <li><b>ספק סליקה</b> — בעת הפעלת מנויים בתשלום, לצורך ביצוע החיוב בלבד.</li>
+      <li><b>הכרחיות</b>: שמירת ההתחברות והאבטחה. פועלות תמיד.</li>
+      <li><b>העדפות</b>: ערכת נושא, נגישות ותצוגה. פועלות רק לאחר הסכמתך.</li>
+      <li><b>סטטיסטיקה</b>: מדידת שימוש אנונימית. לא מופעלת ללא הסכמה מפורשת. נכון להיום המערכת אינה מפעילה כלי סטטיסטיקה חיצוני.</li>
     </ul>
-    <p>לכל ספק מדיניות פרטיות משלו החלה על העיבוד המתבצע אצלו.</p>
+    <p>אפשר לשנות את הבחירה בכל עת בקישור "הגדרות עוגיות" בתחתית העמוד.</p>
 
-    <h3>6. Google Analytics</h3>
-    <p>נכון למועד עדכון מסמך זה המערכת אינה מפעילה Google Analytics. אם וכאשר יופעל, הדבר ייעשה אך ורק לאחר קבלת הסכמתך בקטגוריית "סטטיסטיקה", ומסמך זה יעודכן בהתאם.</p>
-
-    <h3>7. זכויותיך</h3>
+    <h3>9. הזכויות שלך</h3>
     <ul>
-      <li><b>עיון</b> — לצפות בכל הנתונים שלך במערכת ולייצא אותם לקובץ.</li>
-      <li><b>תיקון</b> — לערוך או למחוק כל רשומה שהזנת.</li>
-      <li><b>מחיקה</b> — למחוק את החשבון וכל הנתונים הנלווים דרך אזור אישי ← אבטחה ← מחיקת חשבון.</li>
-      <li><b>הסרה מדיוור</b> — בכל מייל קיים קישור הסרה, וניתן גם להשיב במילה "הסר".</li>
-      <li><b>התנגדות</b> — לפנות אלינו בכל שאלה או בקשה הנוגעת לפרטיותך.</li>
+      <li><b>עיון</b> (סעיף 13 לחוק): לצפות בכל המידע שלך ולייצא אותו לקובץ.</li>
+      <li><b>תיקון ומחיקה</b> (סעיף 14 לחוק): לערוך או למחוק כל רשומה, ולמחוק את החשבון כולו דרך הגדרות ← אבטחה ← מחיקת חשבון.</li>
+      <li><b>הסרה מדיוור</b>: בקישור שבכל הודעה, בהשבה במילה "הסר", או בהגדרות ← התראות ← דיוור ועדכונים.</li>
+      <li><b>פנייה</b>: לכל בקשה אחרת כתבו ל־<a class="legal-mail" href="#"></a>. נשיב תוך 30 יום לכל היותר.</li>
     </ul>
-    <p>מחיקת חשבון היא פעולה בלתי הפיכה. נתונים מסוימים עשויים להישמר בעותקי גיבוי לתקופה מוגבלת או ככל שנדרש על פי דין.</p>
+    <p>אם לדעתך זכויותיך לא כובדו, אפשר לפנות גם לרשות להגנת הפרטיות.</p>
 
-    <h3>8. פנייה בנושא פרטיות</h3>
-    <p>בכל שאלה או בקשה בנושא פרטיות ניתן לפנות אלינו בדוא"ל: <a class="legal-mail" href="#"></a>. נשתדל להשיב בתוך זמן סביר.</p>
+    <h3>10. קטינים</h3>
+    <p>המערכת מיועדת לבני 18 ומעלה ואינה אוספת ביודעין מידע על קטינים.</p>
+
+    <h3>11. שינויים במדיניות</h3>
+    <p>נעדכן את המסמך מעת לעת. על שינוי מהותי נודיע במערכת או בדוא"ל לפני כניסתו לתוקף.</p>
   </section>
 
   <!-- ── TERMS ── -->
   <section class="legal-doc lg-sub" id="lg-terms" role="tabpanel" aria-labelledby="lg-tab-terms" tabindex="0" style="display:none">
     <h2>תנאי שימוש</h2>
     <div class="legal-updated">עודכן לאחרונה: <span class="legal-date"></span></div>
-    <p>השימוש במערכת Fayna Trading כפוף לתנאים שלהלן. עצם ההרשמה והשימוש מהווים הסכמה מלאה לתנאים אלה.</p>
+    <p>השימוש במערכת Fayna Trading, המופעלת על ידי Fayna Group, כפוף לתנאים שלהלן. ההרשמה והשימוש מהווים הסכמה לתנאים אלה. השירות מיועד לבני 18 ומעלה.</p>
 
     <div class="legal-note">
       <b>הבהרה חשובה:</b> Fayna Trading היא כלי לתיעוד, ניתוח וניהול אישי של פעילות מסחר. המערכת אינה מספקת ייעוץ השקעות,
@@ -7669,16 +7686,16 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
 
     <h3>5. מנויים, חיובים וביטול</h3>
     <ul>
-      <li><b>מסלולים</b> — Free, Basic, Pro ו-Premium. היקף היכולות בכל מסלול מוצג בעמוד התמחור ועשוי להתעדכן.</li>
-      <li><b>מחזור חיוב</b> — חודשי או שנתי, לפי בחירתך. החיוב מתחדש אוטומטית בתום כל תקופה עד לביטול.</li>
-      <li><b>ביטול</b> — ניתן לבטל בכל עת דרך עמוד התשלום. הגישה נשמרת עד תום התקופה ששולמה, ולאחריה החשבון עובר למסלול Free.</li>
-      <li><b>החזרים</b> — בהתאם לחוק הגנת הצרכן, ניתן לבטל עסקה בתוך 14 יום ממועד ביצועה או מקבלת מסמך הגילוי, לפי המאוחר.
-          בתקופת התנסות שלא נעשה בה שימוש מהותי יינתן החזר מלא. לאחר מכן, תקופה שכבר נוצלה אינה מזוכה.</li>
-      <li><b>חשבוניות</b> — חשבונית או קבלה תישלח לדוא"ל שרשמת בגין כל חיוב.</li>
-      <li><b>שינויי מחיר</b> — נודיע מראש בדוא"ל לפחות 14 יום לפני כניסת שינוי לתוקף. תוכל לבטל לפני מועד זה.</li>
-      <li><b>כשל בתשלום</b> — אם חיוב נכשל, נודיע לך והגישה למסלול בתשלום עשויה להיפסק עד להסדרה.</li>
+      <li><b>מסלולים</b>: חינם, Fayna One (חשבון מסחר פעיל אחד) ו־Fayna Unlimited (חשבונות ללא הגבלה). המחיר, מה כלול בכל מסלול ותנאי הניסיון מוצגים בעמוד המנויים לפני כל רכישה.</li>
+      <li><b>מחזור חיוב</b>: חודשי. המחיר מוצג בדולר והחיוב בפועל בשקלים; הסכום ושער ההמרה מוצגים לפני אישור התשלום. המנוי מתחדש אוטומטית עד לביטול.</li>
+      <li><b>ביטול מנוי בכל עת</b>: בכפתור "ביטול מנוי" בעמוד המנויים, בדוא"ל ל־<a class="legal-mail" href="#"></a>, או בכל דרך אחרת שבה ניתן לבטל לפי סעיף 13ד1 לחוק הגנת הצרכן. הביטול נכנס לתוקף תוך 3 ימי עסקים מקבלת ההודעה, ולא יבוצעו חיובים לאחר מכן. החשבון עובר למסלול החינמי והנתונים נשמרים.</li>
+      <li><b>ביטול עסקה בתוך 14 יום</b>: לפי סעיף 14ג לחוק הגנת הצרכן, אפשר לבטל את העסקה תוך 14 יום מיום ביצועה או מקבלת מסמך הגילוי, לפי המאוחר. בביטול כזה יוחזר התשלום בניכוי דמי ביטול של 5% מהמחיר או 100 ש"ח, הנמוך מביניהם, ובכפוף לתקנות הגנת הצרכן (ביטול עסקה).</li>
+      <li><b>תקופת ניסיון</b>: ללא כרטיס אשראי וללא חיוב בסיומה. בסיום עוברים למסלול החינמי.</li>
+      <li><b>חשבוניות</b>: חשבונית או קבלה תישלח לדוא"ל שלך על כל חיוב.</li>
+      <li><b>שינוי מחיר</b>: נודיע בדוא"ל לפחות 14 יום מראש, ואפשר לבטל לפני שהשינוי נכנס לתוקף.</li>
+      <li><b>כשל בתשלום</b>: נודיע לך, והגישה למסלול בתשלום עשויה להיפסק עד להסדרה.</li>
     </ul>
-    <p>עיבוד התשלומים מתבצע אצל ספק סליקה מורשה. איננו שומרים פרטי אמצעי תשלום.</p>
+    <p>נכון להיום הסליקה אינה פעילה ולא מתבצעים חיובים. עיבוד התשלומים יתבצע אצל ספק סליקה מורשה, ואיננו שומרים פרטי אמצעי תשלום.</p>
 
     <h3>6. זמינות השירות</h3>
     <p>אנו שואפים לזמינות רציפה, אך איננו מתחייבים לכך. ייתכנו הפסקות לצורך תחזוקה, שדרוג או מסיבות שאינן בשליטתנו.</p>
@@ -7694,36 +7711,39 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <section class="legal-doc lg-sub" id="lg-accessibility" role="tabpanel" aria-labelledby="lg-tab-accessibility" tabindex="0" style="display:none">
     <h2>הצהרת נגישות</h2>
     <div class="legal-updated">עודכן לאחרונה: <span class="legal-date"></span></div>
-    <p>Fayna Trading רואה חשיבות רבה במתן שירות שוויוני לכלל המשתמשים, לרבות אנשים עם מוגבלות, ופועלת להנגשת המערכת.</p>
+    <p>Fayna Trading רואה חשיבות במתן שירות שוויוני לכל המשתמשים, כולל אנשים עם מוגבלות, ופועלת להנגשת האתר והמערכת לפי חוק שוויון זכויות לאנשים עם מוגבלות ותקנות נגישות השירות.</p>
 
-    <h3>רמת התאימות</h3>
-    <p>המערכת הונגשה בהתאם להנחיות <b>WCAG 2.2 ברמה AA</b> ולתקן הישראלי ת"י 5568, ככל שהדבר ניתן ביישום מסוג זה.
-    ההנגשה בוצעה במבנה ובקוד עצמם ולא באמצעות תוסף חיצוני בלבד.</p>
+    <h3>רמת הנגישות</h3>
+    <p>האתר והמערכת הונגשו לפי התקן הישראלי ת"י 5568 ברמה AA, המבוסס על הנחיות WCAG. ההנגשה בוצעה בקוד עצמו, ולא באמצעות תוסף חיצוני.</p>
+
+    <h3>איך נבדק</h3>
+    <p>בבדיקה האחרונה (<span class="legal-date"></span>) נסרקו עמוד הנחיתה, מסכי הכניסה וההרשמה, דף הבית, יומן המסחר, חלון פירוט עסקה, הוספת עסקה, סטטיסטיקה, ניהול עסקי, יומן כלכלי, הגדרות, מנויים והמסמכים המשפטיים. הסריקה נעשתה בכלי בדיקה אוטומטי (axe) מול כללי WCAG 2.1 ברמה AA, בערכה הכהה ובבהירה, במחשב ובנייד, ובשילוב בדיקת ניווט במקלדת.</p>
 
     <h3>מה הונגש</h3>
     <ul>
-      <li>ניווט מלא באמצעות מקלדת בכל חלקי המערכת, כולל קישור "דלג לתוכן הראשי".</li>
-      <li>סימון פוקוס ברור ובולט בעת ניווט במקלדת.</li>
-      <li>תמיכה בקוראי מסך — תפקידי ARIA, תוויות, אזורי ניווט והכרזות על שינויי מצב.</li>
-      <li>טקסט חלופי לתמונות ולאייקונים בעלי משמעות.</li>
-      <li>יחסי ניגודיות תקינים, לצד מצב ניגודיות גבוהה ומצב שחור־לבן.</li>
-      <li>אפשרות להגדלת טקסט בשלוש רמות ללא שבירת המבנה.</li>
-      <li>הדגשת קישורים, פונט קריא ועצירת אנימציות.</li>
-      <li>כיבוד העדפת המערכת להפחתת תנועה (prefers-reduced-motion).</li>
-      <li>טפסים עם תוויות, הודעות שגיאה נגישות ואזורי מגע מוגדלים במובייל.</li>
-      <li>תאימות לדסקטופ ולמובייל כאחד.</li>
+      <li>ניווט מלא במקלדת, כולל קישור "דלג לתוכן הראשי" וסימון פוקוס ברור.</li>
+      <li>תמיכה בקוראי מסך: שפה וכיוון מוגדרים, תוויות לשדות, שמות לכפתורים ולאזורים, והכרזה על הודעות מצב.</li>
+      <li>יחסי ניגודיות של 4.5:1 לפחות לטקסט, בשתי ערכות הנושא.</li>
+      <li>תפריט נגישות (♿) עם הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא ועצירת אנימציות. ההעדפות נשמרות במכשיר.</li>
+      <li>כיבוד העדפת המערכת להפחתת תנועה.</li>
+      <li>התאמה לכל גודל מסך, ממחשב ועד טלפון.</li>
     </ul>
 
-    <h3>כפתור הנגישות</h3>
-    <p>בפינה השמאלית התחתונה של כל מסך מופיע כפתור נגישות (♿) הפותח תפריט הגדרות. ההעדפות נשמרות במכשירך לביקורים הבאים.</p>
+    <h3>חלקים שאינם נגישים במלואם</h3>
+    <ul>
+      <li>גרפי מחירים של TradingView המוטמעים בחלק מהמסכים מסופקים על ידי צד שלישי, ונגישותם אינה בשליטתנו. הנתונים העיקריים של כל עסקה מוצגים גם כטקסט.</li>
+      <li>מדריך ה־PDF להורדה עדיין לא הונגש במלואו. אפשר לקבל את תוכנו בפורמט נגיש בפנייה אלינו.</li>
+      <li>פאנל הניהול הפנימי, שמשמש את מפעיל האתר בלבד, לא נכלל בבדיקה.</li>
+    </ul>
 
-    <h3>מגבלות ידועות</h3>
-    <p>חלק מהרכיבים במערכת מסופקים על ידי צד שלישי — בהם גרפים אינטראקטיביים ורכיבי TradingView מוטמעים — ורמת הנגישות בהם
-    אינה בשליטתנו המלאה. עבור נתונים המוצגים בגרף קיימת גם הצגה טבלאית או מספרית מקבילה. אנו ממשיכים לשפר את הנגישות באופן שוטף.</p>
-
-    <h3>פנייה בנושא נגישות</h3>
-    <p>נתקלת בבעיית נגישות או שיש לך הצעה לשיפור? נשמח לשמוע ולתקן. ניתן לפנות לרכז הנגישות בדוא"ל:
-    <a class="legal-mail" href="#"></a>. נשתדל לטפל בפנייה בהקדם.</p>
+    <h3>רכז הנגישות</h3>
+    <p>נתקלת בבעיית נגישות או צריך מידע בפורמט אחר? נשמח לעזור.</p>
+    <ul>
+      <li>שם: דור פיינה</li>
+      <li>דוא"ל: <a class="legal-mail" href="#"></a></li>
+      <li>אפשר גם דרך טופס יצירת הקשר, בנושא "בעיית נגישות".</li>
+    </ul>
+    <p>נשתדל להשיב תוך 7 ימי עסקים. כדי שנוכל לטפל, ציינו בפנייה את המסך, את הבעיה ואת הדפדפן או הטכנולוגיה המסייעת שבה השתמשתם.</p>
   </section>
 
   <!-- ── CONTACT ── -->
@@ -7814,7 +7834,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <button class="tb2" id="tb-inc" onclick="setMT('הכנסה')">הכנסה</button>
       <button class="tb2" id="tb-wd" onclick="setMT('משיכה')">משיכה</button>
     </div></div>
-    <div class="fr"><label>תאריך</label><input type="date" id="f-dt"></div>
+    <div class="fr"><label for="f-dt">תאריך</label><input type="date" id="f-dt"></div>
     <div class="fr">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <label style="margin:0">סכום</label>
@@ -7831,7 +7851,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
     <div class="fr"><label>שער דולר (₪) <span class="rate-tag" id="rate-hint"></span></label><input type="number" id="f-rt" step="0.0001" value="" oninput="cWd()" inputmode="decimal"></div>
     <div id="reg-f">
-      <div class="fr"><label>חברה</label>
+      <div class="fr"><label for="f-co">חברה</label>
         <input type="text" id="f-co" list="f-co-list" placeholder="בחר או הקלד שם חברה..." autocomplete="off" onfocus="_refreshCompanyList()">
         <datalist id="f-co-list">
           <option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option>
@@ -7839,12 +7859,12 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
           <option>Apex Trader Funding</option><option>Bulenox</option><option>Earn2Trade</option>
         </datalist>
       </div>
-      <div class="fr"><label>קטגוריה</label>
+      <div class="fr"><label for="f-cat">קטגוריה</label>
         <select id="f-cat" onchange="toggleCustomCat()"><option value="מבחן">מבחן</option><option value="לייב">לייב</option><option value="ריסט">ריסט</option><option value="כלי">כלי/תוכנה</option><option value="קורס">קורס</option><option value="מנוי">מנוי</option><option value="ציוד">ציוד</option><option value="שונות">שונות</option><option value="__custom__">✏️ הוסף קטגוריה חדשה...</option></select>
         <input type="text" id="f-cat-custom" placeholder="שם קטגוריה חדשה..." style="display:none;width:100%;margin-top:6px;padding:7px 10px;font-size:12px;border:1px solid var(--ac);border-radius:6px;background:var(--bg3);color:var(--t1);font-family:inherit">
       </div>
-      <div class="fr"><label>שווי תיק ($)</label><select id="f-pv"><option>0</option><option>25</option><option>50</option><option>100</option><option>200</option></select></div>
-      <div class="fr"><label>הערה</label><textarea id="f-note" placeholder="אופציונלי..."></textarea></div>
+      <div class="fr"><label for="f-pv">שווי תיק ($)</label><select id="f-pv"><option>0</option><option>25</option><option>50</option><option>100</option><option>200</option></select></div>
+      <div class="fr"><label for="f-note">הערה</label><textarea id="f-note" placeholder="אופציונלי..."></textarea></div>
       <div class="fr" id="recur-row">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-size:12px">
           <input type="checkbox" id="f-recur" onchange="toggleRecurUI()" style="width:15px;height:15px;accent-color:var(--gr)">
@@ -7872,10 +7892,10 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       </div>
     </div>
     <div id="wd-f" style="display:none">
-      <div class="fr"><label>חברת נוסטרו (ממנה בוצעה המשיכה)</label><select id="f-wdco"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></div>
-      <div class="fr"><label>עמלת חברה (%)</label><input type="number" id="f-wp" step="any" value="20" oninput="_wdFeeMode='pct';cWd()" inputmode="decimal"></div>
-      <div class="fr"><label>או עמלה בסכום (באותו מטבע)</label><input type="number" id="f-wf" step="0.01" min="0" placeholder="0" oninput="_wdFeeMode='abs';cWd()" inputmode="decimal" dir="ltr"></div>
-      <div class="fr"><label>הערה (אופציונלי)</label><input type="text" id="f-wnote" maxlength="250"></div>
+      <div class="fr"><label for="f-wdco">חברת נוסטרו (ממנה בוצעה המשיכה)</label><select id="f-wdco"><option>BULENOX</option><option>APEX</option><option>TAKE P</option><option>MFFU</option><option>אחר</option></select></div>
+      <div class="fr"><label for="f-wp">עמלת חברה (%)</label><input type="number" id="f-wp" step="any" value="20" oninput="_wdFeeMode='pct';cWd()" inputmode="decimal"></div>
+      <div class="fr"><label for="f-wf">או עמלה בסכום (באותו מטבע)</label><input type="number" id="f-wf" step="0.01" min="0" placeholder="0" oninput="_wdFeeMode='abs';cWd()" inputmode="decimal" dir="ltr"></div>
+      <div class="fr"><label for="f-wnote">הערה (אופציונלי)</label><input type="text" id="f-wnote" maxlength="250"></div>
       <div class="wc show" id="wc-box">
         <div class="wcr"><span>ברוטו</span><span id="wc-g">$0.00</span></div>
         <div class="wcr"><span>עמלה (<span id="wc-p">20</span>%)</span><span id="wc-f">-$0.00</span></div>
@@ -7953,20 +7973,20 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
   <div class="modal" style="width:min(400px,calc(100vw - 16px))">
     <h3>＋ הוספת פריט <button class="cx" onclick="document.getElementById('drv-add-modal').classList.remove('open')">×</button></h3>
     <div class="fr">
-      <label>שם *</label>
+      <label for="drv-inp-name">שם *</label>
       <input type="text" id="drv-inp-name" class="fi" placeholder="לדוגמה: TradingView Desktop">
     </div>
     <div class="fr">
-      <label>תיאור קצר</label>
+      <label for="drv-inp-desc">תיאור קצר</label>
       <input type="text" id="drv-inp-desc" class="fi" placeholder="לדוגמה: גרפים וניתוח טכני — Windows / Mac">
     </div>
     <div class="fr">
-      <label>קישור (URL) *</label>
+      <label for="drv-inp-url">קישור (URL) *</label>
       <input type="url" id="drv-inp-url" class="fi" placeholder="https://...">
     </div>
     <div class="fr" style="display:flex;gap:10px;align-items:flex-end">
       <div style="flex:1">
-        <label>אמוג'י / אייקון</label>
+        <label for="drv-inp-icon">אמוג'י / אייקון</label>
         <input type="text" id="drv-inp-icon" class="fi" placeholder="📊" maxlength="4" style="font-size:20px;text-align:center">
       </div>
       <div style="flex:3">
@@ -7988,7 +8008,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <div id="ta-trade-info" style="background:var(--bg3);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"></div>
 
     <div class="fr">
-      <label>💹 סימול לעסקה</label>
+      <label for="ta-sym">💹 סימול לעסקה</label>
       <input type="text" id="ta-sym" list="at-sym-list" autocomplete="off" placeholder="MNQM6, ESM6, MGCZ5..." oninput="_taSymHint()"
         style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--t1);text-transform:uppercase" dir="ltr">
       <div id="ta-sym-hint" style="font-size:10px;color:var(--t3);margin-top:4px"></div>
@@ -8006,7 +8026,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
-      <label>אסטרטגיה מסחר</label>
+      <label for="ta-strategy">אסטרטגיה מסחר</label>
       <input type="text" id="ta-strategy" placeholder="לדוג׳: Breakout, Reversal, Gap Fill, Trend Follow..." list="strat-datalist" autocomplete="off">
       <datalist id="strat-datalist"></datalist>
       <div style="font-size:9px;color:var(--t3);margin-top:4px">הקלד שם אסטרטגיה חופשי — ייאסף אוטומטית לסטטיסטיקה</div>
@@ -8021,7 +8041,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
-      <label>סטאפ כניסה</label>
+      <label for="ta-setup">סטאפ כניסה</label>
       <select id="ta-setup" class="fi">
         <option value="">— לא צויין —</option>
         <option value="FVG">FVG</option>
@@ -8034,7 +8054,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
-      <label>מצב רגשי לפני העסקה</label>
+      <label for="ta-emotion">מצב רגשי לפני העסקה</label>
       <select id="ta-emotion" class="fi">
         <option value="">— לא צויין —</option>
         <option value="calm">😌 רגוע</option>
@@ -8056,12 +8076,12 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </div>
 
     <div class="fr">
-      <label>טעות שנעשתה (אם הייתה)</label>
+      <label for="ta-mistake">טעות שנעשתה (אם הייתה)</label>
       <input type="text" id="ta-mistake" class="fi" placeholder="לדוג׳: כניסה מוקדמת מדי, לא עמדתי בסטופ...">
     </div>
 
     <div class="fr">
-      <label>לקח / מסקנה</label>
+      <label for="ta-lesson">לקח / מסקנה</label>
       <input type="text" id="ta-lesson" class="fi" placeholder="מה למדתי מהעסקה הזו?">
     </div>
 
@@ -8081,7 +8101,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       </div>
     </div>
     <div class="fr">
-      <label>הערות על העסקה</label>
+      <label for="ta-notes">הערות על העסקה</label>
       <textarea id="ta-notes" placeholder="מה עבד? מה לא? מה למדתי? כניסה/יציאה?" style="height:70px;resize:vertical"></textarea>
     </div>
 
@@ -11495,7 +11515,7 @@ function renderHome(){
     <section class="trh-lower">
       <div class="trh-card trh-recent"><div class="trh-head"><div class="trh-head-col"><h2>עסקאות אחרונות</h2><span>${recent.length?'מציג '+recent.length+' עסקאות · '+esc(accountLabel):esc(accountLabel)}</span></div><button type="button" class="home-primary trh-add" data-home-action="add">＋ עסקה חדשה</button></div>${recent.length?'<div class="trh-trades">'+recent.map(card).join('')+'</div>':'<div class="home-empty"><strong>אין עסקאות עדיין</strong><p>אפשר להוסיף עסקה או לייבא את הדוח מהברוקר.</p><button type="button" class="home-link" data-home-nav="import">ייבוא עסקאות ←</button></div>'}<div class="trh-recent-foot"><button type="button" class="home-link" data-home-nav="trades">לכל העסקאות ←</button><button type="button" class="home-link" data-home-action="accounts">ניהול חשבונות ←</button></div></div>
       <div class="trh-card trh-cal"><div class="trh-cal-head"><div class="trh-month"><button type="button" data-home-cal="-1" aria-label="חודש קודם">›</button><strong>${monthNames[cm]} ${cy}</strong><button type="button" data-home-cal="1" aria-label="חודש הבא">‹</button></div><div class="trh-cal-stats"><div><small>רווח והפסד כולל</small><b dir="ltr" class="${tone(monthNet)}">${_homeMoney(monthNet).replace(/^\+/,'')}</b></div><div><small>סה״כ עסקאות</small><b>${monthTrades}</b></div><div><small>ימי מסחר</small><b>${calStats.days.length}</b></div></div></div>
-        <div class="trh-cal-scroll"><div class="trh-cal-grid">${days.map(d=>'<div class="trh-dow">'+d+'</div>').join('')}<div class="trh-dow">סיכום שבועי</div>${calRows}</div></div></div>
+        <div class="trh-cal-scroll" tabindex="0" role="region" aria-label="לוח חודשי"><div class="trh-cal-grid">${days.map(d=>'<div class="trh-dow">'+d+'</div>').join('')}<div class="trh-dow">סיכום שבועי</div>${calRows}</div></div></div>
     </section>
     ${model.excluded?'<p class="home-muted" role="status">'+model.excluded+' עסקאות עם סכום לא תקין לא נכללו בסיכום. בדוק אותן ביומן.</p>':''}`;
   root.querySelectorAll('[data-home-nav]').forEach(b=>b.addEventListener('click',()=>swNav(b.dataset.homeNav)));
@@ -16974,6 +16994,9 @@ async function doRegister() {
       loginCount:   1,
       welcomeSent:  false,
       ..._consentDefaults(),
+      marketingConsent: !!document.getElementById('reg-marketing')?.checked,
+      marketingConsentAt: firebase.firestore.FieldValue.serverTimestamp(),
+      marketingConsentSource: 'register',
       ..._refPayload(uid),
     };
     await db.collection('users').doc(uid).set(userData); _invalidateUsersCache();
@@ -18753,6 +18776,7 @@ function _buildEmailHTML(userName, msg, uid) {
   const unsubBlock = `<div style="margin-top:22px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center">
         <p style="font-size:11px;color:#a0aec0;margin:0 0 6px"><strong>הפסקת קבלת עדכונים</strong> — השב למייל זה עם המילה <strong>"הסר"</strong></p>
         ${unsubUrl ? `<p style="font-size:11px;color:#a0aec0;margin:0">או <a href="${unsubUrl}" style="color:#a0aec0;text-decoration:underline">לחץ כאן להסרה מיידית</a></p>` : ''}
+        ${window.FaynaCompliance ? FaynaCompliance.senderHtml() : ''}
        </div>`;
   return `<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#f0f2f5;font-family:Arial,'Arial Hebrew',sans-serif;direction:rtl}.w{max-width:600px;margin:28px auto}.c{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,.13)}.hd{background:linear-gradient(135deg,#070b12 0%,#162035 55%,#0d1626 100%);padding:38px 44px;text-align:center}.lg{font-size:30px;font-weight:800;color:var(--gr);letter-spacing:-.5px;margin-bottom:6px}.lg span{color:#fff}.tg{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:3.5px;text-transform:uppercase}.bar{height:3px;background:linear-gradient(90deg,var(--gr),var(--bl),var(--pu))}.bd{padding:36px 44px}.gr{font-size:16px;font-weight:600;color:#1a202c;margin-bottom:18px}.mb{background:#f7fafc;border-right:4px solid var(--gr);border-radius:0 8px 8px 0;padding:18px 22px;margin:18px 0;font-size:15px;line-height:1.8;color:#2d3748;white-space:pre-wrap}.fi{font-size:11px;color:#a0aec0;margin-top:18px;padding-top:14px;border-top:1px solid #e8ecf0;text-align:center}.ft{background:#070b12;padding:28px 44px;text-align:center}.fn{font-size:15px;font-weight:700;color:var(--gr);margin-bottom:3px}.fs{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin-bottom:14px}.fc{font-size:10px;color:rgba(255,255,255,.18)}</style>
@@ -18767,7 +18791,7 @@ function _buildEmailHTML(userName, msg, uid) {
 // ── Branded WhatsApp message builder ─────────────────────────
 function _buildWAMsg(msg) {
   const d = new Date().toLocaleDateString('he-IL');
-  return `🌙 *Fayna Trading*\n━━━━━━━━━━━━━━━━\n\n${msg}\n\n━━━━━━━━━━━━━━━━\n_📅 ${d}_\n_Fayna Trading — Professional Trading Journal_`;
+  return `פרסומת\n🌙 *Fayna Trading*\n━━━━━━━━━━━━━━━━\n\n${msg}\n\n━━━━━━━━━━━━━━━━\n_📅 ${d}_\n${window.FaynaCompliance?FaynaCompliance.senderText():'Fayna Trading'}\nלהסרה מרשימת התפוצה השיבו "הסר".`;
 }
 
 // ── Email broadcast ───────────────────────────────────────────
@@ -18778,8 +18802,8 @@ async function sendNotifEmail(msg) {
   /* v23: single consent gate — status, unsubscribe flag and the permanent DNC list */
   const targets = (await filterEmailable(all)).filter(u => !u.isAdmin);
   const skipped = all.filter(u => u.email && !u.isAdmin).length - targets.length;
-  if (!targets.length) { showToast('אין משתמשים פעילים עם מייל','warn'); return; }
-  if (skipped > 0) showToast(`${skipped} נמענים דולגו (הוסרו מהתפוצה) 🔕`,'info');
+  if (!targets.length) { showToast('אין משתמשים שהסכימו לקבל דיוור','warn'); return; }
+  if (skipped > 0) showToast(`${skipped} נמענים דולגו: לא נתנו הסכמה לדיוור או הוסרו מהתפוצה 🔕`,'info');
 
   // No EmailJS → show preview modal with mailto links
   if (!EJS_CONFIG.publicKey || !EJS_CONFIG.serviceId || !EJS_CONFIG.templateId) {
@@ -18795,7 +18819,7 @@ async function sendNotifEmail(msg) {
       await emailjs.send(EJS_CONFIG.serviceId, EJS_CONFIG.templateId, {
         to_email:     u.email,
         user_name:    u.name || 'משתמש יקר',
-        subject:      '📢 הודעה מ-Fayna Trading',
+        subject:      'פרסומת: עדכון מ-Fayna Trading',
         message:      msg,
         html_message: _buildEmailHTML(u.name || 'משתמש יקר', msg, u.uid),
         from_name:    'Fayna Trading',
@@ -18825,11 +18849,12 @@ function _emailBcBody(u){
   const st=window._emailBcState||{msg:''};
   const base=window.location.origin+window.location.pathname;
   const unsub=`\n\n---\nהפסקת קבלת עדכונים — השב למייל זה עם המילה "הסר"`+(u&&u.uid?`\nאו להסרה מיידית: ${(typeof PUBLIC_SITE_URL!=='undefined'?PUBLIC_SITE_URL:base)}?unsub=${u.uid}`:'');
-  return u?`שלום ${u.name||''},\n\n${st.msg}\n\n---\nFayna Trading${unsub}`:`שלום,\n\n${st.msg}\n\n---\nFayna Trading — Professional Trading Journal`;
+  const snd=window.FaynaCompliance?'\n'+FaynaCompliance.senderText():'';
+  return u?`שלום ${u.name||''},\n\n${st.msg}\n\n---\nFayna Trading${snd}${unsub}`:`שלום,\n\n${st.msg}\n\n---\nFayna Trading${snd}`;
 }
 async function _emailBcAct(kind,i){
   const st=window._emailBcState;if(!st)return;
-  const subj='📢 הודעה מ-Fayna Trading',enc=encodeURIComponent;
+  const subj='פרסומת: עדכון מ-Fayna Trading',enc=encodeURIComponent;
   const all=i==null||i<0, u=all?null:st.targets[i];
   if(!all&&!u)return;
   const emails=all?st.targets.map(x=>x.email).filter(Boolean):[u.email];
@@ -18894,8 +18919,10 @@ let _waBroadcastIdx = -1, _waBroadcastTimer = null;
 async function sendNotifWhatsApp(msg) {
   const res  = await _getUsers();
   const all  = Array.isArray(res) ? res : [];
-  const targets = all.filter(u => u.phone && !u.isAdmin && u.status !== 'suspended');
-  if (!targets.length) { showToast('אין משתמשים עם מספר טלפון','warn'); return; }
+  /* v109: marketing over WhatsApp goes only to users who opted in and did not unsubscribe (Communications Law s.30A) */
+  const dncWA = await loadDNC(true); try { await window.FaynaCompliance?.loadUnsubs(); } catch(e) {}
+  const targets = all.filter(u => u.phone && !u.isAdmin && u.status !== 'suspended' && canEmailSync(u, dncWA));
+  if (!targets.length) { showToast('אין משתמשים שהסכימו לקבל דיוור ויש להם טלפון','warn'); return; }
   const branded = _buildWAMsg(msg);
   const encoded = encodeURIComponent(branded);
   const sent = new Set();
@@ -22181,8 +22208,11 @@ if ('serviceWorker' in navigator) {
     }).catch(() => {});
 
     // Once the new SW takes control, reload the page to get fresh assets
+    // v109: a first visit has no previous controller, so there is nothing stale to
+    // replace; reloading then only throws away the page (and links like ?unsub=).
+    const _hadSwController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
+      if (_hadSwController) window.location.reload();
     });
   });
 }
@@ -24336,19 +24366,19 @@ function _calcKey(e){
 
     <!-- Fields -->
     <div class="fr">
-      <label>שם מלא</label>
+      <label for="prof-name">שם מלא</label>
       <input type="text" id="prof-name" placeholder="ישראל ישראלי">
     </div>
     <div class="fr">
-      <label>אימייל</label>
+      <label for="prof-email-disp">אימייל</label>
       <input type="text" id="prof-email-disp" readonly style="opacity:.5;cursor:not-allowed">
     </div>
     <div class="fr">
-      <label>טלפון</label>
+      <label for="prof-phone">טלפון</label>
       <input type="tel" inputmode="tel" autocomplete="tel" id="prof-phone" placeholder="050-0000000" dir="ltr">
     </div>
     <div class="fr">
-      <label>ביו / תיאור קצר</label>
+      <label for="prof-bio">ביו / תיאור קצר</label>
       <textarea id="prof-bio" placeholder="כמה מילים על עצמך, הסגנון שלך, המטרות..." style="height:60px;resize:vertical"></textarea>
     </div>
 
@@ -24592,7 +24622,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    v24 — Accessibility · Legal centre · Cookie consent · Account rights
    ══════════════════════════════════════════════════════════════════ */
 const CONTACT_EMAIL = 'dorfeina123@gmail.com';
-const LEGAL_UPDATED = '2026-07-27';
+const LEGAL_UPDATED = '2026-11-03';
 
 /* ── announce to screen readers ── */
 function a11ySay(msg) {
@@ -25462,6 +25492,8 @@ async function canEmail(user, kind) {
   if (!user || !user.email) return false;
   if (user.status === 'blocked' || user.status === 'suspended') return false;
   if (kind && TRANSACTIONAL_KINDS.has(kind)) return true;      // transactional — always
+  if (user.marketingConsent !== true) return false;            // v109: opt-in only (s.30A)
+  if (window._faynaUnsubs && window._faynaUnsubs.has(user.uid)) return false;
   if (_isUnsubscribed(user)) return false;
   if (await isDNC(user.email)) return false;
   return true;
@@ -25469,12 +25501,15 @@ async function canEmail(user, kind) {
 /* synchronous pre-filter for bulk lists (DNC map already loaded) */
 function canEmailSync(user, dncMap) {
   if (!user || !user.email) return false;
+  if (user.marketingConsent !== true) return false;            // v109: opt-in only (s.30A)
+  if (window._faynaUnsubs && window._faynaUnsubs.has(user.uid)) return false;
   if (_isUnsubscribed(user)) return false;
   if (user.status === 'blocked' || user.status === 'suspended') return false;
   if (dncMap && dncMap.has(_emailKey(user.email))) return false;
   return true;
 }
 async function filterEmailable(users) {
+  try { await window.FaynaCompliance?.loadUnsubs(); } catch(e) {}
   const dnc = await loadDNC(true);
   return (users||[]).filter(u => canEmailSync(u, dnc));
 }
@@ -27220,10 +27255,11 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
-<script src="fayna-tr-pages.js?v=107b"></script>
+<script src="fayna-tr-pages.js?v=109"></script>
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-tr-ecal.js?v=108"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=107b">
+<script src="fayna-compliance.js?v=109"></script>
+<link rel="stylesheet" href="fayna-tr-theme.css?v=109">
 </body>
 </html>

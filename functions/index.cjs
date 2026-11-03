@@ -9,6 +9,14 @@ const {workspacePayload}=require('./workspace.cjs');
 const {fetchUsdRate,makeQuote}=require('./fx.cjs');
 const {randomUUID}=require('node:crypto');
 const { snapshot, validateAction } = require('./billing.cjs');
+
+/* Sunday–Thursday are business days in Israel. Returns epoch ms of the n-th business day after `from`. */
+function israeliBusinessDaysFrom(from, n) {
+  const d = new Date(from); let left = n;
+  while (left > 0) { d.setUTCDate(d.getUTCDate() + 1); const w = d.getUTCDay(); if (w !== 5 && w !== 6) left--; }
+  return d.getTime();
+}
+exports._israeliBusinessDaysFrom = israeliBusinessDaysFrom;
 initializeApp();
 const db = getFirestore();
 exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async request => {
@@ -77,7 +85,8 @@ exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async reque
       // This is a request, never a claim that a provider subscription was cancelled.
       const ref = db.doc(`subscriptionCancellationRequests/${uid}`);
       const previous = await tx.get(ref);
-      if (!previous.exists) tx.create(ref, { uid, status: 'pending_review', createdAt: FieldValue.serverTimestamp() });
+      // Consumer Protection Law s.13D1: cancellation takes effect within 3 business days.
+      if (!previous.exists) tx.create(ref, { uid, status: 'pending_review', createdAt: FieldValue.serverTimestamp(), effectiveBy: israeliBusinessDaysFrom(now, 3) });
       return { ...snapshot(user.data(), managed,now), cancellationRequest: 'pending_review' };
     }
     const cancellation = await tx.get(db.doc(`subscriptionCancellationRequests/${uid}`));
