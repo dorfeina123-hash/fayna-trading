@@ -213,6 +213,40 @@
     try { w(); } catch (e) {}
   }
 
+  /* ── "ביטול עסקה" link on the public site (Consumer Protection Law s.14C/13D1):
+     a signed-out person can give notice of cancellation with no account and no WhatsApp. ── */
+  function showCancelForm() {
+    if (currentUser?.uid) { cancelSubscription(); return; }
+    const by = businessDaysFrom(new Date(), 3).toLocaleDateString('he-IL');
+    const o = overlay(`<h2 id="fyc-ct">ביטול עסקה או מנוי</h2>
+      <p>אפשר למסור כאן הודעת ביטול גם בלי להתחבר. הביטול ייכנס לתוקף תוך 3 ימי עסקים לכל היותר (עד ${by}), ולא יבוצעו חיובים נוספים אחריו. אישור יישלח לדוא"ל שתמסרו.</p>
+      <label for="fyc-cancel-email" style="display:block;font-size:14px;margin-bottom:6px">כתובת הדוא"ל שאיתה נרשמתם</label>
+      <input id="fyc-cancel-email" type="email" autocomplete="email" dir="ltr" required style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border2,#888);background:transparent;color:inherit;font-size:15px">
+      <div class="fyc-actions"><button type="button" class="fyc-primary" id="fyc-cancel-send">שליחת הודעת ביטול</button><button type="button" class="fyc-ghost" id="fyc-cancel-close">סגירה</button></div>
+      <p class="fyc-msg" role="status" aria-live="polite"></p>
+      <p style="font-size:13px">אפשר גם לשלוח הודעת ביטול בדוא"ל ל־<a href="mailto:${esc(LEGAL.email)}?subject=${encodeURIComponent('הודעת ביטול עסקה')}">${esc(LEGAL.email)}</a>.</p>`);
+    o.setAttribute('aria-labelledby', 'fyc-ct');
+    o.querySelector('#fyc-cancel-close').onclick = () => o.remove();
+    o.querySelector('#fyc-cancel-send').onclick = async () => {
+      const input = o.querySelector('#fyc-cancel-email'), msg = o.querySelector('.fyc-msg');
+      const email = input.value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) { input.setAttribute('aria-invalid', 'true'); msg.textContent = 'נא להזין כתובת דוא"ל תקינה.'; input.focus(); return; }
+      input.removeAttribute('aria-invalid');
+      let saved = false;
+      try { await db.collection('billing_requests').add({ type: 'cancel', plan: '', cycle: '', uid: null, email, provider: 'public-form', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); saved = true; } catch (e) {}
+      try {
+        await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ access_key: '8ef4276d-2519-4d4f-8a84-b84cd6f46419', subject: '⛔ הודעת ביטול עסקה מהאתר — לטפל עד ' + by, from_name: 'Fayna Trading — Billing',
+            html: `<div dir="rtl">הודעת ביטול נמסרה דרך הקישור "ביטול עסקה" באתר.<br>דוא"ל: ${esc(email)}<br>יש להפסיק חיובים ולשלוח אישור עד ${by}.</div>` }) });
+        saved = true;
+      } catch (e) {}
+      msg.textContent = saved
+        ? `הודעת הביטול התקבלה. הביטול ייכנס לתוקף עד ${by}, ואישור יישלח ל־${email}.`
+        : `לא הצלחנו לשלוח. אפשר לשלוח הודעת ביטול בדוא"ל ל־${LEGAL.email}.`;
+    };
+  }
+  window.showCancelForm = showCancelForm;
+
   function showDoc(which) {
     try {
       const shown = document.getElementById('auth-screen')?.style.display !== 'none' && !currentUser;
@@ -241,7 +275,7 @@
     if (LEGAL.phone) { const ul = [...document.querySelectorAll('#lg-accessibility h3')].find(h => h.textContent.includes('רכז'))?.nextElementSibling?.nextElementSibling; if (ul && !ul.querySelector('.fyc-phone')) ul.insertAdjacentHTML('beforeend', `<li class="fyc-phone">טלפון: <a href="tel:${esc(LEGAL.phone)}">${esc(LEGAL.phone)}</a></li>`); }
   }
   window.FaynaCompliance = Object.freeze({
-    LEGAL, loadUnsubs, setConsent, businessDaysFrom, cancelSubscription, showDoc,
+    LEGAL, loadUnsubs, setConsent, businessDaysFrom, cancelSubscription, showDoc, showCancelForm,
     senderText: () => 'השולח: ' + senderLine(),
     senderHtml: () => `<p style="font-size:11px;color:#a0aec0;margin:8px 0 0">השולח: ${esc(senderLine())}</p>`,
   });

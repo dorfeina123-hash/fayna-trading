@@ -2447,7 +2447,7 @@ html[data-fayna-theme] :is(.tp .btn-p,.tp .bs){min-height:40px;padding:9px 16px;
 
  <section class="trl-cta"><div class="trl-wrap"><h2>מוכן לראות את המסחר שלך בבהירות?</h2><p>מתחילים בכמה דקות. בלי אקסלים ובלי חישובים ידניים.</p><button type="button" class="trl-btn" data-fy-auth="register">מתחילים תקופת ניסיון</button></div></section>
 
- <footer class="trl-footer"><div class="trl-wrap"><div class="trl-foot-cols"><div><a class="trl-brand" href="#" data-fy-anchor="fy-public-top"><img src="fayna-logo-gold.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>Fayna Trading</span></a><p>תיעוד וניתוח ביצועים לסוחרי פרופ, בעברית. Fayna Group.</p></div><div><b>קישורים מהירים</b><a href="#fy-features" data-fy-anchor="fy-features">פיצ'רים</a><a href="#fy-public-plans" data-fy-anchor="fy-public-plans">מסלולים</a><a href="#fy-public-faq" data-fy-anchor="fy-public-faq">שאלות נפוצות</a></div><div><b>מידע משפטי</b><a href="#" onclick="FaynaCompliance.showDoc('privacy');return false">מדיניות פרטיות</a><a href="#" onclick="FaynaCompliance.showDoc('terms');return false">תנאי שימוש</a><a href="#" onclick="FaynaCompliance.showDoc('accessibility');return false">הצהרת נגישות</a></div><div><b>צור קשר</b><a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a><a href="https://www.instagram.com/faynatrading" target="_blank" rel="noopener noreferrer">@faynatrading</a></div></div><p class="trl-risk">גילוי סיכונים: מסחר בחוזים עתידיים ובמט"ח כרוך בסיכון משמעותי ואינו מתאים לכל משקיע. ניתן להפסיד את כל ההשקעה ואף יותר ממנה. ביצועי עבר אינם מעידים על תוצאות עתידיות. Fayna Trading היא כלי לתיעוד וניתוח בלבד ואינה מספקת ייעוץ השקעות.</p><p class="trl-copy">© 2026 Fayna Trading · אין הבטחה לתשואה</p></div></footer>
+ <footer class="trl-footer"><div class="trl-wrap"><div class="trl-foot-cols"><div><a class="trl-brand" href="#" data-fy-anchor="fy-public-top"><img src="fayna-logo-gold.png" alt="" width="30" height="30" loading="lazy" decoding="async"><span>Fayna Trading</span></a><p>תיעוד וניתוח ביצועים לסוחרי פרופ, בעברית. Fayna Group.</p></div><div><b>קישורים מהירים</b><a href="#fy-features" data-fy-anchor="fy-features">פיצ'רים</a><a href="#fy-public-plans" data-fy-anchor="fy-public-plans">מסלולים</a><a href="#fy-public-faq" data-fy-anchor="fy-public-faq">שאלות נפוצות</a></div><div><b>מידע משפטי</b><a href="#" onclick="FaynaCompliance.showDoc('privacy');return false">מדיניות פרטיות</a><a href="#" onclick="FaynaCompliance.showDoc('terms');return false">תנאי שימוש</a><a href="#" onclick="FaynaCompliance.showDoc('accessibility');return false">הצהרת נגישות</a><a href="#" onclick="FaynaCompliance.showCancelForm();return false">ביטול עסקה</a></div><div><b>צור קשר</b><a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a><a href="https://www.instagram.com/faynatrading" target="_blank" rel="noopener noreferrer">@faynatrading</a></div></div><p class="trl-risk">גילוי סיכונים: מסחר בחוזים עתידיים ובמט"ח כרוך בסיכון משמעותי ואינו מתאים לכל משקיע. ניתן להפסיד את כל ההשקעה ואף יותר ממנה. ביצועי עבר אינם מעידים על תוצאות עתידיות. Fayna Trading היא כלי לתיעוד וניתוח בלבד ואינה מספקת ייעוץ השקעות.</p><p class="trl-copy">© 2026 Fayna Trading · אין הבטחה לתשואה</p></div></footer>
 </section>
 
   <div class="auth-box">
@@ -5921,9 +5921,14 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <a href="https://il.investing.com/economic-calendar/" target="_blank" rel="noopener" style="font-size:10px;color:var(--bl);text-decoration:none">פתח באתר ←</a>
     </div>
     <div id="ecal-scale-wrap" style="width:100%">
-      <iframe
+      <div id="ecal-consent" style="padding:18px 14px;text-align:center;font-size:13px;line-height:1.6">
+        <p style="margin:0 0 10px">היומן המלא נטען מאתר Investing.com. בטעינה האתר שלהם מקבל את כתובת ה־IP שלך ועשוי לשמור עוגיות.</p>
+        <button type="button" class="btn-p" onclick="(function(b){var f=document.getElementById('ecal-iframe');f.src=f.dataset.src;f.hidden=false;b.parentNode.remove();if(window._resizeEcal)_resizeEcal();})(this)">טעינת היומן מ־Investing.com</button>
+      </div>
+      <iframe hidden
+        title="יומן כלכלי של Investing.com"
         id="ecal-iframe"
-        src="https://il.investing.com/economic-calendar"
+        data-src="https://il.investing.com/economic-calendar"
         frameborder="0"
         style="width:100%;border:none;display:block;filter:invert(1) hue-rotate(180deg)">
       </iframe>
@@ -7609,6 +7614,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <li><b>Web3Forms</b>: העברת פניות מטופס יצירת הקשר ועדכונים פנימיים לבעל האתר (שם, דוא"ל ותוכן הפנייה).</li>
       <li><b>EmailJS</b>: משלוח דוא"ל, כשהשירות מופעל.</li>
       <li><b>Google Fonts ו־TradingView</b>: טעינת גופנים וגרפים. ספקים אלה מקבלים את כתובת ה־IP של הדפדפן שלך בעת הטעינה.</li>
+      <li><b>Investing.com</b>: היומן הכלכלי המלא של האתר נטען רק אם לחצת על "טעינת היומן מ־Investing.com". אז האתר שלהם מקבל את כתובת ה־IP שלך ועשוי לשמור עוגיות לפי המדיניות שלו.</li>
       <li><b>ספק סליקה</b>: בעת הפעלת מנויים בתשלום, לצורך החיוב בלבד.</li>
     </ul>
     <p>מידע עשוי להימסר גם אם נידרש לכך על פי דין או צו של רשות מוסמכת.</p>
@@ -7666,9 +7672,9 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     </ul>
 
     <h3>2. הגבלת אחריות</h3>
-    <p>המערכת מסופקת כמות שהיא ("AS IS") וללא אחריות מכל סוג. איננו אחראים לכל נזק — ישיר או עקיף, ממוני או אחר — הנובע
+    <p>במידה המרבית שהדין מתיר, המערכת מסופקת כמות שהיא ("AS IS") וללא אחריות מכל סוג, ואיננו אחראים לכל נזק — ישיר או עקיף, ממוני או אחר — הנובע
     משימוש במערכת, מהסתמכות על נתון או ניתוח המוצגים בה, מהפסקת שירות, מתקלה טכנית, מאובדן נתונים או מפעולת צד שלישי.
-    בכל מקרה, אחריותנו הכוללת לא תעלה על הסכום ששילמת בפועל בשלושת החודשים שקדמו לאירוע.</p>
+    בכל מקרה, אחריותנו הכוללת לא תעלה על הסכום ששילמת בפועל בשלושת החודשים שקדמו לאירוע. אין בסעיף זה כדי לגרוע מאחריות לנזק שנגרם בזדון או ברשלנות רבתי, או מזכות שהדין אינו מאפשר לוותר עליה.</p>
     <p>ניתוחי ה-AI, הציונים וההמלצות במערכת הם כלי עזר סטטיסטי בלבד, המבוסס על הנתונים שהזנת, ואינם מהווים ייעוץ.</p>
 
     <h3>3. איסור שימוש לרעה</h3>
@@ -7678,7 +7684,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
       <li>אין להעלות תוכן פוגעני, מפר זכויות או בלתי חוקי.</li>
       <li>אין לעשות שימוש מסחרי, למכור גישה או לשכפל את המערכת ללא אישור בכתב.</li>
     </ul>
-    <p>הפרה מזכה אותנו בהשעיה או בסגירת החשבון לאלתר, ללא החזר.</p>
+    <p>הפרה מהותית מזכה אותנו בהשעיה או בסגירת החשבון, בכפוף לדין. לפני סגירה נאפשר לך לייצא את הנתונים שלך, אלא אם הדבר אסור על פי דין.</p>
 
     <h3>4. זכויות יוצרים וקניין רוחני</h3>
     <p>כל הזכויות במערכת — קוד, עיצוב, לוגו, תכני הקורס והחומרים הנלווים — שמורות ל-Fayna Trading. הנתונים שהזנת נותרים בבעלותך,
@@ -7704,7 +7710,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
     <p>אנו רשאים לעדכן מסמך זה מעת לעת. הנוסח המעודכן יפורסם בעמוד זה עם תאריך עדכון חדש. המשך שימוש לאחר העדכון מהווה הסכמה לנוסח החדש.</p>
 
     <h3>8. סמכות שיפוט</h3>
-    <p>על תנאים אלה יחולו דיני מדינת ישראל. סמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז תל אביב.</p>
+    <p>על תנאים אלה יחולו דיני מדינת ישראל, וסמכות השיפוט נתונה לבתי המשפט המוסמכים בישראל.</p>
   </section>
 
   <!-- ── ACCESSIBILITY STATEMENT ── -->
@@ -27259,7 +27265,7 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-tr-ecal.js?v=108"></script>
-<script src="fayna-compliance.js?v=109b"></script>
+<script src="fayna-compliance.js?v=110"></script>
 <link rel="stylesheet" href="fayna-tr-theme.css?v=109b">
 </body>
 </html>

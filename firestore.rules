@@ -137,15 +137,27 @@ service cloud.firestore {
       allow delete: if isOwner(refereeUid) || isAdmin();
     }
     // Short invite code → uid. Read before sign-in to resolve a code; exposes only a uid.
+    // v110: a code can only be claimed once. Before, any user could overwrite another
+    // user's code with their own uid and receive that person's referrals, including
+    // the referees' names and e-mail addresses.
     match /refCodes/{code} {
       allow read: if true;
-      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['uid','updatedAt']);
+      allow update: if isSignedIn()
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['uid','updatedAt']);
       allow delete: if isAdmin();
     }
-    // Anonymous click counter on an invite link
+    // Anonymous click counter on an invite link: may only go up by one.
     match /refClicks/{code} {
       allow read: if isSignedIn();
-      allow create, update: if request.resource.data.keys().hasOnly(['count','last']);
+      allow create: if request.resource.data.keys().hasOnly(['count','last'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count','last'])
+                    && request.resource.data.count == resource.data.count + 1;
       allow delete: if isAdmin();
     }
 
@@ -178,7 +190,9 @@ service cloud.firestore {
     // ── requests from the site ──
     match /billing_requests/{id} {
       allow create: if request.resource.data.keys().hasOnly(['type','plan','cycle','uid','email','provider','createdAt'])
-                    && (request.resource.data.uid == null || isOwner(request.resource.data.uid));
+                    && (request.resource.data.uid == null || isOwner(request.resource.data.uid))
+                    && (!('email' in request.resource.data)
+                        || (request.resource.data.email is string && request.resource.data.email.size() <= 200));
       allow read, update, delete: if isAdmin();
     }
     match /waitlist/{id} {
