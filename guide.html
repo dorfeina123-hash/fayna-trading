@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מדריך למשתמש — Fayna Trading</title>
+<meta name="description" content="מדריך נגיש למערכת Fayna Trading: הרשמה, חשבונות מסחר, ייבוא ותיעוד עסקאות, סטטיסטיקה, ניהול עסקי, יומן כלכלי, גיבוי, מנויים ונגישות.">
+<link rel="icon" href="fayna-logo-gold.png">
+<style>
+:root{--bg:#1f1b23;--card:#292930;--line:rgba(255,255,255,.12);--t1:#ffffff;--t2:#d9d7de;--ac:#d8b4fe;--acbg:rgba(192,132,252,.14);--focus:#e9d5ff}
+@media (prefers-color-scheme:light){:root{--bg:#f6f4f8;--card:#ffffff;--line:#dcd8e2;--t1:#18151c;--t2:#3f3b46;--ac:#6b21a8;--acbg:rgba(147,51,234,.08);--focus:#6b21a8}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--t1);font-family:Rubik,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.75}
+a{color:var(--ac)}
+a:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;top:-80px;right:16px;background:var(--ac);color:#1b1320;padding:10px 18px;border-radius:10px;font-weight:700;z-index:10}
+.skip:focus{top:12px}
+header{border-bottom:1px solid var(--line);padding:28px 16px 22px}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;gap:16px;align-items:center}
+header img{width:56px;height:56px;border-radius:50%}
+h1{font-size:clamp(26px,5vw,36px);line-height:1.2;margin:0}
+header p{margin:4px 0 0;color:var(--t2)}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin:28px 0}
+nav.toc h2{font-size:18px;margin:0 0 8px}
+nav.toc ol{margin:0;padding-right:22px;columns:2;column-gap:32px}
+@media (max-width:640px){nav.toc ol{columns:1}}
+main section{padding:8px 0 18px;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(21px,3.6vw,26px);line-height:1.3;margin:26px 0 10px}
+h3{font-size:18px;margin:20px 0 6px}
+p,li{color:var(--t2)}
+strong{color:var(--t1)}
+ol,ul{padding-right:24px}
+li{margin-bottom:6px}
+.note{background:var(--acbg);border-right:4px solid var(--ac);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--t1)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;vertical-align:top}
+th{background:var(--card);color:var(--t1)}
+td{color:var(--t2)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:10px 0}
+summary{cursor:pointer;font-weight:600;color:var(--t1)}
+footer{padding:28px 16px 40px;color:var(--t2);font-size:15px}
+[dir=ltr]{unicode-bidi:isolate}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media print{body{background:#fff;color:#000}a{color:#000}.skip,nav.toc{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">דלג לתוכן</a>
+<header><div class="wrap"><img src="fayna-logo-gold.png" alt=""><div><h1>מדריך למשתמש</h1><p>Fayna Trading — יומן מסחר בעברית. עודכן: נובמבר 2026</p></div></div></header>
+
+<div class="wrap">
+<nav class="toc" aria-labelledby="toc-t">
+  <h2 id="toc-t">תוכן העניינים</h2>
+  <ol>
+    <li><a href="#start">הרשמה וכניסה</a></li>
+    <li><a href="#layout">מבנה המערכת</a></li>
+    <li><a href="#accounts">חשבונות מסחר</a></li>
+    <li><a href="#import">ייבוא עסקאות</a></li>
+    <li><a href="#manual">הוספת עסקה ידנית</a></li>
+    <li><a href="#trade">פירוט עסקה</a></li>
+    <li><a href="#home">דף הבית</a></li>
+    <li><a href="#stats">סטטיסטיקה</a></li>
+    <li><a href="#biz">ניהול עסקי</a></li>
+    <li><a href="#ecal">יומן כלכלי</a></li>
+    <li><a href="#backup">ייצוא וגיבוי</a></li>
+    <li><a href="#settings">הגדרות ופרטיות</a></li>
+    <li><a href="#plans">מנויים וביטול</a></li>
+    <li><a href="#a11y">נגישות</a></li>
+    <li><a href="#faq">שאלות נפוצות</a></li>
+  </ol>
+</nav>
+</div>
+
+<main id="main" class="wrap" tabindex="-1">
+
+<section id="start" aria-labelledby="h-start">
+  <h2 id="h-start">1. הרשמה וכניסה</h2>
+  <ol>
+    <li>נכנסים לאתר ולוחצים <strong>"כניסה למערכת"</strong> או <strong>"מתחילים תקופת ניסיון"</strong>.</li>
+    <li>בוחרים <strong>הרשמה עם Google</strong>, או ממלאים שם מלא, דוא"ל, טלפון וסיסמה של 6 תווים לפחות.</li>
+    <li>תיבת ההסכמה לקבלת עדכונים שיווקיים אינה חובה, ואפשר לשנות את הבחירה בכל עת בהגדרות.</li>
+    <li>לוחצים <strong>"הרשמה"</strong>, והמערכת נפתחת.</li>
+  </ol>
+  <p>בכניסה הבאה מזינים דוא"ל וסיסמה או לוחצים "כניסה עם Google". "השאר אותי מחובר" שומר את החיבור גם אחרי סגירת הדפדפן. שכחת סיסמה? לוחצים "שכחתי סיסמה" ומקבלים קישור לאיפוס בדוא"ל.</p>
+  <p>יציאה מהמערכת: לוחצים על תמונת הפרופיל בפינה העליונה ובוחרים "התנתק".</p>
+</section>
+
+<section id="layout" aria-labelledby="h-layout">
+  <h2 id="h-layout">2. מבנה המערכת</h2>
+  <p>בצד המסך יש תפריט ראשי, ובנייד הוא עובר לסרגל תחתון:</p>
+  <ul>
+    <li><strong>בית</strong>: תמונת מצב של הביצועים.</li>
+    <li><strong>יומן מסחר</strong>: כל העסקאות, ייבוא, לוח שנה, סטאפים ותגיות.</li>
+    <li><strong>יומן כלכלי</strong>: אירועים כלכליים לפי השפעה ומטבע.</li>
+    <li><strong>ביצועים</strong>: סטטיסטיקה מפורטת וניתוח מתקדם.</li>
+    <li><strong>ניהול עסקי</strong>: הכנסות, הוצאות, משיכות ורווחיות.</li>
+    <li><strong>תובנות</strong>: ניתוח הרגלים, אימון ומשמעת.</li>
+    <li><strong>הגדרות</strong> ו<strong>עזרה</strong>.</li>
+  </ul>
+  <p>בסרגל העליון בוחרים מטבע תצוגה (דולר או שקל), טווח תאריכים ומסננים. הבחירה חלה על כל המסכים.</p>
+</section>
+
+<section id="accounts" aria-labelledby="h-accounts">
+  <h2 id="h-accounts">3. חשבונות מסחר</h2>
+  <p>כל עסקה שייכת לחשבון מסחר, למשל Bulenox 50K או Apex 100K. מתחילים ב<strong>"הוסף חשבון מסחר"</strong> בסרגל העליון: שם, חברה, גודל ושלב (מבחן, ממומן או לייב). אפשר להגדיר לכל חשבון יעד רווח, יעד משיכה וסף שריפה.</p>
+  <p>חשבון שהסתיים מעבירים לארכיון. העסקאות שלו נשמרות וממשיכות להופיע בהיסטוריה.</p>
+</section>
+
+<section id="import" aria-labelledby="h-import">
+  <h2 id="h-import">4. ייבוא עסקאות</h2>
+  <ol>
+    <li>מורידים את דוח העסקאות מהפלטפורמה.</li>
+    <li>במערכת: <strong>יומן מסחר ← ייבוא עסקאות</strong>.</li>
+    <li>בוחרים את הקובץ ואת חשבון היעד.</li>
+    <li>בודקים את התצוגה המקדימה ומאשרים.</li>
+  </ol>
+  <p>פורמטים נתמכים: <span dir="ltr">ATAS, Tradovate, Rithmic, NinjaTrader 8, TopstepX, MetaTrader 4/5, Interactive Brokers, Binance</span> וקובץ CSV כללי.</p>
+  <p class="note">עסקאות כפולות מזוהות ומסוננות אוטומטית, כך שאפשר לייבא את אותו קובץ פעמיים בלי לפגוע בנתונים.</p>
+</section>
+
+<section id="manual" aria-labelledby="h-manual">
+  <h2 id="h-manual">5. הוספת עסקה ידנית</h2>
+  <p>ב<strong>יומן מסחר</strong> לוחצים <strong>"עסקה חדשה"</strong> וממלאים חשבון, נכס, כיוון, כמות, מחירי כניסה ויציאה, תאריך ושעות. אפשר להוסיף סטופ, אסטרטגיה, תגיות, הערות, מצב רגשי וצילומי מסך לפני ואחרי.</p>
+</section>
+
+<section id="trade" aria-labelledby="h-trade">
+  <h2 id="h-trade">6. פירוט עסקה</h2>
+  <p>לחיצה על שורה ביומן פותחת חלון עם גרף העסקה (כשיש נתוני מחיר), תוצאה נטו, עמלות, R, זמני כניסה ויציאה ומשך העסקה. בלשונית "תיעוד טכני" רואים את הסטאפ וההערות, וב"תיעוד רגשי" את המצב הרגשי והעמידה בתוכנית.</p>
+  <p>מעבר בין עסקאות: החיצים בראש החלון או מקשי החצים במקלדת. סגירה: Esc.</p>
+</section>
+
+<section id="home" aria-labelledby="h-home">
+  <h2 id="h-home">7. דף הבית</h2>
+  <ul>
+    <li>רווח והפסד נטו, אחוז הצלחה, ימים רווחיים, יחס רווח להפסד ממוצע ו־Profit Factor.</li>
+    <li>עקומת רווח והפסד מצטבר וגרף רווח והפסד יומי.</li>
+    <li>ציון Fayna המשקלל עקביות, ירידה מקסימלית ויחס רווח להפסד.</li>
+    <li>לוח חודשי: יום רווחי בירוק, יום מפסיד באדום, עם סיכום שבועי. לחיצה על יום מציגה את העסקאות שלו.</li>
+  </ul>
+</section>
+
+<section id="stats" aria-labelledby="h-stats">
+  <h2 id="h-stats">8. סטטיסטיקה</h2>
+  <p>במסך <strong>ביצועים</strong> יש שתי לשוניות:</p>
+  <ul>
+    <li><strong>סקירה מפורטת</strong>: כ־40 מדדים, כמו אחוז הצלחה, Profit Factor, תוחלת לעסקה, ירידה מקסימלית, רצפים, ביצועים לפי יום, שעה, נכס וכיוון, ומשך עסקאות.</li>
+    <li><strong>ניתוח מתקדם</strong>: ניתוחים מעמיקים והשוואת אסטרטגיות.</li>
+  </ul>
+  <table>
+    <caption class="vh">מדדים מרכזיים</caption>
+    <thead><tr><th scope="col">מדד</th><th scope="col">מה הוא אומר</th></tr></thead>
+    <tbody>
+      <tr><td>אחוז הצלחה</td><td>כמה מהעסקאות הסתיימו ברווח.</td></tr>
+      <tr><td>Profit Factor</td><td>סך הרווחים חלקי סך ההפסדים. מעל 1 פירושו רווחי.</td></tr>
+      <tr><td>יחס רווח/הפסד ממוצע</td><td>הרווח הממוצע בעסקה מרוויחה מול ההפסד הממוצע בעסקה מפסידה.</td></tr>
+      <tr><td>ירידה מקסימלית</td><td>הירידה הגדולה ביותר מנקודת שיא.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="biz" aria-labelledby="h-biz">
+  <h2 id="h-biz">9. ניהול עסקי</h2>
+  <p>כאן מתעדים את המסחר כעסק: הוצאות על מבחנים, ריסטים, מנויים, כלים וציוד, משיכות (עם עמלה נפרדת) והכנסות. מסך הסיכום מציג רווח והפסד, הכנסות, הוצאות, תשואה על ההוצאות, גרף חודשי, חלוקת הוצאות לפי קטגוריה וסטטוס רווחיות.</p>
+  <p>אפשר לבחור תצוגה בדולר או בשקל, ולהפיק דוחות PDF ו־CSV, למשל לרואה החשבון.</p>
+</section>
+
+<section id="ecal" aria-labelledby="h-ecal">
+  <h2 id="h-ecal">10. יומן כלכלי</h2>
+  <p>אירועים כלכליים של השבוע הנוכחי והקודם, בשעון שלך. מסננים לפי רמת השפעה (נמוכה, בינונית, גבוהה) ולפי מטבע. האירוע הבא מסומן "הבא בתור".</p>
+  <p>לפני אירועים בארה"ב מופיעה התראה קופצת 15, 10 ו־5 דקות מראש. את רמת ההשפעה שמקבלת התראה קובעים בהגדרות.</p>
+</section>
+
+<section id="backup" aria-labelledby="h-backup">
+  <h2 id="h-backup">11. ייצוא וגיבוי</h2>
+  <p>הנתונים נשמרים בענן אוטומטית אחרי כל שינוי. בנוסף, ב<strong>יומן מסחר ← נתונים וגיבוי</strong> אפשר לייצא עותק מלא לקובץ ולשחזר ממנו.</p>
+</section>
+
+<section id="settings" aria-labelledby="h-settings">
+  <h2 id="h-settings">12. הגדרות ופרטיות</h2>
+  <ul>
+    <li><strong>הפרופיל שלי</strong>: שם, טלפון ותמונת פרופיל.</li>
+    <li><strong>אבטחה וסיסמה</strong>: שינוי סיסמה ומחיקת חשבון.</li>
+    <li><strong>התראות</strong>: אילו התראות לקבל, וההסכמה לדיוור ועדכונים.</li>
+    <li><strong>חשבונות מסחר</strong> ו<strong>מנוי ותשלומים</strong>.</li>
+  </ul>
+  <p>כל משתמש רואה רק את הנתונים שלו. הסרה מדיוור: בקישור שבכל הודעה, בהשבה במילה "הסר", או בהגדרות ← התראות. פרטים מלאים במדיניות הפרטיות שבתחתית האתר.</p>
+</section>
+
+<section id="plans" aria-labelledby="h-plans">
+  <h2 id="h-plans">13. מנויים וביטול</h2>
+  <ul>
+    <li><strong>חינם</strong>: המסלול הבסיסי.</li>
+    <li><strong>Fayna One</strong>: חשבון מסחר פעיל אחד, כל הכלים.</li>
+    <li><strong>Fayna Unlimited</strong>: חשבונות מסחר ללא הגבלה, כל הכלים.</li>
+  </ul>
+  <p>משתמשים חדשים זכאים ל־14 ימי ניסיון, ללא כרטיס אשראי וללא חיוב בסיום. נכון לעכשיו הסליקה אינה פעילה.</p>
+  <p>ביטול מנוי: <strong>הגדרות ← מנוי ותשלומים ← ביטול מנוי</strong>, או בדוא"ל. הביטול נכנס לתוקף תוך 3 ימי עסקים, ולא יבוצעו חיובים נוספים.</p>
+</section>
+
+<section id="a11y" aria-labelledby="h-a11y">
+  <h2 id="h-a11y">14. נגישות</h2>
+  <p>כל המערכת עובדת עם מקלדת: Tab ו־Shift+Tab למעבר, Enter לבחירה, Esc לסגירת חלונות. בראש כל מסך יש קישור "דלג לתוכן הראשי".</p>
+  <p>כפתור הנגישות (♿) בפינת המסך פותח הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא ועצירת אנימציות. ההעדפות נשמרות במכשיר. פרטים בהצהרת הנגישות.</p>
+</section>
+
+<section id="faq" aria-labelledby="h-faq">
+  <h2 id="h-faq">15. שאלות נפוצות</h2>
+  <details><summary>ייבאתי קובץ ולא הופיעו עסקאות</summary><p>בדקו שהקובץ הוא דוח עסקאות (ולא דוח פקודות) ושבחרתם חשבון יעד. אם הבעיה נמשכת, שלחו לנו את סוג הפלטפורמה ואת הקובץ.</p></details>
+  <details><summary>מופיעות עסקאות כפולות</summary><p>המערכת מסננת כפילויות אוטומטית. כפילויות שבכל זאת מופיעות נובעות בדרך כלל מעסקה שהוזנה ידנית וגם יובאה מקובץ.</p></details>
+  <details><summary>כניסה עם Google לא נפתחת</summary><p>ודאו שהדפדפן אינו חוסם חלונות קופצים לאתר, ונסו שוב.</p></details>
+  <details><summary>איך מקבלים עזרה?</summary><p>במסך <strong>עזרה</strong> יש עוזר שעונה על רוב השאלות, ואפשר גם לשלוח פנייה בטופס צור קשר שבתחתית האתר.</p></details>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p>זקוקים למידע בפורמט אחר או נתקלתם בבעיית נגישות? כתבו לנו: <a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a></p>
+  <p><a href="./">חזרה ל־Fayna Trading</a></p>
+</footer>
+</body>
+</html>

@@ -16,6 +16,8 @@
     name: 'Fayna Trading (Fayna Group)',
     email: 'dorfeina123@gmail.com',
     address: '',          // ← כתובת העסק למשלוח הודעת סירוב (חובה לפי סעיף 30א)
+    phone: '',            // ← טלפון לפניות (מסמך הגילוי והצהרת הנגישות)
+    vatNote: '',          // ← למשל 'המחירים כוללים מע"מ' או 'עוסק פטור'
     businessId: '',       // ← מספר עוסק / ח.פ.
   };
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -142,8 +144,17 @@
     fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ access_key: '8ef4276d-2519-4d4f-8a84-b84cd6f46419', subject: '⛔ בקשת ביטול מנוי — לטפל עד ' + by, from_name: 'Fayna Trading — Billing',
         html: `<div dir="rtl">בקשת ביטול מנוי התקבלה.<br>משתמש: ${esc(currentUser.name || '')} (${esc(currentUser.email || '')})<br>מזהה: ${esc(currentUser.uid)}<br>יש להפסיק חיובים עד ${by}.</div>` }) }).catch(() => {});
+    // Written confirmation to the customer (transactional mail, no consent needed).
+    let mailed = false;
+    try {
+      if (typeof emailjs !== 'undefined' && EJS_CONFIG?.publicKey && EJS_CONFIG.serviceId && EJS_CONFIG.templateId && currentUser.email) {
+        const body = `קיבלנו את בקשתך לבטל את המנוי ל־Fayna Trading בתאריך ${new Date().toLocaleDateString('he-IL')}.\nהביטול ייכנס לתוקף לכל המאוחר ב־${by}, ולא יבוצעו חיובים נוספים לאחר מכן.\nהחשבון יעבור למסלול החינמי והנתונים שלך נשמרים.\n\n${senderLine()}`;
+        await emailjs.send(EJS_CONFIG.serviceId, EJS_CONFIG.templateId, { to_email: currentUser.email, user_name: currentUser.name || '', subject: 'אישור קבלת בקשה לביטול מנוי', message: body, html_message: body.replace(/\n/g, '<br>'), from_name: 'Fayna Trading' });
+        mailed = true;
+      }
+    } catch (e) {}
     const el = document.getElementById('subscription-server-status');
-    const text = `בקשת הביטול התקבלה${server ? ' ונרשמה בשרת' : ''}. הביטול ייכנס לתוקף עד ${by} ולא יבוצעו חיובים נוספים. אישור יישלח לדוא"ל שלך.`;
+    const text = `בקשת הביטול התקבלה ב־${new Date().toLocaleDateString('he-IL')}. הביטול ייכנס לתוקף עד ${by} ולא יבוצעו חיובים נוספים. ${mailed ? 'אישור נשלח לדוא"ל שלך.' : 'ההודעה הזו נשמרה גם במרכז ההתראות כאישור.'}`;
     if (el) el.textContent = text;
     try { addNotification('billing', 'בקשת ביטול מנוי התקבלה', text); renderNotifBell(); } catch (e) {}
     showToast?.('בקשת הביטול התקבלה', 'success');
@@ -155,15 +166,52 @@
       const card = document.getElementById('my-sub-card'); if (!card) return;
       card.querySelectorAll('button').forEach(b => { if (/בקשת ביטול/.test(b.textContent)) b.remove(); });
       const sec = card.querySelector('section'); if (!sec || sec.querySelector('.fyc-cancel')) return;
-      const box = document.createElement('div'); box.className = 'fyc-cancel';
-      box.innerHTML = `<button type="button" class="fyc-danger">ביטול מנוי</button><small>הביטול נכנס לתוקף תוך 3 ימי עסקים לכל היותר. אפשר לבטל גם במייל ל־<a href="mailto:${LEGAL.email}?subject=${encodeURIComponent('ביטול מנוי')}">${LEGAL.email}</a>.</small>`;
-      box.querySelector('button').addEventListener('click', cancelSubscription);
-      sec.appendChild(box);
+      sec.appendChild(cancelBox());
     };
     w._fyc = true; window.renderMySub = w; try { renderMySub = w; } catch (e) {}
     try { w(); } catch (e) {}
   }
   window.cancelSubscription = cancelSubscription;
+  function cancelBox() {
+    const box = document.createElement('div'); box.className = 'fyc-cancel';
+    box.innerHTML = `<button type="button" class="fyc-danger">ביטול מנוי</button><small>הביטול נכנס לתוקף תוך 3 ימי עסקים לכל היותר, ללא חיובים נוספים. אפשר לבטל גם במייל ל־<a href="mailto:${LEGAL.email}?subject=${encodeURIComponent('ביטול מנוי')}">${LEGAL.email}</a>.</small>`;
+    box.querySelector('button').addEventListener('click', cancelSubscription);
+    return box;
+  }
+  /* The summary card at the top of the billing page is what people see first, so the
+     cancel button lives there too (not only inside the collapsed plans section). */
+  function wrapWorkspacePlan() {
+    const prev = window.workspacePlan; if (typeof prev !== 'function' || prev._fyc) return;
+    const w = function () {
+      const r = prev.apply(this, arguments);
+      const el = document.getElementById('workspace-plan-summary');
+      const plan = String(currentUser?.plan || 'free').toLowerCase();
+      if (el && plan !== 'free' && !el.querySelector('.fyc-cancel')) el.appendChild(cancelBox());
+      return r;
+    };
+    w._fyc = true; window.workspacePlan = w; try { workspacePlan = w; } catch (e) {}
+    try { w(); } catch (e) {}
+  }
+
+  /* ── pre-purchase disclosure (Consumer Protection Law s.14C) ── */
+  function disclosureHtml() {
+    const rows = [
+      ['העוסק', [LEGAL.name, LEGAL.businessId && 'מס׳ עוסק ' + LEGAL.businessId].filter(Boolean).join(' · ')],
+      ['כתובת', LEGAL.address], ['טלפון', LEGAL.phone], ['דוא"ל', LEGAL.email],
+      ['השירות', 'גישה למערכת Fayna Trading לתיעוד וניתוח מסחר, לפי המסלול שנבחר. אינו ייעוץ השקעות.'],
+      ['מחיר ותשלום', 'המחיר החודשי מוצג בכל מסלול בדולר; החיוב בשקלים לפי שער שמוצג לפני אישור. ' + (LEGAL.vatNote || '')],
+      ['תקופה וחידוש', 'מנוי חודשי שמתחדש אוטומטית עד לביטול. אין התחייבות לתקופה מינימלית.'],
+      ['ביטול', 'בכל עת, בכפתור "ביטול מנוי" או בדוא"ל. נכנס לתוקף תוך 3 ימי עסקים, ללא חיובים נוספים. ביטול עסקה תוך 14 יום לפי סעיף 14ג לחוק הגנת הצרכן, בניכוי דמי ביטול של 5% או 100 ש"ח, הנמוך מביניהם.'],
+      ['תקופת ניסיון', '14 יום למשתמשים זכאים, ללא כרטיס אשראי וללא חיוב בסיומה.'],
+    ].filter(r => r[1]);
+    return `<section class="price-card fyc-disclosure" aria-labelledby="fyc-disc-t" style="grid-column:1/-1;color:var(--t1);font-size:14px;line-height:1.6"><h2 id="fyc-disc-t" style="font-size:17px;color:var(--t1)">פרטי העוסק ותנאי העסקה</h2><dl>${rows.map(r => `<div><dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd></div>`).join('')}</dl><p style="font-size:12.5px;color:var(--t2)">מסמך זה יישלח אליך גם בדוא"ל עם השלמת הרכישה. תנאי השימוש המלאים בעמוד <a href="#" onclick="openLegal('terms');return false">תנאי שימוש</a>.</p></section>`;
+  }
+  function wrapPricing() {
+    const prev = window.renderPricing; if (typeof prev !== 'function' || prev._fyc) return;
+    const w = function () { const r = prev.apply(this, arguments); const g = document.getElementById('pricing-grid'); if (g && !g.querySelector('.fyc-disclosure')) g.insertAdjacentHTML('beforeend', disclosureHtml()); return r; };
+    w._fyc = true; window.renderPricing = w; try { renderPricing = w; } catch (e) {}
+    try { w(); } catch (e) {}
+  }
 
   function showDoc(which) {
     try {
@@ -185,11 +233,12 @@
     w._fyc = true; window.showApp = w; try { showApp = w; } catch (e) {}
   }
   function init() {
-    wrapShowApp(); wrapMySub();
+    wrapShowApp(); wrapMySub(); wrapPricing(); wrapWorkspacePlan();
     const tp = document.getElementById('tp-personal');
     if (tp) new MutationObserver(() => { if (tp.classList.contains('active')) { injectToggle(); syncToggle(); } }).observe(tp, { attributes: true, attributeFilter: ['class'] });
     injectToggle();
     try { _legalFill(); } catch (e) {}
+    if (LEGAL.phone) { const ul = [...document.querySelectorAll('#lg-accessibility h3')].find(h => h.textContent.includes('רכז'))?.nextElementSibling?.nextElementSibling; if (ul && !ul.querySelector('.fyc-phone')) ul.insertAdjacentHTML('beforeend', `<li class="fyc-phone">טלפון: <a href="tel:${esc(LEGAL.phone)}">${esc(LEGAL.phone)}</a></li>`); }
   }
   window.FaynaCompliance = Object.freeze({
     LEGAL, loadUnsubs, setConsent, businessDaysFrom, cancelSubscription, showDoc,
@@ -197,5 +246,5 @@
     senderHtml: () => `<p style="font-size:11px;color:#a0aec0;margin:8px 0 0">השולח: ${esc(senderLine())}</p>`,
   });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-  window.addEventListener('load', () => { wrapShowApp(); wrapMySub(); });
+  window.addEventListener('load', () => { wrapShowApp(); wrapMySub(); wrapPricing(); wrapWorkspacePlan(); });
 })();

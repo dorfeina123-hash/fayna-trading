@@ -759,3 +759,8 @@ html[data-fayna-theme] #cd-modal #cd-ok-btn[style*="var(--re)"]{background:#c628
 html[data-fayna-theme="light"] .trs-blue{color:#1d4ed8!important}
 .tre-day.today td b{color:#1b1320!important}
 html[data-fayna-theme="light"] .tre-day.today td b{color:#fff!important}
+.fyc-disclosure dl{margin:6px 0 10px;display:grid;gap:6px}
+.fyc-disclosure dl div{display:grid;grid-template-columns:120px 1fr;gap:10px;border-bottom:1px solid var(--border);padding:6px 0}
+.fyc-disclosure dt{color:var(--t1);font-weight:600}.fyc-disclosure dd{margin:0;color:var(--t2)}
+@media(max-width:560px){.fyc-disclosure dl div{grid-template-columns:1fr;gap:2px}}
+html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b1320!important}
