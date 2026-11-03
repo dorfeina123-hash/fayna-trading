@@ -39,3 +39,23 @@ test('existing legacy sync remains permitted for own account only',async()=>{
  await assertFails(updateDoc(doc(db,'users','alice'),{td_tradesList:[]}));
  await assertFails(updateDoc(doc(db,'users','legacy'),{paymentStatus:'paid'}));
 });
+test('referral codes cannot be taken over and click counters only go up by one',async()=>{
+ const alice=env.authenticatedContext('alice',{email:'alice@example.com'}).firestore();
+ const legacy=env.authenticatedContext('legacy',{email:'legacy@example.com'}).firestore();
+ await assertSucceeds(setDoc(doc(alice,'refCodes','CODEA'),{uid:'alice'}));
+ await assertSucceeds(setDoc(doc(alice,'refCodes','CODEA'),{uid:'alice'}));
+ await assertFails(setDoc(doc(legacy,'refCodes','CODEA'),{uid:'legacy'}));
+ await assertFails(setDoc(doc(legacy,'refCodes','CODEB'),{uid:'alice'}));
+ const anon=env.unauthenticatedContext().firestore();
+ await assertFails(setDoc(doc(anon,'refClicks','CODEA'),{count:500}));
+ await assertSucceeds(setDoc(doc(anon,'refClicks','CODEA'),{count:1}));
+ await assertSucceeds(setDoc(doc(anon,'refClicks','CODEA'),{count:2}));
+ await assertFails(setDoc(doc(anon,'refClicks','CODEA'),{count:99}));
+});
+test('a signed-out visitor can file a cancellation request but cannot read requests',async()=>{
+ const anon=env.unauthenticatedContext().firestore();
+ const {addDoc,collection}=require('firebase/firestore');
+ await assertSucceeds(addDoc(collection(anon,'billing_requests'),{type:'cancel',plan:'',cycle:'',uid:null,email:'someone@example.com',provider:'public-form',createdAt:1}));
+ await assertFails(addDoc(collection(anon,'billing_requests'),{type:'cancel',uid:'alice',email:'x@example.com'}));
+ await assertFails(addDoc(collection(anon,'billing_requests'),{type:'cancel',uid:null,email:'x'.repeat(300)}));
+});
