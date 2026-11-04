@@ -2,7 +2,6 @@
 // מוסיפים אותו לגרף אחד ומדביקים את מפתח החיבור.
 using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using ATAS.DataFeedsCore;
 using ATAS.Indicators;
 
@@ -16,21 +15,18 @@ namespace FaynaSync
         string _key = "";
         bool _backfilled;
 
-        [Display(Name = "מפתח חיבור (מפיינה ← הגדרות ← חיבורים)", GroupName = "Fayna Sync", Order = 10)]
+        [DisplayName("מפתח חיבור (מפיינה ← הגדרות ← חיבורים)")]
+        [Category("Fayna Sync")]
         public string PairingKey
         {
             get => _key;
             set { _key = (value ?? "").Trim(); if (_client != null) _client.Key = _key; _ = _client?.FlushAsync(); }
         }
 
-        [Display(Name = "מצב", GroupName = "Fayna Sync", Order = 20)]
+        [DisplayName("מצב")]
+        [Category("Fayna Sync")]
         [ReadOnly(true)]
         public string Status => _client == null ? "לא הופעל" : _client.LastStatus;
-
-        public FaynaSyncIndicator()
-        {
-            DataSeries[0].IsHidden = true;
-        }
 
         protected override void OnInitialize()
         {
