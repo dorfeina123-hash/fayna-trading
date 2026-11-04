@@ -1,5 +1,5 @@
-// Fayna Sync for ATAS — sends every execution (all connected accounts) to the
-// Fayna Trading journal. Add it to any one chart and paste your pairing key.
+// Fayna Sync ל־ATAS: שולח כל ביצוע (מכל החשבונות המחוברים) ליומן Fayna Trading.
+// מוסיפים אותו לגרף אחד ומדביקים את מפתח החיבור.
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,23 +9,23 @@ using ATAS.Indicators;
 namespace FaynaSync
 {
     [DisplayName("Fayna Sync")]
-    [Description("Sends your executions to the Fayna Trading journal. Read-only: it never places orders.")]
+    [Description("שולח את הביצועים שלך ליומן Fayna Trading. קריאה בלבד: לא מבצע פקודות.")]
     public class FaynaSyncIndicator : Indicator
     {
         FaynaClient? _client;
         string _key = "";
         bool _backfilled;
 
-        [Display(Name = "Pairing key (from Fayna → Settings → Connections)", GroupName = "Fayna Sync", Order = 10)]
+        [Display(Name = "מפתח חיבור (מפיינה ← הגדרות ← חיבורים)", GroupName = "Fayna Sync", Order = 10)]
         public string PairingKey
         {
             get => _key;
             set { _key = (value ?? "").Trim(); if (_client != null) _client.Key = _key; _ = _client?.FlushAsync(); }
         }
 
-        [Display(Name = "Status", GroupName = "Fayna Sync", Order = 20)]
+        [Display(Name = "מצב", GroupName = "Fayna Sync", Order = 20)]
         [ReadOnly(true)]
-        public string Status => _client == null ? "Not started" : _client.LastStatus;
+        public string Status => _client == null ? "לא הופעל" : _client.LastStatus;
 
         public FaynaSyncIndicator()
         {
@@ -42,7 +42,7 @@ namespace FaynaSync
             if (_backfilled) return;
             _backfilled = true;
             _client ??= new FaynaClient("atas") { Key = _key };
-            // Executions ATAS already holds for this session (sent once; the server dedupes).
+            // ביצועים שכבר קיימים ב־ATAS מהסשן הנוכחי (נשלחים פעם אחת; השרת מסנן כפילויות).
             var tm = TradingManager;
             if (tm?.MyTrades == null) return;
             foreach (var t in tm.MyTrades) Enqueue(t);

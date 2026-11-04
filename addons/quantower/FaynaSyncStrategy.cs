@@ -1,5 +1,5 @@
-// Fayna Sync for Quantower — sends every execution on all connections to the
-// Fayna Trading journal. Run it once from the Strategies Manager with your pairing key.
+// Fayna Sync ל־Quantower: שולח כל ביצוע מכל החיבורים ליומן Fayna Trading.
+// מפעילים פעם אחת מ־Strategies Manager עם מפתח החיבור.
 using System;
 using TradingPlatform.BusinessLayer;
 
@@ -7,10 +7,10 @@ namespace FaynaSync
 {
     public class FaynaSyncStrategy : Strategy
     {
-        [InputParameter("Pairing key (from Fayna → Settings → Connections)", 10)]
+        [InputParameter("מפתח חיבור (מפיינה ← הגדרות ← חיבורים)", 10)]
         public string PairingKey = "";
 
-        [InputParameter("Send history from the last N days on start", 20, 0, 30, 1, 0)]
+        [InputParameter("ימים אחורה לשליחה בהפעלה", 20, 0, 30, 1, 0)]
         public int BackfillDays = 3;
 
         FaynaClient? _client;
@@ -18,7 +18,7 @@ namespace FaynaSync
         public FaynaSyncStrategy() : base()
         {
             Name = "Fayna Sync";
-            Description = "Sends your executions to the Fayna Trading journal. Read-only: it never places orders.";
+            Description = "שולח את הביצועים שלך ליומן Fayna Trading. קריאה בלבד: לא מבצע פקודות.";
         }
 
         protected override void OnRun()
@@ -33,7 +33,7 @@ namespace FaynaSync
                     var p = new TradesHistoryRequestParameters { From = DateTime.UtcNow.AddDays(-BackfillDays), To = DateTime.UtcNow };
                     foreach (var t in Core.Instance.GetTrades(p)) OnTrade(t);
                 }
-                catch (Exception e) { Log("History not available on this connection: " + e.Message, StrategyLoggingLevel.Info); }
+                catch (Exception e) { Log("היסטוריית ביצועים לא זמינה בחיבור הזה: " + e.Message, StrategyLoggingLevel.Info); }
             }
         }
 

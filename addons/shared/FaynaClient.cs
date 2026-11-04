@@ -1,7 +1,7 @@
-// Fayna Sync — shared sender used by the ATAS and Quantower add-ons.
-// Queues executions, sends them in batches every few seconds, keeps unsent ones on
-// disk so nothing is lost if the platform closes or the internet drops.
-// It sends only execution data (symbol, side, quantity, price, time, commission).
+// Fayna Sync: רכיב השליחה המשותף לתוספים של ATAS ו־Quantower.
+// אוסף ביצועים, שולח אותם במנות כל כמה שניות, ושומר בדיסק את מה שעוד לא נשלח
+// כדי ששום דבר לא יאבד אם הפלטפורמה נסגרת או האינטרנט נופל.
+// נשלחים רק נתוני ביצוע: סימבול, כיוון, כמות, מחיר, זמן ועמלה.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +43,7 @@ namespace FaynaSync
 
         public string Key { get; set; } = "";
         public string Url { get; set; } = DefaultUrl;
-        public string LastStatus { get; private set; } = "ממתין";
+        public string LastStatus { get; private set; } = "ממתין לביצועים";
         public DateTime? LastSuccessUtc { get; private set; }
         public event Action<string>? Log;
 

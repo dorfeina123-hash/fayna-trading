@@ -1,32 +1,32 @@
-# Fayna Sync add-ons
+# Fayna Sync: תוספים לסנכרון עסקאות
 
-Platform add-ons that send executions to the journal. Read-only: they never place orders
-and never see a broker password.
+תוספים שרצים בתוך פלטפורמת המסחר ושולחים את הביצועים ליומן. הם קריאה בלבד: לא מבצעים פקודות ולא רואים סיסמה של הברוקר.
 
 ```
-ATAS / Quantower  ──POST fills──▶  syncIngest (Cloud Function)  ──▶  users/{uid}/syncFills
-       ▲ pairing key (shown once)                                          │ onSnapshot
-       └──────────── Fayna → Settings → Connections ◀── fayna-sync.js ◀────┘ pairs fills into trades
+ATAS / Quantower  ──שליחת ביצועים──▶  syncIngest (שרת)  ──▶  users/{uid}/syncFills
+       ▲ מפתח חיבור (מוצג פעם אחת)                                   │ האזנה בזמן אמת
+       └────────── פיינה ← הגדרות ← חיבורים ◀── fayna-sync.js ◀─────┘ הופך ביצועים לעסקאות
 ```
 
-## Contract
+## מבנה הבקשה
 `POST https://us-central1-fayna-trading.cloudfunctions.net/syncIngest`
-Header `Authorization: Bearer <pairing key>`; body:
+
+כותרת `Authorization: Bearer <מפתח החיבור>`, וגוף הבקשה:
 ```json
 { "source": "atas", "version": "1.0.0",
   "fills": [{ "id": "E1", "orderId": "O1", "account": "BX50K-123", "symbol": "MNQZ5@CME",
               "side": "buy", "qty": 2, "price": 21000.25, "time": "2026-11-03T14:30:00.000Z", "commission": 1.24 }] }
 ```
-Up to 500 fills per request. A fill is stored once per source + account + id, so resending is safe.
+עד 500 ביצועים בבקשה. כל ביצוע נשמר פעם אחת לפי מקור, חשבון ומזהה, כך ששליחה חוזרת לא יוצרת כפילות.
 
-## Build (Windows, .NET 8 SDK)
+## בנייה (Windows עם ‎.NET 8 SDK)
 ```
-cd addons/atas      && dotnet build -c Release                      # needs ATAS installed (AtasDir)
+cd addons/atas      && dotnet build -c Release                      # דורש ATAS מותקן (AtasDir)
 cd addons/quantower && dotnet build -c Release -p:QuantowerDir="<Quantower>\TradingPlatform\<version>\bin"
 ```
-Copy the DLLs to `sync/` in this repo so the download page offers them.
+את קובצי ה־DLL שנוצרים מעתיקים לתיקייה `sync/` בריפו, ואז עמוד ההורדה מציע אותם.
 
-## Before the first real test
-- Publish `firestore.rules` and deploy the function: `firebase deploy --only firestore:rules,functions:billing:syncIngest`
-- Verify ATAS `MyTrade.Time` is UTC: compare a trade's time in the journal with the platform.
-- The card in Settings → Connections is admin-only until `OPEN_TO_ALL` in `fayna-sync.js` is set to `true`.
+## לפני הבדיקה האמיתית הראשונה
+- להעלות את כללי מסד הנתונים ואת השרת: `firebase deploy --only firestore:rules,functions:billing:syncIngest`
+- לוודא ש־`MyTrade.Time` ב־ATAS הוא UTC: להשוות זמן של עסקה ביומן לזמן בפלטפורמה.
+- הכרטיס בהגדרות ← חיבורים מוצג רק למנהל עד שמשנים את `OPEN_TO_ALL` ב־`fayna-sync.js` ל־`true`.
