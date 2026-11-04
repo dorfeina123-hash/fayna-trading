@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build on a computer with ATAS installed:  dotnet build -c Release
+       then copy bin\Release\net8.0-windows\FaynaSync.Atas.dll to Documents\ATAS\Indicators -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyName>FaynaSync.Atas</AssemblyName>
+    <RootNamespace>FaynaSync</RootNamespace>
+    <AtasDir Condition="'$(AtasDir)' == ''">C:\Program Files (x86)\ATAS Platform</AtasDir>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\shared\FaynaClient.cs" />
+    <Reference Include="ATAS.Indicators"><HintPath>$(AtasDir)\ATAS.Indicators.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ATAS.DataFeedsCore"><HintPath>$(AtasDir)\ATAS.DataFeedsCore.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Utils.Common"><HintPath>$(AtasDir)\Utils.Common.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

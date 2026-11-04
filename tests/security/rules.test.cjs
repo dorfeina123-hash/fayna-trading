@@ -59,3 +59,19 @@ test('a signed-out visitor can file a cancellation request but cannot read reque
  await assertFails(addDoc(collection(anon,'billing_requests'),{type:'cancel',uid:'alice',email:'x@example.com'}));
  await assertFails(addDoc(collection(anon,'billing_requests'),{type:'cancel',uid:null,email:'x'.repeat(300)}));
 });
+test('live sync: pairing keys are owner-only and fills are server-written',async()=>{
+ const h='a'.repeat(64), h2='b'.repeat(64);
+ const alice=env.authenticatedContext('alice',{email:'alice@example.com'}).firestore();
+ const bob=env.authenticatedContext('bob',{email:'bob@example.com'}).firestore();
+ await assertSucceeds(setDoc(doc(alice,'syncDevices',h),{uid:'alice',label:'ATAS',createdAt:1,revoked:false}));
+ await assertFails(setDoc(doc(bob,'syncDevices',h2),{uid:'alice',label:'ATAS',createdAt:1,revoked:false}));
+ await assertFails(setDoc(doc(alice,'syncDevices','short'),{uid:'alice',label:'ATAS',createdAt:1,revoked:false}));
+ await assertFails(setDoc(doc(alice,'syncDevices',h2),{uid:'alice',label:'ATAS',createdAt:1,revoked:false,lastSeen:1}));
+ await assertFails(getDoc(doc(bob,'syncDevices',h)));
+ await assertFails(updateDoc(doc(alice,'syncDevices',h),{uid:'bob'}));
+ await assertSucceeds(updateDoc(doc(alice,'syncDevices',h),{revoked:true}));
+ await assertFails(setDoc(doc(alice,'users','alice','syncFills','f1'),{id:'f1'}));
+ await env.withSecurityRulesDisabled(async c=>setDoc(doc(c.firestore(),'users','alice','syncFills','f1'),{id:'f1'}));
+ await assertSucceeds(getDoc(doc(alice,'users','alice','syncFills','f1')));
+ await assertFails(getDoc(doc(bob,'users','alice','syncFills','f1')));
+});

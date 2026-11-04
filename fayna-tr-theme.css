@@ -764,3 +764,25 @@ html[data-fayna-theme="light"] .tre-day.today td b{color:#fff!important}
 .fyc-disclosure dt{color:var(--t1);font-weight:600}.fyc-disclosure dd{margin:0;color:var(--t2)}
 @media(max-width:560px){.fyc-disclosure dl div{grid-template-columns:1fr;gap:2px}}
 html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b1320!important}
+
+/* v110 — live trade sync card */
+#fys-card .fys-lead{font-size:13.5px;color:var(--t2);line-height:1.7;margin:0 0 12px}
+.fys-status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t2);background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.fys-dot{width:9px;height:9px;border-radius:50%;background:var(--t3);flex-shrink:0}.fys-dot.on{background:var(--gr);box-shadow:0 0 0 3px var(--gd)}
+.fys-new{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.fys-new label{font-size:13px;color:var(--t2)}
+.fys-new select,.fys-map select{min-height:40px;border-radius:10px;padding:0 10px;background:var(--bg2);color:var(--t1);border:1px solid var(--border2);font:inherit}
+.fys-new .fyc-primary{min-height:40px;padding:0 18px;border-radius:10px;font-weight:600;cursor:pointer}
+.fys-dl{font-size:13px;color:var(--ac);text-decoration:underline}
+.fys-devs{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px}
+.fys-devs li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px}
+.fys-devs b{display:block;font-size:13.5px;color:var(--t1)}.fys-devs small{font-size:12px;color:var(--t2)}
+.fys-devs .fyc-danger{min-height:36px;padding:0 14px;border-radius:10px;cursor:pointer;font:inherit;font-size:13px}
+.fys-map{border-top:1px solid var(--border);padding-top:12px}
+.fys-map h3{font-size:14px;margin:0 0 4px;color:var(--t1)}.fys-map p{font-size:12.5px;color:var(--t2);margin:0 0 10px}
+.fys-map-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 0}
+.fys-map-row b{font-size:13px;color:var(--t1)}.fys-map-row small{display:block;font-size:12px;color:var(--t2)}
+.fys-key{display:flex;gap:8px;align-items:center;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px;margin:10px 0}
+.fys-key code{flex:1;font-size:13px;word-break:break-all;color:var(--t1)}
+.fys-steps{padding-right:20px;font-size:14px;color:var(--t2);line-height:1.7}
+.fys-note{font-size:12.5px!important}

@@ -226,6 +226,27 @@ service cloud.firestore {
       allow read, write: if isOwner(uid) || isAdmin();
     }
 
+    // ── live trade sync (platform add-ons → syncIngest function) ──
+    // The browser stores only the SHA-256 of a pairing key; the key itself is shown once.
+    match /syncDevices/{hash} {
+      allow read:   if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn()
+                    && hash.size() == 64
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['uid','label','createdAt','revoked'])
+                    && request.resource.data.revoked == false
+                    && request.resource.data.label is string && request.resource.data.label.size() <= 60;
+      allow update: if isSignedIn() && resource.data.uid == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['revoked','label'])
+                    && request.resource.data.uid == resource.data.uid;
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+    // Executions written by the server; the owner reads them and builds trades.
+    match /users/{uid}/syncFills/{fill} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
     // ── deny everything not explicitly allowed above ──
     match /{document=**} { allow read, write: if false; }
   }

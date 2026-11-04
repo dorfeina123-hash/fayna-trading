@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fayna Sync — התקנה</title>
+<meta name="description" content="התקנת התוסף שמסנכרן עסקאות מ־ATAS ומ־Quantower ליומן Fayna Trading.">
+<link rel="icon" href="../fayna-logo-gold.png">
+<style>
+:root{--bg:#1f1b23;--card:#292930;--line:rgba(255,255,255,.12);--t1:#fff;--t2:#d9d7de;--ac:#d8b4fe;--acbg:rgba(192,132,252,.14);--focus:#e9d5ff}
+@media (prefers-color-scheme:light){:root{--bg:#f6f4f8;--card:#fff;--line:#dcd8e2;--t1:#18151c;--t2:#3f3b46;--ac:#6b21a8;--acbg:rgba(147,51,234,.08);--focus:#6b21a8}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t1);font-family:Rubik,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.75}
+a{color:var(--ac)}a:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--line);padding:28px 0 20px}header .wrap{display:flex;gap:14px;align-items:center}
+header img{width:52px;height:52px;border-radius:50%}h1{font-size:clamp(25px,5vw,34px);margin:0;line-height:1.2}header p{margin:2px 0 0;color:var(--t2)}
+h2{font-size:22px;margin:28px 0 8px}p,li{color:var(--t2)}strong{color:var(--t1)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:16px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h3{margin:0 0 6px;font-size:19px}.card p{margin:0 0 12px;font-size:15px}
+.dl{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:12px;background:var(--ac);color:#1b1320;font-weight:700;text-decoration:none}
+.dl[aria-disabled="true"]{background:transparent;color:var(--t2);border:1px dashed var(--line);pointer-events:none;font-weight:500}
+.note{background:var(--acbg);border-right:4px solid var(--ac);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--t1)}
+ol,ul{padding-right:24px}li{margin-bottom:6px}
+footer{padding:28px 0 40px;color:var(--t2);font-size:15px}
+li,p{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header><div class="wrap"><img src="../fayna-logo-gold.png" alt=""><div><h1>Fayna Sync</h1><p>העסקאות שלך נכנסות ליומן לבד, ישר מפלטפורמת המסחר.</p></div></div></header>
+<main class="wrap">
+  <p>Fayna Sync הוא תוסף קטן שרץ בתוך ATAS או Quantower. הוא רואה כל ביצוע בכל החשבונות שמחוברים לפלטפורמה, בין אם דרך Rithmic ובין אם דרך Tradovate, ושולח אותו ליומן שלך תוך דקה.</p>
+  <div class="note">התוסף לא מבקש סיסמה של הברוקר ולא יכול לבצע פקודות. הוא שולח רק נתוני ביצוע: סימבול, כיוון, כמות, מחיר, זמן ועמלה.</div>
+
+  <h2>הורדה</h2>
+  <div class="grid">
+    <section class="card" aria-labelledby="atas-t"><h3 id="atas-t">ATAS</h3><p>אינדיקטור שמוסיפים לגרף אחד, והוא מסנכרן את כל החשבונות.</p><a class="dl" data-file="FaynaSync.Atas.dll" href="FaynaSync.Atas.dll" download>הורדה ל־ATAS</a></section>
+    <section class="card" aria-labelledby="qt-t"><h3 id="qt-t">Quantower</h3><p>אסטרטגיה שמפעילים פעם אחת מ־Strategies Manager.</p><a class="dl" data-file="FaynaSync.Quantower.dll" href="FaynaSync.Quantower.dll" download>הורדה ל־Quantower</a></section>
+  </div>
+
+  <h2>התקנה ב־ATAS</h2>
+  <ol>
+    <li>ביומן Fayna: <strong>הגדרות ← חיבורים ← סנכרון אוטומטי</strong>, בוחרים ATAS ולוחצים "יצירת מפתח חיבור". מעתיקים את המפתח.</li>
+    <li>מעתיקים את הקובץ שהורדתם לתיקייה <strong dir="ltr">Documents\ATAS\Indicators</strong>.</li>
+    <li>ב־ATAS פותחים גרף כלשהו ← Indicators ← מוסיפים את <strong>Fayna Sync</strong>.</li>
+    <li>בהגדרות האינדיקטור מדביקים את המפתח בשדה Pairing key.</li>
+    <li>משאירים את הגרף פתוח. בשדה Status מופיע מתי נשלחו ביצועים לאחרונה.</li>
+  </ol>
+
+  <h2>התקנה ב־Quantower</h2>
+  <ol>
+    <li>יוצרים מפתח ביומן Fayna כמו למעלה, ובוחרים Quantower.</li>
+    <li>מעתיקים את הקובץ לתיקייה <strong dir="ltr">Quantower\Settings\Scripts\Strategies\FaynaSync</strong>.</li>
+    <li>ב־Quantower פותחים <strong>Strategies Manager</strong>, בוחרים Fayna Sync, מדביקים את המפתח ולוחצים Run.</li>
+  </ol>
+
+  <h2>שאלות נפוצות</h2>
+  <ul>
+    <li><strong>מה עם R|Trader Pro או האתר של Tradovate?</strong> שם אין אפשרות להתקין תוסף. בינתיים ממשיכים לייבא קובץ, וחיבור ישיר ל־Rithmic נמצא בתכנון.</li>
+    <li><strong>העסקאות לא נכנסות ליומן?</strong> בדקו שהגרף עם התוסף פתוח ושה־Status לא מראה שגיאה. עסקאות מחשבון שעוד לא שויך מחכות ב"חשבונות שממתינים לשיוך" במסך החיבורים.</li>
+    <li><strong>פוזיציה עדיין פתוחה?</strong> העסקה תיכנס ליומן ברגע שהפוזיציה תיסגר.</li>
+    <li><strong>איבדתי את המפתח או החלפתי מחשב?</strong> יוצרים מפתח חדש ומנתקים את הישן במסך החיבורים.</li>
+  </ul>
+</main>
+<footer class="wrap"><p>שאלות? <a href="mailto:dorfeina123@gmail.com">dorfeina123@gmail.com</a> · <a href="../">חזרה ל־Fayna Trading</a></p></footer>
+<script>
+/* A download that is not published yet shows as "coming soon" instead of a broken link. */
+document.querySelectorAll('[data-file]').forEach(function(a){
+  fetch(a.getAttribute('data-file'),{method:'HEAD',cache:'no-store'}).then(function(r){if(!r.ok)throw 0;}).catch(function(){a.setAttribute('aria-disabled','true');a.removeAttribute('href');a.textContent='בקרוב — בבדיקות אחרונות';});
+});
+</script>
+</body>
+</html>

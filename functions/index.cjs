@@ -97,3 +97,15 @@ exports.billing = onCall({ enforceAppCheck: true, maxInstances: 5 }, async reque
 exports.billingWebhook = onRequest({ maxInstances: 2 }, (_req, res) => {
   res.status(503).json({ error: 'billing_not_configured' });
 });
+
+/* Live trade sync: executions posted by the ATAS / Quantower add-ons (see sync.cjs). */
+const sync = require('./sync.cjs');
+exports.syncIngest = onRequest({ maxInstances: 3, timeoutSeconds: 30, memory: '256MiB' }, async (req, res) => {
+  try {
+    const out = await sync.handleIngest({ method: req.method, headers: req.headers, body: req.body }, sync.firestoreStore(db, FieldValue));
+    res.status(out.status).json(out.body);
+  } catch (e) {
+    console.error('syncIngest', e);
+    res.status(500).json({ error: 'server' });
+  }
+});

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build on a computer with Quantower installed:  dotnet build -c Release -p:QuantowerDir="<Quantower folder>\TradingPlatform\vX.Y.Z\bin"
+       then copy FaynaSync.Quantower.dll to <Quantower>\Settings\Scripts\Strategies\FaynaSync -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyName>FaynaSync.Quantower</AssemblyName>
+    <RootNamespace>FaynaSync</RootNamespace>
+    <QuantowerDir Condition="'$(QuantowerDir)' == ''">C:\Quantower\TradingPlatform\bin</QuantowerDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\shared\FaynaClient.cs" />
+    <Reference Include="TradingPlatform.BusinessLayer"><HintPath>$(QuantowerDir)\TradingPlatform.BusinessLayer.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>
