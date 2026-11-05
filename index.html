@@ -17424,6 +17424,8 @@ function _scheduleTodayAlerts() {
         if the tab happened to be closed at 17:00.
    Every event is now written to the bell once (deduped per event per day),
    and on load we back-fill anything that already happened today. */
+/* v115: Hebrew event names in every alert (fayna-ecal-he.js) */
+function _ecalHe(t){ try { return window.FaynaEcalHe ? FaynaEcalHe.t(t) : t; } catch(e) { return t; } }
 function _ecalNotifyKey(title, evDate) {
   return 'ecal_' + evDate.toISOString().slice(0,10) + '_' + title.slice(0,40);
 }
@@ -17435,7 +17437,7 @@ function _ecalNotify(title, evDate, minsLeft) {
   const t = evDate.toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' });
   const past = evDate.getTime() <= Date.now();
   addNotification('ecal',
-    '📅 ' + (past ? 'הודעה כלכלית' : 'בעוד ' + minsLeft + ' דקות') + ' — ' + title,
+    '📅 ' + (past ? 'הודעה כלכלית' : 'בעוד ' + minsLeft + ' דקות') + ' — ' + _ecalHe(title),
     (window._ecalLastStars || '⭐⭐') + ' ארה"ב · ' + t,
     { time: evDate.toISOString() });
   seen[key] = Date.now();
@@ -17467,7 +17469,7 @@ function _showTodayEcalBriefing(todayEvents) {
     return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">
       <span style="font-size:10px;color:#bfa15e;font-family:monospace;flex-shrink:0;min-width:38px">${t}</span>
       <span style="font-size:9px;flex-shrink:0">${ecalStars(ev)}</span>
-      <span style="font-size:11px;color:var(--t1)">${escHtml(ev.title)}</span>
+      <span style="font-size:11px;color:var(--t1)">${escHtml(_ecalHe(ev.title))}</span>
     </div>`;
   }).join('');
   toast.innerHTML = `<div style="background:#13110a;border:1px solid rgba(191,161,94,.3);border-radius:10px;padding:12px 14px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
@@ -17516,7 +17518,7 @@ function _showEcalAlertBar(title, country, evDate, minsLeft) {
       <button onclick="document.getElementById('_ecal-alert-bar').remove()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--t2);cursor:pointer;font-size:16px;border-radius:8px;width:28px;height:28px;flex-shrink:0;font-family:inherit;line-height:1;padding:0">✕</button>
     </div>
     <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px">
-      <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px">${window._ecalLastStars || '⭐⭐'} &nbsp;${escHtml(title)}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px">${window._ecalLastStars || '⭐⭐'} &nbsp;${escHtml(_ecalHe(title))}</div>
       <div style="font-size:12px;color:#bfa15e;font-family:monospace;font-weight:600">🕐 ${timeStr} &nbsp;·&nbsp; 🇺🇸 ארה"ב</div>
     </div>
   </div>`;
@@ -23741,7 +23743,7 @@ function renderNextEventsWidget() {
       return `<div class="next-event-item">
         <span class="next-event-time" style="color:${clr}">${timeStr}</span>
         <span style="font-size:8px;flex-shrink:0">${ecalStars(ev)}</span>
-        <span class="next-event-title">${escHtml(ev.title||'')}</span>
+        <span class="next-event-title">${escHtml(_ecalHe(ev.title||''))}</span>
         <span style="font-size:9px;color:var(--t3);margin-inline-start:auto;font-family:'IBM Plex Mono',monospace">${clock}</span>
       </div>`;
     }).join('');
@@ -27264,10 +27266,11 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-tr-pages.js?v=109"></script>
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
-<script src="fayna-tr-ecal.js?v=108"></script>
+<script src="fayna-ecal-he.js?v=115"></script>
+<script src="fayna-tr-ecal.js?v=115"></script>
 <script src="fayna-compliance.js?v=110"></script>
 <script src="fayna-sync.js?v=111"></script>
 <script src="fayna-gmail-expenses.js?v=114"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=114">
+<link rel="stylesheet" href="fayna-tr-theme.css?v=115">
 </body>
 </html>

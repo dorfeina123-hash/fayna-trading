@@ -802,3 +802,7 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 .gmx-amt small{width:100%;font-size:11px;color:var(--t3)}
 @media (max-width:560px){.gmx-row{grid-template-columns:auto 1fr}.gmx-row select,.gmx-amt{grid-column:2}}
 .gmx-btn.gmx-pending,#gmx-biz.gmx-pending{border-color:var(--ac);color:var(--ac)}
+/* v115 — Hebrew event names, English original underneath */
+.tre-title b{display:block;font-weight:600;color:var(--t1)}
+.tre-title small{display:block;margin-top:2px;font-size:11.5px;color:var(--t3);text-align:right;unicode-bidi:plaintext}
+.tre-cur{white-space:nowrap}

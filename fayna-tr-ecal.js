@@ -8,6 +8,10 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined') return;
+  const he = x => (window.FaynaEcalHe ? window.FaynaEcalHe.t(x) : x);
+  const cname = c => (window.FaynaEcalHe ? window.FaynaEcalHe.country(c) : c);
+  const UNIT = { K: 'אלף', M: 'מיליון', B: 'מיליארד', T: 'טריליון' };
+  const val = v => { const m = /^(-?[\d.,]+)\s?([KMBT])$/i.exec(String(v || '').trim()); return m ? `${m[1]} ${UNIT[m[2].toUpperCase()]}` : (v || '—'); };
   const esc = v => (typeof escHtml === 'function' ? escHtml(String(v ?? '')) : String(v ?? ''));
   const KEY = 'fayna_ecal_full_v2', PREF = 'fayna_ecal_view_v1';
   const CUR = ['USD', 'EUR', 'GBP', 'AUD', 'JPY', 'CAD', 'CHF', 'NZD', 'CNY'];
@@ -49,7 +53,7 @@
   const two = n => String(n).padStart(2, '0');
   function table(list) {
     const rows = rowsFor(list);
-    if (!rows.length) return `<div class="tre-empty">${list.length ? 'אין אירועים שמתאימים לסינון. נסו להוסיף רמת השפעה או מטבע.' : (pref.week === 'lastweek' ? 'הנתונים של השבוע שעבר עדיין לא נשמרו. הם יופיעו כאן מהשבוע הבא.' : 'לא הצלחנו לטעון את היומן כרגע. לחצו על רענון או נסו שוב בעוד כמה דקות.')}</div>`;
+    if (!rows.length) return `<div class="tre-empty">${list.length ? 'אין אירועים שמתאימים לסינון. נסו להוסיף רמת השפעה או מדינה.' : (pref.week === 'lastweek' ? 'הנתונים של השבוע שעבר עדיין לא נשמרו. הם יופיעו כאן מהשבוע הבא.' : 'לא הצלחנו לטעון את היומן כרגע. לחצו על רענון או נסו שוב בעוד כמה דקות.')}</div>`;
     const now = Date.now(); let next = rows.find(r => new Date(r.d).getTime() > now && r.i !== 'Holiday');
     let html = '', day = '';
     rows.forEach(r => {
@@ -60,19 +64,19 @@
       const label = imp === 'Holiday' ? 'חג' : (IMP.find(x => x[0] === imp) || ['', imp])[1];
       const past = d.getTime() < now && !allDay;
       html += `<tr class="${past ? 'past' : ''}${r === next ? ' next' : ''}"><td class="tre-time">${allDay ? 'כל היום' : two(d.getHours()) + ':' + two(d.getMinutes())}${r === next ? '<small>הבא בתור</small>' : ''}</td>
-        <td><span class="tre-cur"><i style="background:${CUR_COLOR[r.c] || '#64748b'}"></i>${esc(r.c)}</span></td>
+        <td><span class="tre-cur" title="${esc(r.c)}"><i style="background:${CUR_COLOR[r.c] || '#64748b'}"></i>${esc(cname(r.c))}</span></td>
         <td><span class="tre-imp tre-${esc(imp)}">${label}</span></td>
-        <td class="tre-title" dir="ltr">${esc(r.t)}</td>
-        <td dir="ltr">${esc(r.p || '—')}</td><td dir="ltr">${esc(r.f || '—')}</td><td dir="ltr" class="tre-act">${esc(r.a || '—')}</td></tr>`;
+        <td class="tre-title">${(() => { const h = he(r.t); return h !== r.t ? `<b>${esc(h)}</b><small dir="ltr">${esc(r.t)}</small>` : `<b dir="ltr">${esc(r.t)}</b>`; })()}</td>
+        <td>${esc(val(r.p))}</td><td>${esc(val(r.f))}</td><td class="tre-act">${esc(val(r.a))}</td></tr>`;
     });
-    return `<div class="tre-scroll"><table class="tre-table"><thead><tr><th>שעה</th><th>מטבע</th><th>השפעה</th><th>אירוע</th><th>קודם</th><th>תחזית</th><th>בפועל</th></tr></thead><tbody>${html}</tbody></table></div>`;
+    return `<div class="tre-scroll"><table class="tre-table"><thead><tr><th>שעה</th><th>מדינה</th><th>השפעה</th><th>אירוע</th><th>קודם</th><th>תחזית</th><th>בפועל</th></tr></thead><tbody>${html}</tbody></table></div>`;
   }
   async function render() {
     const tp = document.getElementById('tp-ecal'); if (!tp) return;
     let root = document.getElementById('tre-root');
     if (!root) {
       const legacy = document.createElement('details'); legacy.className = 'simple-details tre-legacy';
-      legacy.innerHTML = '<summary>יומן Investing.com ואירועים חשובים (תצוגה קודמת)</summary>';
+      legacy.innerHTML = '<summary>יומן כלכלי של Investing.com בעברית ואירועים חשובים (תצוגה קודמת)</summary>';
       while (tp.firstChild) legacy.appendChild(tp.firstChild);
       root = document.createElement('div'); root.id = 'tre-root';
       tp.appendChild(root); tp.appendChild(legacy);
@@ -86,9 +90,9 @@
       });
     }
     const alerts = typeof ecalMinImpact === 'function' ? { High: 'גבוהה בלבד', Medium: 'בינונית וגבוהה', Low: 'כל הרמות' }[ecalMinImpact()] : '';
-    root.innerHTML = `<header class="tre-head"><div><h1>יומן כלכלי</h1><p>אירועים כלכליים לפי השפעה ומטבע, בשעון שלך</p></div><button type="button" class="trx-ib" data-tre-refresh title="רענון" aria-label="רענון היומן"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></header>
+    root.innerHTML = `<header class="tre-head"><div><h1>יומן כלכלי</h1><p>אירועים כלכליים לפי השפעה ומדינה, בשעון שלך</p></div><button type="button" class="trx-ib" data-tre-refresh title="רענון" aria-label="רענון היומן"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></header>
       <section class="tre-filters"><div class="tre-fgroup"><span>השפעה</span><div class="tre-seg tre-imps">${IMP.map(([v, l]) => `<button type="button" data-tre-imp="${v}" aria-pressed="${pref.imp.includes(v)}"><i class="tre-dot tre-${v}"></i>${l}</button>`).join('')}</div></div>
-        <div class="tre-fgroup"><span>מטבעות</span><div class="tre-seg tre-curs">${CUR.map(c => `<button type="button" data-tre-cur="${c}" aria-pressed="${pref.cur.includes(c)}"><i style="background:${CUR_COLOR[c]}"></i>${c}</button>`).join('')}</div></div></section>
+        <div class="tre-fgroup"><span>מדינות</span><div class="tre-seg tre-curs">${CUR.map(c => `<button type="button" data-tre-cur="${c}" aria-pressed="${pref.cur.includes(c)}" title="${c}"><i style="background:${CUR_COLOR[c]}"></i>${esc(cname(c))}</button>`).join('')}</div></div></section>
       <div class="tre-weeks" role="tablist" aria-label="שבוע">${WEEKS.map(([v, l]) => `<button type="button" role="tab" data-tre-week="${v}" aria-selected="${pref.week === v}">${l}</button>`).join('')}</div>
       <section class="tre-card" aria-live="polite"><div class="tre-loading">טוען אירועים…</div></section>
       <p class="tre-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>התראות קופצות לפני אירועים בארה״ב נשארות פעילות (15, 10 ו-5 דקות לפני)${alerts ? ' · רמת השפעה להתראות: ' + alerts : ''}.</p>`;
