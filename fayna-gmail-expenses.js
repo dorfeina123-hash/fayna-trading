@@ -220,7 +220,6 @@
 
   const OPEN_TO_ALL = false; /* switch to true after Google verifies the gmail.readonly scope */
   const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
-  const CLIENT_ID_OVERRIDE = ''; /* optional: Web OAuth client id; otherwise read from Firebase's Google sign-in config */
   const API = 'https://gmail.googleapis.com/gmail/v1/users/me';
   const visible = () => OPEN_TO_ALL || (typeof currentUser !== 'undefined' && currentUser?.isAdmin === true);
   const esc = v => (typeof escHtml === 'function' ? escHtml(String(v ?? '')) : String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
@@ -232,50 +231,37 @@
 
   let token = null, tokenExp = 0, busy = false;
 
-  function loadGis() {
-    if (root.google?.accounts?.oauth2) return Promise.resolve();
-    return new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
-      s.onload = () => res(); s.onerror = () => rej(new Error('gis_load'));
-      document.head.appendChild(s);
-    });
-  }
-  async function clientId() {
-    if (CLIENT_ID_OVERRIDE) return CLIENT_ID_OVERRIDE;
-    const cached = lsGet('cid', '');
-    if (cached) return cached;
-    const key = root.firebase?.app?.().options?.apiKey;
-    if (!key) throw new Error('no_api_key');
-    const r = await fetch('https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=' + encodeURIComponent(key));
-    const j = await r.json();
-    const g = (j.idpConfig || []).find(x => x.provider === 'google.com' && x.clientId);
-    if (!g) throw new Error('no_client_id');
-    lsSet('cid', g.clientId);
-    return g.clientId;
+  /* Google access token through Firebase's own Google sign-in, in a separate app
+     instance that stores nothing, so the user's Fayna session is never touched.
+     Firebase already allows this site, so no extra OAuth origin setup is needed. */
+  function gauth() {
+    const fb = root.firebase;
+    if (!fb?.initializeApp) throw new Error('no_firebase');
+    let app = (fb.apps || []).find(x => x.name === 'fayna-gmail');
+    if (!app) app = fb.initializeApp(fb.app().options, 'fayna-gmail');
+    return app.auth();
   }
   async function getToken() {
     if (token && Date.now() < tokenExp - 60e3) return token;
-    await loadGis();
-    const cid = await clientId();
-    return new Promise((res, rej) => {
-      const tc = root.google.accounts.oauth2.initTokenClient({
-        client_id: cid, scope: SCOPE,
-        hint: (typeof currentUser !== 'undefined' && currentUser?.email) || undefined,
-        callback: r => {
-          if (r.error) return rej(new Error(r.error));
-          if (!root.google.accounts.oauth2.hasGrantedAllScopes(r, SCOPE)) return rej(new Error('scope_denied'));
-          token = r.access_token; tokenExp = Date.now() + (Number(r.expires_in) || 3600) * 1000; res(token);
-        },
-        error_callback: e => rej(new Error(e?.type || 'popup')),
-      });
-      tc.requestAccessToken({ prompt: lsGet('granted', false) ? '' : 'consent' });
-    });
+    const a = gauth();
+    try { await a.setPersistence(root.firebase.auth.Auth.Persistence.NONE); } catch (e) {}
+    const p = new root.firebase.auth.GoogleAuthProvider();
+    p.addScope(SCOPE);
+    const hint = (typeof currentUser !== 'undefined' && currentUser?.email) || '';
+    p.setCustomParameters(hint ? { login_hint: hint, prompt: 'consent' } : { prompt: 'select_account consent' });
+    let res;
+    try { res = await a.signInWithPopup(p); }
+    catch (e) { throw new Error(String(e.code || e.message || 'popup').replace(/^auth\//, '')); }
+    const t = res.credential && res.credential.accessToken;
+    try { await a.signOut(); } catch (e) {}
+    if (!t) throw new Error('no_token');
+    token = t; tokenExp = Date.now() + 55 * 60e3;
+    return token;
   }
   async function gget(path) {
     const r = await fetch(API + path, { headers: { Authorization: 'Bearer ' + token } });
     if (r.status === 401) { token = null; throw new Error('auth'); }
-    if (r.status === 403) { const j = await r.json().catch(() => ({})); throw new Error(/has not been used|disabled/i.test(JSON.stringify(j)) ? 'api_disabled' : 'forbidden'); }
+    if (r.status === 403) { const j = await r.json().catch(() => ({})); const t = JSON.stringify(j); throw new Error(/has not been used|disabled/i.test(t) ? 'api_disabled' : /insufficient|scope/i.test(t) ? 'scope_denied' : 'forbidden'); }
     if (!r.ok) throw new Error('http_' + r.status);
     return r.json();
   }
@@ -339,15 +325,35 @@
       review(found, msgs.length);
     } catch (e) {
       dlg.close();
-      const msg = {
-        popup_closed: 'החלון של Google נסגר לפני האישור.', popup_failed_to_open: 'הדפדפן חסם את החלון של Google. אפשר חלונות קופצים לאתר ונסה שוב.',
-        access_denied: 'לא ניתנה הרשאה לקרוא את המייל.', scope_denied: 'צריך לסמן את ההרשאה לקריאת המייל בחלון של Google.',
-        api_disabled: 'שירות Gmail עדיין לא הופעל בפרויקט של המערכת (הגדרה חד־פעמית של המנהל).',
-        no_client_id: 'ההתחברות עם Google לא מוגדרת בפרויקט. צריך להפעיל אותה ב־Firebase.',
-        gis_load: 'לא הצלחתי לטעון את ההתחברות של Google. בדוק את החיבור לאינטרנט.',
-      }[e.message] || 'הסנכרון נכשל. נסה שוב בעוד רגע.';
-      toast(msg, 'error'); console.warn('gmail-expenses', e);
+      console.warn('gmail-expenses', e);
+      errorDialog(e.message);
     } finally { busy = false; renderButtons(); }
+  }
+
+  function errorDialog(code) {
+    const ENABLE = 'https://console.cloud.google.com/apis/library/gmail.googleapis.com?project=fayna-trading';
+    const msg = {
+      'popup-closed-by-user': 'החלון של Google נסגר לפני האישור. נסה שוב והשלם את האישור.',
+      'cancelled-popup-request': 'החלון של Google נסגר לפני האישור. נסה שוב.',
+      'popup-blocked': 'הדפדפן חסם את החלון של Google. אפשר חלונות קופצים לאתר ונסה שוב.',
+      'access_denied': 'לא ניתנה הרשאה לקרוא את המייל.',
+      'scope_denied': 'בחלון של Google צריך לסמן את ההרשאה "צפייה בהודעות האימייל" ואז לאשר.',
+      'api_disabled': 'שירות Gmail עדיין לא מופעל בפרויקט של המערכת. זו הגדרה חד־פעמית: לחץ על הקישור, בחר Enable, חכה דקה ונסה שוב.',
+      'unauthorized-domain': 'הדומיין של האתר לא מאושר בהתחברות של Firebase.',
+      'operation-not-allowed': 'ההתחברות עם Google כבויה ב־Firebase.',
+      'no_token': 'Google לא החזיר הרשאה לקריאת המייל. נסה שוב.',
+    }[code] || 'הסנכרון נכשל. נסה שוב בעוד רגע.';
+    const admin = typeof currentUser !== 'undefined' && currentUser?.isAdmin === true;
+    const o = document.createElement('div'); o.className = 'fyc-overlay'; o.setAttribute('role', 'alertdialog'); o.setAttribute('aria-modal', 'true');
+    o.innerHTML = `<div class="fyc-box" dir="rtl" tabindex="-1"><h2>הסנכרון מ־Gmail לא הצליח</h2><p>${esc(msg)}</p>
+      ${code === 'api_disabled' && admin ? `<p><a href="${ENABLE}" target="_blank" rel="noopener" class="fys-dl">הפעלת Gmail API בפרויקט fayna-trading</a></p>` : ''}
+      ${admin ? `<p class="fys-note" dir="ltr" style="text-align:left">code: ${esc(code)}</p>` : ''}
+      <div class="fyc-actions"><button type="button" class="fyc-primary" data-retry>נסה שוב</button><button type="button" class="fyc-ghost" data-close>סגירה</button></div></div>`;
+    document.body.appendChild(o);
+    setTimeout(() => o.querySelector('.fyc-box').focus(), 30);
+    o.querySelector('[data-close]').onclick = () => o.remove();
+    o.querySelector('[data-retry]').onclick = () => { o.remove(); scan(); };
+    o.addEventListener('keydown', e => { if (e.key === 'Escape') o.remove(); });
   }
 
   function progressDialog() {
@@ -409,7 +415,7 @@
   }
 
   function disconnect() {
-    try { if (token && root.google?.accounts?.oauth2) root.google.accounts.oauth2.revoke(token, () => {}); } catch (e) {}
+    try { if (token) fetch('https://oauth2.googleapis.com/revoke?token=' + encodeURIComponent(token), { method: 'POST' }); } catch (e) {}
     token = null; lsSet('granted', false); lsSet('last', 0);
     toast('החיבור ל־Gmail נותק', 'success'); renderButtons();
   }
@@ -424,14 +430,14 @@
     const last = lsGet('last', 0);
     const label = busy ? 'מסנכרן…' : 'סנכרון מ־Gmail';
     const title = last ? `סנכרון אחרון: ${new Date(last).toLocaleString('he-IL')}` : 'מוצא קבלות של חברות פרופ ופלטפורמות במייל ומוסיף אותן כהוצאות';
-    [['gmx-exp', () => document.querySelector('#tp-expenses .btn-p')], ['gmx-biz', () => document.querySelector('#tp-biz > div')]].forEach(([id, anchor]) => {
+    [['gmx-exp', () => document.querySelector('#tp-expenses .btn-p')], ['gmx-biz', () => document.querySelector('#tp-biz .ws-toolbar')]].forEach(([id, anchor]) => {
       let b = document.getElementById(id);
       if (!show) { b?.remove(); return; }
       const a = anchor(); if (!a) return;
       if (!b) {
         b = button(id);
         if (id === 'gmx-exp') a.before(b);
-        else { a.classList.add('gmx-head'); a.appendChild(b); }
+        else { b.className = 'bn'; a.appendChild(b); }
       }
       b.textContent = label; b.title = title; b.disabled = busy;
     });
@@ -446,6 +452,10 @@
   }
 
   root.FaynaGmailExpenses = { core, scan, disconnect, review };
-  const boot = () => { renderButtons(); setInterval(renderButtons, 4000); };
+  const boot = () => {
+    renderButtons(); setInterval(renderButtons, 4000);
+    const biz = document.getElementById('tp-biz');
+    if (biz && root.MutationObserver) { let q = 0; new MutationObserver(() => { if (!q) q = requestAnimationFrame(() => { q = 0; if (!document.getElementById('gmx-biz')) renderButtons(); }); }).observe(biz, { childList: true, subtree: true }); }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })(typeof window !== 'undefined' ? window : globalThis);
