@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v117-nav-order-20261105';
+const VERSION    = 'fayna-v118-no-flash-20261105';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
@@ -27,7 +27,7 @@ const PRECACHE = [
   './index.html',
   './manifest.json',
   './fayna-experience.css',
-  './fayna-tr-theme.css?v=117',
+  './fayna-tr-theme.css?v=118',
   './fayna-ecal-he.js?v=115',
   './fayna-tr-ecal.js?v=115',
   './fayna-tr-biz.js?v=103',
