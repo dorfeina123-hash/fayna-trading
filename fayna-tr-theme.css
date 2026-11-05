@@ -806,3 +806,35 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 .tre-title b{display:block;font-weight:600;color:var(--t1)}
 .tre-title small{display:block;margin-top:2px;font-size:11.5px;color:var(--t3);text-align:right;unicode-bidi:plaintext}
 .tre-cur{white-space:nowrap}
+
+/* v116 — home dashboard motion (fayna-motion.js). Everything is visible at rest; .fm-intro only plays the first entrance. */
+@keyframes fm-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fm-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes fm-bar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes fm-scale{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fm-pop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.fm-intro :is(.fy-onboarding,.trh-kpis>.trh-card,.trh-charts>.trh-card,.trh-lower>.trh-card){animation:fm-rise .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--fm-i,0) * 90ms)}
+.fm-intro svg.fm-reveal{animation:fm-wipe 1.8s cubic-bezier(.4,0,.2,1) .45s both}
+.fm-intro rect.fm-bar{transform-box:fill-box;transform-origin:50% 100%;animation:fm-bar .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(450ms + min(var(--fm-b,0) * 24ms, 900ms))}
+.fm-intro rect.fm-bar.trh-down{transform-origin:50% 0}
+.fm-intro .trh-area.fm-grow{transform-box:fill-box;transform-origin:50% 50%;animation:fm-scale 1s cubic-bezier(.2,.8,.2,1) .6s both}
+.fm-intro .trh-day{animation:fm-pop .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(850ms + min(var(--fm-d,0) * 22ms, 800ms))}
+.fm-intro .trh-trade{animation:fm-rise .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(700ms + min(var(--fm-t,0) * 80ms, 800ms))}
+#home-dashboard .trh-card{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s}
+@media (hover:hover){#home-dashboard :is(.trh-kpis,.trh-charts)>.trh-card:hover{transform:translateY(-3px);border-color:var(--tr-accent-line,rgba(192,132,252,.3));box-shadow:0 22px 46px -26px rgba(0,0,0,.6)}}
+#home-dashboard .fy-onboarding{position:relative;overflow:hidden;isolation:isolate}
+#home-dashboard .fy-onboarding::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(192,132,252,.14) 50%,transparent 65%);background-size:250% 100%;animation:fm-sheen 7s ease-in-out infinite}
+@keyframes fm-sheen{0%,60%{background-position:120% 0}100%{background-position:-120% 0}}
+#home-dashboard .trh-day:is(.trh-win,.trh-loss){transition:transform .2s}
+@media (hover:hover){#home-dashboard .trh-day:is(.trh-win,.trh-loss):hover{transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.fm-intro *,#home-dashboard .fy-onboarding::after{animation:none!important}#home-dashboard .trh-card,#home-dashboard .trh-day{transition:none!important}}
+
+/* v116 — landing motion (fayna-landing3d.js) */
+.trl-hero.fl-has-ridge{position:relative;overflow:hidden}
+.trl-hero .fl-ridge{position:absolute;inset:0;width:100%;height:min(760px,100%);display:block;pointer-events:none;z-index:0;opacity:0;animation:fl-in 1.6s ease .2s forwards}
+.trl-hero.fl-has-ridge::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(48% 40% at 50% 34%,rgba(31,27,35,.94),rgba(31,27,35,.55) 65%,rgba(31,27,35,.1)),linear-gradient(180deg,transparent 40%,#1f1b23 74%)}
+.trl-hero.fl-has-ridge>.trl-wrap{position:relative;z-index:1}
+@keyframes fl-in{to{opacity:.75}}
+.trl-hero .trl-wrap{perspective:1600px}
+.trl-frame.fl-tilt{transform-origin:50% 0;transform:rotateX(var(--fl-tilt,0deg)) scale(var(--fl-sc,1));will-change:transform}
+@media (prefers-reduced-motion:reduce){.trl-frame.fl-tilt{transform:none}.trl-hero .fl-ridge{display:none}}
