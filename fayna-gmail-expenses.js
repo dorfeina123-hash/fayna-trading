@@ -158,6 +158,7 @@
         currency: amt.currency,
         sure: amt.sure,
         subject: subject.slice(0, 120),
+        sender: domainOf(from),
       },
     };
   }
@@ -212,56 +213,138 @@
     ];
   }
 
-  const core = { VENDORS, extractAmount, findVendor, category, classify, decodeMessage, htmlToText, parseNum, gmailQueries };
+  /* Split classified items into: new and certain (added on their own), to review, and
+     already known. Two mails count as one purchase only when the amount matches to the
+     cent, the dates are at most 2 days apart AND they came from different senders (the
+     vendor's own confirmation next to the Stripe/PayPal receipt). Two receipts from the
+     same sender are two purchases: buying two $167 evaluations the same day is common.
+     An expense already in the log (typed by hand) absorbs exactly one matching mail. */
+  function dedupe(items, existing, seen, toUsd) {
+    const day = d => Date.parse(d) / 864e5;
+    const same = (a, b) => Math.abs(a.usd - b.usd) < 0.01 && Math.abs(day(a.date) - day(b.date)) <= 2;
+    const known = (existing || []).filter(r => r && r.type !== 'הכנסה' && r.type !== 'משיכה')
+      .map(r => ({ usd: +r.amount || 0, date: r.date, gmailId: r.gmailId, used: !!r.gmailId }));
+    const ids = new Set([...(seen || []), ...known.map(k => k.gmailId).filter(Boolean)]);
+    const out = { auto: [], review: [], dup: [], skipped: [] };
+    const kept = [];
+    items.slice().sort((a, b) => a.date.localeCompare(b.date) || (b.sure - a.sure)).forEach(it => {
+      if (!it.gmailId || ids.has(it.gmailId)) { out.skipped.push(it); return; }
+      ids.add(it.gmailId);
+      const x = { ...it, usd: toUsd(it) };
+      const k = known.find(k => !k.used && same(k, x));
+      if (k) { k.used = true; out.dup.push(x); return; }
+      const twin = kept.find(o => !o.paired && same(o, x) && o.sender && x.sender && o.sender !== x.sender);
+      if (twin) { twin.paired = true; out.review.push({ ...x, maybeDup: true }); return; }
+      kept.push(x);
+      (x.sure && x.currency !== 'EUR' ? out.auto : out.review).push(x);
+    });
+    const byDate = (a, b) => b.date.localeCompare(a.date);
+    out.auto.sort(byDate); out.review.sort(byDate); out.dup.sort(byDate);
+    out.auto.forEach(x => delete x.paired);
+    return out;
+  }
+
+  const core = { VENDORS, extractAmount, findVendor, category, classify, decodeMessage, htmlToText, parseNum, gmailQueries, dedupe };
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
   if (typeof document === 'undefined') return;
+
 
   /* ───────────── browser side ───────────── */
 
   const OPEN_TO_ALL = false; /* switch to true after Google verifies the gmail.readonly scope */
   const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
   const API = 'https://gmail.googleapis.com/gmail/v1/users/me';
+  const AUTH_URL = 'https://us-central1-fayna-trading.cloudfunctions.net/gmailAuth';
+  const AUTO_EVERY = 5 * 60e3; /* a reload within 5 minutes does not re-scan */
   const visible = () => OPEN_TO_ALL || (typeof currentUser !== 'undefined' && currentUser?.isAdmin === true);
   const esc = v => (typeof escHtml === 'function' ? escHtml(String(v ?? '')) : String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
   const toast = (m, k) => { try { showToast(m, k); } catch (e) {} };
-  const uid = () => (typeof currentUser !== 'undefined' && currentUser?.uid) || 'anon';
-  const LS = k => `fayna_gmx_${k}_${uid()}`;
+  const uid = () => (typeof currentUser !== 'undefined' && currentUser?.uid) || '';
+  const LS = k => `fayna_gmx_${k}_${uid() || 'anon'}`;
   const lsGet = (k, d) => { try { const v = localStorage.getItem(LS(k)); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   const lsSet = (k, v) => { try { localStorage.setItem(LS(k), JSON.stringify(v)); } catch (e) {} };
+  const recs = () => (typeof records !== 'undefined' && Array.isArray(records) ? records : []);
+  const cloudReady = () => { try { return !!uid() && _cloudReadyUid === uid(); } catch (e) { return false; } };
 
-  let token = null, tokenExp = 0, busy = false;
+  let token = null, tokenExp = 0, busy = false, serverCfg = null, autoDoneFor = '', pending = [];
 
-  /* Google access token through Firebase's own Google sign-in, in a separate app
-     instance that stores nothing, so the user's Fayna session is never touched.
-     Firebase already allows this site, so no extra OAuth origin setup is needed. */
+  /* ── server: long-lived permission so sync runs on every login without a popup ── */
+  async function server(action, extra = {}) {
+    const u = root.firebase?.auth?.().currentUser; if (!u) throw new Error('signed_out');
+    const r = await fetch(AUTH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await u.getIdToken() }, body: JSON.stringify({ action, ...extra }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(j.error || 'http_' + r.status); e.status = r.status; throw e; }
+    return j;
+  }
+  async function config() {
+    if (serverCfg) return serverCfg;
+    try { serverCfg = await server('config'); } catch (e) { serverCfg = { offline: true }; }
+    return serverCfg;
+  }
+  function loadGis() {
+    if (root.google?.accounts?.oauth2) return Promise.resolve();
+    return new Promise((res, rej) => {
+      const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+      s.onload = () => res(); s.onerror = () => rej(new Error('gis_load')); document.head.appendChild(s);
+    });
+  }
+  /* one popup, once: Google returns a one-time code the server swaps for a lasting permission */
+  async function connectServer(cfg) {
+    await loadGis();
+    const code = await new Promise((res, rej) => {
+      root.google.accounts.oauth2.initCodeClient({
+        client_id: cfg.clientId, scope: SCOPE, ux_mode: 'popup',
+        hint: (typeof currentUser !== 'undefined' && currentUser?.email) || undefined,
+        callback: r => (r.error ? rej(new Error(r.error)) : res(r.code)),
+        error_callback: e => rej(new Error(e?.type === 'popup_closed' ? 'popup-closed-by-user' : e?.type || 'popup')),
+      }).requestCode();
+    });
+    const j = await server('connect', { code });
+    serverCfg = { ...cfg, connected: true };
+    token = j.accessToken; tokenExp = Date.now() + (j.expiresIn || 3600) * 1000;
+  }
+  async function silentToken() {
+    const j = await server('token');
+    token = j.accessToken; tokenExp = Date.now() + (j.expiresIn || 3600) * 1000;
+  }
+
+  /* ── fallback before the server is deployed: Firebase's Google popup, every time ── */
   function gauth() {
     const fb = root.firebase;
-    if (!fb?.initializeApp) throw new Error('no_firebase');
     let app = (fb.apps || []).find(x => x.name === 'fayna-gmail');
     if (!app) app = fb.initializeApp(fb.app().options, 'fayna-gmail');
     return app.auth();
   }
-  async function getToken() {
-    if (token && Date.now() < tokenExp - 60e3) return token;
+  async function popupToken() {
     const a = gauth();
     try { await a.setPersistence(root.firebase.auth.Auth.Persistence.NONE); } catch (e) {}
-    const p = new root.firebase.auth.GoogleAuthProvider();
-    p.addScope(SCOPE);
+    const p = new root.firebase.auth.GoogleAuthProvider(); p.addScope(SCOPE);
     const hint = (typeof currentUser !== 'undefined' && currentUser?.email) || '';
-    p.setCustomParameters(hint ? { login_hint: hint, prompt: 'consent' } : { prompt: 'select_account consent' });
+    p.setCustomParameters(hint ? { login_hint: hint } : { prompt: 'select_account' });
     let res;
-    try { res = await a.signInWithPopup(p); }
-    catch (e) { throw new Error(String(e.code || e.message || 'popup').replace(/^auth\//, '')); }
+    try { res = await a.signInWithPopup(p); } catch (e) { throw new Error(String(e.code || e.message || 'popup').replace(/^auth\//, '')); }
     const t = res.credential && res.credential.accessToken;
     try { await a.signOut(); } catch (e) {}
     if (!t) throw new Error('no_token');
     token = t; tokenExp = Date.now() + 55 * 60e3;
-    return token;
   }
+
+  /* interactive=true may open a Google window (needs a click); false never does */
+  async function ensureToken(interactive) {
+    if (token && Date.now() < tokenExp - 60e3) return;
+    const cfg = await config();
+    if (cfg.connected) {
+      try { await silentToken(); return; }
+      catch (e) { if (e.status === 410) serverCfg = { ...cfg, connected: false }; else if (!interactive) throw e; }
+    }
+    if (!interactive) throw new Error('needs_click');
+    if (cfg.clientId) await connectServer(cfg); else await popupToken();
+  }
+
   async function gget(path) {
     const r = await fetch(API + path, { headers: { Authorization: 'Bearer ' + token } });
     if (r.status === 401) { token = null; throw new Error('auth'); }
-    if (r.status === 403) { const j = await r.json().catch(() => ({})); const t = JSON.stringify(j); throw new Error(/has not been used|disabled/i.test(t) ? 'api_disabled' : /insufficient|scope/i.test(t) ? 'scope_denied' : 'forbidden'); }
+    if (r.status === 403) { const t = JSON.stringify(await r.json().catch(() => ({}))); throw new Error(/has not been used|disabled/i.test(t) ? 'api_disabled' : /insufficient|scope/i.test(t) ? 'scope_denied' : 'forbidden'); }
     if (!r.ok) throw new Error('http_' + r.status);
     return r.json();
   }
@@ -269,8 +352,7 @@
     const ids = []; let pt = '';
     do {
       const j = await gget(`/messages?maxResults=100&q=${encodeURIComponent(q)}${pt ? '&pageToken=' + pt : ''}`);
-      (j.messages || []).forEach(m => ids.push(m.id));
-      pt = j.nextPageToken || '';
+      (j.messages || []).forEach(m => ids.push(m.id)); pt = j.nextPageToken || '';
     } while (pt && ids.length < cap);
     return ids;
   }
@@ -287,46 +369,82 @@
     return out;
   }
 
-  const rate = d => { try { return histRate(d); } catch (e) { return 3.7; } };
-  function usdOf(it) {
-    if (it.currency === 'ILS') return Math.round(it.amount / rate(it.date) * 100) / 100;
-    return it.amount; /* EUR is rare; kept as-is and flagged as unsure */
+  /* ── what was already handled: kept on the user's profile so every device agrees ── */
+  async function loadState() {
+    let st = { seen: lsGet('seen', []), last: lsGet('last', 0) };
+    try {
+      const d = (await db.collection('users').doc(uid()).get()).data() || {};
+      st = { seen: [...new Set([...(d.gmailSeen || []), ...st.seen])], last: Math.max(+d.gmailLastSync || 0, st.last) };
+    } catch (e) {}
+    return st;
   }
+  async function markSeen(ids, last) {
+    const all = [...new Set([...lsGet('seen', []), ...ids])].slice(-4000);
+    lsSet('seen', all); if (last) lsSet('last', last);
+    try {
+      const upd = {}; if (ids.length) upd.gmailSeen = root.firebase.firestore.FieldValue.arrayUnion(...ids.slice(-400));
+      if (last) upd.gmailLastSync = last;
+      if (Object.keys(upd).length) await db.collection('users').doc(uid()).set(upd, { merge: true });
+    } catch (e) {}
+  }
+
+  const rate = d => { try { return histRate(d); } catch (e) { return 3.7; } };
+  const toUsd = it => (it.currency === 'ILS' ? Math.round(it.amount / rate(it.date) * 100) / 100 : it.amount);
   function companyName(name) {
-    const list = (typeof records !== 'undefined' ? records : []).map(r => r && r.company).filter(Boolean);
+    const list = recs().map(r => r && r.company).filter(Boolean);
     const first = name.split(' ')[0].toLowerCase();
     return list.find(c => c.toLowerCase() === name.toLowerCase()) || list.find(c => c.toLowerCase().startsWith(first)) || name;
   }
-  function existingMatch(it, usd) {
-    const day = Date.parse(it.date);
-    return (typeof records !== 'undefined' ? records : []).find(r => r && r.type !== 'הכנסה' &&
-      (r.gmailId === it.gmailId ||
-       (Math.abs((+r.amount || 0) - usd) < 0.01 && Math.abs(Date.parse(r.date) - day) <= 2 * 864e5)));
+  function addRecords(list) {
+    let n = 0;
+    list.forEach(it => {
+      if (recs().some(r => r && r.gmailId === it.gmailId)) return; /* last guard against a double add */
+      recs().push({
+        id: Date.now() + '_g' + n, date: it.date, type: 'הוצאה', amount: Math.round(it.usd * 100) / 100,
+        rate: rate(it.date), done: false, company: companyName(it.company), cat: it.cat, portVal: 0,
+        note: 'Gmail: ' + String(it.subject || '').slice(0, 80), src: 'gmail', gmailId: it.gmailId,
+      });
+      n++;
+    });
+    if (n) { try { renderAll(); saveData(); } catch (e) {} }
+    return n;
   }
 
-  async function scan() {
-    if (busy) return; busy = true;
-    const dlg = progressDialog();
+  /* auto=false: button click, may open Google, always shows the result.
+     auto=true: on login, silent; certain receipts are added, the rest wait for review. */
+  async function scan(auto = false) {
+    if (busy || !cloudReady()) { if (!auto && !cloudReady()) toast('הנתונים עוד נטענים, נסה שוב בעוד רגע', 'info'); return; }
+    busy = true; renderButtons();
+    const dlg = auto ? { set() {}, close() {} } : progressDialog();
     try {
-      await getToken(); lsSet('granted', true);
-      const last = lsGet('last', 0);
-      const after = Math.floor((last ? last - 3 * 864e5 : Date.now() - 365 * 864e5) / 1000);
+      await ensureToken(!auto);
+      const st = await loadState();
+      const after = Math.floor((st.last ? st.last - 3 * 864e5 : Date.now() - 365 * 864e5) / 1000);
       dlg.set('מחפש קבלות במייל…');
       const ids = [...new Set((await Promise.all(gmailQueries(after).map(q => listIds(q)))).flat())];
-      const ignored = new Set(lsGet('ignored', []));
-      const todo = ids.filter(id => !ignored.has(id) && !(records || []).some(r => r && r.gmailId === id));
-      dlg.set(todo.length ? `קורא ${todo.length} מיילים…` : 'לא נמצאו מיילים חדשים');
+      const seen = new Set(st.seen);
+      const todo = ids.filter(id => !seen.has(id) && !recs().some(r => r && r.gmailId === id));
       const msgs = await fetchAll(todo, (d, n) => dlg.set(`קורא מיילים ${d}/${n}…`));
-      const found = [];
-      msgs.forEach(m => { const r = classify(m); if (r.ok) found.push(r.item); });
-      found.sort((a, b) => b.date.localeCompare(a.date));
-      lsSet('last', Date.now());
+      const found = []; const notReceipts = [];
+      msgs.forEach(m => { const r = classify(m); if (r.ok) found.push(r.item); else notReceipts.push(m.id); });
+      const split = dedupe(found, recs(), st.seen, toUsd);
       dlg.close();
-      review(found, msgs.length);
+      const now = Date.now();
+      if (auto) {
+        const n = addRecords(split.auto);
+        await markSeen([...notReceipts, ...split.auto, ...split.skipped, ...split.dup].map(x => x.gmailId || x), now);
+        pending = split.review;
+        if (n) toast(`נוספו ${n} הוצאות מסחר מהמייל`, 'success');
+        if (pending.length) toast(`${pending.length} הוצאות מהמייל מחכות לבדיקה שלך`, 'info');
+      } else {
+        await markSeen([...notReceipts, ...split.skipped].map(x => x.gmailId || x), now);
+        pending = [];
+        review([...split.auto, ...split.review, ...split.dup.map(x => ({ ...x, isDup: true }))], msgs.length);
+      }
     } catch (e) {
       dlg.close();
       console.warn('gmail-expenses', e);
-      errorDialog(e.message);
+      if (!auto) errorDialog(e.message);
     } finally { busy = false; renderButtons(); }
   }
 
@@ -336,11 +454,14 @@
       'popup-closed-by-user': 'החלון של Google נסגר לפני האישור. נסה שוב והשלם את האישור.',
       'cancelled-popup-request': 'החלון של Google נסגר לפני האישור. נסה שוב.',
       'popup-blocked': 'הדפדפן חסם את החלון של Google. אפשר חלונות קופצים לאתר ונסה שוב.',
+      'popup_failed_to_open': 'הדפדפן חסם את החלון של Google. אפשר חלונות קופצים לאתר ונסה שוב.',
       'access_denied': 'לא ניתנה הרשאה לקרוא את המייל.',
-      'scope_denied': 'בחלון של Google צריך לסמן את ההרשאה "צפייה בהודעות האימייל" ואז לאשר.',
+      'scope_denied': 'בחלון של Google צריך לסמן את ההרשאה לצפייה בהודעות האימייל ואז לאשר.',
       'api_disabled': 'שירות Gmail עדיין לא מופעל בפרויקט של המערכת. זו הגדרה חד־פעמית: לחץ על הקישור, בחר Enable, חכה דקה ונסה שוב.',
       'unauthorized-domain': 'הדומיין של האתר לא מאושר בהתחברות של Firebase.',
       'operation-not-allowed': 'ההתחברות עם Google כבויה ב־Firebase.',
+      'exchange_failed': 'Google לא אישר את החיבור. נסה שוב.',
+      'no_refresh_token': 'Google לא נתן הרשאה קבועה. נסה שוב, ובחלון של Google אשר את כל ההרשאות.',
       'no_token': 'Google לא החזיר הרשאה לקריאת המייל. נסה שוב.',
     }[code] || 'הסנכרון נכשל. נסה שוב בעוד רגע.';
     const admin = typeof currentUser !== 'undefined' && currentUser?.isAdmin === true;
@@ -352,7 +473,7 @@
     document.body.appendChild(o);
     setTimeout(() => o.querySelector('.fyc-box').focus(), 30);
     o.querySelector('[data-close]').onclick = () => o.remove();
-    o.querySelector('[data-retry]').onclick = () => { o.remove(); scan(); };
+    o.querySelector('[data-retry]').onclick = () => { o.remove(); scan(false); };
     o.addEventListener('keydown', e => { if (e.key === 'Escape') o.remove(); });
   }
 
@@ -364,85 +485,71 @@
   }
 
   const CATS = ['מבחן', 'לייב', 'ריסט', 'כלי', 'קורס', 'אחר'];
+  /* items carry .usd; .dup ones are matched to an expense already in the log */
   function review(items, scanned) {
     const o = document.createElement('div'); o.className = 'fyc-overlay'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-labelledby', 'gmx-t');
     const rows = items.map((it, i) => {
-      const usd = usdOf(it), dup = existingMatch(it, usd);
-      it._usd = usd; it._dup = !!dup;
+      const dup = !!it.isDup || !!it.maybeDup;
       const orig = it.currency !== 'USD' ? `<small dir="ltr">${it.currency === 'ILS' ? '₪' : '€'}${it.amount.toFixed(2)}</small>` : '';
-      const flag = dup ? '<em class="gmx-flag">כנראה כבר רשום</em>' : (!it.sure || it.currency === 'EUR') ? '<em class="gmx-flag">בדוק סכום</em>' : '';
+      const flag = it.isDup ? '<em class="gmx-flag">כבר רשום ביומן</em>' : it.maybeDup ? '<em class="gmx-flag">כנראה אותה רכישה ממייל נוסף</em>' : (!it.sure || it.currency === 'EUR') ? '<em class="gmx-flag">בדוק סכום</em>' : '';
       return `<li class="gmx-row"><label class="gmx-chk"><input type="checkbox" data-i="${i}" ${dup ? '' : 'checked'} aria-label="להוסיף את ${esc(it.company)} מ־${esc(it.date)}"></label>
         <div class="gmx-main"><b>${esc(it.company)}</b><small>${esc(it.date)} · ${esc(it.subject)}</small>${flag}</div>
         <select data-cat="${i}" aria-label="קטגוריה">${CATS.map(c => `<option${c === it.cat ? ' selected' : ''}>${c}</option>`).join('')}</select>
-        <div class="gmx-amt"><span>$</span><input type="number" step="0.01" min="0" inputmode="decimal" dir="ltr" data-amt="${i}" value="${usd.toFixed(2)}" aria-label="סכום בדולר">${orig}</div></li>`;
+        <div class="gmx-amt"><span>$</span><input type="number" step="0.01" min="0" inputmode="decimal" dir="ltr" data-amt="${i}" value="${it.usd.toFixed(2)}" aria-label="סכום בדולר">${orig}</div></li>`;
     }).join('');
-    o.innerHTML = `<div class="fyc-box gmx-box" dir="rtl" tabindex="-1"><h2 id="gmx-t">נמצאו ${items.length} הוצאות מסחר</h2>
-      <p>${items.length ? `סרקתי ${scanned} מיילים מחברות פרופ, פלטפורמות וספקי דאטה. סמן מה להוסיף ליומן ההוצאות ולניהול העסקי.` : `סרקתי ${scanned} מיילים ולא מצאתי קבלות חדשות.`}</p>
+    const lead = items.length
+      ? (scanned != null ? `סרקתי ${scanned} מיילים מחברות פרופ, פלטפורמות וספקי דאטה. ` : '') + 'סמן מה להוסיף ליומן ההוצאות ולניהול העסקי. מה שלא תסמן לא יוצג שוב.'
+      : (scanned ? `סרקתי ${scanned} מיילים חדשים ולא מצאתי קבלות שלא רשומות כבר.` : 'אין מיילים חדשים מאז הסנכרון האחרון. כל ההוצאות כבר ביומן.');
+    o.innerHTML = `<div class="fyc-box gmx-box" dir="rtl" tabindex="-1"><h2 id="gmx-t">${items.length ? `נמצאו ${items.length} הוצאות מסחר` : 'הכל מעודכן'}</h2><p>${lead}</p>
       ${items.length ? `<ul class="gmx-list">${rows}</ul>` : ''}
-      <div class="fyc-actions">${items.length ? '<button type="button" class="fyc-primary" data-add>הוספה</button><button type="button" class="fyc-ghost" data-ignore>התעלם מהלא מסומנים</button>' : ''}<button type="button" class="fyc-ghost" data-close>סגירה</button></div></div>`;
+      <div class="fyc-actions">${items.length ? '<button type="button" class="fyc-primary" data-add>שמירה</button>' : ''}<button type="button" class="fyc-ghost" data-close>${items.length ? 'אחר כך' : 'סגירה'}</button></div></div>`;
     document.body.appendChild(o);
     setTimeout(() => o.querySelector('.fyc-box').focus(), 30);
     const close = () => o.remove();
     o.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-    o.querySelector('[data-close]').onclick = close;
-    const picked = () => [...o.querySelectorAll('[data-i]')].map(c => ({ c, it: items[+c.dataset.i] }));
-    o.querySelector('[data-ignore]')?.addEventListener('click', () => {
-      const ign = new Set(lsGet('ignored', []));
-      picked().filter(p => !p.c.checked).forEach(p => ign.add(p.it.gmailId));
-      lsSet('ignored', [...ign].slice(-3000)); toast('המיילים שלא סומנו לא יוצגו שוב', 'info');
-    });
-    o.querySelector('[data-add]')?.addEventListener('click', () => {
-      let n = 0;
-      picked().forEach(({ c, it }) => {
+    o.querySelector('[data-close]').onclick = () => { pending = items; close(); renderButtons(); };
+    o.querySelector('[data-add]')?.addEventListener('click', async () => {
+      const take = [];
+      o.querySelectorAll('[data-i]').forEach(c => {
+        const i = +c.dataset.i, it = items[i];
         if (!c.checked) return;
-        const i = c.dataset.i;
-        const amt = parseFloat(o.querySelector(`[data-amt="${i}"]`).value);
-        if (!(amt > 0)) return;
-        const cat = o.querySelector(`[data-cat="${i}"]`).value;
-        records.push({
-          id: Date.now() + '_g' + n, date: it.date, type: 'הוצאה', amount: Math.round(amt * 100) / 100,
-          rate: rate(it.date), done: false, company: companyName(it.company), cat, portVal: 0,
-          note: 'Gmail: ' + it.subject.slice(0, 80), src: 'gmail', gmailId: it.gmailId,
-        });
-        n++;
+        const usd = parseFloat(o.querySelector(`[data-amt="${i}"]`).value);
+        if (usd > 0) take.push({ ...it, usd, cat: o.querySelector(`[data-cat="${i}"]`).value });
       });
-      if (n) { try { renderAll(); saveData(); } catch (e) {} toast(`נוספו ${n} הוצאות ליומן`, 'success'); }
-      const ign = new Set(lsGet('ignored', []));
-      picked().filter(p => !p.c.checked).forEach(p => ign.add(p.it.gmailId));
-      lsSet('ignored', [...ign].slice(-3000));
-      close();
+      const n = addRecords(take);
+      await markSeen(items.map(it => it.gmailId));
+      pending = [];
+      toast(n ? `נוספו ${n} הוצאות ליומן` : 'נשמר. ההוצאות שלא סומנו לא יוצגו שוב', 'success');
+      close(); renderButtons();
     });
   }
 
-  function disconnect() {
+  async function disconnect() {
+    try { if ((await config()).connected) await server('disconnect'); } catch (e) {}
     try { if (token) fetch('https://oauth2.googleapis.com/revoke?token=' + encodeURIComponent(token), { method: 'POST' }); } catch (e) {}
-    token = null; lsSet('granted', false); lsSet('last', 0);
+    token = null; tokenExp = 0; serverCfg = null; pending = [];
     toast('החיבור ל־Gmail נותק', 'success'); renderButtons();
   }
 
-  function button(id) {
-    const b = document.createElement('button'); b.type = 'button'; b.id = id; b.className = 'gmx-btn';
-    b.addEventListener('click', scan);
-    return b;
-  }
+  function onButton() { if (pending.length && !busy) review(pending, null); else scan(false); }
   function renderButtons() {
     const show = visible();
+    const label = busy ? 'מסנכרן…' : pending.length ? `${pending.length} הוצאות לבדיקה` : 'סנכרון מ־Gmail';
     const last = lsGet('last', 0);
-    const label = busy ? 'מסנכרן…' : 'סנכרון מ־Gmail';
     const title = last ? `סנכרון אחרון: ${new Date(last).toLocaleString('he-IL')}` : 'מוצא קבלות של חברות פרופ ופלטפורמות במייל ומוסיף אותן כהוצאות';
     [['gmx-exp', () => document.querySelector('#tp-expenses .btn-p')], ['gmx-biz', () => document.querySelector('#tp-biz .ws-toolbar')]].forEach(([id, anchor]) => {
       let b = document.getElementById(id);
       if (!show) { b?.remove(); return; }
       const a = anchor(); if (!a) return;
       if (!b) {
-        b = button(id);
-        if (id === 'gmx-exp') a.before(b);
-        else { b.className = 'bn'; a.appendChild(b); }
+        b = document.createElement('button'); b.type = 'button'; b.id = id; b.addEventListener('click', onButton);
+        if (id === 'gmx-exp') { b.className = 'gmx-btn'; a.before(b); } else { b.className = 'bn'; a.appendChild(b); }
       }
       b.textContent = label; b.title = title; b.disabled = busy;
+      b.classList.toggle('gmx-pending', !!pending.length);
     });
     const set = document.getElementById('gmx-disc');
-    if (lsGet('granted', false) && show) {
+    if (show && serverCfg?.connected) {
       if (!set) {
         const host = document.querySelector('#actdd-exp .act-dd-menu'); if (!host) return;
         const x = document.createElement('button'); x.className = 'act-mi'; x.id = 'gmx-disc'; x.type = 'button'; x.textContent = 'ניתוק Gmail';
@@ -451,9 +558,22 @@
     } else set?.remove();
   }
 
+  /* every login: once the user's data finished loading, re-scan in the background */
+  async function autoTick() {
+    if (!visible() || !cloudReady() || busy) return;
+    const u = uid(); if (autoDoneFor === u) return;
+    autoDoneFor = u;
+    if (Date.now() - lsGet('autoAt', 0) < AUTO_EVERY) return;
+    const cfg = await config(); renderButtons();
+    if (!cfg.connected) return;
+    lsSet('autoAt', Date.now());
+    scan(true);
+  }
+
   root.FaynaGmailExpenses = { core, scan, disconnect, review };
   const boot = () => {
-    renderButtons(); setInterval(renderButtons, 4000);
+    renderButtons();
+    setInterval(() => { if (uid() !== autoDoneFor && autoDoneFor) { serverCfg = null; pending = []; token = null; autoDoneFor = ''; } renderButtons(); autoTick(); }, 3000);
     const biz = document.getElementById('tp-biz');
     if (biz && root.MutationObserver) { let q = 0; new MutationObserver(() => { if (!q) q = requestAnimationFrame(() => { q = 0; if (!document.getElementById('gmx-biz')) renderButtons(); }); }).observe(biz, { childList: true, subtree: true }); }
   };

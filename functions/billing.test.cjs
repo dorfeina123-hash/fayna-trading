@@ -16,6 +16,7 @@ function fixture(options={}) {
     if(name.includes('/https'))return {onCall:(options,fn)=>{assert.equal(options.enforceAppCheck,true);return fn;},onRequest:(_,fn)=>fn,HttpsError};
     if(name.includes('/auth'))return {getAuth:()=>({getUser:async uid=>({metadata:{creationTime:options.createdAt || new Date().toISOString()}})})};
     if(name==='./fx.cjs')return {...require('./fx.cjs'),fetchUsdRate:async()=>({rateMillionths:3089000,publishedAt:Date.now(),source:'Bank of Israel'})};
+    if(name.includes('/params'))return {defineSecret:n=>({value:()=>''})};
     if(name.includes('/app'))return {initializeApp(){}};
     if(name.includes('/firestore'))return {getFirestore:()=>db,FieldValue:{serverTimestamp:()=>123}};
     return require(name);

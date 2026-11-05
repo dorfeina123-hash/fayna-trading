@@ -248,6 +248,9 @@ service cloud.firestore {
     }
 
     // ── deny everything not explicitly allowed above ──
+    // Encrypted Gmail refresh tokens: server only.
+    match /gmailTokens/{uid} { allow read, write: if false; }
+
     match /{document=**} { allow read, write: if false; }
   }
 }

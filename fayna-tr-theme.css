@@ -801,3 +801,4 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 .gmx-amt{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.gmx-amt input{width:92px;min-height:38px;border-radius:8px;padding:0 8px;background:var(--bg2);color:var(--t1);border:1px solid var(--border2);font:inherit}
 .gmx-amt small{width:100%;font-size:11px;color:var(--t3)}
 @media (max-width:560px){.gmx-row{grid-template-columns:auto 1fr}.gmx-row select,.gmx-amt{grid-column:2}}
+.gmx-btn.gmx-pending,#gmx-biz.gmx-pending{border-color:var(--ac);color:var(--ac)}

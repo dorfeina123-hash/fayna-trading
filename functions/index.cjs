@@ -109,3 +109,29 @@ exports.syncIngest = onRequest({ maxInstances: 3, timeoutSeconds: 30, memory: '2
     res.status(500).json({ error: 'server' });
   }
 });
+
+/* Gmail expenses: stores a read-only Gmail permission so receipts re-sync on every login (see gmail.cjs). */
+const { defineSecret } = require('firebase-functions/params');
+const gmail = require('./gmail.cjs');
+const GMAIL_CLIENT_ID = defineSecret('GMAIL_CLIENT_ID');
+const GMAIL_CLIENT_SECRET = defineSecret('GMAIL_CLIENT_SECRET');
+const GMAIL_TOKEN_KEY = defineSecret('GMAIL_TOKEN_KEY');
+const GMAIL_ORIGINS = new Set(['https://dorfeina123-hash.github.io', 'http://localhost:8765']);
+exports.gmailAuth = onRequest({ maxInstances: 5, timeoutSeconds: 20, memory: '256MiB', secrets: [GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_TOKEN_KEY] }, async (req, res) => {
+  const origin = req.get('origin') || '';
+  if (GMAIL_ORIGINS.has(origin)) { res.set('Access-Control-Allow-Origin', origin); res.set('Vary', 'Origin'); }
+  if (req.method === 'OPTIONS') { res.set('Access-Control-Allow-Methods', 'POST'); res.set('Access-Control-Allow-Headers', 'Authorization, Content-Type'); res.set('Access-Control-Max-Age', '3600'); res.status(204).send(''); return; }
+  try {
+    const out = await gmail.handleGmail({ method: req.method, headers: req.headers, body: req.body }, {
+      verifyIdToken: t => getAuth().verifyIdToken(t),
+      store: gmail.firestoreTokenStore(db),
+      fetch: globalThis.fetch,
+      cfg: { clientId: GMAIL_CLIENT_ID.value(), clientSecret: GMAIL_CLIENT_SECRET.value(), tokenKey: GMAIL_TOKEN_KEY.value() },
+      now: Date.now(),
+    });
+    res.status(out.status).json(out.body);
+  } catch (e) {
+    console.error('gmailAuth', e);
+    res.status(500).json({ error: 'server' });
+  }
+});

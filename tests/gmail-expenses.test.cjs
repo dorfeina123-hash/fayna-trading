@@ -69,3 +69,29 @@ test('html receipts become readable text', () => {
   const r = g.classify(mk('Topstep <billing@topstep.com>', 'Your invoice', t));
   assert.equal(r.item.amount, 55);
 });
+
+test('dedupe: already-synced ids, double mails and hand-typed expenses never add twice', () => {
+  const it = (id, date, amount, extra = {}) => ({ gmailId: id, date, company: 'Apex Trader Funding', cat: 'מבחן', amount, currency: 'USD', sure: true, subject: 's', ...extra });
+  const existing = [
+    { type: 'הוצאה', date: '2026-10-01', amount: 85, company: 'APEX' },             // typed by hand
+    { type: 'הוצאה', date: '2026-09-01', amount: 40, gmailId: 'g-old', src: 'gmail' },
+  ];
+  const items = [
+    it('g-old', '2026-09-01', 40),                       // synced before
+    it('g-seen', '2026-09-05', 12),                      // ignored before
+    it('g1', '2026-10-02', 85),                          // matches the hand-typed one
+    it('g2', '2026-10-20', 167, { sender: 'stripe.com' }), it('g2b', '2026-10-21', 167, { sender: 'apextraderfunding.com' }), // Stripe + vendor mail
+    it('g5', '2026-10-20', 167, { sender: 'stripe.com' }),  // a second evaluation the same day
+    it('g3', '2026-10-25', 99, { sure: false }),         // unsure amount
+    it('g4', '2026-10-26', 300, { currency: 'ILS' }),
+  ];
+  const out = require('../fayna-gmail-expenses.js').dedupe(items, existing, ['g-seen'], x => (x.currency === 'ILS' ? x.amount / 3 : x.amount));
+  assert.deepEqual(out.auto.map(x => x.gmailId).sort(), ['g2', 'g4', 'g5']);
+  assert.deepEqual(out.review.map(x => x.gmailId).sort(), ['g2b', 'g3']);
+  assert.equal(out.review.find(x => x.gmailId === 'g2b').maybeDup, true);
+  assert.deepEqual(out.dup.map(x => x.gmailId), ['g1']);
+  assert.deepEqual(out.skipped.map(x => x.gmailId).sort(), ['g-old', 'g-seen']);
+  const twice = require('../fayna-gmail-expenses.js').dedupe([it('a', '2026-10-01', 85), it('b', '2026-10-01', 85)], existing, [], x => x.amount);
+  assert.deepEqual([twice.dup.length, twice.auto.length], [1, 1]); // one typed by hand absorbs one mail only
+  assert.equal(out.auto.find(x => x.gmailId === 'g4').usd, 100);
+});
