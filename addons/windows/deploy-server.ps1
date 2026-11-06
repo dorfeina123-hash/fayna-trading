@@ -30,12 +30,12 @@ if (-not (HasSecret 'GMAIL_CLIENT_ID') -or -not (HasSecret 'GMAIL_CLIENT_SECRET'
   $sec = Read-Host 'הדבק Client secret'
   if ($cid -and $sec) { SetSecret 'GMAIL_CLIENT_ID' $cid.Trim(); SetSecret 'GMAIL_CLIENT_SECRET' $sec.Trim() }
 }
-if (-not (HasSecret 'GMAIL_TOKEN_KEY')) {
+foreach ($k in @('GMAIL_TOKEN_KEY','SYNC_TOKEN_KEY')) { if (-not (HasSecret $k)) {
   $b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b)
-  SetSecret 'GMAIL_TOKEN_KEY' ([Convert]::ToBase64String($b))
-}
+  SetSecret $k ([Convert]::ToBase64String($b))
+} }
 Say 'מעלה את חוקי מסד הנתונים ואת השרת...'
-npx --yes firebase-tools@13 deploy --only "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth" --project fayna-trading
+npx --yes firebase-tools@13 deploy --only "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth,functions:billing:ibkrSync,functions:billing:ibkrSyncScheduled" --project fayna-trading
 $c = $LASTEXITCODE; Pop-Location
 if ($c -ne 0) { Say 'ההעלאה נכשלה. צלם את המסך ושלח לי.' 'Red'; Done $false }
 Say 'השרת עלה בהצלחה.' 'Green'

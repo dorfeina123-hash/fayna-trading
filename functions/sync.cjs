@@ -16,7 +16,7 @@
 const { createHash } = require('node:crypto');
 
 const MAX_FILLS = 500;
-const SOURCES = new Set(['atas', 'quantower', 'ninjatrader', 'test']);
+const SOURCES = new Set(['atas', 'quantower', 'ninjatrader', 'ibkr', 'test']);
 
 const hashKey = key => createHash('sha256').update(String(key)).digest('hex');
 

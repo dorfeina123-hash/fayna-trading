@@ -135,3 +135,35 @@ exports.gmailAuth = onRequest({ maxInstances: 5, timeoutSeconds: 20, memory: '25
     res.status(500).json({ error: 'server' });
   }
 });
+
+/* Interactive Brokers read-only sync through the Flex Web Service (see ibkr.cjs). */
+const ibkr = require('./ibkr.cjs');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
+const SYNC_TOKEN_KEY = defineSecret('SYNC_TOKEN_KEY');
+const ibkrDeps = () => ({
+  verifyIdToken: t => getAuth().verifyIdToken(t),
+  store: ibkr.firestoreLinkStore(db),
+  fillStore: sync.firestoreStore(db, FieldValue),
+  fetch: globalThis.fetch,
+  sleep: ms => new Promise(r => setTimeout(r, ms)),
+  cfg: { tokenKey: SYNC_TOKEN_KEY.value() },
+  now: Date.now(),
+});
+exports.ibkrSync = onRequest({ maxInstances: 5, timeoutSeconds: 90, memory: '256MiB', secrets: [SYNC_TOKEN_KEY] }, async (req, res) => {
+  const origin = req.get('origin') || '';
+  if (GMAIL_ORIGINS.has(origin)) { res.set('Access-Control-Allow-Origin', origin); res.set('Vary', 'Origin'); }
+  if (req.method === 'OPTIONS') { res.set('Access-Control-Allow-Methods', 'POST'); res.set('Access-Control-Allow-Headers', 'Authorization, Content-Type'); res.set('Access-Control-Max-Age', '3600'); res.status(204).send(''); return; }
+  try {
+    const out = await ibkr.handleIbkr({ method: req.method, headers: req.headers, body: req.body }, ibkrDeps());
+    res.status(out.status).json(out.body);
+  } catch (e) { console.error('ibkrSync', e); res.status(500).json({ error: 'server' }); }
+});
+/* every hour: pull new executions for every connected IBKR user, even when nobody is logged in */
+exports.ibkrSyncScheduled = onSchedule({ schedule: 'every 60 minutes', timeoutSeconds: 540, memory: '256MiB', secrets: [SYNC_TOKEN_KEY] }, async () => {
+  const deps = ibkrDeps(); const links = await deps.store.all();
+  for (const l of links) {
+    if (l.lastSync && deps.now - l.lastSync < 45 * 60e3) continue;
+    try { await ibkr.syncUser(l.uid, l, deps, Date.now()); }
+    catch (e) { await deps.store.update(l.uid, { lastError: e.code || e.message, lastErrorAt: Date.now() }); console.warn('ibkr scheduled', l.uid, e.code || e.message); }
+  }
+});
