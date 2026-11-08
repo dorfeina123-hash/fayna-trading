@@ -851,3 +851,8 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 #fib-card .fyc-primary{background:var(--ac);color:var(--fy-on-accent,#1d1226)}#fib-card .fyc-primary:disabled{opacity:.6;cursor:progress}
 #fib-card .fyc-danger{background:transparent;color:var(--re,#f86666);border-color:rgba(248,102,102,.4)}
 #fib-card bdi{unicode-bidi:isolate}
+/* v121 — economic calendar: pick a single day */
+.tre-days{display:flex;flex-wrap:wrap;gap:6px;padding:12px 12px 4px}
+.tre-days button{min-height:34px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--t2);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.tre-days button:hover{color:var(--t1);border-color:var(--tr-accent-line)}
+.tre-days button[aria-selected="true"]{background:var(--bd);border-color:var(--tr-accent-line);color:var(--t1);font-weight:600}

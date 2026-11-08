@@ -24,7 +24,8 @@
   try { pref = { ...pref, ...JSON.parse(localStorage.getItem(PREF) || '{}') }; } catch (e) {}
   if (!WEEKS.some(w => w[0] === pref.week)) pref.week = 'thisweek';
   const save = () => { try { localStorage.setItem(PREF, JSON.stringify(pref)); } catch (e) {} };
-  let data = {}, loading = {};
+  let data = {}, loading = {}, dayPick = 'all'; /* day filter: 'all' or a local YYYY-MM-DD */
+  const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
   const parse = d => (typeof _ffParseDate === 'function' ? _ffParseDate(d) : new Date(d));
   const effImp = ev => (typeof ecalEffectiveImpact === 'function' && ev.impact !== 'Holiday' ? ecalEffectiveImpact(ev) : ev.impact);
@@ -47,7 +48,7 @@
   }
 
   function rowsFor(list) {
-    return list.filter(ev => pref.cur.includes(ev.c) && (ev.i === 'Holiday' ? pref.imp.includes('High') : pref.imp.includes(effImp({ title: ev.t, impact: ev.i }))))
+    return list.filter(ev => (dayPick === 'all' || ymd(new Date(ev.d)) === dayPick) && pref.cur.includes(ev.c) && (ev.i === 'Holiday' ? pref.imp.includes('High') : pref.imp.includes(effImp({ title: ev.t, impact: ev.i }))))
       .sort((a, b) => a.d.localeCompare(b.d));
   }
   const two = n => String(n).padStart(2, '0');
@@ -71,6 +72,15 @@
     });
     return `<div class="tre-scroll"><table class="tre-table"><thead><tr><th>שעה</th><th>מדינה</th><th>השפעה</th><th>אירוע</th><th>קודם</th><th>תחזית</th><th>בפועל</th></tr></thead><tbody>${html}</tbody></table></div>`;
   }
+  /* one chip per day that has events this week, plus the whole week */
+  function days(list) {
+    const set = [...new Set(list.map(ev => ymd(new Date(ev.d))))].sort();
+    if (!set.length) return '';
+    if (dayPick !== 'all' && !set.includes(dayPick)) dayPick = 'all';
+    const today = ymd(new Date());
+    const chip = (v, l) => `<button type="button" role="tab" data-tre-day="${v}" aria-selected="${dayPick === v}">${l}</button>`;
+    return `<div class="tre-days" role="tablist" aria-label="יום">${chip('all', 'כל השבוע')}${set.map(v => { const d = new Date(v + 'T12:00:00'); return chip(v, (v === today ? 'היום · ' : '') + DAYS[d.getDay()] + ' ' + two(d.getDate()) + '/' + two(d.getMonth() + 1)); }).join('')}</div>`;
+  }
   async function render() {
     const tp = document.getElementById('tp-ecal'); if (!tp) return;
     let root = document.getElementById('tre-root');
@@ -81,10 +91,11 @@
       root = document.createElement('div'); root.id = 'tre-root';
       tp.appendChild(root); tp.appendChild(legacy);
       root.addEventListener('click', e => {
-        const b = e.target.closest('[data-tre-imp],[data-tre-cur],[data-tre-week],[data-tre-refresh]'); if (!b) return;
+        const b = e.target.closest('[data-tre-imp],[data-tre-cur],[data-tre-week],[data-tre-refresh],[data-tre-day]'); if (!b) return;
+        if (b.dataset.treDay) { dayPick = b.dataset.treDay; const box = root.querySelector('.tre-card'); if (box) box.innerHTML = days(data[pref.week] || []) + table(data[pref.week] || []); return; }
         if (b.dataset.treImp) { const v = b.dataset.treImp; pref.imp = pref.imp.includes(v) ? pref.imp.filter(x => x !== v) : [...pref.imp, v]; }
         else if (b.dataset.treCur) { const v = b.dataset.treCur; pref.cur = pref.cur.includes(v) ? pref.cur.filter(x => x !== v) : [...pref.cur, v]; }
-        else if (b.dataset.treWeek) pref.week = b.dataset.treWeek;
+        else if (b.dataset.treWeek) { if (pref.week !== b.dataset.treWeek) dayPick = 'all'; pref.week = b.dataset.treWeek; }
         else if (b.dataset.treRefresh !== undefined) { data = {}; try { localStorage.removeItem(KEY); } catch (er) {} }
         save(); render();
       });
@@ -98,7 +109,7 @@
       <p class="tre-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>התראות קופצות לפני אירועים בארה״ב נשארות פעילות (15, 10 ו-5 דקות לפני)${alerts ? ' · רמת השפעה להתראות: ' + alerts : ''}.</p>`;
     const week = pref.week, list = await load(week);
     if (pref.week !== week) return;
-    const box = root.querySelector('.tre-card'); if (box) box.innerHTML = table(list || []);
+    const box = root.querySelector('.tre-card'); if (box) box.innerHTML = days(list || []) + table(list || []);
   }
   function watch() {
     const tp = document.getElementById('tp-ecal'); if (!tp) return;

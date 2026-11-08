@@ -96,6 +96,8 @@
 
   /* on every login: once the user's data is in, ask the server for new executions */
   function tick() {
+    /* the Connections page holds only the admin-gated sync cards for now; hide its menu entry otherwise */
+    const nav = document.getElementById('pasnav-connections'); if (nav) { nav.hidden = !visible(); if (visible()) nav.style.removeProperty('display'); else nav.style.setProperty('display', 'none', 'important'); }
     const u = uid();
     if (!u) { if (autoFor) { autoFor = ''; st = { loaded: false, connected: false, busy: false, err: '' }; } return; }
     try { if (_cloudReadyUid !== u) return; } catch (e) { return; }

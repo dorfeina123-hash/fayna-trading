@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <script>try{document.documentElement.dataset.faynaTheme=localStorage.getItem("fayna_theme")==="light"?"light":"dark";}catch(e){document.documentElement.dataset.faynaTheme="dark";}</script>
-<link rel="preload" href="fayna-tr-theme.css?v=119" as="style">
+<link rel="preload" href="fayna-tr-theme.css?v=121" as="style">
 <style id="fy-boot">html{background:#1f1b23}html[data-fayna-theme="light"]{background:#f1f5f9}html:not(.fy-css) body{visibility:hidden}</style>
 <noscript><style>html:not(.fy-css) body{visibility:visible}</style></noscript>
 <script>/* v118: hide the page until the main stylesheet is in, so a reload never flashes the unstyled page */setTimeout(function(){document.documentElement.classList.add('fy-css')},3500);</script>
@@ -768,6 +768,7 @@ body.focus-mode #focus-mode-btn{background:var(--gr)!important;color:#06210f!imp
 .acg-actions{display:flex;gap:6px;margin-top:10px}
 .acg-actions button{flex:1;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:5px 0;font-size:10px;color:var(--t2);cursor:pointer}
 .acg-actions button:hover{color:var(--t1);border-color:var(--ac)}
+.acg-actions button.acg-del:hover{color:var(--re);border-color:var(--re)}
 /* Session Timer / Pomodoro */
 .ft-mode-btn{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:3px 10px;font-size:10px;color:var(--t2);cursor:pointer}
 .ft-mode-btn.active{background:var(--ac);color:#06210f;border-color:var(--ac)}
@@ -3565,23 +3566,6 @@ pre,code{white-space:pre-wrap;word-break:break-word}
       <!-- חיבורים -->
       <div class="pa-sub" id="pa-connections">
         <div class="pa-page-title">חיבורים</div>
-        <div class="pa-card">
-          <div class="pa-card-title">פלטפורמות מסחר</div>
-          <p style="font-size:13px;color:var(--t2);margin-bottom:16px">חבר את יומן המסחר לפלטפורמות שלך לייבוא אוטומטי.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg3);border-radius:9px;border:1px solid var(--border)">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div style="width:38px;height:38px;border-radius:8px;background:rgba(74,143,168,.15);border:1px solid rgba(74,143,168,.25);display:flex;align-items:center;justify-content:center;font-size:18px">📊</div>
-              <div>
-                <div style="font-size:13px;font-weight:600;color:var(--t1)">Tradovate</div>
-                <div style="font-size:11px;color:var(--t3);margin-top:2px">ייבוא אוטומטי של עסקאות</div>
-              </div>
-            </div>
-            <a href="https://trader.tradovate.com/welcome" target="_blank" rel="noopener" class="pa-btn-ghost" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              פתח Tradovate
-            </a>
-          </div>
-        </div>
       </div>
 
     </div><!-- /pa-main -->
@@ -10792,6 +10776,7 @@ function renderAcctGrid() {
         <button onclick="closeAcctGrid();openAcctGoals('${a.id}')">🎯 יעדים</button>
         <button onclick="renameAccount('${a.id}').then(()=>renderAcctGrid())">✏️ שם</button>
         <button onclick="deleteAccount('${a.id}').then(()=>renderAcctGrid())">📁 ארכיון</button>
+        <button class="acg-del" onclick="purgeTradingAccount('${a.id}')">🗑️ מחיקה</button>
       </div>
     </div>`;
   }).join('');
@@ -16280,6 +16265,22 @@ async function deleteAccount(id) {
   selectedAccounts.delete(id);if(!selectedAccounts.size)selectedAccounts.add('__all__');
   saveAccounts();renderAcctMenu();applyAcctFilter();renderAll();
   showToast('החשבון הועבר לארכיון; ההיסטוריה נשמרה','info');
+}
+
+/* permanent removal from the accounts window; the trader decides what happens to its trades */
+async function purgeTradingAccount(id) {
+  const a=accounts.find(x=>x.id===id);if(!a)return;
+  const linked=tradesList.filter(t=>t.acct===id).length;
+  if(!await customConfirm(`למחוק לצמיתות את החשבון "${a.name}"?`+(linked?` משויכות אליו ${linked} עסקאות.`:''),{danger:true,okText:'מחק חשבון',cancelText:'ביטול'}))return;
+  let dropTrades=false;
+  if(linked) dropTrades=await customConfirm(`מה לעשות עם ${linked} העסקאות של "${a.name}"?`,{danger:true,okText:'למחוק גם אותן',cancelText:'להשאיר ביומן בלי חשבון'});
+  if(dropTrades){for(let i=tradesList.length-1;i>=0;i--)if(tradesList[i].acct===id)tradesList.splice(i,1);}
+  else tradesList.forEach(t=>{if(t.acct===id)t.acct='';});
+  accounts.splice(accounts.indexOf(a),1);
+  selectedAccounts.delete(id);if(!selectedAccounts.size)selectedAccounts.add('__all__');
+  saveAccounts();renderAcctMenu();applyAcctFilter();renderAll();
+  if(document.getElementById('acct-grid-modal')?.classList.contains('open'))renderAcctGrid();
+  showToast(dropTrades?`החשבון ו-${linked} העסקאות שלו נמחקו`:'החשבון נמחק'+(linked?'; העסקאות נשארו ביומן':''),'success');
 }
 
 async function restoreTradingAccount(id) {
@@ -27245,7 +27246,7 @@ function workspaceInit(){
   const biz=document.getElementById('tp-biz');biz.innerHTML='<div id="finance-workspace"></div>';financeRender();
   const calc=document.getElementById('tp-calc'),grid=calc.querySelector('.clx-grid')||calc.querySelector('.clx-card')?.parentElement;
   if(grid){const more=document.createElement('details');more.className='simple-details';more.innerHTML='<summary>מחשבונים מתקדמים</summary><div class="ws-tools"></div>';grid.after(more);[...grid.querySelectorAll('.clx-card')].forEach(card=>{const handler=card.getAttribute('onclick');const b=document.createElement('button');b.className='clx-card';b.type='button';b.setAttribute('onclick',handler);b.innerHTML=card.innerHTML;card.replaceWith(b);if(!/clxOpen\('(rr|contracts)'\)/.test(handler))more.lastElementChild.appendChild(b);});}
-  const journal=document.getElementById('tp-trades'),bar=document.createElement('div');bar.className='ws-toolbar';bar.innerHTML='<label class="ws-search">חיפוש ביומן<input type="search" placeholder="נכס, תאריך או חשבון" oninput="workspaceJournalSearch(this.value)"></label><button class="bn" onclick="openAcctGrid()">ניהול חשבונות מסחר</button><button class="bn" onclick="document.getElementById(\'tj-table\').classList.toggle(\'ws-expanded\');this.setAttribute(\'aria-pressed\',document.getElementById(\'tj-table\').classList.contains(\'ws-expanded\'))" aria-pressed="false">עמודות נוספות</button>';journal.prepend(bar);
+  const journal=document.getElementById('tp-trades'),bar=document.createElement('div');bar.className='ws-toolbar';bar.innerHTML='<label class="ws-search">חיפוש ביומן<input type="search" placeholder="נכס, תאריך או חשבון" oninput="workspaceJournalSearch(this.value)"></label><button class="bn" onclick="openAcctGrid()">ניהול חשבונות מסחר</button>';journal.prepend(bar);
   const personal=document.getElementById('pa-profile');if(personal){const p=document.createElement('section');p.className='ws-panel';p.innerHTML='<h2>מראה סביבת העבודה</h2><div class="ws-theme-options"><button data-fayna-mode="dark" onclick="setFaynaTheme(\'dark\')"><span class="ws-theme-dot ws-mint"></span><strong>כהה</strong><small>רקע סגול כהה · Rubik</small></button><button data-fayna-mode="light" onclick="setFaynaTheme(\'light\')"><span class="ws-theme-dot ws-stone"></span><strong>בהיר</strong><small>רקע אפור בהיר · Rubik</small></button></div>';personal.append(p);_initTheme();}
   const dm=document.getElementById('tp-datamgr'),intro=document.createElement('div');intro.className='ws-backups';intro.innerHTML='<header class="ws-heading"><div><h1>נתונים וגיבוי</h1><p>כל אזור נשמר ומשוחזר בנפרד.</p></div><button class="bn" onclick="_openDataExport()">ייצוא נתונים</button></header>'+[['trading','מסחר','עסקאות, חשבונות מסחר והגדרות עמלות'],['finance','כספים','יומן הוצאות, הוצאות חופשיות, תנועות, הוראות חוזרות והערות. משיכות בתוך חשבונות נכללות בגיבוי המסחר.']].map(([k,t,sub])=>`<section class="ws-panel"><h2>${t}</h2><p>${sub}</p><div class="ws-toolbar"><button class="bn" onclick="workspaceBackup('${k}')">ייצוא גיבוי</button><label class="bn">שחזור גיבוי<input type="file" accept=".json" onchange="workspaceRestore(this,'${k}')"></label>${k==='finance'?'<button class="bn" onclick="financeRecoveryCenter()">בדיקת הוצאות ושחזור</button>':''}</div></section>`).join('');const legacy=document.createElement('details');legacy.className='simple-details';legacy.innerHTML='<summary>כלים קודמים ופעולות מתקדמות</summary>';while(dm.firstChild)legacy.appendChild(dm.firstChild);dm.append(intro,legacy);
   legacy.querySelectorAll('button[onclick^="openAdd"],button[onclick^="openCX"]').forEach(b=>b.onclick=()=>financeNavigate('transactions'));
@@ -27268,16 +27269,16 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
 <script src="fayna-tr-pages.js?v=120"></script>
-<script src="fayna-tr-stats.js?v=102"></script>
+<script src="fayna-tr-stats.js?v=121"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-ecal-he.js?v=115"></script>
-<script src="fayna-tr-ecal.js?v=115"></script>
+<script src="fayna-tr-ecal.js?v=121"></script>
 <script src="fayna-compliance.js?v=110"></script>
 <script src="fayna-sync.js?v=111"></script>
-<script src="fayna-ibkr.js?v=120"></script>
+<script src="fayna-ibkr.js?v=121"></script>
 <script src="fayna-gmail-expenses.js?v=114"></script>
 <script src="fayna-motion.js?v=116"></script>
 <script src="fayna-landing3d.js?v=116"></script>
-<link rel="stylesheet" href="fayna-tr-theme.css?v=119" onload="document.documentElement.classList.add('fy-css')" onerror="document.documentElement.classList.add('fy-css')">
+<link rel="stylesheet" href="fayna-tr-theme.css?v=121" onload="document.documentElement.classList.add('fy-css')" onerror="document.documentElement.classList.add('fy-css')">
 </body>
 </html>

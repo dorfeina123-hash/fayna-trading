@@ -172,10 +172,8 @@
       const legacy = document.createElement('div'); legacy.id = 'trs-legacy';
       while (tp.firstChild) legacy.appendChild(tp.firstChild);
       root = document.createElement('div'); root.id = 'trs-root';
-      const tabs = document.createElement('div'); tabs.className = 'trs-tabs'; tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', 'תצוגת סטטיסטיקה');
-      tabs.innerHTML = '<button type="button" role="tab" data-trs-view="overview">סקירה מפורטת</button><button type="button" role="tab" data-trs-view="advanced">ניתוח מתקדם</button>';
-      tp.appendChild(tabs); tp.appendChild(root); tp.appendChild(legacy);
-      tabs.addEventListener('click', e => { const b = e.target.closest('[data-trs-view]'); if (!b) return; view = b.dataset.trsView; apply(); if (view === 'advanced' && typeof _trsPrev === 'function') { try { _trsPrev(); } catch (er) {} } });
+      /* the advanced tab was removed: the page shows the detailed overview only */
+      tp.appendChild(root); tp.appendChild(legacy);
     }
     return root;
   }
