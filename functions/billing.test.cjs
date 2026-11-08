@@ -122,3 +122,8 @@ test('quotes take USD price and uid from trusted catalog and token, not client a
  assert.equal(q.displayMinor,1490);assert.equal(q.settlementMinor,4603);assert.equal(q.billingEnabled,false);
  assert.equal(f.docs.get('billingQuotes/'+q.quoteId).uid,'bob');assert.equal(f.docs.get('users/bob').plan,'free');
 });
+test('checkout stays closed when switched on without Grow secrets',async()=>{
+ const f=fixture({env:{FAYNA_BILLING_LIVE:'true'}});
+ await assert.rejects(f.billing({auth:{uid:'alice'},data:{action:'checkout',plan:'single',acceptedTerms:true}}),{code:'failed-precondition'});
+ assert.equal(f.docs.size,2);
+});

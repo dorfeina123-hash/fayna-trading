@@ -35,7 +35,10 @@ foreach ($k in @('GMAIL_TOKEN_KEY','SYNC_TOKEN_KEY')) { if (-not (HasSecret $k))
   SetSecret $k ([Convert]::ToBase64String($b))
 } }
 Say 'מעלה את חוקי מסד הנתונים ואת השרת...'
-npx --yes firebase-tools@13 deploy --only "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth,functions:billing:ibkrSync,functions:billing:ibkrSyncScheduled" --project fayna-trading
+$only = "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth,functions:billing:ibkrSync,functions:billing:ibkrSyncScheduled"
+# Tradovate goes up only once its partner credentials were saved as secrets
+if ((HasSecret 'TRADOVATE_CLIENT_ID') -and (HasSecret 'TRADOVATE_CLIENT_SECRET')) { $only += ",functions:billing:tradovateAuth,functions:billing:tradovateSyncScheduled" }
+npx --yes firebase-tools@13 deploy --only $only --project fayna-trading
 $c = $LASTEXITCODE; Pop-Location
 if ($c -ne 0) { Say 'ההעלאה נכשלה. צלם את המסך ושלח לי.' 'Red'; Done $false }
 Say 'השרת עלה בהצלחה.' 'Green'

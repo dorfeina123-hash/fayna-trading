@@ -126,6 +126,13 @@ service cloud.firestore {
     match /billingQuotes/{id} { allow read, write: if false; }
     match /billingEvents/{id} { allow read, write: if false; }
     match /billingOperations/{id} { allow read, write: if false; }
+    match /tradovateLinks/{uid} { allow read, write: if false; }    // encrypted Tradovate OAuth tokens
+    match /billingTokens/{uid} { allow read, write: if false; }      // encrypted Grow card tokens
+    match /billingCheckouts/{id} { allow read, write: if false; }
+    match /subscriptions/{uid}/charges/{id} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
 
     // ── referrals: who invited whom ──
     match /referrals/{refereeUid} {
