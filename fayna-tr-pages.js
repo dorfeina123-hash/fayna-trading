@@ -84,6 +84,15 @@
     return list.sort((a, b) => ((b.date || '') + (b.btime || '')).localeCompare((a.date || '') + (a.btime || '')));
   }
 
+  /* duration: the stored value, or worked out from entry/exit times when it was never filled */
+  function durOf(t) {
+    if (t.dur) return t.dur;
+    const sec = x => { const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(String(x || '')); return m ? +m[1] * 3600 + +m[2] * 60 + +(m[3] || 0) : null; };
+    const a = sec(t.btime), b = sec(t.stime); if (a == null || b == null || b < a) return '';
+    const d = b - a, p2 = n => String(n).padStart(2, '0'); if (d < 60) return d + ' שנ׳';
+    if (d < 3600) return Math.floor(d / 60) + ':' + p2(d % 60) + ' דק׳';
+    return Math.floor(d / 3600) + ':' + p2(Math.floor(d % 3600 / 60)) + ' שע׳';
+  }
   const HEAD = '<tr><th style="width:22px" id="tj-chk-head" title="בחר הכל"><input type="checkbox" class="chk" aria-label="בחר את כל העסקאות" onchange="tjSelAll(this.checked)" style="display:none"></th><th>תאריך</th><th>סטטוס</th><th>נכס</th><th>סוג</th><th>חשבון</th><th>כמות</th><th>מחיר כניסה</th><th>מחיר יציאה</th><th>משך</th><th>תוצאה</th><th>תועד</th><th><span class="trh-sr">פעולות</span></th></tr>';
 
   function renderRows() {
@@ -121,7 +130,7 @@
         <td data-label="כמות">${t.isManual ? (t.manualTradeCount ?? '—') : esc(t.qty ?? '—')}</td>
         <td data-label="מחיר כניסה" dir="ltr">${t.isManual ? '—' : price(entry)}</td>
         <td data-label="מחיר יציאה" dir="ltr">${t.isManual ? '—' : price(exit)}</td>
-        <td data-label="משך">${esc(t.dur || '—')}</td>
+        <td data-label="משך">${esc(durOf(t) || '—')}</td>
         <td data-label="תוצאה" dir="ltr" class="trx-net ${n >= 0 ? 'cg' : 'cr'}">${money(n, true)}</td>
         <td data-label="תועד">${documented(t) ? `<span class="trx-doc" title="יש תיעוד">${ICON.check}</span>` : '<span class="trx-dash">—</span>'}</td>
         <td data-label="" class="trx-actions"><button type="button" class="trx-ib" data-trx-open="${ti}" title="פרטי העסקה" aria-label="פרטי העסקה">${ICON.eye}</button><button type="button" class="trx-ib" onclick="openTradeAnnotate(${ti})" title="עריכה ותיעוד" aria-label="עריכה ותיעוד">${ICON.edit}</button><button type="button" class="trx-ib trx-ib-del" onclick="delTrade(${ti})" title="מחיקה" aria-label="מחיקת העסקה">${ICON.del}</button></td>
@@ -195,7 +204,7 @@
         <section class="trx-sec trx-target"><h3>R מושג</h3><dl class="trx-grid">${field('מכפיל R', r === null || r === undefined || !isFinite(r) ? '—' : `<span dir="ltr">${r > 0 ? '+' : ''}${(+r).toFixed(2)}R</span>`, r > 0 ? 'cg' : r < 0 ? 'cr' : '')}${field('דירוג', t.stars ? '★'.repeat(t.stars) + '<span class="trx-dim">' + '★'.repeat(5 - t.stars) + '</span>' : '—', 'trx-stars')}</dl></section>
       </div>
       <section class="trx-sec"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>זמני העסקה</h3><dl class="trx-grid trx-grid3">
-        ${field('שעת כניסה', esc(t.btime ? String(t.btime).slice(0, 8) : '—'))}${field('שעת יציאה', esc(t.stime ? String(t.stime).slice(0, 8) : '—'))}${field('משך כולל', esc(t.dur || '—'))}
+        ${field('שעת כניסה', esc(t.btime ? String(t.btime).slice(0, 8) : '—'))}${field('שעת יציאה', esc(t.stime ? String(t.stime).slice(0, 8) : '—'))}${field('משך כולל', esc(durOf(t) || '—'))}
       </dl></section>
       <section class="trx-sec"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4"/></svg>תמונות העסקה</h3>${t.image || t.image2 ? `<div class="trx-imgs">${['image', 'image2'].filter(k => t[k]).map(k => `<button type="button" data-trx-img="${k}" aria-label="הגדלת תמונה"><img src="${esc(t[k])}" alt="${k === 'image' ? 'לפני / במהלך העסקה' : 'אחרי העסקה'}" loading="lazy" decoding="async"></button>`).join('')}</div>` : '<p class="trx-none">אין תמונות. אפשר להוסיף בעריכה.</p>'}</section>`;
     } else {

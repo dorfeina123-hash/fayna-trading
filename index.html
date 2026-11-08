@@ -3998,7 +3998,7 @@ pre,code{white-space:pre-wrap;word-break:break-word}
     <div id="cp-results" style="max-height:52vh;overflow-y:auto;padding:6px"></div>
   </div>
 </div>
-<div class="modal-bg" id="cd-modal" onclick="if(event.target===this)_cdResolve(cd_isPrompt?null:false)">
+<div class="modal-bg" id="cd-modal" onclick="if(event.target===this&&typeof _cdResolve==='function')_cdResolve(cd_isPrompt?null:false)">
   <div class="modal" style="width:min(400px,calc(100vw - 16px));text-align:center;padding:24px 22px">
     <div id="cd-icon" style="font-size:30px;margin-bottom:10px">❓</div>
     <div id="cd-msg" style="font-size:14px;color:var(--t1);line-height:1.6;white-space:pre-line;margin-bottom:16px"></div>
@@ -7395,7 +7395,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
             <div style="background:linear-gradient(135deg,rgba(74,143,168,.15),rgba(74,143,168,.08));border:1.5px solid rgba(74,143,168,.5);border-radius:12px;padding:14px 16px;max-width:300px;position:relative">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
                 <span style="font-size:10px;color:#4a8fa8;font-weight:600">שלב 1 / 8</span>
-                <span style="font-size:10px;color:var(--t3);cursor:pointer">✕ סיים</span>
+                <span style="font-size:10px;color:var(--t3)">✕ סיים</span>
               </div>
               <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:5px">🏠 לשונית סקירה</div>
               <div style="font-size:12px;color:var(--t2);line-height:1.6">כאן תמצא את כל המדדים המרכזיים שלך — P&L, Win Rate, Profit Factor ועוד, הכל במקום אחד.</div>
@@ -7405,7 +7405,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
                   <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
                   <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
                 </div>
-                <button style="padding:6px 16px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer">הבא ←</button>
+                <span aria-hidden="true" style="padding:6px 16px;background:var(--ac);color:#fff;border-radius:7px;font-size:11px;font-weight:600">הבא ←</span>
               </div>
             </div>
           </div>
@@ -16576,7 +16576,7 @@ function saveAcctGoals() {
 // Close menu on outside click — checks every "כל התיקים ▼" trigger (there's one per tab) plus the menu itself
 document.addEventListener('click', e => {
   const menu = document.getElementById('acct-menu');
-  const clickedTrigger = e.target.closest('.acct-trigger');
+  const clickedTrigger = e.target.closest('.acct-trigger,[onclick^="toggleAcctMenu"]');
   const clickedInsideMenu = menu && menu.contains(e.target);
   if (!clickedTrigger && !clickedInsideMenu) {
     menu?.classList.remove('open');
@@ -18097,7 +18097,7 @@ async function udpClearPerms() {
 }
 
 async function renderAdminMetrics() {
-  const users = await _getUsers();
+  const _u = await _getUsers(); const users = Array.isArray(_u) ? _u : [];
   const today = _localToday();
   const todayN = users.filter(u=>{ const d=u.registeredAt?.toDate?u.registeredAt.toDate():new Date(u.registeredAt||0); return d.toISOString().startsWith(today); }).length;
   const active = users.filter(u=>u.status!=='blocked').length;
@@ -25324,7 +25324,7 @@ function renderPricing() {
     const price = id==='free' ? 'ללא תשלום' : money(amount)+(annual?' לשנה':' לחודש');
     const period = annual && id!=='free' ? `<p>${money(amount/12)} לחודש בממוצע · תשלום שנתי אחד</p>` : '';
     const features = FEATURE_DEFS.filter(f=>f.key!=='multi_accounts').map(f=>`<p>${p.features[f.key]?'✓':'—'} ${escHtml(f.label)}</p>`).join('');
-    return `<section class="price-card${id==='unlimited'?' pop':''}" style="--pc:var(--ac);color:var(--t1);font-size:14px;line-height:1.6">${id==='unlimited'?'<div class="pc-badge">לניהול מספר חשבונות</div>':''}<h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong dir="ltr">${price}</strong>${period}<p style="font-size:12px">החיוב בפועל בשקלים. הסכום ושער ההמרה יוצגו לפני אישור תשלום.</p><p>מחיר פתיחה · ${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div><button class="bn" onclick="FaynaSubscriptions.showQuote('${id}')">בדיקת סכום החיוב בשקלים</button><p id="billing-quote-${id}" role="status" aria-live="polite"></p><button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">בחר ${escHtml(p.label)}</button><p style="font-size:12px;color:var(--t2)">בחירת חבילה תיפתח לאחר השלמת חיבור הסליקה.</p></section>`;
+    return `<section class="price-card${id==='unlimited'?' pop':''}" style="--pc:var(--ac);color:var(--t1);font-size:14px;line-height:1.6">${id==='unlimited'?'<div class="pc-badge">לניהול מספר חשבונות</div>':''}<h2 style="color:var(--t1);font-size:18px">${escHtml(p.label)}</h2><p>${escHtml(p.audience)}</p><strong dir="ltr">${price}</strong>${period}<p style="font-size:12px">החיוב בפועל בשקלים. הסכום ושער ההמרה יוצגו לפני אישור תשלום.</p><p>מחיר פתיחה · ${p.accounts===null?'חשבונות מסחר ללא הגבלה':'חשבון מסחר אחד'} · עסקאות ללא הגבלת כמות</p><div>${features}</div>${window.faynaBillingCallable?`<button class="bn" onclick="FaynaSubscriptions.showQuote('${id}')">בדיקת סכום החיוב בשקלים</button><p id="billing-quote-${id}" role="status" aria-live="polite"></p>`:''}<button class="btn-p" disabled style="opacity:.55;cursor:not-allowed">בחר ${escHtml(p.label)}</button><p style="font-size:12px;color:var(--t2)">בחירת חבילה תיפתח לאחר השלמת חיבור הסליקה.</p></section>`;
   }).join('');
   renderMySub();
 }
@@ -25342,7 +25342,7 @@ function renderMySub() {
   const legacyEnd = currentUser.planExpiresAt?.toDate?.();
   const legacyInfo = !server && legacyEnd && Number.isFinite(legacyEnd.getTime()) ? 'תאריך התוקף הרשום: '+legacyEnd.toLocaleDateString('he-IL')+(currentUser.planCycle==='reward'?' · זכאות מהפניות':'') : '';
   el.dir = 'rtl';
-  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>${escHtml(status)}</p>${legacyInfo?`<p>${escHtml(legacyInfo)}</p>`:''}<p>משתמשים קיימים אינם מועברים לניסיון או למסלול מצומצם ללא מדיניות מעבר מאושרת.</p><button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.startTrial()">בדיקת זכאות לניסיון של 14 יום</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p></section>`;
+  el.innerHTML = `<section class="price-card" style="color:var(--t1);font-size:14px;line-height:1.6"><h2 style="color:var(--t1);font-size:18px">המנוי שלי: ${escHtml(label)}</h2><p>${escHtml(status)}</p>${legacyInfo?`<p>${escHtml(legacyInfo)}</p>`:''}<p>משתמשים קיימים אינם מועברים לניסיון או למסלול מצומצם ללא מדיניות מעבר מאושרת.</p>${window.faynaBillingCallable?`<button class="bn" onclick="FaynaSubscriptions.refresh()">בדיקת מצב בשרת</button><button class="bn" onclick="FaynaSubscriptions.startTrial()">בדיקת זכאות לניסיון של 14 יום</button><button class="bn" onclick="FaynaSubscriptions.requestCancellation()">בקשת ביטול מנוי</button><p id="subscription-server-status" role="status" aria-live="polite"></p>`:''}</section>`;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -25772,7 +25772,7 @@ async function adminBackfillConsent() {
   if (st) st.textContent = 'מעבד...';
   let touched = 0;
   try {
-    const users = await _getUsers();
+    const _u = await _getUsers(); const users = Array.isArray(_u) ? _u : [];
     for (const u of users) {
       const upd = {};
       if (u.emailSubscriptionStatus === undefined)
@@ -26859,7 +26859,7 @@ async function composeDigest() {
   let sys = null;
   if (currentUser?.isAdmin && typeof db !== 'undefined') {
     try {
-      const users = await _getUsers();
+      const _u = await _getUsers(); const users = Array.isArray(_u) ? _u : [];
       const now = Date.now();
       const reg = u => u.registeredAt?.toDate ? u.registeredAt.toDate().getTime() : 0;
       const seen = u => (u.lastSeen || u.lastLogin)?.toDate ? (u.lastSeen || u.lastLogin).toDate().getTime() : 0;
@@ -27263,18 +27263,18 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="functions/account-policy.js"></script>
 <script src="functions/plan-model.js"></script>
 <script src="fayna-subscriptions.js"></script>
-<script src="fayna-admin.js"></script>
+<script src="fayna-admin.js?v=120"></script>
 <script src="fayna-journal.js"></script>
 <script src="fayna-experience.js"></script>
 <script src="fayna-finance-recovery-ui.js"></script>
-<script src="fayna-tr-pages.js?v=109"></script>
+<script src="fayna-tr-pages.js?v=120"></script>
 <script src="fayna-tr-stats.js?v=102"></script>
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-ecal-he.js?v=115"></script>
 <script src="fayna-tr-ecal.js?v=115"></script>
 <script src="fayna-compliance.js?v=110"></script>
 <script src="fayna-sync.js?v=111"></script>
-<script src="fayna-ibkr.js?v=119"></script>
+<script src="fayna-ibkr.js?v=120"></script>
 <script src="fayna-gmail-expenses.js?v=114"></script>
 <script src="fayna-motion.js?v=116"></script>
 <script src="fayna-landing3d.js?v=116"></script>

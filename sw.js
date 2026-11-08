@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v119-ibkr-20261106';
+const VERSION    = 'fayna-v120-audit-20261108';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';
@@ -31,11 +31,11 @@ const PRECACHE = [
   './fayna-ecal-he.js?v=115',
   './fayna-tr-ecal.js?v=115',
   './fayna-tr-biz.js?v=103',
-  './fayna-tr-pages.js?v=109',
+  './fayna-tr-pages.js?v=120',
   './fayna-tr-stats.js?v=102',
   './fayna-compliance.js?v=110',
   './fayna-sync.js?v=111',
-  './fayna-ibkr.js?v=119',
+  './fayna-ibkr.js?v=120',
   './fayna-gmail-expenses.js?v=114',
   './fayna-motion.js?v=116',
   './fayna-landing3d.js?v=116',

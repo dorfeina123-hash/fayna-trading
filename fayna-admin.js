@@ -90,7 +90,7 @@ window.FaynaAdmin = (() => {
   }
 
   async function refresh() {
-    const users = (_adminUsersCache && _adminUsersCache.length) ? _adminUsersCache : await _getUsers();
+    let users = (_adminUsersCache && _adminUsersCache.length) ? _adminUsersCache : await _getUsers(); if (!Array.isArray(users)) users = [];
     attention(users); signups(users); plans(users);
     show(current);
   }

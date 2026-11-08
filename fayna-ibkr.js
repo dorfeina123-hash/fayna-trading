@@ -27,7 +27,7 @@
   }
   async function refresh() {
     try { const j = await call('status'); st = { ...st, ...j, loaded: true, err: '' }; }
-    catch (e) { st = { ...st, loaded: true, err: e.status === 503 || e.status === 404 || !e.status ? 'החיבור ל-IBKR יופעל אחרי העלאת השרת.' : e.message }; }
+    catch (e) { st = { ...st, loaded: true, unavailable: true }; } /* server not deployed or unreachable: show nothing rather than a card that cannot work */
     render();
   }
   async function connect(token, queryId) {
@@ -58,7 +58,7 @@
   function render() {
     const page = document.getElementById('pa-connections'); if (!page) return;
     let card = document.getElementById('fib-card');
-    if (!visible()) { card?.remove(); return; }
+    if (!visible() || !st.loaded || st.unavailable) { card?.remove(); return; }
     if (!card) {
       card = document.createElement('div'); card.className = 'pa-card'; card.id = 'fib-card';
       (document.getElementById('fys-card') || page.querySelector('.pa-page-title'))?.after(card);
@@ -70,7 +70,6 @@
       });
       card.addEventListener('click', e => { const b = e.target.closest('[data-fib]'); if (!b) return; if (b.dataset.fib === 'sync') syncNow(false); if (b.dataset.fib === 'off') disconnect(); });
     }
-    if (!st.loaded) { card.innerHTML = '<div class="pa-card-title">Interactive Brokers</div><p class="fys-lead">טוען…</p>'; return; }
     const err = st.err ? `<p class="fib-err" role="alert">${esc(st.err)}</p>` : '';
     if (st.connected) {
       card.innerHTML = `<div class="pa-card-title">Interactive Brokers</div>
