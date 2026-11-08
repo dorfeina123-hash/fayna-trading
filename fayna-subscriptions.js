@@ -1,7 +1,9 @@
 /* Existing Firebase Auth remains the sole identity source. No client billing writes. */
 /* Card billing switch. Turning billing on = set this to true AND set FAYNA_BILLING_LIVE=true on the
-   server (with the Grow secrets). Until both are on, no billing button appears and nothing can charge. */
+   server (with the Grow secrets). Until both are on, no billing button appears and nothing can charge.
+   'admin' turns checkout on for admin accounts only (sandbox test) while everyone else sees no change. */
 window.FAYNA_BILLING_LIVE = false;
+window.faynaBillingOn = () => window.FAYNA_BILLING_LIVE === true || (window.FAYNA_BILLING_LIVE === 'admin' && typeof currentUser !== 'undefined' && currentUser?.isAdmin === true);
 if (window.FAYNA_BILLING_LIVE) {
   const BILLING_URL = 'https://us-central1-fayna-trading.cloudfunctions.net/billingApi';
   /* same contract as a Firebase callable: resolves { data }, rejects with { code, message } */
@@ -84,7 +86,7 @@ window.FaynaSubscriptions = (() => {
     refresh: () => call('status'),
     /* Grow hosted page: verifies the card and saves a token; the first charge comes when the trial ends */
     checkout: async plan => {
-      if (!window.FAYNA_BILLING_LIVE || !window.faynaBillingCallable || !FaynaPlanModel.publicPlanIds.includes(plan)) return;
+      if (!window.faynaBillingOn() || !window.faynaBillingCallable || !FaynaPlanModel.publicPlanIds.includes(plan)) return;
       if (!auth.currentUser) { showToast('יש להתחבר תחילה', 'error'); return; }
       const p = FaynaPlanModel.plans[plan], usd = (FaynaPlanModel.price(plan, 'monthly') / 100).toFixed(2);
       const first = new Date(Date.now() + 14 * 86400000).toLocaleDateString('he-IL');

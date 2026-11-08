@@ -39,7 +39,7 @@ function config(env) {
     live: e.FAYNA_BILLING_LIVE === 'true',
     mode, base: HOSTS[mode] + PATH,
     userId: e.GROW_USER_ID || '', pageCode: e.GROW_PAGE_CODE || '',
-    notifyKey: e.GROW_NOTIFY_KEY || '', tokenKey: e.BILLING_TOKEN_KEY || '',
+    notifyKey: e.GROW_NOTIFY_KEY || '', tokenKey: e.BILLING_TOKEN_KEY || '', apiKey: e.GROW_API_KEY || '',
     appUrl: e.FAYNA_APP_URL || 'https://dorfeina123-hash.github.io/fayna-trading/',
     notifyUrl: e.GROW_NOTIFY_URL || '',
     checkoutSumIls: Number(e.GROW_TOKEN_SUM || 1),
@@ -50,7 +50,9 @@ function ready(cfg) { return !!(cfg.live && cfg.userId && cfg.pageCode && cfg.no
 /* Grow takes multipart/form-data and answers { status: "1"|0, err, data } */
 async function call(fetcher, cfg, method, fields) {
   const fd = new FormData();
-  Object.entries(fields).forEach(([k, v]) => { if (v !== undefined && v !== null && v !== '') fd.append(k, String(v)); });
+  /* every Light API call identifies the business; apiKey only when Grow issued one */
+  const all = { userId: cfg.userId, ...(cfg.apiKey ? { apiKey: cfg.apiKey } : {}), ...fields };
+  Object.entries(all).forEach(([k, v]) => { if (v !== undefined && v !== null && v !== '') fd.append(k, String(v)); });
   const r = await fetcher(cfg.base + method, { method: 'POST', body: fd, signal: AbortSignal.timeout(20000) });
   let j; try { j = await r.json(); } catch (e) { throw new GrowError('bad_response', `grow ${method}: ${r.status}`); }
   if (String(j?.status) !== '1') throw new GrowError('grow_' + (j?.err?.id || 'error'), j?.err?.message || 'grow error');

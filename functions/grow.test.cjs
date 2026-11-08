@@ -80,7 +80,7 @@ test('charge ids are stable per period and differ between periods and users', ()
 
 test('Grow errors surface as GrowError, success returns data', async () => {
   const cfg = g.config(live);
-  const ok = await g.call(async (url, init) => { assert.match(url, /createPaymentProcess$/); assert.ok(init.body instanceof FormData); return { status: 200, json: async () => ({ status: '1', err: '', data: { url: 'https://pay' } }) }; }, cfg, 'createPaymentProcess', { a: 1 });
+  const ok = await g.call(async (url, init) => { assert.match(url, /createPaymentProcess$/); assert.ok(init.body instanceof FormData); assert.equal(init.body.get('userId'), 'u1'); assert.equal(init.body.get('a'), '1'); return { status: 200, json: async () => ({ status: '1', err: '', data: { url: 'https://pay' } }) }; }, cfg, 'createPaymentProcess', { a: 1 });
   assert.equal(ok.url, 'https://pay');
   await assert.rejects(g.call(async () => ({ status: 200, json: async () => ({ status: 0, err: { id: 701, message: 'bad userId' }, data: '' }) }), cfg, 'x', {}), { code: 'grow_701' });
 });
