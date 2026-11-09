@@ -190,7 +190,7 @@ html[data-fayna-theme] #auth-screen:not([data-fy-view="auth"]){background:#1a1d2
 html[data-fayna-theme="light"] #auth-screen:not([data-fy-view="auth"]){background:#f1f5f9!important}
 .trl *{box-sizing:border-box}.trl h1,.trl h2,.trl h3,.trl p{margin:0}.trl a{color:inherit;text-decoration:none}
 .trl-wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
-.trl-header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--trl-bg) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--trl-line)}
+.trl-header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--trl-bg) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--trl-line);padding-top:env(safe-area-inset-top,0px)}
 .trl-header-in{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:68px}
 .trl-brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:19px;white-space:nowrap}
 #auth-screen .trl-brand img{width:34px!important;height:34px!important;border-radius:8px!important;object-fit:contain;border:0!important}
@@ -865,3 +865,5 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 .fbc-card label{font-size:12px;color:var(--t2)}.fbc-card input:not([type=checkbox]){min-height:40px;border-radius:9px;border:1px solid var(--border);background:var(--bg1);color:var(--t1);padding:0 10px;font:inherit}
 .fbc-terms{display:flex;gap:8px;align-items:center}.fbc-err{color:var(--re)!important;min-height:1em}
 .fbc-actions{display:flex;gap:8px;margin-top:6px}.fbc-actions .btn-p{flex:1}
+/* v126 — iPhone app (status bar drawn over the page): side drawer starts below it */
+.side-panel{padding-top:env(safe-area-inset-top,0px)}
