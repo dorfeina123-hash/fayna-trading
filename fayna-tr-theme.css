@@ -295,7 +295,7 @@ html[data-fayna-theme="light"] .trl-grid svg{color:#9333ea}
 
 /* ── v93: slim top bar like TradeReport ─────────────────── */
 html[data-fayna-theme] #index-banner{display:none!important}
-html[data-fayna-theme] .topnav{min-height:64px!important;height:auto!important;padding:10px 20px!important;gap:10px!important;background:var(--bg0)!important;border-bottom:0!important;box-shadow:none!important}
+html[data-fayna-theme] .topnav{min-height:64px!important;height:auto!important;padding:calc(10px + env(safe-area-inset-top,0px)) 20px 10px!important;gap:10px!important;background:var(--bg0)!important;border-bottom:0!important;box-shadow:none!important}
 html[data-fayna-theme] .topnav :is(.logo,.nav-user-badge,.world-clocks,#ref-chip,.fayna-appearance,#nav-undo-btn){display:none!important}
 @media(min-width:901px){html[data-fayna-theme] .topnav .nav-active-lbl{display:none!important}}
 .trb-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
@@ -312,7 +312,10 @@ html[data-fayna-theme] .topnav :is(.logo,.nav-user-badge,.world-clocks,#ref-chip
 /* right cluster: bell · sync status · save */
 .trh-recent>.trh-head{align-items:flex-start}
 #home-dashboard .trh-add{min-height:38px;padding:0 14px;font-size:13px;cursor:pointer;white-space:nowrap}
-@media(max-width:900px){.trb-tools{order:5;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.trb-primary span{display:none}.trb-primary,.trb-btn{min-height:40px;padding:0 12px;font-size:13px}html[data-fayna-theme] .topnav{flex-wrap:wrap!important;padding:8px 12px!important}}
+@media(max-width:900px){.trb-tools{order:5;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.trb-primary span{display:none}.trb-primary,.trb-btn{min-height:40px;padding:0 12px;font-size:13px}html[data-fayna-theme] .topnav{flex-wrap:wrap!important;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px!important}}
+/* v125 — phones: the filter row always fits the screen (iOS draws Hebrew wider than desktop browsers) */
+@media(max-width:600px){.trb-tools{overflow-x:visible;gap:6px}.trb-tools>.trb-btn{flex:1 1 auto;min-width:0;justify-content:center;gap:5px;padding:0 8px;overflow:hidden}.trb-tools>.trb-primary{flex:0 0 auto;padding:0 12px}.trb-tools .trb-caret{display:none}}
+@media(max-width:360px){.trb-tools>.trb-btn>svg:first-child{display:none}.trb-tools>.trb-btn{padding:0 6px;font-size:12px}}
 
 
 /* ── v95: right cluster — bell · save status · avatar ───── */
