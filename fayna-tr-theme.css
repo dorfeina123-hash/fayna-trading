@@ -867,3 +867,5 @@ html:not([data-fayna-theme="light"]) :is(.cyc-btn.active,.skip-link){color:#1b13
 .fbc-actions{display:flex;gap:8px;margin-top:6px}.fbc-actions .btn-p{flex:1}
 /* v126 — iPhone app (status bar drawn over the page): side drawer starts below it */
 .side-panel{padding-top:env(safe-area-inset-top,0px)}
+/* v134 — confirm/prompt dialogs always above side panels (the user panel sits at 9001) */
+#cd-modal{z-index:9600!important}
