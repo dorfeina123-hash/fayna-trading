@@ -18457,6 +18457,21 @@ async function udpSavePlan() {
   } catch (e) { showToast('שגיאה בעדכון החבילה: ' + (e.code || e.message || ''), 'error'); }
 }
 
+/* v132: full deletion — Auth account + all data, through the deleteAccount server function.
+   Until that function is deployed, falls back to marking the user deleted (blocked + data wiped). */
+async function faynaDeleteAccount(uid) {
+  try {
+    const r = await fetch('https://us-central1-fayna-trading.cloudfunctions.net/deleteAccount', { method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + await auth.currentUser.getIdToken() }, body: JSON.stringify({ uid }) });
+    if (r.ok) return 'full';
+    if (r.status === 403) throw new Error('אין הרשאה למחוק את המשתמש הזה');
+  } catch (e) { if (/הרשאה/.test(e.message)) throw e; }
+  await db.collection('users').doc(uid).set({ status:'deleted', deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    plan:'free', planStatus:'cancelled', subscriptionStatus:'cancelled', td_accounts:[], td_tradesList:[], phone:'' }, { merge:true });
+  return 'marked';
+}
+window.faynaDeleteAccount = faynaDeleteAccount;
+
 /* Cancel a user's subscription: plan back to Free, nothing more to charge, data kept.
    Used by the admin button and, automatically, for every pending cancellation request. */
 async function adminCancelSubscription(uid, reason) {
@@ -18497,8 +18512,13 @@ async function adminProcessCancellationRequests() {
     const open = q.docs.filter(d => !d.data().handledAt && d.data().uid);
     const uids = [...new Set(open.map(d => d.data().uid))];
     let done = 0;
-    for (const uid of uids) { try { await adminCancelSubscription(uid, 'בקשת המשתמש — אוטומטי'); done++; } catch (e) { console.warn('auto-cancel', uid, e); } }
-    if (done) { showToast(`בוצעו ${done} ביטולי מנוי שהמשתמשים ביקשו ✅`, 'success', 6000); try { _renderUsersTable(); renderAdminMetrics(); } catch (e) {} }
+    for (const uid of uids) { try {
+      await faynaDeleteAccount(uid); done++;
+      await Promise.all(open.filter(d => d.data().uid === uid).map(d => d.ref.update({ handledAt: firebase.firestore.FieldValue.serverTimestamp(), handledBy: currentUser?.uid || '' })));
+      _logAdminAction('מחיקת משתמש', uid + ' · ביקש ביטול — אוטומטי');
+      _adminUsersCache = (_adminUsersCache||[]).filter(u => u.uid !== uid);
+    } catch (e) { console.warn('auto-delete', uid, e); } }
+    if (done) { showToast(`נמחקו ${done} משתמשים שביקשו ביטול ✅`, 'success', 6000); try { _renderUsersTable(); renderAdminMetrics(); } catch (e) {} }
   } catch (e) { console.warn('auto-cancel scan', e); }
 }
 
@@ -18618,11 +18638,7 @@ async function udpDeleteUser() {
   const deletedEmail = _udpCurrentUser.email, delUid = _udpCurrentUid;
   /* v130: mark deleted and wipe the data instead of removing the doc — an open session of the user
      would otherwise recreate the doc on its next save. 'status' can only be changed by the admin. */
-  try {
-    await db.collection('users').doc(delUid).set({ status:'deleted', deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      plan:'free', planStatus:'cancelled', subscriptionStatus:'cancelled', td_accounts:[], td_tradesList:[], phone:'' }, { merge:true });
-    _invalidateUsersCache();
-  }
+  try { await faynaDeleteAccount(delUid); _invalidateUsersCache(); }
   catch (e) { showToast('המחיקה נכשלה: ' + (e.code || e.message || ''), 'error'); return; }
   /* close any open cancellation request of the deleted user */
   try { const q = await db.collection('billing_requests').where('uid','==',delUid).get(); await Promise.all(q.docs.filter(d => !d.data().handledAt).map(d => d.ref.update({ handledAt: firebase.firestore.FieldValue.serverTimestamp(), handledBy: currentUser?.uid || '' }))); } catch (e) {}
@@ -27338,7 +27354,7 @@ document.addEventListener('DOMContentLoaded',workspaceInit);
 <script src="fayna-tr-biz.js?v=103"></script>
 <script src="fayna-ecal-he.js?v=115"></script>
 <script src="fayna-tr-ecal.js?v=121"></script>
-<script src="fayna-compliance.js?v=110"></script>
+<script src="fayna-compliance.js?v=132"></script>
 <script src="fayna-sync.js?v=111"></script>
 <script src="fayna-ibkr.js?v=121"></script>
 <script src="fayna-tradovate.js?v=123"></script>

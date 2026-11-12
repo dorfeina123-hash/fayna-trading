@@ -135,7 +135,7 @@
     if (!currentUser?.uid) { showToast?.('יש להתחבר תחילה', 'info'); return; }
     const by = businessDaysFrom(new Date(), 3).toLocaleDateString('he-IL');
     const ok = typeof customConfirm === 'function'
-      ? await customConfirm(`לבטל את המנוי? הביטול ייכנס לתוקף לכל המאוחר ב־${by} (תוך 3 ימי עסקים), ולא יבוצעו חיובים נוספים אחריו. הנתונים שלך נשמרים והחשבון עובר למסלול החינמי.`, { danger: true, okText: 'ביטול המנוי', cancelText: 'חזרה' })
+      ? await customConfirm(`לבטל את המנוי? ביטול המנוי מוחק את החשבון שלך ואת כל הנתונים (עסקאות, חשבונות, הוצאות) לצמיתות, ולא ניתן לשחזר אותם. לא יבוצעו חיובים נוספים. אם תרצה לחזור בעתיד, תצטרך להירשם מחדש.`, { danger: true, okText: 'מחק את החשבון', cancelText: 'חזרה' })
       : true;
     if (!ok) return;
     let server = false;
@@ -148,7 +148,7 @@
     let mailed = false;
     try {
       if (typeof emailjs !== 'undefined' && EJS_CONFIG?.publicKey && EJS_CONFIG.serviceId && EJS_CONFIG.templateId && currentUser.email) {
-        const body = `קיבלנו את בקשתך לבטל את המנוי ל־Fayna Trading בתאריך ${new Date().toLocaleDateString('he-IL')}.\nהביטול ייכנס לתוקף לכל המאוחר ב־${by}, ולא יבוצעו חיובים נוספים לאחר מכן.\nהחשבון יעבור למסלול החינמי והנתונים שלך נשמרים.\n\n${senderLine()}`;
+        const body = `קיבלנו את בקשתך לבטל את המנוי ל־Fayna Trading בתאריך ${new Date().toLocaleDateString('he-IL')}.\nהחשבון וכל הנתונים שלך נמחקים, ולא יבוצעו חיובים נוספים.\nתודה שהיית איתנו.`;
         await emailjs.send(EJS_CONFIG.serviceId, EJS_CONFIG.templateId, { to_email: currentUser.email, user_name: currentUser.name || '', subject: 'אישור קבלת בקשה לביטול מנוי', message: body, html_message: body.replace(/\n/g, '<br>'), from_name: 'Fayna Trading' });
         mailed = true;
       }
@@ -157,7 +157,12 @@
     const text = `בקשת הביטול התקבלה ב־${new Date().toLocaleDateString('he-IL')}. הביטול ייכנס לתוקף עד ${by} ולא יבוצעו חיובים נוספים. ${mailed ? 'אישור נשלח לדוא"ל שלך.' : 'ההודעה הזו נשמרה גם במרכז ההתראות כאישור.'}`;
     if (el) el.textContent = text;
     try { addNotification('billing', 'בקשת ביטול מנוי התקבלה', text); renderNotifBell(); } catch (e) {}
-    showToast?.('בקשת הביטול התקבלה', 'success');
+    showToast?.('המנוי בוטל והחשבון נמחק', 'success');
+    /* v132: delete the account now; the admin side finishes it if the server is not up yet */
+    try { if (typeof faynaDeleteAccount === 'function') await faynaDeleteAccount(currentUser.uid); } catch (e) {}
+    try { await auth.currentUser?.delete(); } catch (e) {}
+    try { await auth.signOut(); } catch (e) {}
+    setTimeout(() => location.reload(), 1500);
   }
   function wrapMySub() {
     const prev = window.renderMySub; if (typeof prev !== 'function' || prev._fyc) return;

@@ -337,3 +337,31 @@ exports.tradovateSyncScheduled = onSchedule({ schedule: 'every 30 minutes', time
     catch (e) { await deps.store.update(l.uid, { lastError: e.code || e.message, lastErrorAt: Date.now() }); console.warn('tradovate scheduled', l.uid, e.code || e.message); }
   }
 });
+
+/* ── Full account deletion (Auth account + Firestore data). Admin deletes anyone; a user may
+      delete only themselves (used by "cancel subscription", which removes the account). ── */
+exports.deleteAccount = onRequest({ maxInstances: 3, timeoutSeconds: 120, memory: '256MiB' }, async (req, res) => {
+  const origin = req.get('origin') || '';
+  if (GMAIL_ORIGINS.has(origin)) { res.set('Access-Control-Allow-Origin', origin); res.set('Vary', 'Origin'); }
+  if (req.method === 'OPTIONS') { res.set('Access-Control-Allow-Methods', 'POST'); res.set('Access-Control-Allow-Headers', 'Authorization, Content-Type'); res.status(204).send(''); return; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'method' }); return; }
+  const m = /^Bearer\s+(.+)$/.exec(req.get('authorization') || '');
+  let caller; try { caller = m && await getAuth().verifyIdToken(m[1]); } catch (e) { caller = null; }
+  if (!caller) { res.status(401).json({ error: 'auth' }); return; }
+  const target = String(req.body?.uid || caller.uid);
+  if (!/^[\w-]{6,128}$/.test(target)) { res.status(400).json({ error: 'uid' }); return; }
+  if (target !== caller.uid) {
+    const me = await db.doc(`users/${caller.uid}`).get();
+    if (me.data()?.isAdmin !== true) { res.status(403).json({ error: 'forbidden' }); return; }
+    const t = await db.doc(`users/${target}`).get();
+    if (t.data()?.isAdmin === true) { res.status(403).json({ error: 'admin_target' }); return; }
+  }
+  try {
+    for (const path of [`users/${target}`, `subscriptions/${target}`, `adminNotes/${target}`, `ibkrLinks/${target}`, `gmailTokens/${target}`, `tradovateLinks/${target}`, `billingTokens/${target}`]) {
+      await db.recursiveDelete(db.doc(path));
+    }
+    try { await getAuth().deleteUser(target); } catch (e) { if (e.code !== 'auth/user-not-found') throw e; }
+    await db.collection('adminAudit').add({ action: 'account_deleted', uid: target, by: caller.uid, self: target === caller.uid, at: Date.now() });
+    res.status(200).json({ ok: true });
+  } catch (e) { console.error('deleteAccount', e); res.status(500).json({ error: 'server' }); }
+});

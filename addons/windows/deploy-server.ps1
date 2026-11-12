@@ -35,7 +35,7 @@ foreach ($k in @('GMAIL_TOKEN_KEY','SYNC_TOKEN_KEY')) { if (-not (HasSecret $k))
   SetSecret $k ([Convert]::ToBase64String($b))
 } }
 Say 'מעלה את חוקי מסד הנתונים ואת השרת...'
-$only = "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth,functions:billing:ibkrSync,functions:billing:ibkrSyncScheduled"
+$only = "firestore:rules,functions:billing:syncIngest,functions:billing:gmailAuth,functions:billing:ibkrSync,functions:billing:ibkrSyncScheduled,functions:billing:deleteAccount"
 # Tradovate goes up only once its partner credentials were saved as secrets
 if ((HasSecret 'TRADOVATE_CLIENT_ID') -and (HasSecret 'TRADOVATE_CLIENT_SECRET')) { $only += ",functions:billing:tradovateAuth,functions:billing:tradovateSyncScheduled" }
 npx --yes firebase-tools@13 deploy --only $only --project fayna-trading
