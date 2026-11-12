@@ -16907,7 +16907,7 @@ async function _handleAuthUser(fbUser) {
           return;
         }
         currentUser = { ...snap.data(), uid: fbUser.uid };
-        if (currentUser.status === 'blocked') {
+        if (currentUser.status === 'blocked' || currentUser.status === 'deleted') {
           await auth.signOut();
           _showAuthScreen('גישה חסומה. צור קשר עם תמיכה.');
           return;
@@ -17748,7 +17748,7 @@ async function _fetchUsers() {
   // causing partial results with no error — so we avoid it entirely.
   try {
     const snap = await db.collection('users').get();
-    const users = snap.docs.map(d => ({ ...d.data(), uid: d.id }));
+    const users = snap.docs.map(d => ({ ...d.data(), uid: d.id })).filter(u => u.status !== 'deleted');
     users.sort((a, b) => {
       const ta = a.registeredAt?.toDate ? a.registeredAt.toDate().getTime() : new Date(a.registeredAt || 0).getTime();
       const tb = b.registeredAt?.toDate ? b.registeredAt.toDate().getTime() : new Date(b.registeredAt || 0).getTime();
@@ -18417,6 +18417,8 @@ async function openUserDetail(uid) {
   if (msgEl) msgEl.textContent = '';
 
   udpShowTab('info');
+  /* v130: lift the panel out of the admin page so no parent layer (side nav) can cover it */
+  ['udp-overlay','udp-panel'].forEach(id => { const el = document.getElementById(id); if (el && el.parentElement !== document.body) document.body.appendChild(el); });
   document.getElementById('udp-overlay').classList.add('open');
   requestAnimationFrame(() => document.getElementById('udp-panel').classList.add('open'));
 }
@@ -18614,7 +18616,13 @@ async function udpDeleteUser() {
   if (!_udpCurrentUid || !_udpCurrentUser) return;
   if (!await customConfirm(`מחק את ${_udpCurrentUser.name} (${_udpCurrentUser.email})?\nהנתונים יימחקו לצמיתות.`)) return;
   const deletedEmail = _udpCurrentUser.email, delUid = _udpCurrentUid;
-  try { await db.collection('users').doc(delUid).delete(); _invalidateUsersCache(); }
+  /* v130: mark deleted and wipe the data instead of removing the doc — an open session of the user
+     would otherwise recreate the doc on its next save. 'status' can only be changed by the admin. */
+  try {
+    await db.collection('users').doc(delUid).set({ status:'deleted', deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      plan:'free', planStatus:'cancelled', subscriptionStatus:'cancelled', td_accounts:[], td_tradesList:[], phone:'' }, { merge:true });
+    _invalidateUsersCache();
+  }
   catch (e) { showToast('המחיקה נכשלה: ' + (e.code || e.message || ''), 'error'); return; }
   /* close any open cancellation request of the deleted user */
   try { const q = await db.collection('billing_requests').where('uid','==',delUid).get(); await Promise.all(q.docs.filter(d => !d.data().handledAt).map(d => d.ref.update({ handledAt: firebase.firestore.FieldValue.serverTimestamp(), handledBy: currentUser?.uid || '' }))); } catch (e) {}
