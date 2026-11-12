@@ -10,7 +10,7 @@
        the network. Never cache API/auth traffic.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION    = 'fayna-v132-delete-account-20261112';
+const VERSION    = 'fayna-v133-auto-approve-20261112';
 const SHELL      = `${VERSION}-shell`;
 const ASSETS     = `${VERSION}-assets`;
 const OFFLINE_URL = './index.html';

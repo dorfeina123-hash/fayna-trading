@@ -18507,6 +18507,12 @@ let _autoCancelRan = 0;
 async function adminProcessCancellationRequests() {
   if (!currentUser?.isAdmin || Date.now() - _autoCancelRan < 60e3) return;
   _autoCancelRan = Date.now();
+  /* v133: no manual approval step any more — leftover "pending" users are activated */
+  try {
+    const pend = await db.collection('users').where('status','==','pending').get();
+    await Promise.all(pend.docs.map(d => d.ref.update({ status:'active' })));
+    if (pend.size) { _invalidateUsersCache(); (_adminUsersCache||[]).forEach(u => { if (u.status === 'pending') u.status = 'active'; }); _logAdminAction('אישור אוטומטי', pend.size + ' משתמשים ממתינים הופעלו'); }
+  } catch (e) { console.warn('auto-approve', e); }
   try {
     const q = await db.collection('billing_requests').where('type','==','cancel').get();
     const open = q.docs.filter(d => !d.data().handledAt && d.data().uid);
