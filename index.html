@@ -10530,7 +10530,7 @@ function customConfirm(message, opts={}) {
     okBtn.style.background = opts.danger ? 'var(--re)' : '';
     okBtn.style.color = opts.danger ? '#fff' : '';
     document.getElementById('cd-cancel-btn').textContent = opts.cancelText || 'ביטול';
-    document.getElementById('cd-modal').classList.add('open');
+    { const m = document.getElementById('cd-modal'); if (m.parentElement !== document.body) document.body.appendChild(m); m.classList.add('open'); } /* v135: above every panel */
   });
 }
 function customPrompt(message, defaultValue='', opts={}) {
@@ -10545,7 +10545,7 @@ function customPrompt(message, defaultValue='', opts={}) {
     document.getElementById('cd-ok-btn').style.background = '';
     document.getElementById('cd-ok-btn').style.color = '';
     document.getElementById('cd-cancel-btn').textContent = opts.cancelText || 'ביטול';
-    document.getElementById('cd-modal').classList.add('open');
+    { const m = document.getElementById('cd-modal'); if (m.parentElement !== document.body) document.body.appendChild(m); m.classList.add('open'); } /* v135: above every panel */
     setTimeout(()=>{ inp.focus(); inp.select(); }, 50);
   });
 }
