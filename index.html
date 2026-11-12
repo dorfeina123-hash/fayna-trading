@@ -18613,8 +18613,11 @@ function udpCopyEmail() {
 async function udpDeleteUser() {
   if (!_udpCurrentUid || !_udpCurrentUser) return;
   if (!await customConfirm(`מחק את ${_udpCurrentUser.name} (${_udpCurrentUser.email})?\nהנתונים יימחקו לצמיתות.`)) return;
-  const deletedEmail = _udpCurrentUser.email;
-  await db.collection('users').doc(_udpCurrentUid).delete(); _invalidateUsersCache();
+  const deletedEmail = _udpCurrentUser.email, delUid = _udpCurrentUid;
+  try { await db.collection('users').doc(delUid).delete(); _invalidateUsersCache(); }
+  catch (e) { showToast('המחיקה נכשלה: ' + (e.code || e.message || ''), 'error'); return; }
+  /* close any open cancellation request of the deleted user */
+  try { const q = await db.collection('billing_requests').where('uid','==',delUid).get(); await Promise.all(q.docs.filter(d => !d.data().handledAt).map(d => d.ref.update({ handledAt: firebase.firestore.FieldValue.serverTimestamp(), handledBy: currentUser?.uid || '' }))); } catch (e) {}
   _logAdminAction('מחיקת משתמש', deletedEmail);
   _adminUsersCache = _adminUsersCache.filter(u => u.uid !== _udpCurrentUid);
   closeUserDetail();
