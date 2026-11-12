@@ -3,7 +3,9 @@
 <head>
 <script>try{document.documentElement.dataset.faynaTheme=localStorage.getItem("fayna_theme")==="light"?"light":"dark";}catch(e){document.documentElement.dataset.faynaTheme="dark";}</script>
 <link rel="preload" href="fayna-tr-theme.css?v=126" as="style">
-<style id="fy-boot">html{background:#1f1b23}html[data-fayna-theme="light"]{background:#f1f5f9}html:not(.fy-css) body{visibility:hidden}</style>
+<style id="fy-boot">html{background:#1f1b23}html[data-fayna-theme="light"]{background:#f1f5f9}html:not(.fy-css) body{visibility:hidden}html.fy-restoring #auth-screen{visibility:hidden}</style>
+<script>/* v127: a saved sign-in goes straight into the app — hide the opening screen while Firebase restores it */
+try{var _k=Object.keys(localStorage).concat(Object.keys(sessionStorage));if(_k.some(function(k){return k.indexOf('firebase:authUser:')===0}))document.documentElement.classList.add('fy-restoring');setTimeout(function(){document.documentElement.classList.remove('fy-restoring')},8000);}catch(e){}</script>
 <noscript><style>html:not(.fy-css) body{visibility:visible}</style></noscript>
 <script>/* v118: hide the page until the main stylesheet is in, so a reload never flashes the unstyled page */setTimeout(function(){document.documentElement.classList.add('fy-css')},3500);</script>
 <meta charset="UTF-8">
@@ -1363,12 +1365,12 @@ body::before {
 @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
 #report-menu div[onclick]:hover { background:rgba(144,137,189,.08); color:var(--pu); }
 /* ── USER DETAIL DRAWER ── */
-.udp-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:900; }
+.udp-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9000; }
 .udp-overlay.open { display:block; }
 .udp-panel {
   position: fixed; top: 0; right: -460px; width: 440px; height: 100vh;
   background: #0d111a; border-left: 1px solid rgba(144,137,189,.2);
-  z-index: 1000; transition: right .28s cubic-bezier(.4,0,.2,1); overflow-y: auto;
+  z-index: 9001; transition: right .28s cubic-bezier(.4,0,.2,1); overflow-y: auto;
   box-shadow: -8px 0 32px rgba(0,0,0,.5);
 }
 .udp-panel.open { right: 0; }
@@ -6314,6 +6316,7 @@ if (document.readyState !== 'loading') setTimeout(_courseRefresh, 0);
         <button class="udp-btn"      onclick="udpToggleBlock()"><span id="udp-block-label">🚫 חסום</span></button>
         <button class="udp-btn success" onclick="udpApprovePending()">✅ אשר משתמש</button>
         <button class="udp-btn primary" onclick="udpCopyEmail()">📋 העתק מייל</button>
+        <button class="udp-btn warn" onclick="udpCancelSubscription()" style="grid-column:1/-1">⛔ ביטול מנוי (מעבר ל-Free)</button>
         <button class="udp-btn danger"  onclick="udpDeleteUser()" style="grid-column:1/-1">🗑 מחק משתמש לצמיתות</button>
       </div>
       <div id="udp-action-msg" style="margin-top:10px;font-size:11px;min-height:18px;text-align:center"></div>
@@ -16874,7 +16877,7 @@ let contactSettings = {
 // ──────────────────────────────────────────────────────────────
 //  INIT
 // ──────────────────────────────────────────────────────────────
-let _siteEntryRequested = false; // session restore never bypasses the public opening
+let _siteEntryRequested = true; // v127: a restored session enters the app directly; logout resets it
 let _authInitialized = false;
 let _registering  = false; // prevents onAuthStateChanged firing during registration
 let _manualLogin  = false; // set when user explicitly presses login/google button → skip welcome screen
@@ -16938,6 +16941,7 @@ function initAuth() {
 }
 
 function _showAuthScreen(errorMsg) {
+  document.documentElement.classList.remove('fy-restoring');
   const wb = document.getElementById('welcome-back-screen');
   if (wb) wb.style.display = 'none';
   const el = document.getElementById('auth-screen');
@@ -17600,6 +17604,7 @@ async function ecalForceRefresh() {
 }
 
 function showApp() {
+  setTimeout(() => document.documentElement.classList.remove('fy-restoring'), 50);
   try { initNotifications(typeof currentUser !== 'undefined' ? currentUser : null); } catch (e) { console.warn('notify init', e); }
   document.getElementById('auth-screen').style.display='none';
   const wb = document.getElementById('welcome-back-screen');
@@ -17922,6 +17927,7 @@ async function adminUploadGuidePDF(inp) {
 }
 
 async function renderAdminPanel() {
+  adminProcessCancellationRequests();
   window.FaynaAdmin?.organize();
   await renderAdminMetrics();
   try { renderGrowthDash(); } catch(e){}
@@ -18436,14 +18442,62 @@ function udpShowTab(tab) {
 async function udpSavePlan() {
   if (!_udpCurrentUid) return;
   const plan = document.getElementById('udp-plan-sel')?.value || 'pro';
-  await db.collection('users').doc(_udpCurrentUid).update({ plan }); _invalidateUsersCache();
-  _logAdminAction('שינוי חבילה', `${_udpCurrentUser?.email||_udpCurrentUid} → ${plan}`);
-  _udpCurrentUser.plan = plan;
-  const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
-  if (idx >= 0) _adminUsersCache[idx].plan = plan;
-  document.getElementById('udpi-plan').textContent = plan;
-  _renderUsersTable(); renderAdminMetrics();
-  showToast(`חבילה עודכנה ל-${plan} ✅`,'success');
+  if (plan === 'free') { await udpCancelSubscription(true); return; }
+  try {
+    await db.collection('users').doc(_udpCurrentUid).update({ plan, planStatus:'active', cancelAtPeriodEnd:false }); _invalidateUsersCache();
+    _logAdminAction('שינוי חבילה', `${_udpCurrentUser?.email||_udpCurrentUid} → ${plan}`);
+    _udpCurrentUser.plan = plan;
+    const idx = _adminUsersCache.findIndex(u => u.uid === _udpCurrentUid);
+    if (idx >= 0) Object.assign(_adminUsersCache[idx], { plan, planStatus:'active', cancelAtPeriodEnd:false });
+    document.getElementById('udpi-plan').textContent = plan;
+    _renderUsersTable(); renderAdminMetrics();
+    showToast(`חבילה עודכנה ל-${plan} ✅`,'success');
+  } catch (e) { showToast('שגיאה בעדכון החבילה: ' + (e.code || e.message || ''), 'error'); }
+}
+
+/* Cancel a user's subscription: plan back to Free, nothing more to charge, data kept.
+   Used by the admin button and, automatically, for every pending cancellation request. */
+async function adminCancelSubscription(uid, reason) {
+  const upd = { plan:'free', planCycle:null, planExpiresAt:null, planStatus:'cancelled', cancelAtPeriodEnd:false,
+                subscriptionPlan:'free', subscriptionStatus:'cancelled', paymentStatus:'not_paid' };
+  await db.collection('users').doc(uid).update(upd); _invalidateUsersCache();
+  const idx = (_adminUsersCache||[]).findIndex(u => u.uid === uid);
+  if (idx >= 0) Object.assign(_adminUsersCache[idx], upd);
+  /* close every open cancellation request of this user */
+  try {
+    const q = await db.collection('billing_requests').where('uid','==',uid).get();
+    await Promise.all(q.docs.filter(d => d.data().type === 'cancel' && !d.data().handledAt)
+      .map(d => d.ref.update({ handledAt: firebase.firestore.FieldValue.serverTimestamp(), handledBy: currentUser?.uid || '' })));
+  } catch (e) {}
+  _logAdminAction('ביטול מנוי', `${idx >= 0 ? _adminUsersCache[idx].email : uid}${reason ? ' · ' + reason : ''}`);
+  return upd;
+}
+async function udpCancelSubscription(skipConfirm) {
+  if (!_udpCurrentUid) return;
+  const who = _udpCurrentUser?.email || _udpCurrentUid;
+  if (!skipConfirm && !await customConfirm(`לבטל את המנוי של ${who}? החשבון יעבור ל-Free מיד, לא יהיו חיובים נוספים, והנתונים נשמרים.`, { danger:true, okText:'בטל מנוי', cancelText:'חזרה' })) return;
+  try {
+    await adminCancelSubscription(_udpCurrentUid, 'מהפאנל');
+    _udpCurrentUser.plan = 'free';
+    const el = document.getElementById('udpi-plan'); if (el) el.textContent = 'free';
+    const sel = document.getElementById('udp-plan-sel'); if (sel) sel.value = 'free';
+    _renderUsersTable(); renderAdminMetrics();
+    showToast('המנוי בוטל — החשבון עבר ל-Free ✅','success');
+  } catch (e) { showToast('הביטול נכשל: ' + (e.code || e.message || ''), 'error'); }
+}
+/* Runs when the admin panel loads: every cancellation a user asked for is carried out on the spot. */
+let _autoCancelRan = 0;
+async function adminProcessCancellationRequests() {
+  if (!currentUser?.isAdmin || Date.now() - _autoCancelRan < 60e3) return;
+  _autoCancelRan = Date.now();
+  try {
+    const q = await db.collection('billing_requests').where('type','==','cancel').get();
+    const open = q.docs.filter(d => !d.data().handledAt && d.data().uid);
+    const uids = [...new Set(open.map(d => d.data().uid))];
+    let done = 0;
+    for (const uid of uids) { try { await adminCancelSubscription(uid, 'בקשת המשתמש — אוטומטי'); done++; } catch (e) { console.warn('auto-cancel', uid, e); } }
+    if (done) { showToast(`בוצעו ${done} ביטולי מנוי שהמשתמשים ביקשו ✅`, 'success', 6000); try { _renderUsersTable(); renderAdminMetrics(); } catch (e) {} }
+  } catch (e) { console.warn('auto-cancel scan', e); }
 }
 
 async function adminQuickPlan(uid, plan, selectEl) {
